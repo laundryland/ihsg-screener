@@ -1,15 +1,23 @@
 {
-  "name": "IHSG Stock Screener",
-  "short_name": "IHSG Screener",
-  "start_url": "/index.html",
-  "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#1e293b",
+  "short_name": "IHSG SH4NDY",
+  "name": "IHSG SH4NDY's SCREENER",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2422/2422796.png",
+      "src": "icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512x512.png",
+      "type": "image/png",
       "sizes": "512x512",
-      "type": "image/png"
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait"
 }
