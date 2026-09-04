@@ -4,52 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IHSG Stock Screener</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1e293b">
+  <meta name="theme-color" content="#0f172a">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background-color: #0f172a; color: #f8fafc; padding: 16px; }
     header { margin-bottom: 20px; text-align: center; }
     h1 { font-size: 1.5rem; color: #38bdf8; }
-    p.update-time { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; }
+    p.update-time { font-size: 0.85rem; color: #94a3b8; margin-top: 6px; }
     
-    .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     .card { background: #1e293b; padding: 14px; border-radius: 12px; border: 1px solid #334155; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .ticker { font-weight: bold; font-size: 1.1rem; }
-    .price { font-size: 1.2rem; font-weight: 600; margin-bottom: 6px; }
+    .ticker { font-weight: bold; font-size: 1.1rem; color: #fff; }
+    .price { font-size: 1.15rem; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
     
     .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
     .buy { background: #166534; color: #4ade80; }
     .sell { background: #991b1b; color: #fca5a5; }
     .neutral { background: #334155; color: #94a3b8; }
 
-    .stat { font-size: 0.8rem; color: #cbd5e1; margin-top: 4px; }
+    .stat { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; }
+    .error-msg { background: #451a03; color: #fde047; padding: 12px; border-radius: 8px; text-align: center; font-size: 0.9rem; margin-top: 20px; }
   </style>
 </head>
 <body>
 
   <header>
     <h1>IHSG Screener</h1>
-    <p class="update-time" id="updateTime">Memuat data...</p>
+    <p class="update-time" id="updateTime">Memuat data terbaru...</p>
   </header>
 
+  <div id="errorMessage"></div>
   <div class="card-grid" id="stockGrid"></div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-
     async function loadStockData() {
+      const timeElem = document.getElementById('updateTime');
+      const errElem = document.getElementById('errorMessage');
+      const grid = document.getElementById('stockGrid');
+
       try {
-        const res = await fetch('data.json?cachebuster=' + new Date().getTime());
+        // Ambil data JSON langsung tanpa cache
+        const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
+        
+        if (!res.ok) {
+          throw new Error(`HTTP Error Status: ${res.status}`);
+        }
+
         const data = await res.json();
         
-        document.getElementById('updateTime').innerText = "Diperbarui: " + data.updated_at;
-        
-        const grid = document.getElementById('stockGrid');
+        timeElem.innerText = "Diperbarui: " + (data.updated_at || "Baru saja");
         grid.innerHTML = '';
+        errElem.innerHTML = '';
+
+        if (!data.stocks || data.stocks.length === 0) {
+          errElem.innerHTML = `<div class="error-msg">Data saham masih kosong. Mohon jalankan 'Run workflow' di GitHub Actions.</div>`;
+          return;
+        }
 
         data.stocks.forEach(stock => {
           const badgeClass = stock.signal === 'BUY' ? 'buy' : stock.signal === 'SELL' ? 'sell' : 'neutral';
@@ -61,14 +72,15 @@
               <span class="ticker">${stock.ticker}</span>
               <span class="badge ${badgeClass}">${stock.signal}</span>
             </div>
-            <div class="price">Rp ${stock.price.toLocaleString('id-ID')}</div>
+            <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
             <div class="stat">RSI: ${stock.rsi}</div>
             <div class="stat">MA20: ${stock.ma20}</div>
           `;
           grid.appendChild(card);
         });
       } catch (err) {
-        document.getElementById('updateTime').innerText = "Gagal memuat data.";
+        timeElem.innerText = "Status: Menunggu sinkronisasi berkas";
+        errElem.innerHTML = `<div class="error-msg">Gagal memproses file data.json.<br><small>(${err.message})</small></div>`;
       }
     }
 
