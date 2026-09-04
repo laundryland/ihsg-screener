@@ -1,4 +1,26 @@
 {
+  "short_name": "IHSG SH4NDY",
+  "name": "IHSG SH4NDY's SCREENER",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait"
+}{
   "short_name": "IHSG Screener",
   "name": "IHSG Stock Screener App",
   "icons": [
