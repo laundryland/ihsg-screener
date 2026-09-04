@@ -4,7 +4,7 @@ on:
   schedule:
     # Berjalan Senin-Jumat jam 09:15 UTC (16:15 WIB)
     - cron: '15 9 * * 1-5'
-  workflow_dispatch: # Memungkinkan jalankan manual via GitHub tombol Click
+  workflow_dispatch: # Memungkinkan trigger manual dari tombol GitHub
 
 jobs:
   update-data:
@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        
-- name: Setup Python
-        uses: actions/setup-python@v4    # <-- UBAH JADI INI
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
