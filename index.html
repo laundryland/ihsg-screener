@@ -3,88 +3,248 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IHSG Stock Screener</title>
+  <title>IHSG SH4NDY's SCREENER</title>
+  
+  <!-- Manifest & Theme -->
+  <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0f172a">
+  
+  <!-- Icon untuk Android & Chrome -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512x512.png">
+  
+  <!-- Icon & Tampilan Fullscreen untuk iOS / Safari -->
+  <link rel="apple-touch-icon" href="./icon-192x192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: #0f172a; color: #f8fafc; padding: 16px; }
-    header { margin-bottom: 20px; text-align: center; }
-    h1 { font-size: 1.5rem; color: #38bdf8; }
-    p.update-time { font-size: 0.85rem; color: #94a3b8; margin-top: 6px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
+    body { background-color: #0f172a; color: #f8fafc; padding: 16px; padding-bottom: 40px; }
     
-    .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-    .card { background: #1e293b; padding: 14px; border-radius: 12px; border: 1px solid #334155; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    header { text-align: center; margin-bottom: 16px; }
+    h1 { font-size: 1.3rem; color: #38bdf8; letter-spacing: 0.5px; }
+    .update-time { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; }
+
+    /* Control Box / Form */
+    .control-box { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 16px; }
+    .form-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    input, select, button { padding: 8px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 0.85rem; }
+    input { flex: 1; min-width: 100px; text-transform: uppercase; }
+    button { background: #0284c7; color: white; border: none; font-weight: bold; cursor: pointer; }
+    button:active { opacity: 0.8; }
+    .btn-danger { background: #dc2626; }
+    .btn-action { padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; background: #334155; }
+
+    /* Filter Tabs */
+    .group-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
+    .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; }
+    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
+
+    /* Stock Cards */
+    .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .card { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; position: relative; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .ticker { font-weight: bold; font-size: 1.1rem; color: #fff; }
-    .price { font-size: 1.15rem; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
+    .price { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
     
-    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+    /* Badge Warna Sinyal */
+    .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; }
+    .breakout-r { background: #15803d; color: #86efac; border: 1px solid #22c55e; } /* Breakout Resistance */
+    .breakout-s { background: #b91c1c; color: #fca5a5; border: 1px solid #ef4444; } /* Breakout Support */
     .buy { background: #166534; color: #4ade80; }
     .sell { background: #991b1b; color: #fca5a5; }
     .neutral { background: #334155; color: #94a3b8; }
 
-    .stat { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; }
-    .error-msg { background: #451a03; color: #fde047; padding: 12px; border-radius: 8px; text-align: center; font-size: 0.9rem; margin-top: 20px; }
+    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; }
+    .stat { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+
+    .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #334155; }
+    .reorder-btns { display: flex; gap: 4px; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>IHSG Screener</h1>
-    <p class="update-time" id="updateTime">Memuat data terbaru...</p>
+    <h1>IHSG SH4NDY's SCREENER</h1>
+    <p class="update-time" id="updateTime">Memuat data...</p>
   </header>
 
-  <div id="errorMessage"></div>
+  <!-- Panel Tambah Emiten & Kelompok -->
+  <div class="control-box">
+    <div class="form-row">
+      <input type="text" id="newTicker" placeholder="Kode Ticker (cth: BBRI)">
+      <select id="newGroup">
+        <option value="Perbankan">Perbankan</option>
+        <option value="Tambang">Tambang</option>
+        <option value="Telco">Telco</option>
+        <option value="Consumer">Consumer</option>
+        <option value="Watchlist">Watchlist</option>
+      </select>
+      <button onclick="addStock()">+ Tambah</button>
+    </div>
+  </div>
+
+  <!-- Filter Kelompok/Grup -->
+  <div class="group-tabs" id="groupTabs">
+    <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
+    <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
+    <div class="tab" onclick="filterGroup('Tambang', this)">Tambang</div>
+    <div class="tab" onclick="filterGroup('Telco', this)">Telco</div>
+    <div class="tab" onclick="filterGroup('Consumer', this)">Consumer</div>
+    <div class="tab" onclick="filterGroup('Watchlist', this)">Watchlist</div>
+  </div>
+
+  <!-- Daftar Kartu Saham -->
   <div class="card-grid" id="stockGrid"></div>
 
   <script>
-    async function loadStockData() {
-      const timeElem = document.getElementById('updateTime');
-      const errElem = document.getElementById('errorMessage');
-      const grid = document.getElementById('stockGrid');
+    let rawData = [];
+    let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
+    let customGroups = JSON.parse(localStorage.getItem('custom_groups')) || {};
+    let activeFilter = 'ALL';
+
+    function formatWIB(timeStr) {
+      if (!timeStr) return "-";
+      if (timeStr.includes("WIB")) return timeStr;
 
       try {
-        // Ambil data JSON langsung tanpa cache
-        const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
-        
-        if (!res.ok) {
-          throw new Error(`HTTP Error Status: ${res.status}`);
-        }
+        const date = new Date(timeStr);
+        if (isNaN(date.getTime())) return timeStr;
 
-        const data = await res.json();
-        
-        timeElem.innerText = "Diperbarui: " + (data.updated_at || "Baru saja");
-        grid.innerHTML = '';
-        errElem.innerHTML = '';
-
-        if (!data.stocks || data.stocks.length === 0) {
-          errElem.innerHTML = `<div class="error-msg">Data saham masih kosong. Mohon jalankan 'Run workflow' di GitHub Actions.</div>`;
-          return;
-        }
-
-        data.stocks.forEach(stock => {
-          const badgeClass = stock.signal === 'BUY' ? 'buy' : stock.signal === 'SELL' ? 'sell' : 'neutral';
-          
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <div class="card-header">
-              <span class="ticker">${stock.ticker}</span>
-              <span class="badge ${badgeClass}">${stock.signal}</span>
-            </div>
-            <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
-            <div class="stat">RSI: ${stock.rsi}</div>
-            <div class="stat">MA20: ${stock.ma20}</div>
-          `;
-          grid.appendChild(card);
-        });
-      } catch (err) {
-        timeElem.innerText = "Status: Menunggu sinkronisasi berkas";
-        errElem.innerHTML = `<div class="error-msg">Gagal memproses file data.json.<br><small>(${err.message})</small></div>`;
+        return date.toLocaleString('id-ID', {
+          timeZone: 'Asia/Jakarta',
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) + " WIB";
+      } catch (e) {
+        return timeStr;
       }
     }
 
-    loadStockData();
+    async function loadData() {
+      try {
+        const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
+        const data = await res.json();
+        
+        const wibTime = formatWIB(data.updated_at);
+        document.getElementById('updateTime').innerText = "Diperbarui: " + wibTime;
+        
+        rawData = data.stocks || [];
+
+        if (stockOrder.length === 0) {
+          stockOrder = rawData.map(s => s.ticker);
+          saveState();
+        }
+
+        render();
+      } catch (e) {
+        document.getElementById('updateTime').innerText = "Gagal memuat data.json";
+      }
+    }
+
+    function render() {
+      const grid = document.getElementById('stockGrid');
+      grid.innerHTML = '';
+
+      let orderedList = [];
+      stockOrder.forEach(ticker => {
+        let item = rawData.find(s => s.ticker === ticker) || { ticker, price: 0, rsi: 0, ma20: 0, support: 0, resistance: 0, signal: 'NEUTRAL' };
+        orderedList.push(item);
+      });
+
+      orderedList.forEach((stock, index) => {
+        const group = customGroups[stock.ticker] || 'Watchlist';
+        
+        if (activeFilter !== 'ALL' && group !== activeFilter) return;
+
+        // Kelas badge sinyal
+        let badgeClass = 'neutral';
+        if (stock.signal === 'Breakout R') badgeClass = 'breakout-r';
+        else if (stock.signal === 'Breakout S') badgeClass = 'breakout-s';
+        else if (stock.signal === 'BUY') badgeClass = 'buy';
+        else if (stock.signal === 'SELL') badgeClass = 'sell';
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="ticker">${stock.ticker}</span>
+            <span class="badge ${badgeClass}">${stock.signal}</span>
+          </div>
+          <span class="group-tag">${group}</span>
+          <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
+          <div class="stat">RSI: ${stock.rsi}</div>
+          <div class="stat">S: ${stock.support} | R: ${stock.resistance}</div>
+
+          <div class="card-actions">
+            <div class="reorder-btns">
+              <button class="btn-action" onclick="moveStock(${index}, -1)">▲</button>
+              <button class="btn-action" onclick="moveStock(${index}, 1)">▼</button>
+            </div>
+            <button class="btn-action btn-danger" onclick="removeStock('${stock.ticker}')">Hapus</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function addStock() {
+      const input = document.getElementById('newTicker');
+      const groupSelect = document.getElementById('newGroup');
+      const ticker = input.value.trim().toUpperCase();
+
+      if (!ticker) return;
+
+      if (!stockOrder.includes(ticker)) {
+        stockOrder.push(ticker);
+      }
+      customGroups[ticker] = groupSelect.value;
+      
+      input.value = '';
+      saveState();
+      render();
+    }
+
+    function removeStock(ticker) {
+      stockOrder = stockOrder.filter(t => t !== ticker);
+      delete customGroups[ticker];
+      saveState();
+      render();
+    }
+
+    function moveStock(index, direction) {
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= stockOrder.length) return;
+      
+      const temp = stockOrder[index];
+      stockOrder[index] = stockOrder[newIndex];
+      stockOrder[newIndex] = temp;
+      
+      saveState();
+      render();
+    }
+
+    function filterGroup(group, el) {
+      activeFilter = group;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      render();
+    }
+
+    function saveState() {
+      localStorage.setItem('stock_order', JSON.stringify(stockOrder));
+      localStorage.setItem('custom_groups', JSON.stringify(customGroups));
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+
+    loadData();
   </script>
 </body>
 </html>
