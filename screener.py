@@ -17,12 +17,8 @@ TICKERS = [
     
 ]
 
-# ... (kode lainnya tetap sama) ...
-
             # Ubah pembersihan nama ticker agar ^JKSE dibaca sebagai IHSG
             clean_name = ticker.replace(".JK", "").replace("^JKSE", "IHSG")
-
-# ... (sisa kode bawahnya tetap sama) ...
 
 def calculate_rsi(series, window=14):
     delta = series.diff()
