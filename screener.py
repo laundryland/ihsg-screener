@@ -13,8 +13,6 @@ TICKERS = [
     "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", "SAMP.JK", "SCMA.JK", "SGRS.JK", 
     "SIDO.JK", "SMGR.JK", "SRTG.JK", "TBIG.JK", "TKIM.JK", "TLKM.JK", "TPIA.JK", 
     "UNTR.JK", "UNVR.JK", "BNBR.JK", "JGLE.JK", "CUAN.JK", "KOTA.JK", "BYAN.JK",
-    
-]
 ]
 
 def calculate_rsi(series, window=14):
