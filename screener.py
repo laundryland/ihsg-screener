@@ -10,8 +10,9 @@ TICKERS = [
     "BRPT.JK", "BUKA.JK", "CPIN.JK", "EMTK.JK", "EXCL.JK", "GOTO.JK", 
     "ICBP.JK", "INDF.JK", "INTP.JK", "ITMG.JK", "KLBF.JK", "MAPI.JK", 
     "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", "SIDO.JK", "SMGR.JK", 
-    "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK"
-]
+    "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK", "MDIA.JK", "ENRG.JK",
+    "BIPI.JK", "CDIA.JK", "INDY.JK", "CBRE.JK", "KOKA.JK", "DEWA.JK",
+     ]
 
 def calculate_rsi(series, window=14):
     delta = series.diff()
