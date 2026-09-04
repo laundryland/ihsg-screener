@@ -2,9 +2,9 @@ name: IHSG Stock Screener Auto Update
 
 on:
   schedule:
-    # Berjalan otomatis setiap jam 09:00 WIB (02:00 UTC) dari Senin-Jumat
-    - cron: '0 2 * * 1-5'
-  workflow_dispatch: # Memungkinkan tombol 'Run workflow' manual
+    # Berjalan tiap jam antara 02:00 UTC - 09:00 UTC (09:00 WIB - 16:00 WIB) Senin-Jumat
+    - cron: '0 2-9 * * 1-5'
+  workflow_dispatch:
 
 jobs:
   build-and-run:
