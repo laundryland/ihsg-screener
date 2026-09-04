@@ -2,7 +2,7 @@ name: IHSG Stock Screener Auto Update
 
 on:
   schedule:
-    # Berjalan tiap jam antara 02:00 UTC - 09:00 UTC (09:00 WIB - 16:00 WIB) Senin-Jumat
+    # Berjalan tiap jam antara 09:00 - 16:00 WIB (02:00 - 09:00 UTC), Senin-Jumat
     - cron: '0 2-9 * * 1-5'
   workflow_dispatch:
 
@@ -11,26 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pandas yfinance
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas yfinance
 
-      - name: Run Screener Script
-        run: python screener.py
+    - name: Run Screener Script
+      run: python screener.py
 
-      - name: Commit and Push Updated Data
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data.json
-          git commit -m "Auto update data.json" || exit 0
-          git push
+    - name: Commit and Push Updated Data
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add data.json
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update data.json" && git push)
