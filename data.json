@@ -1,5 +1,5 @@
 {
-    "updated_at": "2026-09-04 17:14:59",
+    "updated_at": "2026-09-04 17:22:47",
     "stocks": [
         {
             "ticker": "IHSG",
@@ -339,6 +339,86 @@
             "support": 1615.0,
             "resistance": 1845.0,
             "vol_ratio": 0.72,
+            "signal": "Breakout S"
+        },
+        {
+            "ticker": "MDIA",
+            "price": 0.0,
+            "rsi": 40.54,
+            "ma20": 0.0,
+            "support": 212.0,
+            "resistance": 304.0,
+            "vol_ratio": 2.52,
+            "signal": "Strong Breakout S"
+        },
+        {
+            "ticker": "ENRG",
+            "price": 0.0,
+            "rsi": 68.97,
+            "ma20": 0.0,
+            "support": 927.96,
+            "resistance": 1395.0,
+            "vol_ratio": 0.78,
+            "signal": "Breakout S"
+        },
+        {
+            "ticker": "BIPI",
+            "price": 0.0,
+            "rsi": 51.06,
+            "ma20": 0.0,
+            "support": 134.0,
+            "resistance": 164.0,
+            "vol_ratio": 0.44,
+            "signal": "Breakout S"
+        },
+        {
+            "ticker": "CDIA",
+            "price": 0.0,
+            "rsi": 48.72,
+            "ma20": 0.0,
+            "support": 640.0,
+            "resistance": 735.0,
+            "vol_ratio": 2.05,
+            "signal": "Strong Breakout S"
+        },
+        {
+            "ticker": "INDY",
+            "price": 0.0,
+            "rsi": 66.67,
+            "ma20": 0.0,
+            "support": 2430.0,
+            "resistance": 2870.0,
+            "vol_ratio": 0.57,
+            "signal": "Breakout S"
+        },
+        {
+            "ticker": "CBRE",
+            "price": 0.0,
+            "rsi": 63.33,
+            "ma20": 0.0,
+            "support": 655.0,
+            "resistance": 815.0,
+            "vol_ratio": 3.62,
+            "signal": "Strong Breakout S"
+        },
+        {
+            "ticker": "KOKA",
+            "price": 0.0,
+            "rsi": 41.33,
+            "ma20": 0.0,
+            "support": 168.0,
+            "resistance": 224.0,
+            "vol_ratio": 0.15,
+            "signal": "Breakout S"
+        },
+        {
+            "ticker": "DEWA",
+            "price": 0.0,
+            "rsi": 52.17,
+            "ma20": 0.0,
+            "support": 414.0,
+            "resistance": 496.0,
+            "vol_ratio": 0.58,
             "signal": "Breakout S"
         }
     ]
