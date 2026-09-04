@@ -1,45 +1,39 @@
 {
-  "short_name": "IHSG SH4NDY",
-  "name": "IHSG SH4NDY's SCREENER",
+  "name": "IHSG Stock Screener",
+  "short_name": "Screener",
+  "description": "Aplikasi Screener Saham IHSG dengan Indikator Technical, RSI, & Volume Bandarmology",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "lang": "id",
+  "categories": ["finance", "utilities"],
   "icons": [
     {
       "src": "icon-192x192.png",
-      "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512x512.png",
       "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
-    }
-  ],
-  "start_url": "./index.html",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
-  "display": "standalone",
-  "orientation": "portrait"
-}{
-  "short_name": "IHSG Screener",
-  "name": "IHSG Stock Screener App",
-  "icons": [
+      "purpose": "any"
+    },
     {
       "src": "icon-192x192.png",
-      "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon-512x512.png",
-      "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ],
-  "start_url": "./index.html",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
-  "display": "standalone",
-  "orientation": "portrait"
+  ]
 }
