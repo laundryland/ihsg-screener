@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      - name: Setup Python
-        uses: uses: actions/setup-python@v4
+        
+- name: Setup Python
+        uses: actions/setup-python@v4    # <-- UBAH JADI INI
         with:
           python-version: '3.10'
 
