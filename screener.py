@@ -11,8 +11,18 @@ TICKERS = [
     "EMTK.JK", "EXCL.JK", "GOTO.JK", "ICBP.JK", "INDF.JK", 
     "INTP.JK", "ITMG.JK", "KLBF.JK", "MAPI.JK", "MDKA.JK", 
     "MEDC.JK", "PGAS.JK", "PTBA.JK", "SIDO.JK", "SMGR.JK", 
-    "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK"
+    "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK", "BUVA.JK",
+    "KOTA.JK", "LUCY.JK", "MDIA.JK", "ENRG.JK", "BIPI.JK",
+    "CDIA.JK", "INDY.JK", "CBRE.JK", "KOKA.JK", "DEWA.JK",
+    
 ]
+
+# ... (kode lainnya tetap sama) ...
+
+            # Ubah pembersihan nama ticker agar ^JKSE dibaca sebagai IHSG
+            clean_name = ticker.replace(".JK", "").replace("^JKSE", "IHSG")
+
+# ... (sisa kode bawahnya tetap sama) ...
 
 def calculate_rsi(series, window=14):
     delta = series.diff()
