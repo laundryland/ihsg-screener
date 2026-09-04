@@ -6,9 +6,15 @@ import yfinance as yf
 
 # Daftar ticker saham IHSG terkemuka
 TICKERS = [
-    "BBCA.JK", "BBRI.JK", "BMRI.JK", "BBNI.JK", "TLKM.JK",
-    "ASII.JK", "ICBP.JK", "INDF.JK", "UNVR.JK", "AMRT.JK",
-    "GOTO.JK", "PGAS.JK", "PTBA.JK", "ADRO.JK", "ANTM.JK"
+    "ACES.JK", "ADRO.JK", "AKRA.JK", "AMRT.JK", "ANTM.JK", "ARTO.JK", "ASII.JK", 
+    "BBCA.JK", "BBNI.JK", "BBRI.JK", "BBTN.JK", "BMRI.JK", "BRIS.JK", "BRPT.JK", 
+    "BUKA.JK", "CPIN.JK", "EMTK.JK", "EXCL.JK", "GOTO.JK", "HRUM.JK", "ICBP.JK", 
+    "INKP.JK", "INDF.JK", "INTP.JK", "ITMG.JK", "KLBF.JK", "MAPI.JK", "MBMA.JK", 
+    "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", "SAMP.JK", "SCMA.JK", "SGRS.JK", 
+    "SIDO.JK", "SMGR.JK", "SRTG.JK", "TBIG.JK", "TKIM.JK", "TLKM.JK", "TPIA.JK", 
+    "UNTR.JK", "UNVR.JK", "BNBR.JK", "JGLE.JK", "CUAN.JK", "KOTA.JK", "BYAN.JK",
+    
+]
 ]
 
 def calculate_rsi(series, window=14):
