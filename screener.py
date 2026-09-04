@@ -5,20 +5,13 @@ import pandas as pd
 import yfinance as yf
 
 TICKERS = [
-    "ACES.JK", "ADRO.JK", "AKRA.JK", "AMRT.JK", "ANTM.JK", 
-    "ASII.JK", "BBCA.JK", "BBNI.JK", "BBRI.JK", "BBTN.JK", 
-    "BMRI.JK", "BRIS.JK", "BRPT.JK", "BUKA.JK", "CPIN.JK", 
-    "EMTK.JK", "EXCL.JK", "GOTO.JK", "ICBP.JK", "INDF.JK", 
-    "INTP.JK", "ITMG.JK", "KLBF.JK", "MAPI.JK", "MDKA.JK", 
-    "MEDC.JK", "PGAS.JK", "PTBA.JK", "SIDO.JK", "SMGR.JK", 
-    "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK", "BUVA.JK",
-    "KOTA.JK", "LUCY.JK", "MDIA.JK", "ENRG.JK", "BIPI.JK",
-    "CDIA.JK", "INDY.JK", "CBRE.JK", "KOKA.JK", "DEWA.JK",
-    
+    "^JKSE", "ACES.JK", "ADRO.JK", "AKRA.JK", "AMRT.JK", "ANTM.JK", 
+    "ASII.JK", "BBCA.JK", "BBNI.JK", "BBTN.JK", "BMRI.JK", "BRIS.JK", 
+    "BRPT.JK", "BUKA.JK", "CPIN.JK", "EMTK.JK", "EXCL.JK", "GOTO.JK", 
+    "ICBP.JK", "INDF.JK", "INTP.JK", "ITMG.JK", "KLBF.JK", "MAPI.JK", 
+    "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", "SIDO.JK", "SMGR.JK", 
+    "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK"
 ]
-
-            # Ubah pembersihan nama ticker agar ^JKSE dibaca sebagai IHSG
-            clean_name = ticker.replace(".JK", "").replace("^JKSE", "IHSG")
 
 def calculate_rsi(series, window=14):
     delta = series.diff()
@@ -81,7 +74,8 @@ def run_screener():
             elif last_rsi > 70 or last_close < last_ma20:
                 signal = "SELL"
 
-            clean_name = ticker.replace(".JK", "")
+            # Nama Ticker Bersih (IHSG untuk ^JKSE)
+            clean_name = ticker.replace(".JK", "").replace("^JKSE", "IHSG")
 
             results.append({
                 "ticker": clean_name,
