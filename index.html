@@ -95,6 +95,24 @@
     <div class="tab" onclick="filterGroup('Watchlist', this)">Watchlist</div>
   </div>
 
+<!-- Di bagian dropdown tambah emiten -->
+<select id="newGroup">
+  <option value="Indeks">Indeks</option>
+  <option value="Perbankan">Perbankan</option>
+  <option value="Tambang">Tambang</option>
+  <option value="Telco">Telco</option>
+  <option value="Consumer">Consumer</option>
+  <option value="Watchlist">Watchlist</option>
+</select>
+
+<!-- Di bagian Filter Tabs -->
+<div class="group-tabs" id="groupTabs">
+  <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
+  <div class="tab" onclick="filterGroup('Indeks', this)">Indeks</div>
+  <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
+  <!-- ... tab lainnya ... -->
+</div>
+  
   <!-- Daftar Kartu Saham -->
   <div class="card-grid" id="stockGrid"></div>
 
