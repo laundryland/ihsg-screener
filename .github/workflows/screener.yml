@@ -2,28 +2,27 @@ name: IHSG Stock Screener Auto Update
 
 on:
   schedule:
-    # Berjalan Senin-Jumat jam 09:15 UTC (16:15 WIB)
-    - cron: '15 9 * * 1-5'
-  workflow_dispatch: # Trigger manual
+    # Berjalan otomatis setiap jam 09:00 WIB (02:00 UTC) dari Senin-Jumat
+    - cron: '0 2 * * 1-5'
+  workflow_dispatch: # Memungkinkan tombol 'Run workflow' manual
 
 jobs:
-  update-data:
+  build-and-run:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # Izin tulis otomatis
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5.3.0
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install yfinance pandas
+          pip install pandas yfinance
 
       - name: Run Screener Script
         run: python screener.py
@@ -33,5 +32,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add data.json
-          git diff-index --quiet HEAD || git commit -m "Auto update IHSG data"
+          git commit -m "Auto update data.json [skip ci]" || exit 0
           git push
