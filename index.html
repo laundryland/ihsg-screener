@@ -14,7 +14,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
     body { background-color: #0f172a; color: #f8fafc; padding: 16px; padding-bottom: 40px; }
     
-    /* Layout Header Kop: Logo Besar Pindah Pojok Kiri */
     header { margin-bottom: 16px; }
     .header-container { display: flex; align-items: center; justify-content: flex-start; gap: 14px; }
     .app-logo { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid #334155; }
@@ -22,36 +21,43 @@
     h1 { font-size: 1.35rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
     .update-time { font-size: 0.78rem; color: #94a3b8; margin-top: 3px; }
 
-    /* Control Box & Menu Toggle */
     .control-box { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 16px; }
     .control-header { display: flex; justify-content: space-between; align-items: center; }
     .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
     .form-row { margin-top: 10px; display: flex; gap: 8px; }
     .form-row.hidden { display: none; }
     
-    select, button { padding: 8px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 0.85rem; }
-    select { width: 100%; }
-    
-    button { background: #0284c7; color: white; border: none; font-weight: bold; cursor: pointer; }
-    button:active { opacity: 0.8; }
-    .btn-danger { background: #dc2626; }
-    .btn-action { padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; background: #334155; }
+    select { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 0.85rem; }
 
-    /* Tab Filter Sektor Standar (Kolom Konglomerat Dihapus) */
     .group-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
     .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
 
-    .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
-    .card { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; position: relative; }
+    .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
     
-    /* Card IHSG Permanen */
-    .card-ihsg { border: 2px solid #0284c7; background: #0f172a; }
+    /* Card dengan Efek Drag & Drop */
+    .card { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
+    .card:active { cursor: grabbing; }
+    .card.dragging { opacity: 0.4; transform: scale(0.96); border-style: dashed; }
     
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
+
+    /* Header Kartu + Tombol Hapus X */
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .ticker-box { display: flex; align-items: center; gap: 6px; }
     .ticker { font-weight: bold; font-size: 1.1rem; color: #fff; }
-    .price { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
-    
+    .close-btn { background: transparent; border: none; color: #ef4444; font-size: 1rem; font-weight: bold; cursor: pointer; padding: 0 4px; }
+    .close-btn:hover { color: #f87171; }
+
+    /* Petir Kuning Volume */
+    .lightning-box { color: #eab308; font-size: 0.8rem; letter-spacing: -1px; }
+
+    /* Warna Dinamis Harga Penutupan */
+    .price { font-size: 1.15rem; font-weight: bold; margin-bottom: 4px; }
+    .price-up { color: #22c55e; }
+    .price-down { color: #ef4444; }
+    .price-flat { color: #ffffff; }
+
     .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
     .strong-r { background: #047857; color: #34d399; border: 1px solid #10b981; }
     .breakout-r { background: #15803d; color: #86efac; border: 1px solid #22c55e; }
@@ -68,31 +74,31 @@
     .box-container { display: flex; gap: 2px; }
     .signal-box { width: 7px; height: 10px; border-radius: 1px; background-color: #475569; }
     
-    .box-neutral { background-color: #e2e8f0; }
-    .box-sideways { background-color: #eab308; }
     .box-buy { background-color: #22c55e; }
     .box-sell { background-color: #ef4444; }
+    .box-neutral { background-color: #e2e8f0; }
 
     .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
 
-    .dot-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
-    .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
-    .dot-neutral { background-color: #64748b; box-shadow: 0 0 3px #64748b; }
-    .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
+    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
+    .dot-buy { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
+    .dot-neutral { background-color: #64748b; }
+    .dot-sell { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
 
-    .text-buy { color: #22c55e; font-weight: bold; }
-    .text-sell { color: #ef4444; font-weight: bold; }
-    .text-neutral { color: #94a3b8; }
-
-    .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; flex-wrap: wrap; }
+    .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; flex-wrap: wrap; }
+    .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 4px; border-bottom: 1px solid #334155; padding-bottom: 4px; }
     
-    .fibo-stat-box { margin-top: 6px; padding: 4px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.7rem; text-align: center; font-weight: bold; }
+    .fibo-stat-box { margin-top: 6px; padding: 3px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; text-align: center; font-weight: bold; }
     .fibo-oversold { color: #22c55e; border-color: #22c55e; }
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
 
-    .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #334155; }
-    .reorder-btns { display: flex; gap: 4px; }
+    /* Box Manajemen Risiko Entry / TP / CL */
+    .trading-plan-box { margin-top: 8px; padding: 6px; background: #0f172a; border-radius: 6px; border: 1px dashed #475569; font-size: 0.68rem; }
+    .plan-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .plan-entry { color: #38bdf8; font-weight: bold; }
+    .plan-tp { color: #4ade80; font-weight: bold; }
+    .plan-cl { color: #fca5a5; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -107,7 +113,6 @@
     </div>
   </header>
 
-  <!-- Control Box Dengan Toggle Sembunyi/Tampil Menu -->
   <div class="control-box">
     <div class="control-header">
       <span style="font-size: 0.85rem; color: #94a3b8;">Menu Pilih Emiten</span>
@@ -120,7 +125,6 @@
     </div>
   </div>
 
-  <!-- Tab Kategori Sektor Industri -->
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
     <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
@@ -140,6 +144,7 @@
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
     let activeFilter = 'ALL';
+    let draggedItemIndex = null;
 
     function formatWIB(timeStr) {
       if (!timeStr) return "-";
@@ -212,8 +217,27 @@
       selectEl.value = '';
     }
 
+    function getLightningIcons(volRatio) {
+      if (volRatio >= 2.5) return '⚡⚡⚡⚡⚡';
+      if (volRatio >= 1.5) return '⚡⚡⚡';
+      if (volRatio >= 1.0) return '⚡⚡';
+      return '⚡';
+    }
+
     function createCardElement(stock, isIHSG = false, index = -1) {
       const group = isIHSG ? 'Indeks Utama' : (stock.category || 'Lainnya');
+
+      // Evaluasi Warna Harga Penutupan vs Open
+      const openPrice = stock.open || stock.price;
+      const closePrice = stock.price;
+      let priceColorClass = 'price-flat';
+      if (closePrice > openPrice) priceColorClass = 'price-up';
+      else if (closePrice < openPrice) priceColorClass = 'price-down';
+
+      // Kalkulasi Trading Plan (Entry / TP / CL)
+      const entryVal = closePrice;
+      const tpVal = stock.resistance > 0 ? stock.resistance : Math.round(closePrice * 1.05);
+      const clVal = stock.support > 0 ? stock.support : Math.round(closePrice * 0.95);
 
       let badgeClass = 'neutral';
       if (stock.signal === 'SBR') badgeClass = 'strong-r';
@@ -249,16 +273,25 @@
       let rsiDot = stock.rsi_status === 'BUY' ? 'dot-buy' : stock.rsi_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
       let macdDot = stock.macd_status === 'BUY' ? 'dot-buy' : stock.macd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
       let volDot = stock.vol_status === 'BUY' ? 'dot-buy' : stock.vol_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-      let sndDot = stock.snd_status === 'BUY' ? 'dot-buy' : stock.snd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-      let sndText = stock.snd_status === 'BUY' ? 'text-buy' : stock.snd_status === 'SELL' ? 'text-sell' : 'text-neutral';
+
+      const lightningHtml = `<span class="lightning-box">${getLightningIcons(stock.vol_ratio || 1.0)}</span>`;
 
       const card = document.createElement('div');
       card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
+      if (!isIHSG) {
+        card.draggable = true;
+        card.dataset.index = index;
+      }
+
       card.innerHTML = `
         <div class="card-header">
-          <span class="ticker">${stock.ticker} ${isIHSG ? '📌' : ''}</span>
-          <span class="badge ${badgeClass}">${stock.signal}</span>
+          <div class="ticker-box">
+            <span class="ticker">${stock.ticker} ${isIHSG ? '📌' : ''}</span>
+            ${lightningHtml}
+          </div>
+          ${!isIHSG ? `<button class="close-btn" onclick="removeStock('${stock.ticker}')">✕</button>` : `<span class="badge ${badgeClass}">${stock.signal}</span>`}
         </div>
+
         <div class="sub-header">
           <span class="group-tag">${group}</span>
           <div class="signal-indicator-box">
@@ -272,47 +305,85 @@
           </div>
         </div>
 
-        <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
+        <div class="price ${priceColorClass}">Rp ${Number(closePrice).toLocaleString('id-ID')}</div>
         
+        <!-- Kolom OPEN, HIGH, LOW -->
+        <div class="ohl-stat">
+          O: ${stock.open || closePrice} | H: ${stock.high || closePrice} | L: ${stock.low || closePrice}
+        </div>
+
         <div class="stat">
           RSI<span class="dot-indicator ${rsiDot}"></span>
           MACD<span class="dot-indicator ${macdDot}"></span>
           VOL<span class="dot-indicator ${volDot}"></span>
         </div>
-        <div class="stat ${sndText}">
-          S: ${stock.support} | R: ${stock.resistance}
-          <span class="dot-indicator ${sndDot}"></span>
-        </div>
+        
         <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
 
         <div class="fibo-stat-box ${fiboBoxClass}">
           ${fiboText}
         </div>
 
+        <!-- Kolom Trading Plan: ENTRY, TP, CL -->
         ${!isIHSG ? `
-          <div class="card-actions">
-            <div class="reorder-btns">
-              <button class="btn-action" onclick="moveStock(${index}, -1)">▲</button>
-              <button class="btn-action" onclick="moveStock(${index}, 1)">▼</button>
-            </div>
-            <button class="btn-action btn-danger" onclick="removeStock('${stock.ticker}')">Hapus</button>
+          <div class="trading-plan-box">
+            <div class="plan-row"><span class="plan-entry">ENTRY:</span> <span>Rp ${Number(entryVal).toLocaleString('id-ID')}</span></div>
+            <div class="plan-row"><span class="plan-tp">TP:</span> <span>Rp ${Number(tpVal).toLocaleString('id-ID')}</span></div>
+            <div class="plan-row"><span class="plan-cl">CL:</span> <span>Rp ${Number(clVal).toLocaleString('id-ID')}</span></div>
           </div>
         ` : ''}
       `;
+
+      // Event Drag & Drop untuk Desktop & Mobile
+      if (!isIHSG) {
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragover', handleDragOver);
+        card.addEventListener('drop', handleDrop);
+        card.addEventListener('dragend', handleDragEnd);
+      }
+
       return card;
+    }
+
+    // Handlers Drag and Drop
+    function handleDragStart(e) {
+      draggedItemIndex = parseInt(this.dataset.index);
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const targetIndex = parseInt(this.dataset.index);
+      if (draggedItemIndex !== null && targetIndex !== draggedItemIndex) {
+        const item = stockOrder.splice(draggedItemIndex, 1)[0];
+        stockOrder.splice(targetIndex, 0, item);
+        saveState();
+        render();
+      }
+    }
+
+    function handleDragEnd() {
+      this.classList.remove('dragging');
+      draggedItemIndex = null;
     }
 
     function render() {
       const grid = document.getElementById('stockGrid');
       grid.innerHTML = '';
 
-      // 1. Tampilkan Kartu IHSG Permanen di Pojok Kiri Atas Grid
+      // Tampilkan IHSG Permanen
       let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
-        ticker: 'IHSG', price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, snd_status: 'NEUTRAL', vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NEUTRAL'
+        ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, snd_status: 'NEUTRAL', vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NEUTRAL'
       };
       grid.appendChild(createCardElement(ihsgData, true));
 
-      // 2. Tampilkan Emiten Pilihan User
+      // Tampilkan Emiten Pilihan
       let orderedList = [];
       stockOrder.forEach(ticker => {
         let item = rawData.find(s => s.ticker === ticker);
@@ -329,16 +400,6 @@
 
     function removeStock(ticker) {
       stockOrder = stockOrder.filter(t => t !== ticker);
-      saveState();
-      render();
-    }
-
-    function moveStock(index, direction) {
-      const newIndex = index + direction;
-      if (newIndex < 0 || newIndex >= stockOrder.length) return;
-      const temp = stockOrder[index];
-      stockOrder[index] = stockOrder[newIndex];
-      stockOrder[newIndex] = temp;
       saveState();
       render();
     }
