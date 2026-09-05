@@ -41,6 +41,7 @@
     .ticker { font-weight: bold; font-size: 1.1rem; color: #fff; }
     .price { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
     
+    /* Signal Badges */
     .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
     .strong-r { background: #047857; color: #34d399; border: 1px solid #10b981; }
     .breakout-r { background: #15803d; color: #86efac; border: 1px solid #22c55e; }
@@ -50,14 +51,19 @@
     .sell { background: #991b1b; color: #fca5a5; }
     .neutral { background: #334155; color: #94a3b8; }
 
-    /* Indikator Bulatan Kecil (RSI, MACD, Volume) */
-    .dot-indicator { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 2px; margin-right: 6px; vertical-align: middle; }
+    /* Indikator Bulatan Kecil */
+    .dot-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
     .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
     .dot-neutral { background-color: #64748b; box-shadow: 0 0 3px #64748b; }
     .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
+    /* Warna Teks SnD */
+    .text-buy { color: #22c55e; font-weight: bold; }
+    .text-sell { color: #ef4444; font-weight: bold; }
+    .text-neutral { color: #94a3b8; }
+
     .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; }
-    .stat { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+    .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; flex-wrap: wrap; }
 
     .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #334155; }
     .reorder-btns { display: flex; gap: 4px; }
@@ -171,6 +177,10 @@
         const res20 = Math.max(...highs.slice(-21, -1));
         const sup20 = Math.min(...lows.slice(-21, -1));
 
+        let sndStatus = "NEUTRAL";
+        if (sup20 > 0 && lastClose <= (sup20 * 1.02)) sndStatus = "BUY";
+        else if (res20 > 0 && lastClose >= (res20 * 0.98)) sndStatus = "SELL";
+
         const rsi = calculateRSI(closes);
         let rsiStatus = "NEUTRAL";
         if (rsi < 35) rsiStatus = "BUY";
@@ -195,6 +205,7 @@
           ma20: ma20,
           support: Math.round(sup20 * 100) / 100,
           resistance: Math.round(res20 * 100) / 100,
+          snd_status: sndStatus,
           vol_ratio: volRatio,
           vol_status: volStatus,
           macd_status: "NEUTRAL",
@@ -217,7 +228,6 @@
         
         rawData = data.stocks || [];
 
-        // Atur urutan default berdasarkan screener.py jika belum ada custom order
         if (stockOrder.length === 0) {
           stockOrder = rawData.map(s => s.ticker);
           saveState();
@@ -244,7 +254,7 @@
       let orderedList = [];
       stockOrder.forEach(ticker => {
         let item = rawData.find(s => s.ticker === ticker) || liveFetchedData[ticker] || { 
-          ticker, price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', signal: 'NEUTRAL' 
+          ticker, price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, snd_status: 'NEUTRAL', vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', signal: 'NEUTRAL' 
         };
         orderedList.push(item);
       });
@@ -277,6 +287,17 @@
         if (stock.vol_status === 'BUY') volDotClass = 'dot-buy';
         else if (stock.vol_status === 'SELL') volDotClass = 'dot-sell';
 
+        // Bulatan & Teks Indikator SnD
+        let sndDotClass = 'dot-neutral';
+        let sndTextClass = 'text-neutral';
+        if (stock.snd_status === 'BUY') {
+          sndDotClass = 'dot-buy';
+          sndTextClass = 'text-buy';
+        } else if (stock.snd_status === 'SELL') {
+          sndDotClass = 'dot-sell';
+          sndTextClass = 'text-sell';
+        }
+
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
@@ -286,12 +307,21 @@
           </div>
           <span class="group-tag">${group}</span>
           <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
+          
+          <!-- Baris Bulatan Indikator Utama -->
           <div class="stat">
-            RSI: <span class="dot-indicator ${rsiDotClass}"></span>
-            MACD: <span class="dot-indicator ${macdDotClass}"></span>
-            Vol: <span class="dot-indicator ${volDotClass}"></span>
+            RSI<span class="dot-indicator ${rsiDotClass}"></span>
+            MACD<span class="dot-indicator ${macdDotClass}"></span>
+            VOL<span class="dot-indicator ${volDotClass}"></span>
           </div>
-          <div class="stat">S: ${stock.support} | R: ${stock.resistance}</div>
+
+          <!-- Baris Support & Resistance (SnD) -->
+          <div class="stat ${sndTextClass}">
+            S: ${stock.support} | R: ${stock.resistance}
+            <span class="dot-indicator ${sndDotClass}"></span>
+          </div>
+
+          <!-- Baris Ratio Volume -->
           <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
 
           <div class="card-actions">
