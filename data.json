@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-05T19:25:30.279594",
+  "updated_at": "2026-09-05T19:37:30.050557",
   "stocks": [
     {
       "ticker": "IHSG",
@@ -17,7 +17,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 6636,
+      "cut_loss": 6105,
+      "take_profit": 7698,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "BBCA",
@@ -35,7 +40,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 6700,
+      "cut_loss": 6052,
+      "take_profit": 7996,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "BBRI",
@@ -53,7 +63,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 3390,
+      "cut_loss": 2979,
+      "take_profit": 4212,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "BMRI",
@@ -71,7 +86,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 4420,
+      "cut_loss": 3998,
+      "take_profit": 5264,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "BBNI",
@@ -89,7 +109,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 3940,
+      "cut_loss": 3479,
+      "take_profit": 4862,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "BRIS",
@@ -107,7 +132,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 1790,
+      "cut_loss": 1720,
+      "take_profit": 1930,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "ARTO",
@@ -125,7 +155,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "OVER SOLD",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "BBTN",
@@ -143,7 +178,12 @@
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 1240,
+      "cut_loss": 1166,
+      "take_profit": 1388,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "ADRO",
@@ -161,7 +201,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 2720,
+      "cut_loss": 2411,
+      "take_profit": 3338,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "PTBA",
@@ -179,7 +224,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 2880,
+      "cut_loss": 2274,
+      "take_profit": 4092,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "ITMG",
@@ -197,7 +247,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 26100,
+      "cut_loss": 23716,
+      "take_profit": 30868,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "HRUM",
@@ -215,7 +270,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 950,
+      "cut_loss": 789,
+      "take_profit": 1272,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "AKRA",
@@ -233,7 +293,12 @@
       "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "MEDC",
@@ -251,7 +316,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 1495,
+      "cut_loss": 1240,
+      "take_profit": 2005,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "PGAS",
@@ -269,7 +339,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 1520,
+      "cut_loss": 1441,
+      "take_profit": 1678,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "ANTM",
@@ -287,7 +362,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "INCO",
@@ -305,7 +385,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "MDKA",
@@ -323,7 +408,12 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL"
+      "signal": "SELL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "MBMA",
@@ -341,7 +431,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "NCKL",
@@ -359,7 +454,12 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL"
+      "signal": "SELL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "TINS",
@@ -377,7 +477,12 @@
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "STRONG BUY"
+      "signal": "STRONG BUY",
+      "entry_price": 4420,
+      "cut_loss": 3616,
+      "take_profit": 6028,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "GOTO",
@@ -395,7 +500,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "EMTK",
@@ -413,7 +523,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "SCMA",
@@ -431,7 +546,12 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL"
+      "signal": "SELL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "BUKA",
@@ -449,7 +569,12 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL"
+      "signal": "SELL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "ICBP",
@@ -467,7 +592,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "INDF",
@@ -485,7 +615,12 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL"
+      "signal": "SELL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "UNVR",
@@ -503,7 +638,12 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL"
+      "signal": "SELL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "MYOR",
@@ -521,7 +661,12 @@
       "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "OVER SOLD",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 1560,
+      "cut_loss": 1499,
+      "take_profit": 1682,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "AMRT",
@@ -539,7 +684,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "ACES",
@@ -557,7 +707,12 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL"
+      "signal": "SELL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "BSDE",
@@ -575,7 +730,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 670,
+      "cut_loss": 568,
+      "take_profit": 874,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "CTRA",
@@ -593,7 +753,12 @@
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 635,
+      "cut_loss": 578,
+      "take_profit": 749,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "PWON",
@@ -611,7 +776,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 276,
+      "cut_loss": 247,
+      "take_profit": 334,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "TLKM",
@@ -629,7 +799,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "ISAT",
@@ -647,7 +822,12 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL"
+      "signal": "SELL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "EXCL",
@@ -665,7 +845,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL"
+      "signal": "NETRAL",
+      "entry_price": "Wait",
+      "cut_loss": "Wait",
+      "take_profit": "Wait",
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "JSMR",
@@ -683,7 +868,12 @@
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 2990,
+      "cut_loss": 2656,
+      "take_profit": 3658,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "ASII",
@@ -701,7 +891,12 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 4900,
+      "cut_loss": 4626,
+      "take_profit": 5448,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     },
     {
       "ticker": "UNTR",
@@ -719,7 +914,12 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY"
+      "signal": "BUY",
+      "entry_price": 24950,
+      "cut_loss": 22614,
+      "take_profit": 29622,
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
     }
   ]
 }
