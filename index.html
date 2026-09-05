@@ -49,10 +49,18 @@
     .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; }
     
-    .exclamation-mark { font-weight: 900; font-size: 0.85rem; letter-spacing: -1px; }
-    .exclamation-buy { color: #22c55e; }
-    .exclamation-sell { color: #ef4444; }
-    .exclamation-neutral { color: #64748b; }
+    /* Layout 4 Kotak + Persentase */
+    .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
+    .box-container { display: flex; gap: 2px; }
+    .signal-box { width: 7px; height: 10px; border-radius: 1px; background-color: #475569; }
+    
+    /* Warna Kotak Sinyal */
+    .box-neutral { background-color: #e2e8f0; } /* Putih/Abu Terang */
+    .box-sideways { background-color: #eab308; } /* Kuning */
+    .box-buy { background-color: #22c55e; }      /* Hijau */
+    .box-sell { background-color: #ef4444; }     /* Merah */
+
+    .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
 
     .dot-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
     .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
@@ -160,16 +168,33 @@
         else if (stock.signal === 'BUY') badgeClass = 'buy';
         else if (stock.signal === 'SELL') badgeClass = 'sell';
 
-        let exclamationText = '!';
-        let exclamationClass = 'exclamation-neutral';
-        if (stock.signal === 'SBR' || stock.signal === 'BUY') {
-          exclamationText = '!!'; exclamationClass = 'exclamation-buy';
-        } else if (stock.signal === 'Break R') {
-          exclamationText = '!'; exclamationClass = 'exclamation-buy';
-        } else if (stock.signal === 'SBS' || stock.signal === 'SELL') {
-          exclamationText = '!!'; exclamationClass = 'exclamation-sell';
-        } else if (stock.signal === 'Break S') {
-          exclamationText = '!'; exclamationClass = 'exclamation-sell';
+        // LOGIKA 4 KOTAK KECIL & PERSENTASE
+        let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
+        let percentage = '0%';
+
+        if (stock.signal === 'SBR') { // Strong Buy (Breakout + Volume)
+          boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
+          percentage = '100%';
+        } else if (stock.signal === 'BUY') { // Strong Buy
+          boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
+          percentage = '100%';
+        } else if (stock.signal === 'Break R') { // Buy
+          boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off'];
+          percentage = '50%';
+        } else if (stock.signal === 'SBS' || stock.signal === 'SELL') { // Strong Sell
+          boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell'];
+          percentage = '100%';
+        } else if (stock.signal === 'Break S') { // Sell
+          boxClasses = ['box-sell', 'box-sell', 'box-off', 'box-off'];
+          percentage = '50%';
+        } else if (stock.snd_status === 'NEUTRAL' && stock.rsi_status === 'NEUTRAL') { // Sideways / Neutral
+          if (stock.vol_ratio >= 0.8 && stock.vol_ratio <= 1.2) {
+            boxClasses = ['box-sideways', 'box-sideways', 'box-off', 'box-off']; // Sideways (Kuning)
+            percentage = '50%';
+          } else {
+            boxClasses = ['box-neutral', 'box-neutral', 'box-neutral', 'box-neutral']; // Netral (Putih)
+            percentage = '25%';
+          }
         }
 
         let rsiDot = stock.rsi_status === 'BUY' ? 'dot-buy' : stock.rsi_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
@@ -187,8 +212,19 @@
           </div>
           <div class="sub-header">
             <span class="group-tag">${group}</span>
-            <span class="exclamation-mark ${exclamationClass}">${exclamationText}</span>
+            
+            <!-- 4 Kotak Kecil & Prosentase -->
+            <div class="signal-indicator-box">
+              <div class="box-container">
+                <div class="signal-box ${boxClasses[0]}"></div>
+                <div class="signal-box ${boxClasses[1]}"></div>
+                <div class="signal-box ${boxClasses[2]}"></div>
+                <div class="signal-box ${boxClasses[3]}"></div>
+              </div>
+              <span class="signal-percent">${percentage}</span>
+            </div>
           </div>
+
           <div class="price">${stock.price > 0 ? 'Rp ' + Number(stock.price).toLocaleString('id-ID') : 'Menunggu Update'}</div>
           <div class="stat">
             RSI<span class="dot-indicator ${rsiDot}"></span>
