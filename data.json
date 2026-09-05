@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-05T19:08:24.543594",
+  "updated_at": "2026-09-05T19:24:40.216120",
   "stocks": [
     {
       "ticker": "IHSG",
@@ -17,7 +17,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "BBCA",
@@ -35,7 +35,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "BBRI",
@@ -53,7 +53,7 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "BMRI",
@@ -71,7 +71,7 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "BBNI",
@@ -89,7 +89,7 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "BRIS",
@@ -107,7 +107,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "ARTO",
@@ -125,7 +125,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "OVER SOLD",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "BBTN",
@@ -143,7 +143,7 @@
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "ADRO",
@@ -161,7 +161,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "PTBA",
@@ -179,7 +179,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "ITMG",
@@ -197,7 +197,7 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "HRUM",
@@ -215,7 +215,7 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "AKRA",
@@ -233,7 +233,7 @@
       "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "MEDC",
@@ -251,7 +251,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "PGAS",
@@ -269,7 +269,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "ANTM",
@@ -287,7 +287,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "INCO",
@@ -305,7 +305,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "MDKA",
@@ -323,7 +323,7 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "SELL"
     },
     {
       "ticker": "MBMA",
@@ -341,7 +341,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "NCKL",
@@ -359,7 +359,7 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "SELL"
     },
     {
       "ticker": "TINS",
@@ -377,7 +377,7 @@
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "SBR"
+      "signal": "STRONG BUY"
     },
     {
       "ticker": "GOTO",
@@ -395,7 +395,7 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "Break R"
+      "signal": "NETRAL"
     },
     {
       "ticker": "EMTK",
@@ -413,7 +413,7 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "SCMA",
@@ -431,7 +431,7 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "SELL"
     },
     {
       "ticker": "BUKA",
@@ -449,7 +449,7 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "SELL"
     },
     {
       "ticker": "ICBP",
@@ -467,7 +467,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "INDF",
@@ -485,7 +485,7 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "SELL"
     },
     {
       "ticker": "UNVR",
@@ -503,7 +503,7 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "SELL"
     },
     {
       "ticker": "MYOR",
@@ -521,7 +521,7 @@
       "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "OVER SOLD",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "AMRT",
@@ -539,7 +539,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "ACES",
@@ -557,7 +557,7 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "SELL"
     },
     {
       "ticker": "BSDE",
@@ -575,7 +575,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "CTRA",
@@ -593,7 +593,25 @@
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
+    },
+    {
+      "ticker": "PWON",
+      "category": "Properti",
+      "price": 276,
+      "open": 282,
+      "high": 284,
+      "low": 276,
+      "rsi": 67.74,
+      "rsi_status": "SELL",
+      "ma20": 266,
+      "support": 252,
+      "resistance": 284,
+      "vol_ratio": 0.59,
+      "vol_status": "SELL",
+      "macd_status": "BUY",
+      "fibo_rsi_status": "NORMAL",
+      "signal": "BUY"
     },
     {
       "ticker": "TLKM",
@@ -611,7 +629,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "ISAT",
@@ -629,7 +647,7 @@
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "SELL"
     },
     {
       "ticker": "EXCL",
@@ -647,7 +665,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "NETRAL"
     },
     {
       "ticker": "JSMR",
@@ -665,7 +683,7 @@
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "ASII",
@@ -683,7 +701,7 @@
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     },
     {
       "ticker": "UNTR",
@@ -701,7 +719,7 @@
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NEUTRAL"
+      "signal": "BUY"
     }
   ]
 }
