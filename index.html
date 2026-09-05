@@ -14,14 +14,23 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
     body { background-color: #0f172a; color: #f8fafc; padding: 16px; padding-bottom: 40px; }
     
-    header { text-align: center; margin-bottom: 16px; }
+    /* Header & Logo Adjustment */
+    header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .header-title { display: flex; align-items: center; gap: 10px; }
+    .app-logo { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; }
     h1 { font-size: 1.3rem; color: #38bdf8; letter-spacing: 0.5px; }
     .update-time { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; }
 
+    /* Control Box & Toggle Dropdown */
     .control-box { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 16px; }
-    .form-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .control-header { display: flex; justify-content: space-between; align-items: center; }
+    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+    .form-row { margin-top: 10px; display: flex; gap: 8px; }
+    .form-row.hidden { display: none; }
+    
     select, button { padding: 8px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 0.85rem; }
-    select { flex: 1; min-width: 150px; }
+    select { width: 100%; }
+    
     button { background: #0284c7; color: white; border: none; font-weight: bold; cursor: pointer; }
     button:active { opacity: 0.8; }
     .btn-danger { background: #dc2626; }
@@ -31,9 +40,12 @@
     .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
 
-    /* Kolom Diperlebar Agar Tampilan Fibo & RSI Rata-rata Muat Sempurna */
     .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     .card { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; position: relative; }
+    
+    /* Card Khusus IHSG Permanen */
+    .card-ihsg { border: 2px solid #0284c7; background: #0f172a; }
+    
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .ticker { font-weight: bold; font-size: 1.1rem; color: #fff; }
     .price { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
@@ -72,7 +84,6 @@
 
     .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; flex-wrap: wrap; }
     
-    /* Area Fibonacci & RSI Rata-Rata */
     .fibo-stat-box { margin-top: 6px; padding: 4px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.7rem; text-align: center; font-weight: bold; }
     .fibo-oversold { color: #22c55e; border-color: #22c55e; }
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
@@ -85,29 +96,37 @@
 <body>
 
   <header>
-    <h1>IHSG SH4NDY's SCREENER</h1>
+    <div class="header-title">
+      <img src="./icon-192x192.png" alt="Logo" class="app-logo">
+      <h1>IHSG SH4NDY's SCREENER</h1>
+    </div>
     <p class="update-time" id="updateTime">Memuat data...</p>
   </header>
 
-  <!-- Pilihan Dropdown Tambah Emiten -->
+  <!-- Control Box Dengan Toggle Sembunyi/Tampil Dropdown -->
   <div class="control-box">
-    <div class="form-row">
-      <select id="selectTickerOption">
-        <option value="">-- Pilih Emiten Untuk Ditampilkan --</option>
+    <div class="control-header">
+      <span style="font-size: 0.85rem; color: #94a3b8;">Menu Pilih Emiten</span>
+      <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ Sembunyikan Menu</button>
+    </div>
+    <div class="form-row" id="dropdownRow">
+      <select id="selectTickerOption" onchange="autoAddStock(this)">
+        <option value="">-- Pilih Emiten Langsung Tampil --</option>
       </select>
-      <button onclick="addStockFromDropdown()">+ Tambah</button>
     </div>
   </div>
 
-  <!-- Tab Kategori Sektor Resmi -->
+  <!-- Tab Kategori Sektor Resmi & Kelompok Konglomerat -->
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
+    <div class="tab" onclick="filterGroup('Grup Bakrie', this)">Grup Bakrie</div>
+    <div class="tab" onclick="filterGroup('Prayogo Pangestu', this)">Prayogo Pangestu</div>
+    <div class="tab" onclick="filterGroup('Haji Isam', this)">Haji Isam</div>
     <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
     <div class="tab" onclick="filterGroup('Energi', this)">Energi</div>
     <div class="tab" onclick="filterGroup('Tambang', this)">Tambang</div>
-    <div class="tab" onclick="filterGroup('Konsumer', this)">Konsumer</div>
-    <div class="tab" onclick="filterGroup('Ritel', this)">Ritel</div>
-    <div class="tab" onclick="filterGroup('Infrastruktur', this)">Infrastruktur</div>
+    <div class="tab" onclick="filterGroup('Teknologi', this)">Teknologi</div>
+    <div class="tab" onclick="filterGroup('Properti', this)">Properti</div>
   </div>
 
   <div class="card-grid" id="stockGrid"></div>
@@ -115,6 +134,7 @@
   <script>
     let rawData = [];
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
+    let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
     let activeFilter = 'ALL';
 
     function formatWIB(timeStr) {
@@ -136,6 +156,7 @@
         document.getElementById('updateTime').innerText = "Diperbarui: " + formatWIB(data.updated_at);
         rawData = data.stocks || [];
 
+        initMenuState();
         populateDropdownOptions();
         render();
       } catch (e) {
@@ -143,12 +164,32 @@
       }
     }
 
-    // Mengisi Dropdown Pilih Emiten Lengkap
+    // Menu Tampil/Sembunyi State
+    function initMenuState() {
+      const row = document.getElementById('dropdownRow');
+      const btn = document.getElementById('toggleBtn');
+      if (isMenuVisible) {
+        row.classList.remove('hidden');
+        btn.innerText = "👁️ Sembunyikan Menu";
+      } else {
+        row.classList.add('hidden');
+        btn.innerText = "👁️ Tampilkan Menu";
+      }
+    }
+
+    function toggleDropdownMenu() {
+      isMenuVisible = !isMenuVisible;
+      localStorage.setItem('menu_visible', JSON.stringify(isMenuVisible));
+      initMenuState();
+    }
+
     function populateDropdownOptions() {
       const selectEl = document.getElementById('selectTickerOption');
-      selectEl.innerHTML = '<option value="">-- Pilih Emiten Untuk Ditampilkan --</option>';
+      selectEl.innerHTML = '<option value="">-- Pilih Emiten Langsung Tampil --</option>';
       
-      rawData.forEach(stock => {
+      let sortedStocks = [...rawData].filter(s => s.ticker !== 'IHSG').sort((a, b) => a.ticker.localeCompare(b.ticker));
+
+      sortedStocks.forEach(stock => {
         const option = document.createElement('option');
         option.value = stock.ticker;
         option.textContent = `${stock.ticker} (${stock.category})`;
@@ -156,118 +197,8 @@
       });
     }
 
-    function render() {
-      const grid = document.getElementById('stockGrid');
-      grid.innerHTML = '';
-
-      if (stockOrder.length === 0) {
-        grid.innerHTML = '<div style="color: #94a3b8; grid-column: 1/-1; text-align: center; padding: 20px;">Silakan pilih emiten dari dropdown di atas untuk ditampilkan.</div>';
-        return;
-      }
-
-      let orderedList = [];
-      stockOrder.forEach(ticker => {
-        let item = rawData.find(s => s.ticker === ticker);
-        if (item) orderedList.push(item);
-      });
-
-      orderedList.forEach((stock, index) => {
-        const group = stock.category || 'Lainnya';
-        if (activeFilter !== 'ALL' && group !== activeFilter) return;
-
-        let badgeClass = 'neutral';
-        if (stock.signal === 'SBR') badgeClass = 'strong-r';
-        else if (stock.signal === 'Break R') badgeClass = 'breakout-r';
-        else if (stock.signal === 'SBS') badgeClass = 'strong-s';
-        else if (stock.signal === 'Break S') badgeClass = 'breakout-s';
-        else if (stock.signal === 'BUY') badgeClass = 'buy';
-        else if (stock.signal === 'SELL') badgeClass = 'sell';
-
-        // Logika 4 Kotak Kecil
-        let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
-        let percentage = '0%';
-
-        if (stock.signal === 'SBR' || stock.signal === 'BUY') {
-          boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy']; percentage = '100%';
-        } else if (stock.signal === 'Break R') {
-          boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off']; percentage = '50%';
-        } else if (stock.signal === 'SBS' || stock.signal === 'SELL') {
-          boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell']; percentage = '100%';
-        } else if (stock.signal === 'Break S') {
-          boxClasses = ['box-sell', 'box-sell', 'box-off', 'box-off']; percentage = '50%';
-        } else {
-          boxClasses = ['box-neutral', 'box-neutral', 'box-neutral', 'box-neutral']; percentage = '25%';
-        }
-
-        // Fibo & RSI MA Indicator
-        let fiboBoxClass = 'fibo-normal';
-        let fiboText = 'FIBO-RSI: NORMAL';
-        if (stock.fibo_rsi_status === 'OVER SOLD') {
-          fiboBoxClass = 'fibo-oversold';
-          fiboText = 'OVER SOLD';
-        } else if (stock.fibo_rsi_status === 'OVER BOUGHT') {
-          fiboBoxClass = 'fibo-overbought';
-          fiboText = 'OVER BOUGHT';
-        }
-
-        let rsiDot = stock.rsi_status === 'BUY' ? 'dot-buy' : stock.rsi_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-        let macdDot = stock.macd_status === 'BUY' ? 'dot-buy' : stock.macd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-        let volDot = stock.vol_status === 'BUY' ? 'dot-buy' : stock.vol_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-        let sndDot = stock.snd_status === 'BUY' ? 'dot-buy' : stock.snd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-        let sndText = stock.snd_status === 'BUY' ? 'text-buy' : stock.snd_status === 'SELL' ? 'text-sell' : 'text-neutral';
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="card-header">
-            <span class="ticker">${stock.ticker}</span>
-            <span class="badge ${badgeClass}">${stock.signal}</span>
-          </div>
-          <div class="sub-header">
-            <span class="group-tag">${group}</span>
-            <div class="signal-indicator-box">
-              <div class="box-container">
-                <div class="signal-box ${boxClasses[0]}"></div>
-                <div class="signal-box ${boxClasses[1]}"></div>
-                <div class="signal-box ${boxClasses[2]}"></div>
-                <div class="signal-box ${boxClasses[3]}"></div>
-              </div>
-              <span class="signal-percent">${percentage}</span>
-            </div>
-          </div>
-
-          <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
-          
-          <div class="stat">
-            RSI<span class="dot-indicator ${rsiDot}"></span>
-            MACD<span class="dot-indicator ${macdDot}"></span>
-            VOL<span class="dot-indicator ${volDot}"></span>
-          </div>
-          <div class="stat ${sndText}">
-            S: ${stock.support} | R: ${stock.resistance}
-            <span class="dot-indicator ${sndDot}"></span>
-          </div>
-          <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
-
-          <!-- FIBONACCI & RSI RATA-RATA (DI BAGIAN BAWAH) -->
-          <div class="fibo-stat-box ${fiboBoxClass}">
-            ${fiboText}
-          </div>
-
-          <div class="card-actions">
-            <div class="reorder-btns">
-              <button class="btn-action" onclick="moveStock(${index}, -1)">▲</button>
-              <button class="btn-action" onclick="moveStock(${index}, 1)">▼</button>
-            </div>
-            <button class="btn-action btn-danger" onclick="removeStock('${stock.ticker}')">Hapus</button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function addStockFromDropdown() {
-      const selectEl = document.getElementById('selectTickerOption');
+    // Langsung Tampil Saat Diklik (Tanpa Tombol Tambah)
+    function autoAddStock(selectEl) {
       const ticker = selectEl.value;
       if (!ticker) return;
 
@@ -277,6 +208,121 @@
         render();
       }
       selectEl.value = '';
+    }
+
+    function createCardElement(stock, isIHSG = false, index = -1) {
+      const group = isIHSG ? 'Indeks Utama' : (stock.category || 'Lainnya');
+
+      let badgeClass = 'neutral';
+      if (stock.signal === 'SBR') badgeClass = 'strong-r';
+      else if (stock.signal === 'Break R') badgeClass = 'breakout-r';
+      else if (stock.signal === 'SBS') badgeClass = 'strong-s';
+      else if (stock.signal === 'Break S') badgeClass = 'breakout-s';
+      else if (stock.signal === 'BUY') badgeClass = 'buy';
+      else if (stock.signal === 'SELL') badgeClass = 'sell';
+
+      let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
+      let percentage = '0%';
+
+      if (stock.signal === 'SBR' || stock.signal === 'BUY') {
+        boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy']; percentage = '100%';
+      } else if (stock.signal === 'Break R') {
+        boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off']; percentage = '50%';
+      } else if (stock.signal === 'SBS' || stock.signal === 'SELL') {
+        boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell']; percentage = '100%';
+      } else if (stock.signal === 'Break S') {
+        boxClasses = ['box-sell', 'box-sell', 'box-off', 'box-off']; percentage = '50%';
+      } else {
+        boxClasses = ['box-neutral', 'box-neutral', 'box-neutral', 'box-neutral']; percentage = '25%';
+      }
+
+      let fiboBoxClass = 'fibo-normal';
+      let fiboText = 'FIBO-RSI: NORMAL';
+      if (stock.fibo_rsi_status === 'OVER SOLD') {
+        fiboBoxClass = 'fibo-oversold'; fiboText = 'OVER SOLD';
+      } else if (stock.fibo_rsi_status === 'OVER BOUGHT') {
+        fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT';
+      }
+
+      let rsiDot = stock.rsi_status === 'BUY' ? 'dot-buy' : stock.rsi_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+      let macdDot = stock.macd_status === 'BUY' ? 'dot-buy' : stock.macd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+      let volDot = stock.vol_status === 'BUY' ? 'dot-buy' : stock.vol_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+      let sndDot = stock.snd_status === 'BUY' ? 'dot-buy' : stock.snd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+      let sndText = stock.snd_status === 'BUY' ? 'text-buy' : stock.snd_status === 'SELL' ? 'text-sell' : 'text-neutral';
+
+      const card = document.createElement('div');
+      card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="ticker">${stock.ticker} ${isIHSG ? '📌' : ''}</span>
+          <span class="badge ${badgeClass}">${stock.signal}</span>
+        </div>
+        <div class="sub-header">
+          <span class="group-tag">${group}</span>
+          <div class="signal-indicator-box">
+            <div class="box-container">
+              <div class="signal-box ${boxClasses[0]}"></div>
+              <div class="signal-box ${boxClasses[1]}"></div>
+              <div class="signal-box ${boxClasses[2]}"></div>
+              <div class="signal-box ${boxClasses[3]}"></div>
+            </div>
+            <span class="signal-percent">${percentage}</span>
+          </div>
+        </div>
+
+        <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
+        
+        <div class="stat">
+          RSI<span class="dot-indicator ${rsiDot}"></span>
+          MACD<span class="dot-indicator ${macdDot}"></span>
+          VOL<span class="dot-indicator ${volDot}"></span>
+        </div>
+        <div class="stat ${sndText}">
+          S: ${stock.support} | R: ${stock.resistance}
+          <span class="dot-indicator ${sndDot}"></span>
+        </div>
+        <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
+
+        <div class="fibo-stat-box ${fiboBoxClass}">
+          ${fiboText}
+        </div>
+
+        ${!isIHSG ? `
+          <div class="card-actions">
+            <div class="reorder-btns">
+              <button class="btn-action" onclick="moveStock(${index}, -1)">▲</button>
+              <button class="btn-action" onclick="moveStock(${index}, 1)">▼</button>
+            </div>
+            <button class="btn-action btn-danger" onclick="removeStock('${stock.ticker}')">Hapus</button>
+          </div>
+        ` : ''}
+      `;
+      return card;
+    }
+
+    function render() {
+      const grid = document.getElementById('stockGrid');
+      grid.innerHTML = '';
+
+      // 1. TAMPILKAN KARTU IHSG PERMANEN DI POJOK KIRI ATAS
+      let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
+        ticker: 'IHSG', price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, snd_status: 'NEUTRAL', vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NEUTRAL'
+      };
+      grid.appendChild(createCardElement(ihsgData, true));
+
+      // 2. TAMPILKAN EMITEN PILIHAN USER
+      let orderedList = [];
+      stockOrder.forEach(ticker => {
+        let item = rawData.find(s => s.ticker === ticker);
+        if (item && item.ticker !== 'IHSG') orderedList.push(item);
+      });
+
+      orderedList.forEach((stock, index) => {
+        const group = stock.category || 'Lainnya';
+        if (activeFilter !== 'ALL' && group !== activeFilter) return;
+
+        grid.appendChild(createCardElement(stock, false, index));
+      });
     }
 
     function removeStock(ticker) {
