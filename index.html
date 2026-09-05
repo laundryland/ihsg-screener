@@ -41,7 +41,6 @@
     .ticker { font-weight: bold; font-size: 1.1rem; color: #fff; }
     .price { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
     
-    /* Badge Sinyal Singkatan */
     .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
     .strong-r { background: #047857; color: #34d399; border: 1px solid #10b981; }
     .breakout-r { background: #15803d; color: #86efac; border: 1px solid #22c55e; }
@@ -51,11 +50,11 @@
     .sell { background: #991b1b; color: #fca5a5; }
     .neutral { background: #334155; color: #94a3b8; }
 
-    /* Indikator MACD Bulatan Kecil */
-    .macd-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 4px; vertical-align: middle; }
-    .macd-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
-    .macd-neutral { background-color: #eab308; box-shadow: 0 0 5px #eab308; }
-    .macd-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
+    /* Indikator Bulatan Kecil */
+    .dot-indicator { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 2px; margin-right: 6px; vertical-align: middle; }
+    .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
+    .dot-neutral { background-color: #64748b; box-shadow: 0 0 3px #64748b; } /* Abu-abu */
+    .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
     .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; }
     .stat { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
@@ -72,7 +71,6 @@
     <p class="update-time" id="updateTime">Memuat data...</p>
   </header>
 
-  <!-- Control Box / Input Ticker Tambahan -->
   <div class="control-box">
     <div class="form-row">
       <input type="text" id="newTicker" placeholder="Ticker (misal: BBCA / IHSG)">
@@ -89,7 +87,6 @@
     </div>
   </div>
 
-  <!-- Filter Tabs -->
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
     <div class="tab" onclick="filterGroup('Harian', this)">⚡ Pantauan Harian</div>
@@ -101,7 +98,6 @@
     <div class="tab" onclick="filterGroup('Watchlist', this)">Watchlist</div>
   </div>
 
-  <!-- Grid Kartu Saham -->
   <div class="card-grid" id="stockGrid"></div>
 
   <script>
@@ -165,7 +161,6 @@
         if (closes.length < 20) return null;
 
         const lastClose = Math.round(closes[closes.length - 1] * 100) / 100;
-        
         const sliceCloses = closes.slice(-20);
         const ma20 = Math.round((sliceCloses.reduce((a, b) => a + b, 0) / 20) * 100) / 100;
         
@@ -178,15 +173,18 @@
         const sup20 = Math.min(...lows.slice(-21, -1));
 
         const rsi = calculateRSI(closes);
+        let rsiStatus = "NEUTRAL";
+        if (rsi < 35) rsiStatus = "BUY";
+        else if (rsi > 70) rsiStatus = "SELL";
 
         let signal = "NEUTRAL";
         if (lastClose > res20 && res20 > 0) {
           signal = volRatio >= 1.5 ? "SBR" : "Break R";
         } else if (lastClose < sup20 && sup20 > 0) {
           signal = volRatio >= 1.5 ? "SBS" : "Break S";
-        } else if (rsi < 35 || lastClose > ma20) {
+        } else if (rsiStatus === "BUY" || lastClose > ma20) {
           signal = "BUY";
-        } else if (rsi > 70 || lastClose < ma20) {
+        } else if (rsiStatus === "SELL" || lastClose < ma20) {
           signal = "SELL";
         }
 
@@ -194,6 +192,7 @@
           ticker: ticker,
           price: lastClose,
           rsi: rsi,
+          rsi_status: rsiStatus,
           ma20: ma20,
           support: Math.round(sup20 * 100) / 100,
           resistance: Math.round(res20 * 100) / 100,
@@ -217,6 +216,9 @@
         document.getElementById('updateTime').innerText = "Diperbarui: " + wibTime;
         
         rawData = data.stocks || [];
+
+        // Hapus GOTO otomatis dari localStorage jika masih tersimpan
+        stockOrder = stockOrder.filter(t => t !== "GOTO");
 
         if (stockOrder.length === 0) {
           stockOrder = rawData.map(s => s.ticker);
@@ -244,7 +246,7 @@
       let orderedList = [];
       stockOrder.forEach(ticker => {
         let item = rawData.find(s => s.ticker === ticker) || liveFetchedData[ticker] || { 
-          ticker, price: 0, rsi: 0, ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, macd_status: 'NEUTRAL', signal: 'NEUTRAL' 
+          ticker, price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, macd_status: 'NEUTRAL', signal: 'NEUTRAL' 
         };
         orderedList.push(item);
       });
@@ -262,16 +264,15 @@
         else if (stock.signal === 'BUY') badgeClass = 'buy';
         else if (stock.signal === 'SELL') badgeClass = 'sell';
 
+        // Bulatan Indikator RSI
+        let rsiDotClass = 'dot-neutral';
+        if (stock.rsi_status === 'BUY') rsiDotClass = 'dot-buy';
+        else if (stock.rsi_status === 'SELL') rsiDotClass = 'dot-sell';
+
         // Bulatan Indikator MACD
-        let macdDotClass = 'macd-neutral';
-        let macdTitle = 'MACD: Netral';
-        if (stock.macd_status === 'BUY') {
-          macdDotClass = 'macd-buy';
-          macdTitle = 'MACD: Layak Beli (Bullish)';
-        } else if (stock.macd_status === 'SELL') {
-          macdDotClass = 'macd-sell';
-          macdTitle = 'MACD: Jual (Bearish)';
-        }
+        let macdDotClass = 'dot-neutral';
+        if (stock.macd_status === 'BUY') macdDotClass = 'dot-buy';
+        else if (stock.macd_status === 'SELL') macdDotClass = 'dot-sell';
 
         const isVolHigh = stock.vol_ratio >= 1.5;
         const volClass = isVolHigh ? 'vol-high' : '';
@@ -287,7 +288,8 @@
           <span class="group-tag">${group}</span>
           <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
           <div class="stat">
-            RSI: ${stock.rsi} | MACD: <span class="macd-dot ${macdDotClass}" title="${macdTitle}"></span>
+            RSI: <span class="dot-indicator ${rsiDotClass}"></span>
+            MACD: <span class="dot-indicator ${macdDotClass}"></span>
           </div>
           <div class="stat">S: ${stock.support} | R: ${stock.resistance}</div>
           <div class="stat ${volClass}">Vol: ${volIcon}${stock.vol_ratio}x Rerata</div>
