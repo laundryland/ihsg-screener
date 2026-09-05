@@ -50,15 +50,14 @@
     .sell { background: #991b1b; color: #fca5a5; }
     .neutral { background: #334155; color: #94a3b8; }
 
-    /* Indikator Bulatan Kecil */
+    /* Indikator Bulatan Kecil (RSI, MACD, Volume) */
     .dot-indicator { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 2px; margin-right: 6px; vertical-align: middle; }
     .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
-    .dot-neutral { background-color: #64748b; box-shadow: 0 0 3px #64748b; } /* Abu-abu */
+    .dot-neutral { background-color: #64748b; box-shadow: 0 0 3px #64748b; }
     .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
     .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; }
     .stat { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
-    .vol-high { color: #facc15; font-weight: bold; }
 
     .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #334155; }
     .reorder-btns { display: flex; gap: 4px; }
@@ -76,11 +75,9 @@
       <input type="text" id="newTicker" placeholder="Ticker (misal: BBCA / IHSG)">
       <select id="newGroup">
         <option value="Harian">Pantauan Harian</option>
-        <option value="Indeks">Indeks</option>
+        <option value="Konglomerat">Konglomerat</option>
         <option value="Perbankan">Perbankan</option>
-        <option value="Tambang">Tambang</option>
-        <option value="Telco">Telco</option>
-        <option value="Consumer">Consumer</option>
+        <option value="Volatil">Volatil</option>
         <option value="Watchlist">Watchlist</option>
       </select>
       <button onclick="addStock()">+ Tambah</button>
@@ -90,11 +87,9 @@
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
     <div class="tab" onclick="filterGroup('Harian', this)">⚡ Pantauan Harian</div>
-    <div class="tab" onclick="filterGroup('Indeks', this)">Indeks</div>
+    <div class="tab" onclick="filterGroup('Konglomerat', this)">Konglomerat</div>
     <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
-    <div class="tab" onclick="filterGroup('Tambang', this)">Tambang</div>
-    <div class="tab" onclick="filterGroup('Telco', this)">Telco</div>
-    <div class="tab" onclick="filterGroup('Consumer', this)">Consumer</div>
+    <div class="tab" onclick="filterGroup('Volatil', this)">Volatil</div>
     <div class="tab" onclick="filterGroup('Watchlist', this)">Watchlist</div>
   </div>
 
@@ -169,6 +164,10 @@
         const lastVol = volumes[volumes.length - 1];
         const volRatio = volMa20 > 0 ? Math.round((lastVol / volMa20) * 100) / 100 : 1.0;
 
+        let volStatus = "NEUTRAL";
+        if (volRatio >= 1.5) volStatus = "BUY";
+        else if (volRatio < 0.7) volStatus = "SELL";
+
         const res20 = Math.max(...highs.slice(-21, -1));
         const sup20 = Math.min(...lows.slice(-21, -1));
 
@@ -197,6 +196,7 @@
           support: Math.round(sup20 * 100) / 100,
           resistance: Math.round(res20 * 100) / 100,
           vol_ratio: volRatio,
+          vol_status: volStatus,
           macd_status: "NEUTRAL",
           signal: signal
         };
@@ -217,9 +217,7 @@
         
         rawData = data.stocks || [];
 
-        // Hapus GOTO otomatis dari localStorage jika masih tersimpan
-        stockOrder = stockOrder.filter(t => t !== "GOTO");
-
+        // Atur urutan default berdasarkan screener.py jika belum ada custom order
         if (stockOrder.length === 0) {
           stockOrder = rawData.map(s => s.ticker);
           saveState();
@@ -246,7 +244,7 @@
       let orderedList = [];
       stockOrder.forEach(ticker => {
         let item = rawData.find(s => s.ticker === ticker) || liveFetchedData[ticker] || { 
-          ticker, price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, macd_status: 'NEUTRAL', signal: 'NEUTRAL' 
+          ticker, price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', signal: 'NEUTRAL' 
         };
         orderedList.push(item);
       });
@@ -274,9 +272,10 @@
         if (stock.macd_status === 'BUY') macdDotClass = 'dot-buy';
         else if (stock.macd_status === 'SELL') macdDotClass = 'dot-sell';
 
-        const isVolHigh = stock.vol_ratio >= 1.5;
-        const volClass = isVolHigh ? 'vol-high' : '';
-        const volIcon = isVolHigh ? '⚡ ' : '';
+        // Bulatan Indikator Volume
+        let volDotClass = 'dot-neutral';
+        if (stock.vol_status === 'BUY') volDotClass = 'dot-buy';
+        else if (stock.vol_status === 'SELL') volDotClass = 'dot-sell';
 
         const card = document.createElement('div');
         card.className = 'card';
@@ -290,9 +289,10 @@
           <div class="stat">
             RSI: <span class="dot-indicator ${rsiDotClass}"></span>
             MACD: <span class="dot-indicator ${macdDotClass}"></span>
+            Vol: <span class="dot-indicator ${volDotClass}"></span>
           </div>
           <div class="stat">S: ${stock.support} | R: ${stock.resistance}</div>
-          <div class="stat ${volClass}">Vol: ${volIcon}${stock.vol_ratio}x Rerata</div>
+          <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
 
           <div class="card-actions">
             <div class="reorder-btns">
