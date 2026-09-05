@@ -8,11 +8,7 @@
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0f172a">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512x512.png">
   <link rel="apple-touch-icon" href="./icon-192x192.png">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
@@ -41,7 +37,6 @@
     .ticker { font-weight: bold; font-size: 1.1rem; color: #fff; }
     .price { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; }
     
-    /* Signal Badges */
     .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
     .strong-r { background: #047857; color: #34d399; border: 1px solid #10b981; }
     .breakout-r { background: #15803d; color: #86efac; border: 1px solid #22c55e; }
@@ -51,29 +46,24 @@
     .sell { background: #991b1b; color: #fca5a5; }
     .neutral { background: #334155; color: #94a3b8; }
 
-    /* Layout Sub-Header (Grup & Tanda Seru) */
     .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; }
     
-    /* Style Tanda Seru */
     .exclamation-mark { font-weight: 900; font-size: 0.85rem; letter-spacing: -1px; }
     .exclamation-buy { color: #22c55e; }
     .exclamation-sell { color: #ef4444; }
     .exclamation-neutral { color: #64748b; }
 
-    /* Indikator Bulatan Kecil */
     .dot-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
     .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
     .dot-neutral { background-color: #64748b; box-shadow: 0 0 3px #64748b; }
     .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
-    /* Warna Teks SnD */
     .text-buy { color: #22c55e; font-weight: bold; }
     .text-sell { color: #ef4444; font-weight: bold; }
     .text-neutral { color: #94a3b8; }
 
     .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; flex-wrap: wrap; }
-
     .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #334155; }
     .reorder-btns { display: flex; gap: 4px; }
   </style>
@@ -114,117 +104,17 @@
     let rawData = [];
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let customGroups = JSON.parse(localStorage.getItem('custom_groups')) || {};
-    let liveFetchedData = {};
     let activeFilter = 'ALL';
 
     function formatWIB(timeStr) {
       if (!timeStr) return "-";
-      if (timeStr.includes("WIB")) return timeStr;
-
       try {
         const date = new Date(timeStr);
         if (isNaN(date.getTime())) return timeStr;
-
         return date.toLocaleString('id-ID', {
-          timeZone: 'Asia/Jakarta',
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+          timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
         }) + " WIB";
-      } catch (e) {
-        return timeStr;
-      }
-    }
-
-    function calculateRSI(closes, window = 14) {
-      if (closes.length < window + 1) return 50;
-      let gains = 0, losses = 0;
-      for (let i = 1; i <= window; i++) {
-        let diff = closes[i] - closes[i - 1];
-        if (diff >= 0) gains += diff;
-        else losses -= diff;
-      }
-      let avgGain = gains / window;
-      let avgLoss = losses / window;
-      if (avgLoss === 0) return 100;
-      let rs = avgGain / avgLoss;
-      return Math.round((100 - (100 / (1 + rs))) * 100) / 100;
-    }
-
-    async function fetchLiveStockData(ticker) {
-      const yfSymbol = ticker === "IHSG" ? "^JKSE" : `${ticker}.JK`;
-      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${yfSymbol}?range=3mo&interval=1d`;
-
-      try {
-        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-        const result = await response.json();
-        const data = JSON.parse(result.contents).chart.result[0];
-
-        const quotes = data.indicators.quote[0];
-        const closes = quotes.close.filter(v => v !== null);
-        const highs = quotes.high.filter(v => v !== null);
-        const lows = quotes.low.filter(v => v !== null);
-        const volumes = quotes.volume.filter(v => v !== null);
-
-        if (closes.length < 20) return null;
-
-        const lastClose = Math.round(closes[closes.length - 1] * 100) / 100;
-        const sliceCloses = closes.slice(-20);
-        const ma20 = Math.round((sliceCloses.reduce((a, b) => a + b, 0) / 20) * 100) / 100;
-        
-        const sliceVols = volumes.slice(-20);
-        const volMa20 = sliceVols.reduce((a, b) => a + b, 0) / 20;
-        const lastVol = volumes[volumes.length - 1];
-        const volRatio = volMa20 > 0 ? Math.round((lastVol / volMa20) * 100) / 100 : 1.0;
-
-        let volStatus = "NEUTRAL";
-        if (volRatio >= 1.5) volStatus = "BUY";
-        else if (volRatio < 0.7) volStatus = "SELL";
-
-        const res20 = Math.max(...highs.slice(-21, -1));
-        const sup20 = Math.min(...lows.slice(-21, -1));
-
-        let sndStatus = "NEUTRAL";
-        if (sup20 > 0 && lastClose <= (sup20 * 1.02)) sndStatus = "BUY";
-        else if (res20 > 0 && lastClose >= (res20 * 0.98)) sndStatus = "SELL";
-
-        const rsi = calculateRSI(closes);
-        let rsiStatus = "NEUTRAL";
-        if (rsi < 35) rsiStatus = "BUY";
-        else if (rsi > 70) rsiStatus = "SELL";
-
-        let signal = "NEUTRAL";
-        if (lastClose > res20 && res20 > 0) {
-          signal = volRatio >= 1.5 ? "SBR" : "Break R";
-        } else if (lastClose < sup20 && sup20 > 0) {
-          signal = volRatio >= 1.5 ? "SBS" : "Break S";
-        } else if (rsiStatus === "BUY" || lastClose > ma20) {
-          signal = "BUY";
-        } else if (rsiStatus === "SELL" || lastClose < ma20) {
-          signal = "SELL";
-        }
-
-        return {
-          ticker: ticker,
-          price: lastClose,
-          rsi: rsi,
-          rsi_status: rsiStatus,
-          ma20: ma20,
-          support: Math.round(sup20 * 100) / 100,
-          resistance: Math.round(res20 * 100) / 100,
-          snd_status: sndStatus,
-          vol_ratio: volRatio,
-          vol_status: volStatus,
-          macd_status: "NEUTRAL",
-          signal: signal
-        };
-
-      } catch (err) {
-        console.error(`Gagal memuat live data untuk ${ticker}:`, err);
-        return null;
-      }
+      } catch (e) { return timeStr; }
     }
 
     async function loadData() {
@@ -232,22 +122,12 @@
         const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
         const data = await res.json();
         
-        const wibTime = formatWIB(data.updated_at);
-        document.getElementById('updateTime').innerText = "Diperbarui: " + wibTime;
-        
+        document.getElementById('updateTime').innerText = "Diperbarui: " + formatWIB(data.updated_at);
         rawData = data.stocks || [];
 
         if (stockOrder.length === 0) {
           stockOrder = rawData.map(s => s.ticker);
           saveState();
-        }
-
-        const missingTickers = stockOrder.filter(t => !rawData.some(s => s.ticker === t));
-        for (let ticker of missingTickers) {
-          const fetched = await fetchLiveStockData(ticker);
-          if (fetched) {
-            liveFetchedData[ticker] = fetched;
-          }
         }
 
         render();
@@ -262,7 +142,7 @@
 
       let orderedList = [];
       stockOrder.forEach(ticker => {
-        let item = rawData.find(s => s.ticker === ticker) || liveFetchedData[ticker] || { 
+        let item = rawData.find(s => s.ticker === ticker) || { 
           ticker, price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, snd_status: 'NEUTRAL', vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', signal: 'NEUTRAL' 
         };
         orderedList.push(item);
@@ -270,7 +150,6 @@
 
       orderedList.forEach((stock, index) => {
         const group = customGroups[stock.ticker] || 'Watchlist';
-        
         if (activeFilter !== 'ALL' && group !== activeFilter) return;
 
         let badgeClass = 'neutral';
@@ -281,49 +160,23 @@
         else if (stock.signal === 'BUY') badgeClass = 'buy';
         else if (stock.signal === 'SELL') badgeClass = 'sell';
 
-        // Logika Tanda Seru
         let exclamationText = '!';
         let exclamationClass = 'exclamation-neutral';
-
         if (stock.signal === 'SBR' || stock.signal === 'BUY') {
-          exclamationText = '!!';
-          exclamationClass = 'exclamation-buy';
+          exclamationText = '!!'; exclamationClass = 'exclamation-buy';
         } else if (stock.signal === 'Break R') {
-          exclamationText = '!';
-          exclamationClass = 'exclamation-buy';
+          exclamationText = '!'; exclamationClass = 'exclamation-buy';
         } else if (stock.signal === 'SBS' || stock.signal === 'SELL') {
-          exclamationText = '!!';
-          exclamationClass = 'exclamation-sell';
+          exclamationText = '!!'; exclamationClass = 'exclamation-sell';
         } else if (stock.signal === 'Break S') {
-          exclamationText = '!';
-          exclamationClass = 'exclamation-sell';
+          exclamationText = '!'; exclamationClass = 'exclamation-sell';
         }
 
-        // Bulatan Indikator RSI
-        let rsiDotClass = 'dot-neutral';
-        if (stock.rsi_status === 'BUY') rsiDotClass = 'dot-buy';
-        else if (stock.rsi_status === 'SELL') rsiDotClass = 'dot-sell';
-
-        // Bulatan Indikator MACD
-        let macdDotClass = 'dot-neutral';
-        if (stock.macd_status === 'BUY') macdDotClass = 'dot-buy';
-        else if (stock.macd_status === 'SELL') macdDotClass = 'dot-sell';
-
-        // Bulatan Indikator Volume
-        let volDotClass = 'dot-neutral';
-        if (stock.vol_status === 'BUY') volDotClass = 'dot-buy';
-        else if (stock.vol_status === 'SELL') volDotClass = 'dot-sell';
-
-        // Bulatan & Teks Indikator SnD
-        let sndDotClass = 'dot-neutral';
-        let sndTextClass = 'text-neutral';
-        if (stock.snd_status === 'BUY') {
-          sndDotClass = 'dot-buy';
-          sndTextClass = 'text-buy';
-        } else if (stock.snd_status === 'SELL') {
-          sndDotClass = 'dot-sell';
-          sndTextClass = 'text-sell';
-        }
+        let rsiDot = stock.rsi_status === 'BUY' ? 'dot-buy' : stock.rsi_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+        let macdDot = stock.macd_status === 'BUY' ? 'dot-buy' : stock.macd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+        let volDot = stock.vol_status === 'BUY' ? 'dot-buy' : stock.vol_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+        let sndDot = stock.snd_status === 'BUY' ? 'dot-buy' : stock.snd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+        let sndText = stock.snd_status === 'BUY' ? 'text-buy' : stock.snd_status === 'SELL' ? 'text-sell' : 'text-neutral';
 
         const card = document.createElement('div');
         card.className = 'card';
@@ -332,30 +185,21 @@
             <span class="ticker">${stock.ticker}</span>
             <span class="badge ${badgeClass}">${stock.signal}</span>
           </div>
-          
           <div class="sub-header">
             <span class="group-tag">${group}</span>
             <span class="exclamation-mark ${exclamationClass}">${exclamationText}</span>
           </div>
-
-          <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
-          
-          <!-- Baris Bulatan Indikator Utama -->
+          <div class="price">${stock.price > 0 ? 'Rp ' + Number(stock.price).toLocaleString('id-ID') : 'Menunggu Update'}</div>
           <div class="stat">
-            RSI<span class="dot-indicator ${rsiDotClass}"></span>
-            MACD<span class="dot-indicator ${macdDotClass}"></span>
-            VOL<span class="dot-indicator ${volDotClass}"></span>
+            RSI<span class="dot-indicator ${rsiDot}"></span>
+            MACD<span class="dot-indicator ${macdDot}"></span>
+            VOL<span class="dot-indicator ${volDot}"></span>
           </div>
-
-          <!-- Baris Support & Resistance (SnD) -->
-          <div class="stat ${sndTextClass}">
+          <div class="stat ${sndText}">
             S: ${stock.support} | R: ${stock.resistance}
-            <span class="dot-indicator ${sndDotClass}"></span>
+            <span class="dot-indicator ${sndDot}"></span>
           </div>
-
-          <!-- Baris Ratio Volume -->
           <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
-
           <div class="card-actions">
             <div class="reorder-btns">
               <button class="btn-action" onclick="moveStock(${index}, -1)">▲</button>
@@ -368,35 +212,22 @@
       });
     }
 
-    async function addStock() {
+    function addStock() {
       const input = document.getElementById('newTicker');
       const groupSelect = document.getElementById('newGroup');
       let ticker = input.value.trim().toUpperCase();
-
       if (!ticker) return;
 
-      if (!stockOrder.includes(ticker)) {
-        stockOrder.push(ticker);
-      }
+      if (!stockOrder.includes(ticker)) stockOrder.push(ticker);
       customGroups[ticker] = groupSelect.value;
-      
       input.value = '';
       saveState();
-
-      if (!rawData.some(s => s.ticker === ticker)) {
-        document.getElementById('updateTime').innerText = `Memuat data live ${ticker}...`;
-        const fetched = await fetchLiveStockData(ticker);
-        if (fetched) liveFetchedData[ticker] = fetched;
-        document.getElementById('updateTime').innerText = "Data siap!";
-      }
-
       render();
     }
 
     function removeStock(ticker) {
       stockOrder = stockOrder.filter(t => t !== ticker);
       delete customGroups[ticker];
-      delete liveFetchedData[ticker];
       saveState();
       render();
     }
@@ -404,11 +235,9 @@
     function moveStock(index, direction) {
       const newIndex = index + direction;
       if (newIndex < 0 || newIndex >= stockOrder.length) return;
-      
       const temp = stockOrder[index];
       stockOrder[index] = stockOrder[newIndex];
       stockOrder[newIndex] = temp;
-      
       saveState();
       render();
     }
@@ -425,10 +254,7 @@
       localStorage.setItem('custom_groups', JSON.stringify(customGroups));
     }
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
-
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
     loadData();
   </script>
 </body>
