@@ -6,21 +6,26 @@ import yfinance as yf
 
 TICKERS = [
     "^JKSE", "ACES.JK", "ADRO.JK", "AKRA.JK", "AMRT.JK", "ANTM.JK", 
-    "ASII.JK", "BBCA.JK", "BBNI.JK", "BBTN.JK", "BMRI.JK", "BRIS.JK", 
-    "BRPT.JK", "BUKA.JK", "CPIN.JK", "EMTK.JK", "EXCL.JK", "GOTO.JK", 
-    "ICBP.JK", "INDF.JK", "INTP.JK", "ITMG.JK", "KLBF.JK", "MAPI.JK", 
-    "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", "SIDO.JK", "SMGR.JK", 
-    "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK", "MDIA.JK", "ENRG.JK",
-    "BIPI.JK", "CDIA.JK", "INDY.JK", "CBRE.JK", "KOKA.JK", "DEWA.JK",
-     ]
+    "ASII.JK", "BBNI.JK", "BBCA.JK", "BBRI.JK", "BBTN.JK", "BMRI.JK", 
+    "BRIS.JK", "BRPT.JK", "BUKA.JK", "CPIN.JK", "EMTK.JK", "EXCL.JK", 
+    "GOTO.JK", "ICBP.JK", "INDF.JK", "INTP.JK", "ITMG.JK", "KLBF.JK", 
+    "MAPI.JK", "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", "SIDO.JK", 
+    "SMGR.JK", "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK"
+]
 
 def calculate_rsi(series, window=14):
     delta = series.diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
     loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
     rs = gain / loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
+    return 100 - (100 / (1 + rs))
+
+def calculate_macd(series):
+    exp1 = series.ewm(span=12, adjust=False).mean()
+    exp2 = series.ewm(span=26, adjust=False).mean()
+    macd = exp1 - exp2
+    signal = macd.ewm(span=9, adjust=False).mean()
+    return macd, signal
 
 def clean_val(val):
     if val is None or math.isnan(val) or math.isinf(val):
@@ -29,14 +34,13 @@ def clean_val(val):
 
 def run_screener():
     results = []
-    print("Memulai analisis saham IHSG dengan Support, Demand, & Bandarmology Volume...")
+    print("Memulai analisis saham IHSG...")
 
     for ticker in TICKERS:
         try:
             df = yf.download(ticker, period="6mo", progress=False)
 
-            if df.empty or len(df) < 20:
-                print(f"Data {ticker} tidak cukup, dilewati.")
+            if df.empty or len(df) < 35:
                 continue
 
             close_prices = df['Close'].squeeze()
@@ -44,10 +48,11 @@ def run_screener():
             low_prices = df['Low'].squeeze()
             volume_data = df['Volume'].squeeze()
 
-            # Indikator MA, RSI, & Volume MA20
+            # Indikator MA, RSI, MACD, & Volume MA20
             ma20_series = close_prices.rolling(window=20).mean()
             vol_ma20_series = volume_data.rolling(window=20).mean()
             rsi_series = calculate_rsi(close_prices)
+            macd_series, macd_signal_series = calculate_macd(close_prices)
 
             # Support & Resistance (20 hari terakhir)
             resistance_20 = high_prices.iloc[-21:-1].max()
@@ -59,23 +64,33 @@ def run_screener():
             res_val = clean_val(resistance_20)
             sup_val = clean_val(support_20)
             
+            # Perhitungan MACD Status
+            last_macd = clean_val(macd_series.iloc[-1])
+            last_macd_sig = clean_val(macd_signal_series.iloc[-1])
+            
+            if last_macd > last_macd_sig and last_macd > 0:
+                macd_status = "BUY"       # Bullish / Layak Beli (🟢)
+            elif last_macd < last_macd_sig and last_macd < 0:
+                macd_status = "SELL"      # Bearish / Jual (🔴)
+            else:
+                macd_status = "NEUTRAL"   # Netral (🟡)
+
             # Analisis Volume (Bandarmology)
             last_vol = float(volume_data.iloc[-1])
             last_vol_ma = float(vol_ma20_series.iloc[-1])
             vol_ratio = clean_val(last_vol / last_vol_ma) if last_vol_ma > 0 else 1.0
 
-            # Logika Signal & Konfirmasi Volume
+            # Logika Signal Singkatan
             signal = "NEUTRAL"
             if last_close > res_val and res_val > 0:
-                signal = "Strong Breakout R" if vol_ratio >= 1.5 else "Breakout R"
+                signal = "SBR" if vol_ratio >= 1.5 else "Break R"
             elif last_close < sup_val and sup_val > 0:
-                signal = "Strong Breakout S" if vol_ratio >= 1.5 else "Breakout S"
+                signal = "SBS" if vol_ratio >= 1.5 else "Break S"
             elif last_rsi < 35 or last_close > last_ma20:
                 signal = "BUY"
             elif last_rsi > 70 or last_close < last_ma20:
                 signal = "SELL"
 
-            # Nama Ticker Bersih (IHSG untuk ^JKSE)
             clean_name = ticker.replace(".JK", "").replace("^JKSE", "IHSG")
 
             results.append({
@@ -86,9 +101,9 @@ def run_screener():
                 "support": sup_val,
                 "resistance": res_val,
                 "vol_ratio": vol_ratio,
+                "macd_status": macd_status,
                 "signal": signal
             })
-            print(f"Sukses memproses {clean_name}: {signal} (Vol Ratio: {vol_ratio}x)")
 
         except Exception as e:
             print(f"Gagal memproses {ticker}: {e}")
