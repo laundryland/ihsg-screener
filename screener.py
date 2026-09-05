@@ -28,7 +28,7 @@ STOCKS = [
     "ICBP.JK", "INDF.JK", "UNVR.JK", "MYOR.JK", "AMRT.JK", "ACES.JK",
     
     # Properti & Infrastruktur
-    "BSDE.JK", "CTRA.JK", "PWWON.JK", "TLKM.JK", "ISAT.JK", "EXCL.JK", "JSMR.JK",
+    "BSDE.JK", "CTRA.JK", "PWON.JK", "TLKM.JK", "ISAT.JK", "EXCL.JK", "JSMR.JK",
     
     # Industri & Otomotif
     "ASII.JK", "UNTR.JK"
@@ -116,7 +116,7 @@ def run_screener():
             last_high = round(clean_val(high_prices.iloc[-1]))
             last_low = round(clean_val(low_prices.iloc[-1]))
 
-            # --- KALKULASI INDIKATOR ---
+            # --- KALKULASI INDIKATOR TEKNIKAL ---
             # 1. Moving Average & Support/Resistance
             ma20 = clean_val(close_prices.rolling(window=20).mean().iloc[-1])
             support = round(clean_val(low_prices.rolling(window=20).min().iloc[-1]))
@@ -127,9 +127,9 @@ def run_screener():
             rsi_val = clean_val(rsi_series.iloc[-1], default=50)
             
             rsi_status = "NEUTRAL"
-            if rsi_val <= 35:
+            if rsi_val <= 38:
                 rsi_status = "BUY"
-            elif rsi_val >= 65:
+            elif rsi_val >= 62:
                 rsi_status = "SELL"
 
             # 3. MACD & Status
@@ -153,31 +153,42 @@ def run_screener():
             elif rsi_val >= 70:
                 fibo_rsi_status = "OVER BOUGHT"
 
-            # 6. Sinyal Transaksi Utama
-            signal = "NEUTRAL"
-            if last_close >= resistance and vol_ratio > 1.2:
-                signal = "SBR"  # Strong Breakout Resistance
-            elif last_close >= resistance:
-                signal = "Break R"
-            elif last_close <= support and vol_ratio > 1.2:
-                signal = "SBS"  # Strong Breakdown Support
-            elif last_close <= support:
-                signal = "Break S"
-            elif rsi_status == "BUY" and macd_status == "BUY":
+            # ==========================================
+            # PEMETAAN SINYAL LENGKAP:
+            # STRONG BUY, BUY, NETRAL, SELL, STRONG SELL
+            # ==========================================
+            buy_score = (1 if rsi_status == "BUY" else 0) + \
+                        (1 if macd_status == "BUY" else 0) + \
+                        (1 if vol_status == "BUY" else 0)
+
+            sell_score = (1 if rsi_status == "SELL" else 0) + \
+                         (1 if macd_status == "SELL" else 0) + \
+                         (1 if vol_status == "SELL" else 0)
+
+            signal = "NETRAL"
+
+            # Sinyal Beli
+            if (last_close >= resistance and vol_ratio > 1.2) or buy_score == 3:
+                signal = "STRONG BUY"
+            elif buy_score >= 2 or (last_close > ma20 and macd_status == "BUY"):
                 signal = "BUY"
-            elif rsi_status == "SELL" and macd_status == "SELL":
+            
+            # Sinyal Jual
+            elif (last_close <= support and vol_ratio > 1.2) or sell_score == 3:
+                signal = "STRONG SELL"
+            elif sell_score >= 2 or (last_close < support):
                 signal = "SELL"
 
             # ==========================================
-            # OBJECT OUTPUT JSON (TERMASUK OPEN, HIGH, LOW)
+            # OBJECT OUTPUT JSON
             # ==========================================
             stock_data = {
                 "ticker": clean_name,
                 "category": "Indeks Utama" if clean_name == "IHSG" else SECTOR_MAP.get(clean_name, "Lainnya"),
                 "price": last_close,
-                "open": last_open,        # <-- FIELD BARU (OPEN)
-                "high": last_high,        # <-- FIELD BARU (HIGH)
-                "low": last_low,          # <-- FIELD BARU (LOW)
+                "open": last_open,
+                "high": last_high,
+                "low": last_low,
                 "rsi": round(rsi_val, 2),
                 "rsi_status": rsi_status,
                 "ma20": round(ma20),
@@ -187,7 +198,7 @@ def run_screener():
                 "vol_status": vol_status,
                 "macd_status": macd_status,
                 "fibo_rsi_status": fibo_rsi_status,
-                "signal": signal
+                "signal": signal  # Mendukung STRONG BUY / BUY / NETRAL / SELL / STRONG SELL
             }
 
             results.append(stock_data)
