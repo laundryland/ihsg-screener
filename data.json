@@ -1,6 +1,23 @@
 {
-    "updated_at": "2026-09-05 17:14:11",
+    "updated_at": "2026-09-05 17:47:33",
     "stocks": [
+        {
+            "ticker": "IHSG",
+            "category": "Lainnya",
+            "price": 6636.48,
+            "rsi": 71.89,
+            "rsi_ma": 64.38,
+            "rsi_status": "SELL",
+            "ma20": 6465.41,
+            "support": 6230.1,
+            "resistance": 6681.84,
+            "snd_status": "SELL",
+            "vol_ratio": 0.84,
+            "vol_status": "NEUTRAL",
+            "macd_status": "BUY",
+            "fibo_rsi_status": "NORMAL",
+            "signal": "BUY"
+        },
         {
             "ticker": "BBCA",
             "category": "Perbankan",
