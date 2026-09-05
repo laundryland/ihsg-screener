@@ -4,14 +4,20 @@ import math
 import pandas as pd
 import yfinance as yf
 
-# Daftar Ticker (Sudah ditambah CUAN, PTRO, MDIA & dihapus GOTO)
+# Urutan Emiten: Konglomerat -> Perbankan -> Volatil & Sisanya
 TICKERS = [
-    "^JKSE", "ACES.JK", "ADRO.JK", "AKRA.JK", "AMRT.JK", "ANTM.JK", 
-    "ASII.JK", "BBNI.JK", "BBCA.JK", "BBRI.JK", "BBTN.JK", "BMRI.JK", 
-    "BRIS.JK", "BRPT.JK", "BUKA.JK", "CPIN.JK", "CUAN.JK", "EMTK.JK", 
-    "EXCL.JK", "ICBP.JK", "INDF.JK", "INTP.JK", "ITMG.JK", "KLBF.JK", 
-    "MAPI.JK", "MDIA.JK", "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", 
-    "PTRO.JK", "SIDO.JK", "SMGR.JK", "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK"
+    # 1. Saham Konglomerat
+    "^JKSE", "AMRT.JK", "ASII.JK", "BRPT.JK", "CUAN.JK", "EMTK.JK", 
+    "ICBP.JK", "INDF.JK", "ITMG.JK", "MDKA.JK", "PTBA.JK", "PTRO.JK", 
+    "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK",
+    
+    # 2. Saham Perbankan
+    "BBCA.JK", "BBNI.JK", "BBRI.JK", "BBTN.JK", "BMRI.JK", "BRIS.JK",
+    
+    # 3. Saham Volatil & Sisanya
+    "ACES.JK", "ADRO.JK", "AKRA.JK", "ANTM.JK", "BUKA.JK", "CPIN.JK", 
+    "EXCL.JK", "INTP.JK", "KLBF.JK", "MAPI.JK", "MDIA.JK", "MEDC.JK", 
+    "PGAS.JK", "SIDO.JK", "SMGR.JK"
 ]
 
 def calculate_rsi(series, window=14):
@@ -65,7 +71,7 @@ def run_screener():
             res_val = clean_val(resistance_20)
             sup_val = clean_val(support_20)
             
-            # Perhitungan RSI Status
+            # Status RSI
             if last_rsi < 35:
                 rsi_status = "BUY"
             elif last_rsi > 70:
@@ -73,7 +79,7 @@ def run_screener():
             else:
                 rsi_status = "NEUTRAL"
 
-            # Perhitungan MACD Status
+            # Status MACD
             last_macd = clean_val(macd_series.iloc[-1])
             last_macd_sig = clean_val(macd_signal_series.iloc[-1])
             
@@ -84,12 +90,19 @@ def run_screener():
             else:
                 macd_status = "NEUTRAL"
 
-            # Volume (Bandarmology)
+            # Volume & Status Volume
             last_vol = float(volume_data.iloc[-1])
             last_vol_ma = float(vol_ma20_series.iloc[-1])
             vol_ratio = clean_val(last_vol / last_vol_ma) if last_vol_ma > 0 else 1.0
 
-            # Logika Signal Singkatan
+            if vol_ratio >= 1.5:
+                vol_status = "BUY"
+            elif vol_ratio < 0.7:
+                vol_status = "SELL"
+            else:
+                vol_status = "NEUTRAL"
+
+            # Logika Signal
             signal = "NEUTRAL"
             if last_close > res_val and res_val > 0:
                 signal = "SBR" if vol_ratio >= 1.5 else "Break R"
@@ -111,6 +124,7 @@ def run_screener():
                 "support": sup_val,
                 "resistance": res_val,
                 "vol_ratio": vol_ratio,
+                "vol_status": vol_status,
                 "macd_status": macd_status,
                 "signal": signal
             })
