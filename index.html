@@ -20,18 +20,19 @@
 
     .control-box { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 16px; }
     .form-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-    input, select, button { padding: 8px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 0.85rem; }
-    input { flex: 1; min-width: 100px; text-transform: uppercase; }
+    select, button { padding: 8px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 0.85rem; }
+    select { flex: 1; min-width: 150px; }
     button { background: #0284c7; color: white; border: none; font-weight: bold; cursor: pointer; }
     button:active { opacity: 0.8; }
     .btn-danger { background: #dc2626; }
     .btn-action { padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; background: #334155; }
 
     .group-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
-    .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; }
+    .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
 
-    .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    /* Kolom Diperlebar Agar Tampilan Fibo & RSI Rata-rata Muat Sempurna */
+    .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     .card { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; position: relative; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .ticker { font-weight: bold; font-size: 1.1rem; color: #fff; }
@@ -49,16 +50,14 @@
     .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; }
     
-    /* Layout 4 Kotak + Persentase */
     .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
     .box-container { display: flex; gap: 2px; }
     .signal-box { width: 7px; height: 10px; border-radius: 1px; background-color: #475569; }
     
-    /* Warna Kotak Sinyal */
-    .box-neutral { background-color: #e2e8f0; } /* Putih/Abu Terang */
-    .box-sideways { background-color: #eab308; } /* Kuning */
-    .box-buy { background-color: #22c55e; }      /* Hijau */
-    .box-sell { background-color: #ef4444; }     /* Merah */
+    .box-neutral { background-color: #e2e8f0; }
+    .box-sideways { background-color: #eab308; }
+    .box-buy { background-color: #22c55e; }
+    .box-sell { background-color: #ef4444; }
 
     .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
 
@@ -72,6 +71,13 @@
     .text-neutral { color: #94a3b8; }
 
     .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; flex-wrap: wrap; }
+    
+    /* Area Fibonacci & RSI Rata-Rata */
+    .fibo-stat-box { margin-top: 6px; padding: 4px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.7rem; text-align: center; font-weight: bold; }
+    .fibo-oversold { color: #22c55e; border-color: #22c55e; }
+    .fibo-overbought { color: #ef4444; border-color: #ef4444; }
+    .fibo-normal { color: #64748b; }
+
     .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #334155; }
     .reorder-btns { display: flex; gap: 4px; }
   </style>
@@ -83,27 +89,25 @@
     <p class="update-time" id="updateTime">Memuat data...</p>
   </header>
 
+  <!-- Pilihan Dropdown Tambah Emiten -->
   <div class="control-box">
     <div class="form-row">
-      <input type="text" id="newTicker" placeholder="Ticker (misal: BBCA / IHSG)">
-      <select id="newGroup">
-        <option value="Harian">Pantauan Harian</option>
-        <option value="Konglomerat">Konglomerat</option>
-        <option value="Perbankan">Perbankan</option>
-        <option value="Volatil">Volatil</option>
-        <option value="Watchlist">Watchlist</option>
+      <select id="selectTickerOption">
+        <option value="">-- Pilih Emiten Untuk Ditampilkan --</option>
       </select>
-      <button onclick="addStock()">+ Tambah</button>
+      <button onclick="addStockFromDropdown()">+ Tambah</button>
     </div>
   </div>
 
+  <!-- Tab Kategori Sektor Resmi -->
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
-    <div class="tab" onclick="filterGroup('Harian', this)">⚡ Pantauan Harian</div>
-    <div class="tab" onclick="filterGroup('Konglomerat', this)">Konglomerat</div>
     <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
-    <div class="tab" onclick="filterGroup('Volatil', this)">Volatil</div>
-    <div class="tab" onclick="filterGroup('Watchlist', this)">Watchlist</div>
+    <div class="tab" onclick="filterGroup('Energi', this)">Energi</div>
+    <div class="tab" onclick="filterGroup('Tambang', this)">Tambang</div>
+    <div class="tab" onclick="filterGroup('Konsumer', this)">Konsumer</div>
+    <div class="tab" onclick="filterGroup('Ritel', this)">Ritel</div>
+    <div class="tab" onclick="filterGroup('Infrastruktur', this)">Infrastruktur</div>
   </div>
 
   <div class="card-grid" id="stockGrid"></div>
@@ -111,7 +115,6 @@
   <script>
     let rawData = [];
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
-    let customGroups = JSON.parse(localStorage.getItem('custom_groups')) || {};
     let activeFilter = 'ALL';
 
     function formatWIB(timeStr) {
@@ -133,31 +136,43 @@
         document.getElementById('updateTime').innerText = "Diperbarui: " + formatWIB(data.updated_at);
         rawData = data.stocks || [];
 
-        if (stockOrder.length === 0) {
-          stockOrder = rawData.map(s => s.ticker);
-          saveState();
-        }
-
+        populateDropdownOptions();
         render();
       } catch (e) {
         document.getElementById('updateTime').innerText = "Gagal memuat data.json";
       }
     }
 
+    // Mengisi Dropdown Pilih Emiten Lengkap
+    function populateDropdownOptions() {
+      const selectEl = document.getElementById('selectTickerOption');
+      selectEl.innerHTML = '<option value="">-- Pilih Emiten Untuk Ditampilkan --</option>';
+      
+      rawData.forEach(stock => {
+        const option = document.createElement('option');
+        option.value = stock.ticker;
+        option.textContent = `${stock.ticker} (${stock.category})`;
+        selectEl.appendChild(option);
+      });
+    }
+
     function render() {
       const grid = document.getElementById('stockGrid');
       grid.innerHTML = '';
 
+      if (stockOrder.length === 0) {
+        grid.innerHTML = '<div style="color: #94a3b8; grid-column: 1/-1; text-align: center; padding: 20px;">Silakan pilih emiten dari dropdown di atas untuk ditampilkan.</div>';
+        return;
+      }
+
       let orderedList = [];
       stockOrder.forEach(ticker => {
-        let item = rawData.find(s => s.ticker === ticker) || { 
-          ticker, price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, snd_status: 'NEUTRAL', vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', signal: 'NEUTRAL' 
-        };
-        orderedList.push(item);
+        let item = rawData.find(s => s.ticker === ticker);
+        if (item) orderedList.push(item);
       });
 
       orderedList.forEach((stock, index) => {
-        const group = customGroups[stock.ticker] || 'Watchlist';
+        const group = stock.category || 'Lainnya';
         if (activeFilter !== 'ALL' && group !== activeFilter) return;
 
         let badgeClass = 'neutral';
@@ -168,33 +183,31 @@
         else if (stock.signal === 'BUY') badgeClass = 'buy';
         else if (stock.signal === 'SELL') badgeClass = 'sell';
 
-        // LOGIKA 4 KOTAK KECIL & PERSENTASE
+        // Logika 4 Kotak Kecil
         let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
         let percentage = '0%';
 
-        if (stock.signal === 'SBR') { // Strong Buy (Breakout + Volume)
-          boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
-          percentage = '100%';
-        } else if (stock.signal === 'BUY') { // Strong Buy
-          boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
-          percentage = '100%';
-        } else if (stock.signal === 'Break R') { // Buy
-          boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off'];
-          percentage = '50%';
-        } else if (stock.signal === 'SBS' || stock.signal === 'SELL') { // Strong Sell
-          boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell'];
-          percentage = '100%';
-        } else if (stock.signal === 'Break S') { // Sell
-          boxClasses = ['box-sell', 'box-sell', 'box-off', 'box-off'];
-          percentage = '50%';
-        } else if (stock.snd_status === 'NEUTRAL' && stock.rsi_status === 'NEUTRAL') { // Sideways / Neutral
-          if (stock.vol_ratio >= 0.8 && stock.vol_ratio <= 1.2) {
-            boxClasses = ['box-sideways', 'box-sideways', 'box-off', 'box-off']; // Sideways (Kuning)
-            percentage = '50%';
-          } else {
-            boxClasses = ['box-neutral', 'box-neutral', 'box-neutral', 'box-neutral']; // Netral (Putih)
-            percentage = '25%';
-          }
+        if (stock.signal === 'SBR' || stock.signal === 'BUY') {
+          boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy']; percentage = '100%';
+        } else if (stock.signal === 'Break R') {
+          boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off']; percentage = '50%';
+        } else if (stock.signal === 'SBS' || stock.signal === 'SELL') {
+          boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell']; percentage = '100%';
+        } else if (stock.signal === 'Break S') {
+          boxClasses = ['box-sell', 'box-sell', 'box-off', 'box-off']; percentage = '50%';
+        } else {
+          boxClasses = ['box-neutral', 'box-neutral', 'box-neutral', 'box-neutral']; percentage = '25%';
+        }
+
+        // Fibo & RSI MA Indicator
+        let fiboBoxClass = 'fibo-normal';
+        let fiboText = 'FIBO-RSI: NORMAL';
+        if (stock.fibo_rsi_status === 'OVER SOLD') {
+          fiboBoxClass = 'fibo-oversold';
+          fiboText = 'OVER SOLD';
+        } else if (stock.fibo_rsi_status === 'OVER BOUGHT') {
+          fiboBoxClass = 'fibo-overbought';
+          fiboText = 'OVER BOUGHT';
         }
 
         let rsiDot = stock.rsi_status === 'BUY' ? 'dot-buy' : stock.rsi_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
@@ -212,8 +225,6 @@
           </div>
           <div class="sub-header">
             <span class="group-tag">${group}</span>
-            
-            <!-- 4 Kotak Kecil & Prosentase -->
             <div class="signal-indicator-box">
               <div class="box-container">
                 <div class="signal-box ${boxClasses[0]}"></div>
@@ -225,7 +236,8 @@
             </div>
           </div>
 
-          <div class="price">${stock.price > 0 ? 'Rp ' + Number(stock.price).toLocaleString('id-ID') : 'Menunggu Update'}</div>
+          <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
+          
           <div class="stat">
             RSI<span class="dot-indicator ${rsiDot}"></span>
             MACD<span class="dot-indicator ${macdDot}"></span>
@@ -236,6 +248,12 @@
             <span class="dot-indicator ${sndDot}"></span>
           </div>
           <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
+
+          <!-- FIBONACCI & RSI RATA-RATA (DI BAGIAN BAWAH) -->
+          <div class="fibo-stat-box ${fiboBoxClass}">
+            ${fiboText}
+          </div>
+
           <div class="card-actions">
             <div class="reorder-btns">
               <button class="btn-action" onclick="moveStock(${index}, -1)">▲</button>
@@ -248,22 +266,21 @@
       });
     }
 
-    function addStock() {
-      const input = document.getElementById('newTicker');
-      const groupSelect = document.getElementById('newGroup');
-      let ticker = input.value.trim().toUpperCase();
+    function addStockFromDropdown() {
+      const selectEl = document.getElementById('selectTickerOption');
+      const ticker = selectEl.value;
       if (!ticker) return;
 
-      if (!stockOrder.includes(ticker)) stockOrder.push(ticker);
-      customGroups[ticker] = groupSelect.value;
-      input.value = '';
-      saveState();
-      render();
+      if (!stockOrder.includes(ticker)) {
+        stockOrder.push(ticker);
+        saveState();
+        render();
+      }
+      selectEl.value = '';
     }
 
     function removeStock(ticker) {
       stockOrder = stockOrder.filter(t => t !== ticker);
-      delete customGroups[ticker];
       saveState();
       render();
     }
@@ -287,7 +304,6 @@
 
     function saveState() {
       localStorage.setItem('stock_order', JSON.stringify(stockOrder));
-      localStorage.setItem('custom_groups', JSON.stringify(customGroups));
     }
 
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
