@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance as yf
 
 # Daftar emiten lengkap yang siap diproses oleh server
-TICKERS = [
+TICKERS = [ "^JKSE", 
     # Perbankan & Keuangan
     "BBCA.JK", "BBRI.JK", "BMRI.JK", "BBNI.JK", "BBTN.JK", "BRIS.JK", "ARTO.JK",
     # Energi, Tambang & Mineral
