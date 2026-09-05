@@ -4,27 +4,54 @@ import math
 import pandas as pd
 import yfinance as yf
 
-# Daftar emiten lengkap yang siap diproses oleh server
-TICKERS = [ "^JKSE", 
-    # Perbankan & Keuangan
-    "BBCA.JK", "BBRI.JK", "BMRI.JK", "BBNI.JK", "BBTN.JK", "BRIS.JK", "ARTO.JK",
-    # Energi, Tambang & Mineral
-    "ADRO.JK", "PTBA.JK", "ITMG.JK", "MEDC.JK", "PGAS.JK", "ANTM.JK", "MDKA.JK", "INCO.JK", "CUAN.JK", "BRPT.JK", "PTRO.JK",
-    # Konsumer & Ritel
-    "ICBP.JK", "INDF.JK", "UNVR.JK", "MYOR.JK", "AMRT.JK", "ACES.JK", "MAPI.JK", "KLBF.JK", "SIDO.JK",
-    # Infrastruktur & Telekomunikasi
-    "TLKM.JK", "ISAT.JK", "EXCL.JK", "TPIA.JK", "ASII.JK", "UNTR.JK", "INTP.JK", "SMGR.JK",
-    # Properti & Media
-    "BSDE.JK", "CTRA.JK", "PWON.JK", "EMTK.JK", "MNCN.JK"
+# Daftar Ticker Gabungan + Indeks Utama IHSG (^JKSE)
+RAW_TICKERS = [
+    "^JKSE", "KOTA", "MDIA", "INET", "WIFI", "DSSA", "BNBR", "JGLE", "BAPA", "ISAT", 
+    "ENRG", "BRMS", "CDIA", "CBRE", "KOKA", "AGAR", "KBLV", "DOOH", "BACH", "DEWA", 
+    "AADI", "MUTU", "ASII", "ARTO", "MYOR", "MDKA", "TINS", "WBSA", "BUVA", "DATA", 
+    "INCO", "ROCK", "BULL", "BYAN", "HUMI", "MTDL", "NIKL",
+
+    # Saham Perbankan & Bluechip Tambahan
+    "BBCA", "BBRI", "BMRI", "BBNI", "BBTN", "BRIS", "ADRO", "PTBA", "ITMG", 
+    "MEDC", "PGAS", "ANTM", "ICBP", "INDF", "UNVR", "AMRT", "ACES", "MAPI", 
+    "KLBF", "SIDO", "TLKM", "EXCL", "INTP", "SMGR", "BSDE", "CTRA", "PWON", "EMTK", "MNCN"
 ]
 
-# Pemetaan Otomatis Sektor/Jenis Emiten
+# Deduping otomatis dan format Yahoo Finance (.JK)
+UNIQUE_TICKERS = list(dict.fromkeys([t.strip().upper() for t in RAW_TICKERS]))
+TICKERS = [t if t.startswith("^") else f"{t}.JK" for t in UNIQUE_TICKERS]
+
+# Pemetaan Sektor Standar
 SECTOR_MAP = {
-    "BBCA": "Perbankan", "BBRI": "Perbankan", "BMRI": "Perbankan", "BBNI": "Perbankan", "BBTN": "Perbankan", "BRIS": "Perbankan", "ARTO": "Perbankan",
-    "ADRO": "Energi", "PTBA": "Energi", "ITMG": "Energi", "MEDC": "Energi", "PGAS": "Energi", "ANTM": "Tambang", "MDKA": "Tambang", "INCO": "Tambang", "CUAN": "Energi", "BRPT": "Energi", "PTRO": "Energi",
-    "ICBP": "Konsumer", "INDF": "Konsumer", "UNVR": "Konsumer", "MYOR": "Konsumer", "AMRT": "Ritel", "ACES": "Ritel", "MAPI": "Ritel", "KLBF": "Kesehatan", "SIDO": "Kesehatan",
-    "TLKM": "Telko", "ISAT": "Telko", "EXCL": "Telko", "TPIA": "Infrastruktur", "ASII": "Otomotif", "UNTR": "Infrastruktur", "INTP": "Semen", "SMGR": "Semen",
-    "BSDE": "Properti", "CTRA": "Properti", "PWON": "Properti", "EMTK": "Teknologi", "MNCN": "Media"
+    "^JKSE": "Indeks Utama",
+    
+    # Perbankan & Keuangan
+    "BBCA": "Perbankan", "BBRI": "Perbankan", "BMRI": "Perbankan", 
+    "BBNI": "Perbankan", "BBTN": "Perbankan", "BRIS": "Perbankan", 
+    "ARTO": "Perbankan", "BACH": "Keuangan",
+
+    # Energi & Tambang
+    "ADRO": "Energi", "PTBA": "Energi", "ITMG": "Energi", "MEDC": "Energi", 
+    "PGAS": "Energi", "ANTM": "Tambang", "MDKA": "Tambang", "INCO": "Tambang", 
+    "TINS": "Tambang", "BYAN": "Energi", "HUMI": "Energi", "BULL": "Energi", 
+    "NIKL": "Tambang", "DSSA": "Energi", "AADI": "Energi", "ENRG": "Energi",
+    "BRMS": "Tambang", "DEWA": "Energi", "BNBR": "Industri",
+
+    # Teknologi, Telko & Media
+    "TLKM": "Telko", "ISAT": "Telko", "EXCL": "Telko", "INET": "Teknologi", 
+    "WIFI": "Teknologi", "MTDL": "Teknologi", "EMTK": "Teknologi", "MNCN": "Media", 
+    "KBLV": "Media", "DOOH": "Media", "DATA": "Teknologi", "MDIA": "Media",
+
+    # Konsumer, Ritel & Otomotif
+    "ICBP": "Konsumer", "INDF": "Konsumer", "UNVR": "Konsumer", "MYOR": "Konsumer", 
+    "AMRT": "Ritel", "ACES": "Ritel", "MAPI": "Ritel", "KLBF": "Kesehatan", 
+    "SIDO": "Kesehatan", "ASII": "Otomotif", "MUTU": "Konsumer",
+
+    # Properti, Konstruksi & Transportasi
+    "BSDE": "Properti", "CTRA": "Properti", "PWON": "Properti", "KOTA": "Properti", 
+    "JGLE": "Properti", "BAPA": "Properti", "CBRE": "Transportasi", "KOKA": "Konstruksi", 
+    "AGAR": "Industri", "WBSA": "Industri", "BUVA": "Pariwisata", 
+    "ROCK": "Industri", "CDIA": "Industri"
 }
 
 def calculate_rsi(series, window=14):
@@ -48,7 +75,7 @@ def clean_val(val):
 
 def run_screener():
     results = []
-    print("Memulai analisis saham IHSG lengkap...")
+    print(f"Memulai analisis {len(TICKERS)} emiten...")
 
     for ticker in TICKERS:
         try:
@@ -62,18 +89,18 @@ def run_screener():
             low_prices = df['Low'].squeeze()
             volume_data = df['Volume'].squeeze()
 
-            # Indikator Dasar
+            # Indikator
             ma20_series = close_prices.rolling(window=20).mean()
             vol_ma20_series = volume_data.rolling(window=20).mean()
             rsi_series = calculate_rsi(close_prices)
-            rsi_ma_series = rsi_series.rolling(window=14).mean() # RSI Rata-rata
+            rsi_ma_series = rsi_series.rolling(window=14).mean()
             macd_series, macd_signal_series = calculate_macd(close_prices)
 
-            # Support & Resistance (20 hari)
+            # Support & Resistance
             resistance_20 = high_prices.iloc[-21:-1].max()
             support_20 = low_prices.iloc[-21:-1].min()
 
-            # Analisis Fibonacci Retracement (High/Low 6 Bulan)
+            # Fibonacci Retracement
             fib_high = high_prices.max()
             fib_low = low_prices.min()
             fib_diff = fib_high - fib_low
@@ -87,21 +114,18 @@ def run_screener():
             res_val = clean_val(resistance_20)
             sup_val = clean_val(support_20)
 
-            # Penentuan Area Fibo + RSI Rata-Rata
             fibo_rsi_status = "NORMAL"
             if last_close <= fib_786 and last_rsi_ma <= 35:
                 fibo_rsi_status = "OVER SOLD"
             elif last_close >= fib_236 and last_rsi_ma >= 65:
                 fibo_rsi_status = "OVER BOUGHT"
 
-            # Status RSI
             rsi_status = "NEUTRAL"
             if last_rsi < 35:
                 rsi_status = "BUY"
             elif last_rsi > 70:
                 rsi_status = "SELL"
 
-            # Status MACD
             last_macd = clean_val(macd_series.iloc[-1])
             last_macd_sig = clean_val(macd_signal_series.iloc[-1])
             macd_status = "NEUTRAL"
@@ -110,7 +134,6 @@ def run_screener():
             elif last_macd < last_macd_sig and last_macd < 0:
                 macd_status = "SELL"
 
-            # Volume
             last_vol = float(volume_data.iloc[-1])
             last_vol_ma = float(vol_ma20_series.iloc[-1])
             vol_ratio = clean_val(last_vol / last_vol_ma) if last_vol_ma > 0 else 1.0
@@ -121,14 +144,12 @@ def run_screener():
             elif vol_ratio < 0.7:
                 vol_status = "SELL"
 
-            # Status SnD
             snd_status = "NEUTRAL"
             if sup_val > 0 and last_close <= (sup_val * 1.02):
                 snd_status = "BUY"
             elif res_val > 0 and last_close >= (res_val * 0.98):
                 snd_status = "SELL"
 
-            # Signal Utama
             signal = "NEUTRAL"
             if last_close > res_val and res_val > 0:
                 signal = "SBR" if vol_ratio >= 1.5 else "Break R"
