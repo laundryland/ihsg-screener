@@ -14,14 +14,15 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
     body { background-color: #0f172a; color: #f8fafc; padding: 16px; padding-bottom: 40px; }
     
-    /* Header & Logo Adjustment */
-    header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; }
-    .header-title { display: flex; align-items: center; gap: 10px; }
-    .app-logo { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; }
-    h1 { font-size: 1.3rem; color: #38bdf8; letter-spacing: 0.5px; }
-    .update-time { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; }
+    /* Layout Header Kop: Logo Besar Pindah Pojok Kiri */
+    header { margin-bottom: 16px; }
+    .header-container { display: flex; align-items: center; justify-content: flex-start; gap: 14px; }
+    .app-logo { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid #334155; }
+    .header-text { display: flex; flex-direction: column; }
+    h1 { font-size: 1.35rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
+    .update-time { font-size: 0.78rem; color: #94a3b8; margin-top: 3px; }
 
-    /* Control Box & Toggle Dropdown */
+    /* Control Box & Menu Toggle */
     .control-box { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 16px; }
     .control-header { display: flex; justify-content: space-between; align-items: center; }
     .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
@@ -36,6 +37,7 @@
     .btn-danger { background: #dc2626; }
     .btn-action { padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; background: #334155; }
 
+    /* Tab Filter Sektor Standar (Kolom Konglomerat Dihapus) */
     .group-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
     .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
@@ -43,7 +45,7 @@
     .card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     .card { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; position: relative; }
     
-    /* Card Khusus IHSG Permanen */
+    /* Card IHSG Permanen */
     .card-ihsg { border: 2px solid #0284c7; background: #0f172a; }
     
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -96,14 +98,16 @@
 <body>
 
   <header>
-    <div class="header-title">
+    <div class="header-container">
       <img src="./icon-192x192.png" alt="Logo" class="app-logo">
-      <h1>IHSG SH4NDY's SCREENER</h1>
+      <div class="header-text">
+        <h1>IHSG SH4NDY's SCREENER</h1>
+        <p class="update-time" id="updateTime">Memuat data...</p>
+      </div>
     </div>
-    <p class="update-time" id="updateTime">Memuat data...</p>
   </header>
 
-  <!-- Control Box Dengan Toggle Sembunyi/Tampil Dropdown -->
+  <!-- Control Box Dengan Toggle Sembunyi/Tampil Menu -->
   <div class="control-box">
     <div class="control-header">
       <span style="font-size: 0.85rem; color: #94a3b8;">Menu Pilih Emiten</span>
@@ -116,17 +120,17 @@
     </div>
   </div>
 
-  <!-- Tab Kategori Sektor Resmi & Kelompok Konglomerat -->
+  <!-- Tab Kategori Sektor Industri -->
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
-    <div class="tab" onclick="filterGroup('Grup Bakrie', this)">Grup Bakrie</div>
-    <div class="tab" onclick="filterGroup('Prayogo Pangestu', this)">Prayogo Pangestu</div>
-    <div class="tab" onclick="filterGroup('Haji Isam', this)">Haji Isam</div>
     <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
     <div class="tab" onclick="filterGroup('Energi', this)">Energi</div>
     <div class="tab" onclick="filterGroup('Tambang', this)">Tambang</div>
     <div class="tab" onclick="filterGroup('Teknologi', this)">Teknologi</div>
+    <div class="tab" onclick="filterGroup('Media', this)">Media</div>
+    <div class="tab" onclick="filterGroup('Konsumer', this)">Konsumer</div>
     <div class="tab" onclick="filterGroup('Properti', this)">Properti</div>
+    <div class="tab" onclick="filterGroup('Industri', this)">Industri</div>
   </div>
 
   <div class="card-grid" id="stockGrid"></div>
@@ -164,7 +168,6 @@
       }
     }
 
-    // Menu Tampil/Sembunyi State
     function initMenuState() {
       const row = document.getElementById('dropdownRow');
       const btn = document.getElementById('toggleBtn');
@@ -197,7 +200,6 @@
       });
     }
 
-    // Langsung Tampil Saat Diklik (Tanpa Tombol Tambah)
     function autoAddStock(selectEl) {
       const ticker = selectEl.value;
       if (!ticker) return;
@@ -304,13 +306,13 @@
       const grid = document.getElementById('stockGrid');
       grid.innerHTML = '';
 
-      // 1. TAMPILKAN KARTU IHSG PERMANEN DI POJOK KIRI ATAS
+      // 1. Tampilkan Kartu IHSG Permanen di Pojok Kiri Atas Grid
       let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
         ticker: 'IHSG', price: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, snd_status: 'NEUTRAL', vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NEUTRAL'
       };
       grid.appendChild(createCardElement(ihsgData, true));
 
-      // 2. TAMPILKAN EMITEN PILIHAN USER
+      // 2. Tampilkan Emiten Pilihan User
       let orderedList = [];
       stockOrder.forEach(ticker => {
         let item = rawData.find(s => s.ticker === ticker);
