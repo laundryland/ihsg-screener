@@ -4,8 +4,9 @@ import math
 import pandas as pd
 import yfinance as yf
 
+# Daftar saham utama yang otomatis di-crawl oleh server
 TICKERS = [
-    # 1. Saham Konglomerat
+    # 1. Saham Konglomerat & Index
     "^JKSE", "AMRT.JK", "ASII.JK", "BRPT.JK", "CUAN.JK", "EMTK.JK", 
     "ICBP.JK", "INDF.JK", "ITMG.JK", "MDKA.JK", "PTBA.JK", "PTRO.JK", 
     "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK",
@@ -13,7 +14,7 @@ TICKERS = [
     # 2. Saham Perbankan
     "BBCA.JK", "BBNI.JK", "BBRI.JK", "BBTN.JK", "BMRI.JK", "BRIS.JK",
     
-    # 3. Saham Volatil & Sisanya
+    # 3. Saham Volatil & Watchlist Populer
     "ACES.JK", "ADRO.JK", "AKRA.JK", "ANTM.JK", "BUKA.JK", "CPIN.JK", 
     "EXCL.JK", "INTP.JK", "KLBF.JK", "MAPI.JK", "MDIA.JK", "MEDC.JK", 
     "PGAS.JK", "SIDO.JK", "SMGR.JK"
@@ -54,11 +55,13 @@ def run_screener():
             low_prices = df['Low'].squeeze()
             volume_data = df['Volume'].squeeze()
 
+            # Indikator
             ma20_series = close_prices.rolling(window=20).mean()
             vol_ma20_series = volume_data.rolling(window=20).mean()
             rsi_series = calculate_rsi(close_prices)
             macd_series, macd_signal_series = calculate_macd(close_prices)
 
+            # Support & Resistance (20 hari terakhir)
             resistance_20 = high_prices.iloc[-21:-1].max()
             support_20 = low_prices.iloc[-21:-1].min()
 
@@ -68,42 +71,42 @@ def run_screener():
             res_val = clean_val(resistance_20)
             sup_val = clean_val(support_20)
             
+            # Status RSI
+            rsi_status = "NEUTRAL"
             if last_rsi < 35:
                 rsi_status = "BUY"
             elif last_rsi > 70:
                 rsi_status = "SELL"
-            else:
-                rsi_status = "NEUTRAL"
 
+            # Status MACD
             last_macd = clean_val(macd_series.iloc[-1])
             last_macd_sig = clean_val(macd_signal_series.iloc[-1])
             
+            macd_status = "NEUTRAL"
             if last_macd > last_macd_sig and last_macd > 0:
                 macd_status = "BUY"
             elif last_macd < last_macd_sig and last_macd < 0:
                 macd_status = "SELL"
-            else:
-                macd_status = "NEUTRAL"
 
+            # Volume & Status Volume
             last_vol = float(volume_data.iloc[-1])
             last_vol_ma = float(vol_ma20_series.iloc[-1])
             vol_ratio = clean_val(last_vol / last_vol_ma) if last_vol_ma > 0 else 1.0
 
+            vol_status = "NEUTRAL"
             if vol_ratio >= 1.5:
                 vol_status = "BUY"
             elif vol_ratio < 0.7:
                 vol_status = "SELL"
-            else:
-                vol_status = "NEUTRAL"
 
+            # Status SnD (Support & Resistance Area)
+            snd_status = "NEUTRAL"
             if sup_val > 0 and last_close <= (sup_val * 1.02):
                 snd_status = "BUY"
             elif res_val > 0 and last_close >= (res_val * 0.98):
                 snd_status = "SELL"
-            else:
-                snd_status = "NEUTRAL"
 
-            # Penentuan Sinyal
+            # Signal Utama
             signal = "NEUTRAL"
             if last_close > res_val and res_val > 0:
                 signal = "SBR" if vol_ratio >= 1.5 else "Break R"
