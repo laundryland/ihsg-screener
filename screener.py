@@ -102,7 +102,15 @@ def run_screener():
             else:
                 vol_status = "NEUTRAL"
 
-            # Logika Signal
+            # Status SnD (Support & Resistance Area)
+            if sup_val > 0 and last_close <= (sup_val * 1.02):
+                snd_status = "BUY"
+            elif res_val > 0 and last_close >= (res_val * 0.98):
+                snd_status = "SELL"
+            else:
+                snd_status = "NEUTRAL"
+
+            # Logika Signal Singkatan
             signal = "NEUTRAL"
             if last_close > res_val and res_val > 0:
                 signal = "SBR" if vol_ratio >= 1.5 else "Break R"
@@ -123,6 +131,7 @@ def run_screener():
                 "ma20": last_ma20,
                 "support": sup_val,
                 "resistance": res_val,
+                "snd_status": snd_status,
                 "vol_ratio": vol_ratio,
                 "vol_status": vol_status,
                 "macd_status": macd_status,
