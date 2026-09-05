@@ -4,13 +4,14 @@ import math
 import pandas as pd
 import yfinance as yf
 
+# Daftar Ticker (Sudah ditambah CUAN, PTRO, MDIA & dihapus GOTO)
 TICKERS = [
     "^JKSE", "ACES.JK", "ADRO.JK", "AKRA.JK", "AMRT.JK", "ANTM.JK", 
     "ASII.JK", "BBNI.JK", "BBCA.JK", "BBRI.JK", "BBTN.JK", "BMRI.JK", 
-    "BRIS.JK", "BRPT.JK", "BUKA.JK", "CPIN.JK", "EMTK.JK", "EXCL.JK", 
-    "GOTO.JK", "ICBP.JK", "INDF.JK", "INTP.JK", "ITMG.JK", "KLBF.JK", 
-    "MAPI.JK", "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", "SIDO.JK", 
-    "SMGR.JK", "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK"
+    "BRIS.JK", "BRPT.JK", "BUKA.JK", "CPIN.JK", "CUAN.JK", "EMTK.JK", 
+    "EXCL.JK", "ICBP.JK", "INDF.JK", "INTP.JK", "ITMG.JK", "KLBF.JK", 
+    "MAPI.JK", "MDIA.JK", "MDKA.JK", "MEDC.JK", "PGAS.JK", "PTBA.JK", 
+    "PTRO.JK", "SIDO.JK", "SMGR.JK", "TLKM.JK", "TPIA.JK", "UNTR.JK", "UNVR.JK"
 ]
 
 def calculate_rsi(series, window=14):
@@ -48,7 +49,7 @@ def run_screener():
             low_prices = df['Low'].squeeze()
             volume_data = df['Volume'].squeeze()
 
-            # Indikator MA, RSI, MACD, & Volume MA20
+            # Indikator
             ma20_series = close_prices.rolling(window=20).mean()
             vol_ma20_series = volume_data.rolling(window=20).mean()
             rsi_series = calculate_rsi(close_prices)
@@ -64,18 +65,26 @@ def run_screener():
             res_val = clean_val(resistance_20)
             sup_val = clean_val(support_20)
             
+            # Perhitungan RSI Status
+            if last_rsi < 35:
+                rsi_status = "BUY"
+            elif last_rsi > 70:
+                rsi_status = "SELL"
+            else:
+                rsi_status = "NEUTRAL"
+
             # Perhitungan MACD Status
             last_macd = clean_val(macd_series.iloc[-1])
             last_macd_sig = clean_val(macd_signal_series.iloc[-1])
             
             if last_macd > last_macd_sig and last_macd > 0:
-                macd_status = "BUY"       # Bullish / Layak Beli (🟢)
+                macd_status = "BUY"
             elif last_macd < last_macd_sig and last_macd < 0:
-                macd_status = "SELL"      # Bearish / Jual (🔴)
+                macd_status = "SELL"
             else:
-                macd_status = "NEUTRAL"   # Netral (🟡)
+                macd_status = "NEUTRAL"
 
-            # Analisis Volume (Bandarmology)
+            # Volume (Bandarmology)
             last_vol = float(volume_data.iloc[-1])
             last_vol_ma = float(vol_ma20_series.iloc[-1])
             vol_ratio = clean_val(last_vol / last_vol_ma) if last_vol_ma > 0 else 1.0
@@ -86,9 +95,9 @@ def run_screener():
                 signal = "SBR" if vol_ratio >= 1.5 else "Break R"
             elif last_close < sup_val and sup_val > 0:
                 signal = "SBS" if vol_ratio >= 1.5 else "Break S"
-            elif last_rsi < 35 or last_close > last_ma20:
+            elif rsi_status == "BUY" or last_close > last_ma20:
                 signal = "BUY"
-            elif last_rsi > 70 or last_close < last_ma20:
+            elif rsi_status == "SELL" or last_close < last_ma20:
                 signal = "SELL"
 
             clean_name = ticker.replace(".JK", "").replace("^JKSE", "IHSG")
@@ -97,6 +106,7 @@ def run_screener():
                 "ticker": clean_name,
                 "price": last_close,
                 "rsi": last_rsi,
+                "rsi_status": rsi_status,
                 "ma20": last_ma20,
                 "support": sup_val,
                 "resistance": res_val,
