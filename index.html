@@ -51,19 +51,26 @@
     .sell { background: #991b1b; color: #fca5a5; }
     .neutral { background: #334155; color: #94a3b8; }
 
+    /* Layout Sub-Header (Grup & Tanda Seru) */
+    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+    
+    /* Style Tanda Seru */
+    .exclamation-mark { font-weight: 900; font-size: 0.85rem; letter-spacing: -1px; }
+    .exclamation-buy { color: #22c55e; }
+    .exclamation-sell { color: #ef4444; }
+    .exclamation-neutral { color: #64748b; }
+
     /* Indikator Bulatan Kecil */
     .dot-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
     .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
     .dot-neutral { background-color: #64748b; box-shadow: 0 0 3px #64748b; }
     .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
-    /* Warna Teks SnD & Tanda Seru */
+    /* Warna Teks SnD */
     .text-buy { color: #22c55e; font-weight: bold; }
     .text-sell { color: #ef4444; font-weight: bold; }
     .text-neutral { color: #94a3b8; }
-
-    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 6px; font-weight: 500; }
-    .excl-mark { font-weight: 900; letter-spacing: -1px; }
 
     .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; flex-wrap: wrap; }
 
@@ -274,6 +281,24 @@
         else if (stock.signal === 'BUY') badgeClass = 'buy';
         else if (stock.signal === 'SELL') badgeClass = 'sell';
 
+        // Logika Tanda Seru
+        let exclamationText = '!';
+        let exclamationClass = 'exclamation-neutral';
+
+        if (stock.signal === 'SBR' || stock.signal === 'BUY') {
+          exclamationText = '!!';
+          exclamationClass = 'exclamation-buy';
+        } else if (stock.signal === 'Break R') {
+          exclamationText = '!';
+          exclamationClass = 'exclamation-buy';
+        } else if (stock.signal === 'SBS' || stock.signal === 'SELL') {
+          exclamationText = '!!';
+          exclamationClass = 'exclamation-sell';
+        } else if (stock.signal === 'Break S') {
+          exclamationText = '!';
+          exclamationClass = 'exclamation-sell';
+        }
+
         // Bulatan Indikator RSI
         let rsiDotClass = 'dot-neutral';
         if (stock.rsi_status === 'BUY') rsiDotClass = 'dot-buy';
@@ -300,18 +325,6 @@
           sndTextClass = 'text-sell';
         }
 
-        // Tanda Seru pada Label Kolom Biru
-        let exclMark = '<span class="excl-mark text-neutral">!</span>';
-        if (stock.signal === 'SBR') {
-          exclMark = '<span class="excl-mark text-buy">!!</span>';
-        } else if (stock.signal === 'BUY' || stock.signal === 'Break R') {
-          exclMark = '<span class="excl-mark text-buy">!</span>';
-        } else if (stock.signal === 'SBS') {
-          exclMark = '<span class="excl-mark text-sell">!!</span>';
-        } else if (stock.signal === 'SELL' || stock.signal === 'Break S') {
-          exclMark = '<span class="excl-mark text-sell">!</span>';
-        }
-
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
@@ -319,7 +332,12 @@
             <span class="ticker">${stock.ticker}</span>
             <span class="badge ${badgeClass}">${stock.signal}</span>
           </div>
-          <span class="group-tag">${group} ${exclMark}</span>
+          
+          <div class="sub-header">
+            <span class="group-tag">${group}</span>
+            <span class="exclamation-mark ${exclamationClass}">${exclamationText}</span>
+          </div>
+
           <div class="price">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
           
           <!-- Baris Bulatan Indikator Utama -->
