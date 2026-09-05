@@ -100,7 +100,7 @@ def run_screener():
                 print(f"Data {clean_name} kurang / tidak tersedia. Dilewati.")
                 continue
 
-            # Menangani MultiIndex Column jika ada dari yfinance
+            # Menangani MultiIndex Column dari yfinance
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(0)
 
@@ -117,12 +117,11 @@ def run_screener():
             last_low = round(clean_val(low_prices.iloc[-1]))
 
             # --- KALKULASI INDIKATOR TEKNIKAL ---
-            # 1. Moving Average & Support/Resistance
             ma20 = clean_val(close_prices.rolling(window=20).mean().iloc[-1])
             support = round(clean_val(low_prices.rolling(window=20).min().iloc[-1]))
             resistance = round(clean_val(high_prices.rolling(window=20).max().iloc[-1]))
 
-            # 2. RSI & Status
+            # RSI & Status
             rsi_series = calculate_rsi(close_prices, 14)
             rsi_val = clean_val(rsi_series.iloc[-1], default=50)
             
@@ -132,21 +131,21 @@ def run_screener():
             elif rsi_val >= 62:
                 rsi_status = "SELL"
 
-            # 3. MACD & Status
+            # MACD & Status
             macd, macd_sig = calculate_macd(close_prices)
             macd_val = clean_val(macd.iloc[-1])
             macd_sig_val = clean_val(macd_sig.iloc[-1])
             
             macd_status = "BUY" if macd_val > macd_sig_val else "SELL"
 
-            # 4. Volume Ratio & Status
+            # Volume Ratio & Status
             vol_ma20 = clean_val(volumes.rolling(window=20).mean().iloc[-1], default=1)
             last_vol = clean_val(volumes.iloc[-1])
             vol_ratio = round(last_vol / vol_ma20, 2) if vol_ma20 > 0 else 1.0
             
             vol_status = "BUY" if vol_ratio >= 1.2 else ("SELL" if vol_ratio <= 0.8 else "NEUTRAL")
 
-            # 5. FIBO RSI Status
+            # FIBO RSI Status
             fibo_rsi_status = "NORMAL"
             if rsi_val <= 30:
                 fibo_rsi_status = "OVER SOLD"
@@ -154,8 +153,7 @@ def run_screener():
                 fibo_rsi_status = "OVER BOUGHT"
 
             # ==========================================
-            # PEMETAAN SINYAL LENGKAP:
-            # STRONG BUY, BUY, NETRAL, SELL, STRONG SELL
+            # EVALUASI SKOR INDIKATOR & PEMETAAN SINYAL
             # ==========================================
             buy_score = (1 if rsi_status == "BUY" else 0) + \
                         (1 if macd_status == "BUY" else 0) + \
@@ -167,40 +165,38 @@ def run_screener():
 
             signal = "NETRAL"
 
-            # Sinyal Beli
+            # Penentuan Sinyal Beli
             if (last_close >= resistance and vol_ratio > 1.2) or buy_score == 3:
                 signal = "STRONG BUY"
             elif buy_score >= 2 or (last_close > ma20 and macd_status == "BUY"):
                 signal = "BUY"
             
-            # Sinyal Jual
+            # Penentuan Sinyal Jual
             elif (last_close <= support and vol_ratio > 1.2) or sell_score == 3:
                 signal = "STRONG SELL"
             elif sell_score >= 2 or (last_close < support):
                 signal = "SELL"
 
             # ==========================================
-            # STRATEGI ENTRY, CUT LOSS, TAKE PROFIT
-            # (Set ke "Wait" jika kondisi belum layak Beli)
+            # ENTRY / CUT LOSS / TAKE PROFIT (LOGIKA "WAIT")
             # ==========================================
             if signal in ["STRONG BUY", "BUY"]:
                 entry_price = last_close
-                # Cut loss dipasang 2% di bawah level support
                 cut_loss = round(support * 0.98)
                 
-                # Menghitung Take Profit berdasarkan Risk-Reward Ratio (1:2)
                 risk = entry_price - cut_loss
                 if risk <= 0:
-                    risk = entry_price * 0.02  # Jarak risiko minimal 2%
+                    risk = entry_price * 0.02
                 
                 take_profit = round(entry_price + (risk * 2))
             else:
+                # Jika sinyal NETRAL, SELL, atau STRONG SELL
                 entry_price = "Wait"
                 cut_loss = "Wait"
                 take_profit = "Wait"
 
             # ==========================================
-            # OBJECT OUTPUT JSON
+            # STRUCTURED JSON OUTPUT
             # ==========================================
             stock_data = {
                 "ticker": clean_name,
@@ -222,7 +218,6 @@ def run_screener():
                 "entry_price": entry_price,
                 "cut_loss": cut_loss,
                 "take_profit": take_profit,
-                # Keterangan Gambar / Visual
                 "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
                 "image_source": "tupungato / Getty Images"
             }
@@ -232,13 +227,11 @@ def run_screener():
         except Exception as e:
             print(f"Gagal memproses {ticker_symbol}: {str(e)}")
 
-    # Format akhir JSON
     output_json = {
         "updated_at": datetime.now().isoformat(),
         "stocks": results
     }
 
-    # Simpan ke data.json
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(output_json, f, indent=2, ensure_ascii=False)
 
