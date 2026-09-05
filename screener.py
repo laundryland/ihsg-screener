@@ -180,6 +180,26 @@ def run_screener():
                 signal = "SELL"
 
             # ==========================================
+            # STRATEGI ENTRY, CUT LOSS, TAKE PROFIT
+            # (Set ke "Wait" jika kondisi belum layak Beli)
+            # ==========================================
+            if signal in ["STRONG BUY", "BUY"]:
+                entry_price = last_close
+                # Cut loss dipasang 2% di bawah level support
+                cut_loss = round(support * 0.98)
+                
+                # Menghitung Take Profit berdasarkan Risk-Reward Ratio (1:2)
+                risk = entry_price - cut_loss
+                if risk <= 0:
+                    risk = entry_price * 0.02  # Jarak risiko minimal 2%
+                
+                take_profit = round(entry_price + (risk * 2))
+            else:
+                entry_price = "Wait"
+                cut_loss = "Wait"
+                take_profit = "Wait"
+
+            # ==========================================
             # OBJECT OUTPUT JSON
             # ==========================================
             stock_data = {
@@ -198,7 +218,13 @@ def run_screener():
                 "vol_status": vol_status,
                 "macd_status": macd_status,
                 "fibo_rsi_status": fibo_rsi_status,
-                "signal": signal  # Mendukung STRONG BUY / BUY / NETRAL / SELL / STRONG SELL
+                "signal": signal,
+                "entry_price": entry_price,
+                "cut_loss": cut_loss,
+                "take_profit": take_profit,
+                # Keterangan Gambar / Visual
+                "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+                "image_source": "tupungato / Getty Images"
             }
 
             results.append(stock_data)
