@@ -1,425 +1,390 @@
 {
-    "updated_at": "2026-09-04 18:28:11",
+    "updated_at": "2026-09-05 03:06:09",
     "stocks": [
         {
             "ticker": "IHSG",
-            "price": 6667.89,
-            "rsi": 68.26,
-            "ma20": 6451.14,
+            "price": 6636.48,
+            "rsi": 71.89,
+            "ma20": 6465.41,
             "support": 6230.1,
-            "resistance": 6629.54,
-            "vol_ratio": 1.12,
-            "signal": "Breakout R"
+            "resistance": 6681.84,
+            "vol_ratio": 0.84,
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "ACES",
-            "price": 0.0,
-            "rsi": 52.38,
-            "ma20": 0.0,
+            "price": 358.0,
+            "rsi": 54.55,
+            "ma20": 357.3,
             "support": 348.0,
             "resistance": 368.0,
             "vol_ratio": 0.64,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "BUY"
         },
         {
             "ticker": "ADRO",
-            "price": 0.0,
-            "rsi": 67.09,
-            "ma20": 0.0,
+            "price": 2720.0,
+            "rsi": 65.43,
+            "ma20": 2610.0,
             "support": 2460.0,
             "resistance": 2860.0,
             "vol_ratio": 0.97,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "AKRA",
-            "price": 0.0,
-            "rsi": 50.0,
-            "ma20": 0.0,
+            "price": 1385.0,
+            "rsi": 47.54,
+            "ma20": 1398.25,
             "support": 1350.0,
             "resistance": 1455.0,
             "vol_ratio": 1.31,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "AMRT",
-            "price": 0.0,
-            "rsi": 46.38,
-            "ma20": 0.0,
+            "price": 1310.0,
+            "rsi": 44.44,
+            "ma20": 1370.25,
             "support": 1305.0,
             "resistance": 1455.0,
             "vol_ratio": 0.89,
-            "signal": "Breakout S"
+            "macd_status": "SELL",
+            "signal": "SELL"
         },
         {
             "ticker": "ANTM",
-            "price": 0.0,
-            "rsi": 56.9,
-            "ma20": 0.0,
+            "price": 3120.0,
+            "rsi": 54.1,
+            "ma20": 3117.5,
             "support": 2970.0,
             "resistance": 3290.0,
             "vol_ratio": 0.9,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "BUY"
         },
         {
             "ticker": "ASII",
-            "price": 0.0,
-            "rsi": 72.88,
-            "ma20": 0.0,
+            "price": 4900.0,
+            "rsi": 58.11,
+            "ma20": 4848.0,
             "support": 4720.0,
             "resistance": 5175.0,
             "vol_ratio": 1.01,
-            "signal": "Breakout S"
-        },
-        {
-            "ticker": "BBCA",
-            "price": 0.0,
-            "rsi": 77.46,
-            "ma20": 0.0,
-            "support": 6176.06,
-            "resistance": 6800.0,
-            "vol_ratio": 0.93,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "BUY"
         },
         {
             "ticker": "BBNI",
-            "price": 0.0,
-            "rsi": 78.95,
-            "ma20": 0.0,
+            "price": 3940.0,
+            "rsi": 76.27,
+            "ma20": 3709.0,
             "support": 3550.0,
             "resistance": 4000.0,
             "vol_ratio": 0.76,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
+        },
+        {
+            "ticker": "BBCA",
+            "price": 6700.0,
+            "rsi": 70.61,
+            "ma20": 6420.3,
+            "support": 6176.06,
+            "resistance": 6800.0,
+            "vol_ratio": 0.93,
+            "macd_status": "BUY",
+            "signal": "BUY"
+        },
+        {
+            "ticker": "BBRI",
+            "price": 3390.0,
+            "rsi": 72.88,
+            "ma20": 3192.5,
+            "support": 3030.0,
+            "resistance": 3430.0,
+            "vol_ratio": 0.78,
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "BBTN",
-            "price": 0.0,
-            "rsi": 62.07,
-            "ma20": 0.0,
+            "price": 1240.0,
+            "rsi": 56.25,
+            "ma20": 1223.0,
             "support": 1190.0,
             "resistance": 1260.0,
             "vol_ratio": 1.47,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "BMRI",
-            "price": 0.0,
-            "rsi": 78.43,
-            "ma20": 0.0,
+            "price": 4420.0,
+            "rsi": 72.73,
+            "ma20": 4222.0,
             "support": 4080.0,
             "resistance": 4460.0,
             "vol_ratio": 0.77,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "BRIS",
-            "price": 0.0,
-            "rsi": 58.06,
-            "ma20": 0.0,
+            "price": 1790.0,
+            "rsi": 54.55,
+            "ma20": 1788.75,
             "support": 1755.0,
             "resistance": 1850.0,
             "vol_ratio": 1.11,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "BUY"
         },
         {
             "ticker": "BRPT",
-            "price": 0.0,
-            "rsi": 41.86,
-            "ma20": 0.0,
+            "price": 1790.0,
+            "rsi": 40.91,
+            "ma20": 1846.5,
             "support": 1710.0,
             "resistance": 1965.0,
             "vol_ratio": 0.76,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "BUKA",
-            "price": 0.0,
-            "rsi": 53.57,
-            "ma20": 0.0,
+            "price": 115.0,
+            "rsi": 55.17,
+            "ma20": 113.4,
             "support": 104.0,
             "resistance": 125.0,
             "vol_ratio": 0.32,
-            "signal": "Breakout S"
+            "macd_status": "SELL",
+            "signal": "BUY"
         },
         {
             "ticker": "CPIN",
-            "price": 0.0,
-            "rsi": 63.64,
-            "ma20": 0.0,
+            "price": 3210.0,
+            "rsi": 58.33,
+            "ma20": 3071.0,
             "support": 2900.0,
             "resistance": 3320.0,
             "vol_ratio": 0.68,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "BUY"
         },
         {
             "ticker": "EMTK",
-            "price": 0.0,
-            "rsi": 60.61,
-            "ma20": 0.0,
+            "price": 515.0,
+            "rsi": 54.05,
+            "ma20": 520.0,
             "support": 492.0,
             "resistance": 565.0,
             "vol_ratio": 0.73,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "EXCL",
-            "price": 0.0,
-            "rsi": 57.14,
-            "ma20": 0.0,
+            "price": 2710.0,
+            "rsi": 55.0,
+            "ma20": 2704.0,
             "support": 2410.0,
             "resistance": 2930.0,
             "vol_ratio": 0.81,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "BUY"
         },
         {
             "ticker": "GOTO",
-            "price": 0.0,
+            "price": 50.0,
             "rsi": 0.0,
-            "ma20": 0.0,
+            "ma20": 50.0,
             "support": 50.0,
             "resistance": 50.0,
             "vol_ratio": 0.5,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "BUY"
         },
         {
             "ticker": "ICBP",
-            "price": 0.0,
-            "rsi": 42.22,
-            "ma20": 0.0,
+            "price": 7275.0,
+            "rsi": 38.78,
+            "ma20": 7610.0,
             "support": 7225.0,
             "resistance": 8000.0,
             "vol_ratio": 1.09,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "INDF",
-            "price": 0.0,
-            "rsi": 41.03,
-            "ma20": 0.0,
+            "price": 7225.0,
+            "rsi": 40.0,
+            "ma20": 7326.25,
             "support": 7075.0,
             "resistance": 7500.0,
             "vol_ratio": 0.8,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "INTP",
-            "price": 0.0,
-            "rsi": 61.7,
-            "ma20": 0.0,
+            "price": 5450.0,
+            "rsi": 54.72,
+            "ma20": 5475.0,
             "support": 5200.0,
             "resistance": 5675.0,
             "vol_ratio": 0.28,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "ITMG",
-            "price": 0.0,
-            "rsi": 70.91,
-            "ma20": 0.0,
+            "price": 26100.0,
+            "rsi": 69.64,
+            "ma20": 25336.25,
             "support": 24200.0,
             "resistance": 26775.0,
             "vol_ratio": 0.61,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "KLBF",
-            "price": 0.0,
-            "rsi": 43.75,
-            "ma20": 0.0,
+            "price": 775.0,
+            "rsi": 42.42,
+            "ma20": 794.0,
             "support": 750.0,
             "resistance": 835.0,
             "vol_ratio": 0.93,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "MAPI",
-            "price": 0.0,
-            "rsi": 40.26,
-            "ma20": 0.0,
+            "price": 1425.0,
+            "rsi": 41.03,
+            "ma20": 1496.25,
             "support": 1400.0,
             "resistance": 1700.0,
             "vol_ratio": 0.31,
-            "signal": "Breakout S"
+            "macd_status": "SELL",
+            "signal": "SELL"
         },
         {
             "ticker": "MDKA",
-            "price": 0.0,
-            "rsi": 61.82,
-            "ma20": 0.0,
+            "price": 2900.0,
+            "rsi": 59.65,
+            "ma20": 2928.0,
             "support": 2740.0,
             "resistance": 3180.0,
             "vol_ratio": 0.41,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "MEDC",
-            "price": 0.0,
-            "rsi": 69.77,
-            "ma20": 0.0,
+            "price": 1495.0,
+            "rsi": 70.45,
+            "ma20": 1378.75,
             "support": 1265.0,
             "resistance": 1515.0,
             "vol_ratio": 0.89,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "PGAS",
-            "price": 0.0,
-            "rsi": 60.98,
-            "ma20": 0.0,
+            "price": 1520.0,
+            "rsi": 55.56,
+            "ma20": 1517.75,
             "support": 1470.0,
             "resistance": 1570.0,
             "vol_ratio": 0.83,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "PTBA",
-            "price": 0.0,
-            "rsi": 90.77,
-            "ma20": 0.0,
+            "price": 2880.0,
+            "rsi": 89.39,
+            "ma20": 2491.5,
             "support": 2320.0,
             "resistance": 2930.0,
             "vol_ratio": 0.89,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "SIDO",
-            "price": 0.0,
-            "rsi": 62.5,
-            "ma20": 0.0,
+            "price": 356.0,
+            "rsi": 58.82,
+            "ma20": 352.3,
             "support": 344.0,
             "resistance": 362.0,
             "vol_ratio": 0.53,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "BUY"
         },
         {
             "ticker": "SMGR",
-            "price": 0.0,
-            "rsi": 70.07,
-            "ma20": 0.0,
+            "price": 1795.0,
+            "rsi": 70.5,
+            "ma20": 1585.0,
             "support": 1465.0,
             "resistance": 1840.0,
             "vol_ratio": 0.78,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "TLKM",
-            "price": 0.0,
-            "rsi": 44.44,
-            "ma20": 0.0,
+            "price": 2610.0,
+            "rsi": 47.37,
+            "ma20": 2609.5,
             "support": 2550.0,
             "resistance": 2730.0,
             "vol_ratio": 1.01,
-            "signal": "Breakout S"
+            "macd_status": "SELL",
+            "signal": "BUY"
         },
         {
             "ticker": "TPIA",
-            "price": 0.0,
-            "rsi": 45.28,
-            "ma20": 0.0,
+            "price": 1995.0,
+            "rsi": 44.04,
+            "ma20": 2022.25,
             "support": 1830.0,
             "resistance": 2270.0,
             "vol_ratio": 0.53,
-            "signal": "Breakout S"
+            "macd_status": "NEUTRAL",
+            "signal": "SELL"
         },
         {
             "ticker": "UNTR",
-            "price": 0.0,
-            "rsi": 72.13,
-            "ma20": 0.0,
+            "price": 24950.0,
+            "rsi": 67.01,
+            "ma20": 24063.75,
             "support": 23075.0,
             "resistance": 26000.0,
             "vol_ratio": 0.79,
-            "signal": "Breakout S"
+            "macd_status": "BUY",
+            "signal": "BUY"
         },
         {
             "ticker": "UNVR",
-            "price": 0.0,
-            "rsi": 37.25,
-            "ma20": 0.0,
+            "price": 1685.0,
+            "rsi": 33.93,
+            "ma20": 1764.0,
             "support": 1615.0,
             "resistance": 1845.0,
             "vol_ratio": 0.72,
-            "signal": "Breakout S"
-        },
-        {
-            "ticker": "MDIA",
-            "price": 0.0,
-            "rsi": 40.54,
-            "ma20": 0.0,
-            "support": 212.0,
-            "resistance": 304.0,
-            "vol_ratio": 2.52,
-            "signal": "Strong Breakout S"
-        },
-        {
-            "ticker": "ENRG",
-            "price": 0.0,
-            "rsi": 68.97,
-            "ma20": 0.0,
-            "support": 927.96,
-            "resistance": 1395.0,
-            "vol_ratio": 0.78,
-            "signal": "Breakout S"
-        },
-        {
-            "ticker": "BIPI",
-            "price": 0.0,
-            "rsi": 51.06,
-            "ma20": 0.0,
-            "support": 134.0,
-            "resistance": 164.0,
-            "vol_ratio": 0.44,
-            "signal": "Breakout S"
-        },
-        {
-            "ticker": "CDIA",
-            "price": 0.0,
-            "rsi": 48.72,
-            "ma20": 0.0,
-            "support": 640.0,
-            "resistance": 735.0,
-            "vol_ratio": 2.05,
-            "signal": "Strong Breakout S"
-        },
-        {
-            "ticker": "INDY",
-            "price": 0.0,
-            "rsi": 66.67,
-            "ma20": 0.0,
-            "support": 2430.0,
-            "resistance": 2870.0,
-            "vol_ratio": 0.57,
-            "signal": "Breakout S"
-        },
-        {
-            "ticker": "CBRE",
-            "price": 0.0,
-            "rsi": 63.33,
-            "ma20": 0.0,
-            "support": 655.0,
-            "resistance": 815.0,
-            "vol_ratio": 3.62,
-            "signal": "Strong Breakout S"
-        },
-        {
-            "ticker": "KOKA",
-            "price": 0.0,
-            "rsi": 41.33,
-            "ma20": 0.0,
-            "support": 168.0,
-            "resistance": 224.0,
-            "vol_ratio": 0.15,
-            "signal": "Breakout S"
-        },
-        {
-            "ticker": "DEWA",
-            "price": 0.0,
-            "rsi": 52.17,
-            "ma20": 0.0,
-            "support": 414.0,
-            "resistance": 496.0,
-            "vol_ratio": 0.58,
-            "signal": "Breakout S"
+            "macd_status": "SELL",
+            "signal": "BUY"
         }
     ]
 }
