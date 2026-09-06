@@ -115,6 +115,9 @@
     .sr-row:last-child { margin-bottom: 0; }
     .sr-res { color: #f87171; font-weight: bold; }
     .sr-sup { color: #4ade80; font-weight: bold; }
+    .sr-pivot-white { color: #ffffff; font-weight: bold; }
+    .sr-pivot-green { color: #4ade80; font-weight: bold; }
+    .sr-pivot-red { color: #f87171; font-weight: bold; }
 
     /* Badge Sinyal Utama */
     .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
@@ -417,10 +420,32 @@
         fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT';
       }
 
+      // Hitung Support, Resistan, dan Pivot Point
       const r1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
       const r2 = stock.resistance_2 || Math.round(r1 * 1.02);
+      const r3 = stock.resistance_3 || Math.round(r2 * 1.02);
       const s1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
       const s2 = stock.support_2 || Math.round(s1 * 0.98);
+      const s3 = stock.support_3 || Math.round(s2 * 0.98);
+
+      const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+
+      // Warna Pivot Point berdasarkan posisi harga terhadap pivot
+      let pivotClass = 'sr-pivot-white';
+      if (closePrice > pivotPoint) {
+        pivotClass = 'sr-pivot-green';
+      } else if (closePrice < pivotPoint) {
+        pivotClass = 'sr-pivot-red';
+      }
+
+      // Kelas Blink untuk Resistan dan Support jika tersentuh/terlewati oleh harga (Close atau High/Low)
+      const r3Class = (highPrice >= r3 || closePrice >= r3) ? 'blink-red' : 'sr-res';
+      const r2Class = (highPrice >= r2 || closePrice >= r2) ? 'blink-red' : 'sr-res';
+      const r1Class = (highPrice >= r1 || closePrice >= r1) ? 'blink-red' : 'sr-res';
+      
+      const s1Class = (lowPrice <= s1 || closePrice <= s1) ? 'blink-green' : 'sr-sup';
+      const s2Class = (lowPrice <= s2 || closePrice <= s2) ? 'blink-green' : 'sr-sup';
+      const s3Class = (lowPrice <= s3 || closePrice <= s3) ? 'blink-green' : 'sr-sup';
 
       const lightningHtml = `<span class="lightning-box ${lightningClass}">${getLightningIcons(stock.vol_ratio || 1.0)}</span>`;
 
@@ -483,10 +508,13 @@
         <div class="stat">Vol: ${stock.vol_ratio || 1.0}x Rerata | Trend: ${trendTextHtml}</div>
 
         <div class="sr-stat-box">
-          <div class="sr-row"><span>Resistan 2 (R2):</span> <span class="sr-res">Rp ${formatNum(r2)}</span></div>
-          <div class="sr-row"><span>Resistan 1 (R1):</span> <span class="sr-res">Rp ${formatNum(r1)}</span></div>
-          <div class="sr-row"><span>Support 1 (S1):</span> <span class="sr-sup">Rp ${formatNum(s1)}</span></div>
-          <div class="sr-row"><span>Support 2 (S2):</span> <span class="sr-sup">Rp ${formatNum(s2)}</span></div>
+          <div class="sr-row"><span>Resistan 3 (R3):</span> <span class="${r3Class}">Rp ${formatNum(r3)}</span></div>
+          <div class="sr-row"><span>Resistan 2 (R2):</span> <span class="${r2Class}">Rp ${formatNum(r2)}</span></div>
+          <div class="sr-row"><span>Resistan 1 (R1):</span> <span class="${r1Class}">Rp ${formatNum(r1)}</span></div>
+          <div class="sr-row"><span>Pivot Point (P):</span> <span class="${pivotClass}">Rp ${formatNum(pivotPoint)}</span></div>
+          <div class="sr-row"><span>Support 1 (S1):</span> <span class="${s1Class}">Rp ${formatNum(s1)}</span></div>
+          <div class="sr-row"><span>Support 2 (S2):</span> <span class="${s2Class}">Rp ${formatNum(s2)}</span></div>
+          <div class="sr-row"><span>Support 3 (S3):</span> <span class="${s3Class}">Rp ${formatNum(s3)}</span></div>
         </div>
 
         <div class="signal-badge-container">
