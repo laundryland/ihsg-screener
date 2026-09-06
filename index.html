@@ -68,36 +68,21 @@
 
     .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
 
-    /* Bulatan Warna Status Indikator (Memberi Spasi Lebih Luas) */
+    /* Bulatan Warna Status Indikator */
     .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
     .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
     .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
 
-    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 3px; margin-right: 12px; vertical-align: middle; }
+    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
     .dot-buy { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
     .dot-neutral { background-color: #64748b; }
     .dot-sell { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
 
-    .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 4px; display: flex; align-items: center; flex-wrap: wrap; }
+    .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; flex-wrap: wrap; }
     
     /* Box OHL & Prev Close */
     .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 5px; line-height: 1.4; }
     .ohl-row { display: flex; justify-content: space-between; }
-
-    /* Desain & Animasi Panah Pivot */
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.15; }
-    }
-    .pivot-container { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.72rem; }
-    .stacked-arrows { display: inline-flex; flex-direction: column; line-height: 0.8; font-size: 0.7rem; font-weight: bold; }
-    .arrow-blink-up { color: #22c55e; animation: blink 0.8s infinite; }
-    .arrow-blink-down { color: #ef4444; animation: blink 0.8s infinite; }
-    .arrow-white { color: #ffffff; }
-
-    .text-green-glow { color: #22c55e; text-shadow: 0 0 3px #22c55e; font-weight: bold; }
-    .text-red { color: #ef4444; font-weight: bold; }
-    .text-white { color: #ffffff; font-weight: bold; }
 
     /* Badge Sinyal Utama */
     .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
@@ -306,43 +291,6 @@
       let macdDot = stock.macd_status === 'BUY' ? 'dot-buy' : stock.macd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
       let volDot = stock.vol_status === 'BUY' ? 'dot-buy' : stock.vol_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
 
-      /* LOGIKA PANAH & SELISIH PIVOT TERBARU */
-      const highP = stock.high || closePrice;
-      const lowP = stock.low || closePrice;
-      const pivotVal = Math.round((highP + lowP + closePrice) / 3);
-      const diffVal = closePrice - pivotVal;
-
-      let stackedArrowHtml = '';
-      let priceTextClass = '';
-      let rightArrowSymbol = '➔';
-      let rightArrowClass = '';
-      let formattedDiff = '';
-
-      if (closePrice > pivotVal) {
-        stackedArrowHtml = `<div class="stacked-arrows"><span class="arrow-blink-up">▲</span><span class="arrow-white">▼</span></div>`;
-        priceTextClass = 'text-green-glow';
-        rightArrowClass = 'text-green-glow';
-        formattedDiff = `+${diffVal.toLocaleString('id-ID')}`;
-      } else if (closePrice < pivotVal) {
-        stackedArrowHtml = `<div class="stacked-arrows"><span class="arrow-white">▲</span><span class="arrow-blink-down">▼</span></div>`;
-        priceTextClass = 'text-red';
-        rightArrowClass = 'text-red';
-        formattedDiff = `${diffVal.toLocaleString('id-ID')}`;
-      } else {
-        stackedArrowHtml = `<div class="stacked-arrows"><span class="arrow-white">▲</span><span class="arrow-white">▼</span></div>`;
-        priceTextClass = 'text-white';
-        rightArrowClass = 'text-white';
-        formattedDiff = '0';
-      }
-
-      const pivotSectionHtml = `
-        <div class="pivot-container">
-          <span style="color: #94a3b8;">Pivot: ${pivotVal.toLocaleString('id-ID')}</span>
-          ${stackedArrowHtml}
-          <span>(<span class="${priceTextClass}">Rp ${closePrice.toLocaleString('id-ID')}</span> <span class="${rightArrowClass}">${rightArrowSymbol} ${formattedDiff}</span>)</span>
-        </div>
-      `;
-
       const lightningHtml = `<span class="lightning-box">${getLightningIcons(stock.vol_ratio || 1.0)}</span>`;
 
       const card = document.createElement('div');
@@ -380,8 +328,6 @@
           <div class="ohl-row"><span>Prev: ${prevClose}</span> <span>O: ${openPrice}</span></div>
           <div class="ohl-row"><span>H: ${stock.high || closePrice}</span> <span>L: ${stock.low || closePrice}</span></div>
         </div>
-
-        ${pivotSectionHtml}
 
         <div class="stat">
           RSI<span class="dot-indicator ${rsiDot}"></span>
@@ -458,6 +404,7 @@
       const grid = document.getElementById('stockGrid');
       grid.innerHTML = '';
 
+      // Tampilkan IHSG terlebih dahulu
       let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
         ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NETRAL'
       };
@@ -466,6 +413,7 @@
       let nonIhsgStocks = rawData.filter(s => s.ticker !== 'IHSG');
       let displayList = [];
 
+      // Gabungkan urutan tersimpan dengan emiten baru secara otomatis di halaman depan
       if (stockOrder.length > 0) {
         stockOrder.forEach(ticker => {
           let item = nonIhsgStocks.find(s => s.ticker === ticker);
