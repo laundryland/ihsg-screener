@@ -22,12 +22,12 @@
     h1 { font-size: 1.35rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
     .update-time { font-size: 0.78rem; color: #94a3b8; margin-top: 3px; font-weight: normal; text-transform: none; }
 
-    /* Tombol Pilihan Timeframe Berbagi di Header Right */
+    /* Tombol Timeframe */
     .timeframe-container { display: flex; gap: 6px; background: #1e293b; padding: 4px; border-radius: 8px; border: 1px solid #334155; }
     .tf-btn { background: transparent; color: #94a3b8; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
     .tf-btn.active { background: #0284c7; color: #fff; border: 1px solid #38bdf8; }
 
-    /* Sticky Control Box */
+    /* Control Box */
     .control-box { 
       position: sticky; 
       top: 10px; 
@@ -59,7 +59,7 @@
     .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    /* Grid Kartu Responsif */
+    /* Grid Kartu */
     .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
     
     .card { background: #1e293b; padding: 14px; border-radius: 12px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
@@ -68,11 +68,10 @@
     
     .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
 
-    /* Tombol Close Lebih Kecil di Pojok Kanan Atas */
-    .close-btn-top { position: absolute; top: 6px; right: 8px; background: transparent; border: none; color: #ff0055; font-size: 0.85rem; cursor: pointer; padding: 2px; z-index: 5; }
-    .close-btn-top:hover { color: #ff5588; }
+    .close-btn-top { position: absolute; top: 6px; right: 8px; background: transparent; border: none; color: #ef4444; font-size: 0.85rem; cursor: pointer; padding: 2px; z-index: 5; }
+    .close-btn-top:hover { color: #f87171; }
 
-    /* Kolom Gabungan Nama Emiten & Harga Sisi Kanan (Hitam Doff & Menyala) */
+    /* Kolom Gabungan Nama Emiten & Harga (Warna Terang Tanpa Glow) */
     .ticker-price-row {
       display: flex;
       justify-content: space-between;
@@ -83,42 +82,54 @@
       border-radius: 8px;
       margin-top: 8px;
       margin-bottom: 8px;
-      transition: all 0.3s;
     }
     .ticker-title { font-size: 1.15rem; color: #ffffff; display: flex; align-items: center; gap: 6px; }
     .price-display { font-size: 1.15rem; color: #ffffff; }
 
-    /* Status Warna Menyala Neon */
-    .bg-bullish { background-color: #002e12 !important; border: 1px solid #00ff66 !important; }
-    .bg-bullish .ticker-title, .bg-bullish .price-display { color: #00ff66 !important; text-shadow: 0 0 8px #00ff66; }
-    .bg-bearish { background-color: #330011 !important; border: 1px solid #ff0055 !important; }
-    .bg-bearish .ticker-title, .bg-bearish .price-display { color: #ff0055 !important; text-shadow: 0 0 8px #ff0055; }
+    .bg-bullish { background-color: #052e16 !important; border: 1px solid #22c55e !important; }
+    .bg-bullish .ticker-title, .bg-bullish .price-display { color: #22c55e !important; }
+    .bg-bearish { background-color: #450a0a !important; border: 1px solid #ef4444 !important; }
+    .bg-bearish .ticker-title, .bg-bearish .price-display { color: #ef4444 !important; }
 
-    /* Animation Blink Kedip */
     @keyframes blink-animation {
       0% { opacity: 1; }
-      50% { opacity: 0.2; }
+      50% { opacity: 0.3; }
       100% { opacity: 1; }
     }
     .blink-mode { animation: blink-animation 0.8s infinite; }
 
     /* Petir Volume */
     .lightning-box { font-size: 0.8rem; letter-spacing: -1px; }
-    .lightning-green { color: #00ff66; text-shadow: 0 0 5px #00ff66; }
-    .lightning-red { color: #ff0055; text-shadow: 0 0 5px #ff0055; }
+    .lightning-green { color: #22c55e; }
+    .lightning-red { color: #ef4444; }
     .lightning-white { color: #ffffff; }
 
-    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; }
+    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 6px; }
+    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; border: 1px solid #0284c7; }
 
-    /* Baris Persentase Open di Antara Label & Kotak Persentase */
+    /* Kolom Status Sinyal di Samping Label */
+    .signal-status-tag {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      color: #ffffff;
+      text-align: center;
+    }
+    .tag-strong-buy { background: #15803d; border-color: #22c55e; color: #4ade80; }
+    .tag-buy { background: #166534; border-color: #16a34a; color: #86efac; }
+    .tag-netral { background: #334155; border-color: #475569; color: #cbd5e1; }
+    .tag-sell { background: #991b1b; border-color: #dc2626; color: #fca5a5; }
+    .tag-strong-sell { background: #b91c1c; border-color: #ef4444; color: #f87171; }
+
+    /* Persentase */
     .percent-middle-row { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 6px 0; }
     .open-percent-badge { font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; background: #161c24; border: 1px solid #334155; }
-    .percent-green { color: #00ff66; text-shadow: 0 0 4px #00ff66; }
-    .percent-red { color: #ff0055; text-shadow: 0 0 4px #ff0055; }
+    .percent-green { color: #22c55e; }
+    .percent-red { color: #ef4444; }
     .percent-white { color: #ffffff; }
 
-    /* Baris Penutupan Kemarin Mengisi Kartu dari Kiri ke Kanan */
+    /* Penutupan Kemarin */
     .prev-close-container {
       display: flex;
       justify-content: space-between;
@@ -134,7 +145,7 @@
     .prev-label { color: #94a3b8; }
     .prev-val { color: #ffffff; font-size: 0.8rem; }
 
-    /* Kolom Hitam Doff Indikator & Volume */
+    /* Box Hitam Doff */
     .doff-box {
       background-color: #161c24;
       border: 1px solid #2d3748;
@@ -146,31 +157,33 @@
     .ind-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; margin-bottom: 4px; }
     .ind-row:last-child { margin-bottom: 0; }
     .ind-name { color: #94a3b8; }
-    .ind-val-green { color: #00ff66; text-shadow: 0 0 4px #00ff66; }
-    .ind-val-red { color: #ff0055; text-shadow: 0 0 4px #ff0055; }
+    .ind-val-green { color: #22c55e; }
+    .ind-val-red { color: #ef4444; }
     .ind-val-white { color: #ffffff; }
 
-    /* Baris Kotak 10% - 100% Gabungan Rata-rata Indikator */
+    /* Kotak-Kotak Persentase (KOTAK MENYALA / GLOWING) */
     .multi-box-bar { display: flex; align-items: center; justify-content: space-between; gap: 3px; margin-top: 8px; padding-top: 6px; border-top: 1px solid #2d3748; }
     .boxes-grid { display: flex; gap: 2px; flex-grow: 1; }
     .box-step { height: 10px; flex: 1; border-radius: 2px; background-color: #334155; }
-    .box-step.active-green { background-color: #00ff66; box-shadow: 0 0 5px #00ff66; }
-    .box-step.active-red { background-color: #ff0055; box-shadow: 0 0 5px #ff0055; }
+    
+    /* Warna Menyala Khusus Kotak Persentase */
+    .box-step.active-green { background-color: #00ff66; box-shadow: 0 0 6px #00ff66; }
+    .box-step.active-red { background-color: #ff0055; box-shadow: 0 0 6px #ff0055; }
     .bar-percent-text { font-size: 0.7rem; color: #ffffff; margin-left: 6px; min-width: 32px; text-align: right; }
 
-    /* Kolom Hitam Doff Warning */
+    /* Warning Box */
     .warning-box-doff {
       background-color: #161c24;
-      border: 1px solid #ff0055;
+      border: 1px solid #ef4444;
       padding: 6px;
       margin: 6px 0;
       border-radius: 6px;
       text-align: center;
     }
-    .warning-box-doff.green-border { border-color: #00ff66; }
+    .warning-box-doff.green-border { border-color: #22c55e; }
     .warning-text { font-size: 0.72rem; letter-spacing: 0.5px; }
 
-    /* Box OHL */
+    /* OHL Box */
     .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 5px; line-height: 1.4; }
     .ohl-row { display: flex; justify-content: space-between; }
 
@@ -178,8 +191,8 @@
     .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; color: #cbd5e1; }
     .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; align-items: center; }
     .sr-row:last-child { margin-bottom: 0; }
-    .sr-res { color: #ff0055; text-shadow: 0 0 3px #ff0055; }
-    .sr-sup { color: #00ff66; text-shadow: 0 0 3px #00ff66; }
+    .sr-res { color: #ef4444; }
+    .sr-sup { color: #22c55e; }
 
     .sr-pivot-separator {
       background-color: #0f172a;
@@ -190,25 +203,24 @@
     }
     .pivot-label-yellow { color: #eab308; }
     .pivot-price-blue { color: #38bdf8; }
-    .pivot-price-green { color: #00ff66; }
+    .pivot-price-green { color: #22c55e; }
     .pivot-price-yellow { color: #eab308; }
 
-    .pivot-symbol-down { color: #ff0055; font-size: 0.75rem; text-shadow: 0 0 4px #ff0055; margin-left: 4px; margin-right: auto; }
+    .pivot-symbol-down { color: #ef4444; font-size: 0.75rem; margin-left: 4px; margin-right: auto; }
     .pivot-symbol-equal { color: #ffffff; font-size: 0.75rem; margin-left: 4px; margin-right: auto; }
-    .pivot-symbol-up { color: #00ff66; font-size: 0.75rem; text-shadow: 0 0 4px #00ff66; margin-left: 4px; margin-right: auto; }
+    .pivot-symbol-up { color: #22c55e; font-size: 0.75rem; margin-left: 4px; margin-right: auto; }
 
-    /* Sinyal Utama (Hanya Kolom Warna Menyala) */
     .signal-badge-container { margin: 8px 0 4px 0; }
     .badge-bar { display: block; width: 100%; height: 12px; border-radius: 4px; }
-    .bg-signal-strong-buy { background: #00ff66; box-shadow: 0 0 10px #00ff66; }
-    .bg-signal-buy { background: #00b347; }
+    .bg-signal-strong-buy { background: #22c55e; }
+    .bg-signal-buy { background: #15803d; }
     .bg-signal-neutral { background: #475569; }
-    .bg-signal-sell { background: #b3003b; }
-    .bg-signal-strong-sell { background: #ff0055; box-shadow: 0 0 10px #ff0055; }
+    .bg-signal-sell { background: #b91c1c; }
+    .bg-signal-strong-sell { background: #ef4444; }
 
     .fibo-stat-box { margin-top: 4px; padding: 4px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; text-align: center; }
-    .fibo-oversold { color: #00ff66; border-color: #00ff66; }
-    .fibo-overbought { color: #ff0055; border-color: #ff0055; }
+    .fibo-oversold { color: #22c55e; border-color: #22c55e; }
+    .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
 
     /* Trading Plan Box */
@@ -231,7 +243,6 @@
           <p class="update-time" id="updateTime">Memuat data...</p>
         </div>
       </div>
-      <!-- Tombol Pilihan Berbagi Timeframe AI Gemini Pro -->
       <div class="timeframe-container">
         <button class="tf-btn active" onclick="setTimeframe('HARIAN', this)">HARIAN</button>
         <button class="tf-btn" onclick="setTimeframe('MINGGUAN', this)">MINGGUAN</button>
@@ -446,14 +457,23 @@
       let calcPercent = Math.min(100, Math.max(10, Math.round((absScore / totalMaxScore) * 100)));
       if (absScore === 0) calcPercent = 50;
 
-      // Gaya Visual Kolom Nama Emiten + Harga (Menyala & Blink)
+      // Status Sinyal Teks & Kolom di Samping Label
+      let signalTagText = 'NETRAL';
+      let signalTagClass = 'tag-netral';
+
+      if (score >= 4) { signalTagText = 'STRONG BUY'; signalTagClass = 'tag-strong-buy'; }
+      else if (score >= 1) { signalTagText = 'BUY'; signalTagClass = 'tag-buy'; }
+      else if (score <= -4) { signalTagText = 'STRONG SELL'; signalTagClass = 'tag-strong-sell'; }
+      else if (score <= -1) { signalTagText = 'SELL'; signalTagClass = 'tag-sell'; }
+
+      // Gaya Kolom Nama Emiten + Harga (Terang Tanpa Glow)
       let rowColorClass = '';
       if (score >= 4) rowColorClass = 'bg-bullish blink-mode';
       else if (score >= 1) rowColorClass = 'bg-bullish';
       else if (score <= -4) rowColorClass = 'bg-bearish blink-mode';
       else if (score <= -1) rowColorClass = 'bg-bearish';
 
-      // Generate 10 Kotak Daya Beli/Jual (Tiap Kotak 10%)
+      // 10 Kotak Daya Beli/Jual (Tetap Warna Menyala Glow Khusus Kotak Ini)
       let boxesHtml = '';
       let boxCount = Math.round(calcPercent / 10);
       let activeBoxClass = score >= 0 ? 'active-green' : 'active-red';
@@ -472,7 +492,7 @@
       if (vRatio >= 1.2 || volStatus === 'BUY') lightningClass = 'lightning-green';
       else if (vRatio <= 0.8 || volStatus === 'SELL') lightningClass = 'lightning-red';
 
-      // Sinyal Warna Menyala Kolom Utama (Tanpa Teks Buy/Sell)
+      // Sinyal Warna Kolom Utama
       let signalBadgeBg = 'bg-signal-neutral';
       if (score >= 4) signalBadgeBg = 'bg-signal-strong-buy';
       else if (score >= 1) signalBadgeBg = 'bg-signal-buy';
@@ -525,6 +545,10 @@
 
       const lightningHtml = `<span class="lightning-box ${lightningClass}">${getLightningIcons(stock.vol_ratio || 1.0)}</span>`;
 
+      // Status Kondisi Khusus IHSG
+      let ihsgStatusTagText = closePrice > prevClose ? 'NAIK' : closePrice < prevClose ? 'TURUN' : 'FLAT';
+      let ihsgStatusTagClass = closePrice > prevClose ? 'tag-buy' : closePrice < prevClose ? 'tag-sell' : 'tag-netral';
+
       const card = document.createElement('div');
       card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
       card.dataset.ticker = stock.ticker;
@@ -535,23 +559,24 @@
 
         <div class="sub-header">
           <span class="group-tag">${group}</span>
+          <span class="signal-status-tag ${isIHSG ? ihsgStatusTagClass : signalTagClass}">${isIHSG ? ihsgStatusTagText : signalTagText}</span>
         </div>
 
-        <!-- Kolom Gabungan Nama Emiten Sisi Kanan Harga Doff Menyala -->
+        <!-- Kolom Nama Emiten Sisi Kanan Harga -->
         <div class="ticker-price-row ${rowColorClass}">
           <div class="ticker-title">
-            ${stock.ticker} ${isIHSG ? '📌' : ''} ${lightningHtml}
+            ${stock.ticker} ${isIHSG ? '📌' : ''} ${!isIHSG ? lightningHtml : ''}
           </div>
           <div class="price-display">RP ${formatNum(closePrice)}</div>
         </div>
 
-        <!-- Baris Prosentase Selisih di Antara Label Kategori & Kotak Sinyal -->
+        <!-- Baris Prosentase Selisih -->
         <div class="percent-middle-row">
           <span class="open-percent-badge ${percentClass}">${openPercentStr}</span>
           <span style="font-size:0.7rem; color:#94a3b8;">TIMEFRAME: ${currentTimeframe}</span>
         </div>
 
-        <!-- Penutupan Kemarin Memenuhi Kartu dari Kiri ke Kanan -->
+        <!-- Penutupan Kemarin -->
         <div class="prev-close-container">
           <span class="prev-label">PENUTUPAN KEMARIN</span>
           <span class="prev-val">RP ${formatNum(prevClose)}</span>
@@ -562,6 +587,18 @@
           <div class="ohl-row"><span>HIGH: ${formatNum(highPrice)}</span> <span>LOW: ${formatNum(lowPrice)}</span></div>
         </div>
 
+        ${isIHSG ? `
+          <!-- Kolom Kotak Persentase Khusus Kartu IHSG -->
+          <div class="doff-box">
+            <div class="multi-box-bar" style="margin-top:0; padding-top:0; border-top:none;">
+              <div class="boxes-grid">
+                ${boxesHtml}
+              </div>
+              <span class="bar-percent-text">${calcPercent}%</span>
+            </div>
+          </div>
+        ` : ''}
+
         ${!isIHSG ? `
           <!-- Kolom Hitam Doff Indikator -->
           <div class="doff-box">
@@ -571,7 +608,7 @@
             <div class="ind-row"><span class="ind-name">EMA</span><span class="${emaStatus === 'BUY' ? 'ind-val-green' : emaStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white'}">${emaStatus}</span></div>
             <div class="ind-row"><span class="ind-name">TREND</span><span class="${trendStatus === 'BULLISH' ? 'ind-val-green' : trendStatus === 'BEARISH' ? 'ind-val-red' : 'ind-val-white'}">${trendStatus}</span></div>
             
-            <!-- Baris Kotak 10% - 100% Gabungan Rata-rata -->
+            <!-- Baris Kotak 10% - 100% Menyala -->
             <div class="multi-box-bar">
               <div class="boxes-grid">
                 ${boxesHtml}
@@ -604,7 +641,7 @@
             <div class="sr-row"><span>SUPPORT 3 (S3):</span> <span class="sr-sup">RP ${formatNum(s3)}</span></div>
           </div>
 
-          <!-- Sinyal Utama (Hanya Bar Warna Menyala Tanpa Teks Buy/Sell) -->
+          <!-- Bar Warna Sinyal -->
           <div class="signal-badge-container">
             <div class="badge-bar ${signalBadgeBg}"></div>
           </div>
