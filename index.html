@@ -105,16 +105,11 @@
     /* Baris Penutupan Kemarin tepat di bawah kotak persentase */
     .prev-close-row { text-align: right; font-size: 0.68rem; color: #94a3b8; margin-bottom: 6px; }
 
-    /* Bulatan Warna Status Indikator */
-    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
-    .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
-    .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
-
-    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 2px; margin-right: 6px; vertical-align: middle; }
-    .dot-buy { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
-    .dot-neutral { background-color: #64748b; }
-    .dot-sell { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
-    .dot-sideways { background-color: #ffffff; box-shadow: 0 0 4px #ffffff; }
+    /* Teks Indikator Berwarna & Bold */
+    .ind-text { font-weight: bold; margin-left: 2px; margin-right: 6px; }
+    .text-green { color: #22c55e; }
+    .text-red { color: #ef4444; }
+    .text-white { color: #ffffff; }
 
     .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; flex-wrap: wrap; }
     
@@ -141,7 +136,17 @@
     /* Box OHL & Prev Close */
     .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 5px; line-height: 1.4; position: relative; }
     .ohl-row { display: flex; justify-content: space-between; }
-    .warning-text { text-align: center; font-size: 0.72rem; font-weight: 800; margin: 3px 0; letter-spacing: 0.5px; }
+
+    /* Kolom Hitam Doff untuk Warning */
+    .warning-box-doff {
+      background-color: #161c24;
+      border: 1px solid #2d3748;
+      padding: 6px;
+      margin: 6px 0;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .warning-text { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.5px; }
 
     /* Support & Resistance Box */
     .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; color: #cbd5e1; }
@@ -163,8 +168,10 @@
     .pivot-price-green { color: #4ade80; font-weight: bold; }
     .pivot-price-yellow { color: #eab308; font-weight: bold; }
 
-    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; font-weight: bold; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
-    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; font-weight: bold; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
+    /* Simbol Tunggal Pivot */
+    .pivot-symbol-down { color: #ef4444; font-size: 0.75rem; font-weight: bold; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
+    .pivot-symbol-equal { color: #ffffff; font-size: 0.75rem; font-weight: bold; margin-left: 4px; margin-right: auto; }
+    .pivot-symbol-up { color: #4ade80; font-size: 0.75rem; font-weight: bold; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
 
     /* Badge Sinyal Utama */
     .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
@@ -180,7 +187,7 @@
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
 
-    /* Trading Plan Box dengan Bulatan Merah / Hijau */
+    /* Trading Plan Box */
     .trading-plan-box { margin-top: 8px; padding: 8px 10px; background: #0f172a; border-radius: 8px; border: 1px dashed #475569; font-size: 0.72rem; }
     .plan-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
     .plan-row:last-child { margin-bottom: 0; }
@@ -313,7 +320,6 @@
       selectEl.value = '';
     }
 
-    /* Fitur Pencarian Emiten dengan Efek Berkedip & Scroll */
     function searchStock(query) {
       const cleanQuery = query.trim().toUpperCase();
       if (!cleanQuery) return;
@@ -340,7 +346,7 @@
         if (cardEl) {
           cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
           cardEl.classList.remove('highlight-card');
-          void cardEl.offsetWidth; // Trigger reflow untuk reset animasi
+          void cardEl.offsetWidth;
           cardEl.classList.add('highlight-card');
         }
       }, 100);
@@ -363,7 +369,6 @@
       const highPrice = stock.high ?? closePrice;
       const lowPrice = stock.low ?? closePrice;
 
-      // Hitung % dari Open Market
       let openPercentVal = 0;
       if (openPrice > 0) {
         openPercentVal = ((closePrice - openPrice) / openPrice) * 100;
@@ -382,58 +387,65 @@
       // Evaluasi 6 Indikator
       let score = 0;
 
+      // Helper Teks Indikator (Tanpa Bulatan, Teks Bold)
+      function getIndText(status) {
+        if (status === 'BUY') return '<span class="ind-text text-green">BUY</span>';
+        if (status === 'SELL') return '<span class="ind-text text-red">SELL</span>';
+        return '<span class="ind-text text-white">NEUTRAL</span>';
+      }
+
       // 1. RSI
       let rsiStatus = stock.rsi_status || 'NEUTRAL';
-      let rsiDot = 'dot-neutral';
-      if (rsiStatus === 'BUY') { score += 1; rsiDot = 'dot-buy'; }
-      else if (rsiStatus === 'SELL') { score -= 1; rsiDot = 'dot-sell'; }
+      if (rsiStatus === 'BUY') score += 1;
+      else if (rsiStatus === 'SELL') score -= 1;
+      let rsiText = getIndText(rsiStatus);
 
       // 2. MACD
       let macdStatus = stock.macd_status || 'NEUTRAL';
-      let macdDot = 'dot-neutral';
-      if (macdStatus === 'BUY') { score += 1; macdDot = 'dot-buy'; }
-      else if (macdStatus === 'SELL') { score -= 1; macdDot = 'dot-sell'; }
+      if (macdStatus === 'BUY') score += 1;
+      else if (macdStatus === 'SELL') score -= 1;
+      let macdText = getIndText(macdStatus);
 
       // 3. Volume
       let volStatus = stock.vol_status || 'NEUTRAL';
-      let volDot = 'dot-neutral';
-      if (volStatus === 'BUY') { score += 1; volDot = 'dot-buy'; }
-      else if (volStatus === 'SELL') { score -= 1; volDot = 'dot-sell'; }
+      if (volStatus === 'BUY') score += 1;
+      else if (volStatus === 'SELL') score -= 1;
+      let volText = getIndText(volStatus);
 
       // 4. EMA
       let emaStatus = stock.ema_status || (closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL');
-      let emaDot = 'dot-neutral';
-      if (emaStatus === 'BUY') { score += 1; emaDot = 'dot-buy'; }
-      else if (emaStatus === 'SELL') { score -= 1; emaDot = 'dot-sell'; }
+      if (emaStatus === 'BUY') score += 1;
+      else if (emaStatus === 'SELL') score -= 1;
+      let emaText = getIndText(emaStatus);
 
       // 5. FIBO / RSI Status
       let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
       if (fiboStatus === 'OVER SOLD') score += 1;
       else if (fiboStatus === 'OVER BOUGHT') score -= 1;
 
-      // 6. Indikator Trend + Dot Warna
+      // 6. Trend Status
       let rawTrend = (stock.trend_status || '').toUpperCase();
       let trendStatus = 'SIDEWAYS';
-      let trendDot = 'dot-sideways';
-      let trendTextHtml = 'SIDEWAYS';
+      let trendTextHtml = '<span class="ind-text text-white">SIDEWAYS</span>';
 
       if (rawTrend.includes('BULL') || rawTrend === 'BUY') {
         score += 1;
-        trendDot = 'dot-buy';
         trendStatus = 'BULLISH';
-        trendTextHtml = '<span class="blink-green">BULLISH</span>';
+        trendTextHtml = '<span class="ind-text text-green blink-green">BULLISH</span>';
       } else if (rawTrend.includes('BEAR') || rawTrend === 'SELL') {
         score -= 1;
-        trendDot = 'dot-sell';
         trendStatus = 'BEARISH';
-        trendTextHtml = '<span class="blink-red">BEARISH</span>';
+        trendTextHtml = '<span class="ind-text text-red blink-red">BEARISH</span>';
       } else {
         if (closePrice > prevClose) {
-          trendDot = 'dot-buy'; trendStatus = 'BULLISH'; trendTextHtml = '<span class="blink-green">BULLISH</span>';
+          trendStatus = 'BULLISH';
+          trendTextHtml = '<span class="ind-text text-green blink-green">BULLISH</span>';
         } else if (closePrice < prevClose) {
-          trendDot = 'dot-sell'; trendStatus = 'BEARISH'; trendTextHtml = '<span class="blink-red">BEARISH</span>';
+          trendStatus = 'BEARISH';
+          trendTextHtml = '<span class="ind-text text-red blink-red">BEARISH</span>';
         } else {
-          trendDot = 'dot-sideways'; trendStatus = 'SIDEWAYS'; trendTextHtml = 'SIDEWAYS';
+          trendStatus = 'SIDEWAYS';
+          trendTextHtml = '<span class="ind-text text-white">SIDEWAYS</span>';
         }
       }
 
@@ -446,7 +458,7 @@
         lightningClass = 'lightning-red';
       }
 
-      // Tentukan Keputusan AI Sinyal Utama
+      // Keputusan Sinyal Utama
       let signalText = 'NETRAL';
       let badgeClass = 'neutral';
       let percentage = '50%';
@@ -476,19 +488,18 @@
         }
       }
 
-      // Deteksi WARNING! Teks Baru
+      // Deteksi WARNING! (Diubah ke Huruf Besar Semua)
       let warningHtml = '';
       const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || trendStatus === 'BEARISH' || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
       const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || trendStatus === 'BULLISH' || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
 
       if (trendStatus === 'BEARISH' || isReversalDown) {
-        warningHtml = '<div class="warning-text blink-red">⚠️ WARNING! Trend TURUN!</div>';
+        warningHtml = '<div class="warning-box-doff"><div class="warning-text blink-red">⚠️ WARNING! TREND TURUN!</div></div>';
       } else if (trendStatus === 'BULLISH' || isReversalUp) {
-        warningHtml = '<div class="warning-text blink-green">⚠️ WARNING! Trend NAIK!</div>';
+        warningHtml = '<div class="warning-box-doff"><div class="warning-text blink-green">⚠️ WARNING! TREND NAIK!</div></div>';
       }
 
       const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
-      const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
 
       const entryVal = isReadyToBuy ? `Rp ${formatNum(stock.entry_price || closePrice)}` : 'Wait';
       const tpVal = isReadyToBuy ? `Rp ${formatNum(stock.take_profit || stock.resistance || stock.resistance_1)}` : 'Wait';
@@ -512,18 +523,16 @@
 
       const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
 
-      // Logika Pivot Point Baru:
-      // - Tulisan Pivot Point (P) selalu kuning (pivot-label-yellow)
-      // - Ikon & Warna Harga berdasarkan harga sekarang (closePrice) vs harga pivot (pivotPoint)
+      // Simbol Pivot tunggal: Merah (▼) jika < Pivot, Kotak Putih (■) jika = Pivot, Panah Atas Hijau (▲) jika > Pivot
       let pivotPriceClass = 'pivot-price-yellow';
-      let pivotArrowHtml = '';
+      let pivotSymbolHtml = '<span class="pivot-symbol-equal">■</span>';
 
       if (closePrice < pivotPoint) {
         pivotPriceClass = 'pivot-price-blue';
-        pivotArrowHtml = '<span class="pivot-arrow-down">▼▼</span>';
+        pivotSymbolHtml = '<span class="pivot-symbol-down">▼</span>';
       } else if (closePrice > pivotPoint) {
         pivotPriceClass = 'pivot-price-green';
-        pivotArrowHtml = '<span class="pivot-arrow-up">▲▲</span>';
+        pivotSymbolHtml = '<span class="pivot-symbol-up">▲</span>';
       }
 
       // Kedip-kedip jika tersentuh levelnya
@@ -581,18 +590,21 @@
         
         <div class="ohl-stat">
           <div class="ohl-row"><span>Prev: ${formatNum(prevClose)}</span> <span>O: ${formatNum(openPrice)}</span></div>
-          ${warningHtml}
           <div class="ohl-row"><span>H: ${formatNum(highPrice)}</span> <span>L: ${formatNum(lowPrice)}</span></div>
         </div>
 
+        <!-- Indikator dengan Teks Bold tanpa Bulatan -->
         <div class="stat">
-          RSI<span class="dot-indicator ${rsiDot}"></span>
-          MACD<span class="dot-indicator ${macdDot}"></span>
-          VOL<span class="dot-indicator ${volDot}"></span>
-          EMA<span class="dot-indicator ${emaDot}"></span>
-          TREND<span class="dot-indicator ${trendDot}"></span>
+          RSI: ${rsiText}
+          MACD: ${macdText}
+          VOL: ${volText}
+          EMA: ${emaText}
+          TREND: ${trendTextHtml}
         </div>
         
+        <!-- WARNING BOX Hitam Doff Diletakkan Tepat Dibawah Indikator -->
+        ${warningHtml}
+
         <div class="stat">Vol: ${stock.vol_ratio || 1.0}x Rerata | Trend: ${trendTextHtml}</div>
 
         <div class="sr-stat-box">
@@ -602,7 +614,7 @@
           
           <div class="sr-row sr-pivot-separator">
             <span class="pivot-label-yellow">Pivot Point (P):</span>
-            ${pivotArrowHtml}
+            ${pivotSymbolHtml}
             <span class="${pivotPriceClass}">Rp ${formatNum(pivotPoint)}</span>
           </div>
 
@@ -622,15 +634,15 @@
         ${!isIHSG ? `
           <div class="trading-plan-box">
             <div class="plan-row">
-              <span class="plan-label">${statusDotHtml} ENTRY:</span>
+              <span class="plan-label">ENTRY:</span>
               <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${entryVal}</span>
             </div>
             <div class="plan-row">
-              <span class="plan-label">${statusDotHtml} TAKE PROFIT:</span>
+              <span class="plan-label">TAKE PROFIT:</span>
               <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${tpVal}</span>
             </div>
             <div class="plan-row">
-              <span class="plan-label">${statusDotHtml} CUT LOSS:</span>
+              <span class="plan-label">CUT LOSS:</span>
               <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${clVal}</span>
             </div>
           </div>
