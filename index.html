@@ -158,9 +158,10 @@
       margin: 4px -6px;
       border-radius: 4px;
     }
+    /* Style Kondisional Pivot Point */
     .sr-pivot-yellow { color: #eab308; font-weight: bold; }
-    .sr-pivot-green { color: #4ade80; font-weight: bold; }
-    .sr-pivot-pink { color: #f618a9; font-weight: bold; }
+    .pivot-above { color: #4ade80; font-weight: bold; }
+    .pivot-below { color: #618a90; font-weight: bold; }
 
     /* Badge Sinyal Utama */
     .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
@@ -508,12 +509,19 @@
 
       const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
 
-      // Warna Kata "Pivot Point (P)" berdasarkan harga
-      let pivotClass = 'sr-pivot-yellow';
+      // Pembuatan tampilan Pivot Point dengan logika warna dan ikon baru
+      let pivotLabelHtml = '';
+      let pivotValueHtml = '';
+
       if (closePrice > pivotPoint) {
-        pivotClass = 'sr-pivot-green';
+        pivotLabelHtml = `<span class="pivot-above"><span style="color: #22c55e;">▲</span> Pivot Point (P):</span>`;
+        pivotValueHtml = `<span class="pivot-above">Rp ${formatNum(pivotPoint)}</span>`;
       } else if (closePrice < pivotPoint) {
-        pivotClass = 'sr-pivot-pink';
+        pivotLabelHtml = `<span class="pivot-below"><span class="blink-red">▼</span> Pivot Point (P):</span>`;
+        pivotValueHtml = `<span class="pivot-below">Rp ${formatNum(pivotPoint)}</span>`;
+      } else {
+        pivotLabelHtml = `<span class="sr-pivot-yellow">Pivot Point (P):</span>`;
+        pivotValueHtml = `<span class="sr-pivot-yellow">Rp ${formatNum(pivotPoint)}</span>`;
       }
 
       // Kedip-kedip jika tersentuh levelnya
@@ -591,8 +599,8 @@
           <div class="sr-row"><span>Resistan 1 (R1):</span> <span class="${r1Class}">Rp ${formatNum(r1)}</span></div>
           
           <div class="sr-row sr-pivot-separator">
-            <span class="${pivotClass}">Pivot Point (P):</span>
-            <span class="${pivotClass}">Rp ${formatNum(pivotPoint)}</span>
+            ${pivotLabelHtml}
+            ${pivotValueHtml}
           </div>
 
           <div class="sr-row"><span>Support 1 (S1):</span> <span class="${s1Class}">Rp ${formatNum(s1)}</span></div>
