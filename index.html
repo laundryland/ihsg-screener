@@ -33,7 +33,7 @@
     .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
 
-    /* Grid Kartu Responsif */
+    /* Grid Kartu Lebar & Responsif */
     .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
     
     .card { background: #1e293b; padding: 14px; border-radius: 12px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
@@ -68,7 +68,7 @@
 
     .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
 
-    /* Bulatan Warna Status Indikator */
+    /* Indikator Titik Bulat */
     .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
     .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
     .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
@@ -242,6 +242,7 @@
       if (closePrice > prevClose) priceColorClass = 'price-up';
       else if (closePrice < prevClose) priceColorClass = 'price-down';
 
+      // Pengecekan Kesiapan Beli (Gabungan Indikator)
       const isReadyToBuy = stock.signal === 'STRONG BUY' || stock.signal === 'BUY';
       const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
 
@@ -404,31 +405,18 @@
       const grid = document.getElementById('stockGrid');
       grid.innerHTML = '';
 
-      // Tampilkan IHSG terlebih dahulu
       let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
         ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NETRAL'
       };
       grid.appendChild(createCardElement(ihsgData, true));
 
-      let nonIhsgStocks = rawData.filter(s => s.ticker !== 'IHSG');
-      let displayList = [];
+      let orderedList = [];
+      stockOrder.forEach(ticker => {
+        let item = rawData.find(s => s.ticker === ticker);
+        if (item && item.ticker !== 'IHSG') orderedList.push(item);
+      });
 
-      // Gabungkan urutan tersimpan dengan emiten baru secara otomatis di halaman depan
-      if (stockOrder.length > 0) {
-        stockOrder.forEach(ticker => {
-          let item = nonIhsgStocks.find(s => s.ticker === ticker);
-          if (item) displayList.push(item);
-        });
-        nonIhsgStocks.forEach(item => {
-          if (!displayList.some(s => s.ticker === item.ticker)) {
-            displayList.push(item);
-          }
-        });
-      } else {
-        displayList = nonIhsgStocks;
-      }
-
-      displayList.forEach((stock, index) => {
+      orderedList.forEach((stock, index) => {
         const group = stock.category || 'Lainnya';
         if (activeFilter !== 'ALL' && group !== activeFilter) return;
 
