@@ -50,12 +50,15 @@
 
     .lightning-box { color: #eab308; font-size: 0.8rem; letter-spacing: -1px; }
 
-    .price { font-size: 1.2rem; font-weight: bold; margin-bottom: 4px; }
+    /* Tata Letak Persentase Open & Harga Utama */
+    .price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .open-percent { font-size: 0.82rem; font-weight: bold; padding: 2px 5px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; }
+    .price { font-size: 1.2rem; font-weight: bold; }
     .price-up { color: #22c55e; }
     .price-down { color: #ef4444; }
     .price-flat { color: #ffffff; }
 
-    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
     .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; }
     
     .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
@@ -68,12 +71,15 @@
 
     .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
 
+    /* Baris Penutupan Kemarin tepat di bawah kotak persentase */
+    .prev-close-row { text-align: right; font-size: 0.68rem; color: #94a3b8; margin-bottom: 6px; }
+
     /* Bulatan Warna Status Indikator */
     .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
     .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
     .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
 
-    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
+    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 2px; margin-right: 6px; vertical-align: middle; }
     .dot-buy { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
     .dot-neutral { background-color: #64748b; }
     .dot-sell { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
@@ -83,6 +89,13 @@
     /* Box OHL & Prev Close */
     .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 5px; line-height: 1.4; }
     .ohl-row { display: flex; justify-content: space-between; }
+
+    /* Support & Resistance Box */
+    .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; color: #cbd5e1; }
+    .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .sr-row:last-child { margin-bottom: 0; }
+    .sr-res { color: #f87171; font-weight: bold; }
+    .sr-sup { color: #4ade80; font-weight: bold; }
 
     /* Badge Sinyal Utama */
     .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
@@ -151,7 +164,7 @@
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
     let activeFilter = 'ALL';
-    let draggedItemIndex = null;
+    let draggedTicker = null;
 
     function formatWIB(timeStr) {
       if (!timeStr) return "-";
@@ -162,6 +175,11 @@
           timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
         }) + " WIB";
       } catch (e) { return timeStr; }
+    }
+
+    function formatNum(val) {
+      if (val === undefined || val === null || isNaN(val)) return '0';
+      return Number(val).toLocaleString('id-ID');
     }
 
     async function loadData() {
@@ -207,7 +225,7 @@
       sortedStocks.forEach(stock => {
         const option = document.createElement('option');
         option.value = stock.ticker;
-        option.textContent = `${stock.ticker} (${stock.category})`;
+        option.textContent = `${stock.ticker} (${stock.category || 'Lainnya'})`;
         selectEl.appendChild(option);
       });
     }
@@ -224,72 +242,146 @@
       selectEl.value = '';
     }
 
-    function getLightningIcons(volRatio) {
-      if (volRatio >= 2.5) return '⚡⚡⚡⚡⚡';
-      if (volRatio >= 1.5) return '⚡⚡⚡';
-      if (volRatio >= 1.0) return '⚡⚡';
+    function getLightningIcons(volRatio = 1.0) {
+      const ratio = parseFloat(volRatio) || 1.0;
+      if (ratio >= 2.5) return '⚡⚡⚡⚡⚡';
+      if (ratio >= 1.5) return '⚡⚡⚡';
+      if (ratio >= 1.0) return '⚡⚡';
       return '⚡';
     }
 
-    function createCardElement(stock, isIHSG = false, index = -1) {
+    function createCardElement(stock, isIHSG = false) {
       const group = isIHSG ? 'Indeks Utama' : (stock.category || 'Lainnya');
 
-      const openPrice = stock.open || stock.price;
-      const closePrice = stock.price;
-      const prevClose = stock.prev_close || openPrice;
+      const openPrice = stock.open ?? stock.price;
+      const closePrice = stock.price ?? 0;
+      const prevClose = stock.prev_close ?? openPrice;
+      const highPrice = stock.high ?? closePrice;
+      const lowPrice = stock.low ?? closePrice;
+
+      // Hitung % dari Open Market
+      let openPercentVal = 0;
+      if (openPrice > 0) {
+        openPercentVal = ((closePrice - openPrice) / openPrice) * 100;
+      }
+      const openPercentSign = openPercentVal > 0 ? '+' : '';
+      const openPercentStr = `${openPercentSign}${openPercentVal.toFixed(2)}%`;
+      
+      let openPercentColorClass = 'price-flat';
+      if (openPercentVal > 0) openPercentColorClass = 'price-up';
+      else if (openPercentVal < 0) openPercentColorClass = 'price-down';
 
       let priceColorClass = 'price-flat';
       if (closePrice > prevClose) priceColorClass = 'price-up';
       else if (closePrice < prevClose) priceColorClass = 'price-down';
 
-      const isReadyToBuy = stock.signal === 'STRONG BUY' || stock.signal === 'BUY';
+      // --- LOGIKA AI GEMINI (Multi-Indikator AI Decision Engine) ---
+      // Evaluasi 6 Indikator: RSI, MACD, VOL, EMA, FIBO, TREND
+      let score = 0;
+      let totalIndicators = 6;
+
+      // 1. RSI
+      let rsiStatus = stock.rsi_status || 'NEUTRAL';
+      let rsiDot = 'dot-neutral';
+      if (rsiStatus === 'BUY') { score += 1; rsiDot = 'dot-buy'; }
+      else if (rsiStatus === 'SELL') { score -= 1; rsiDot = 'dot-sell'; }
+
+      // 2. MACD
+      let macdStatus = stock.macd_status || 'NEUTRAL';
+      let macdDot = 'dot-neutral';
+      if (macdStatus === 'BUY') { score += 1; macdDot = 'dot-buy'; }
+      else if (macdStatus === 'SELL') { score -= 1; macdDot = 'dot-sell'; }
+
+      // 3. Volume
+      let volStatus = stock.vol_status || 'NEUTRAL';
+      let volDot = 'dot-neutral';
+      if (volStatus === 'BUY') { score += 1; volDot = 'dot-buy'; }
+      else if (volStatus === 'SELL') { score -= 1; volDot = 'dot-sell'; }
+
+      // 4. EMA (Hitung dari ma20/ema jika tidak ada stat khusus)
+      let emaStatus = stock.ema_status || (closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL');
+      let emaDot = 'dot-neutral';
+      if (emaStatus === 'BUY') { score += 1; emaDot = 'dot-buy'; }
+      else if (emaStatus === 'SELL') { score -= 1; emaDot = 'dot-sell'; }
+
+      // 5. FIBO / RSI Status
+      let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
+      if (fiboStatus === 'OVER SOLD') score += 1; // Potensi Rebound (Buy)
+      else if (fiboStatus === 'OVER BOUGHT') score -= 1; // Risk Correction (Sell)
+
+      // 6. Indikator Trend
+      let trendStatus = stock.trend_status || (closePrice >= prevClose ? 'BULLISH' : 'BEARISH');
+      let trendDot = 'dot-neutral';
+      if (trendStatus === 'BULLISH' || trendStatus === 'BUY') { score += 1; trendDot = 'dot-buy'; trendStatus = 'BULLISH'; }
+      else if (trendStatus === 'BEARISH' || trendStatus === 'SELL') { score -= 1; trendDot = 'dot-sell'; trendStatus = 'BEARISH'; }
+      else { trendStatus = 'SIDEWAYS'; }
+
+      // Tentukan Keputusan AI Sinyal Utama
+      let signalText = 'NETRAL';
+      let badgeClass = 'neutral';
+      let percentage = '50%';
+      let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
+
+      if (score >= 4) {
+        signalText = 'STRONG BUY';
+        badgeClass = 'strong-buy';
+        percentage = '100%';
+        boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
+      } else if (score >= 1) {
+        signalText = 'BUY';
+        badgeClass = 'buy';
+        percentage = '75%';
+        boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-off'];
+      } else if (score <= -4) {
+        signalText = 'STRONG SELL';
+        badgeClass = 'strong-sell';
+        percentage = '100%';
+        boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell'];
+      } else if (score <= -1) {
+        signalText = 'SELL';
+        badgeClass = 'sell';
+        percentage = '75%';
+        boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-off'];
+      } else {
+        signalText = 'NETRAL';
+        badgeClass = 'neutral';
+        percentage = '50%';
+        boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off'];
+      }
+
+      // Gunakan penimpaan sinyal manual dari data.json jika ada
+      if (stock.signal) {
+        if (stock.signal === 'STRONG BUY' || stock.signal === 'SBR') {
+          signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; percentage = '100%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
+        } else if (stock.signal === 'BUY' || stock.signal === 'Break R') {
+          signalText = 'BUY'; badgeClass = 'buy'; percentage = '75%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-off'];
+        } else if (stock.signal === 'STRONG SELL' || stock.signal === 'SBS') {
+          signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; percentage = '100%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell'];
+        } else if (stock.signal === 'SELL' || stock.signal === 'Break S') {
+          signalText = 'SELL'; badgeClass = 'sell'; percentage = '75%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-off'];
+        }
+      }
+
+      const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
       const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
 
-      const entryVal = isReadyToBuy ? `Rp ${Number(stock.entry_price || closePrice).toLocaleString('id-ID')}` : 'Wait';
-      const tpVal = isReadyToBuy ? `Rp ${Number(stock.take_profit || stock.resistance).toLocaleString('id-ID')}` : 'Wait';
-      const clVal = isReadyToBuy ? `Rp ${Number(stock.cut_loss || stock.support).toLocaleString('id-ID')}` : 'Wait';
-
-      let badgeClass = 'neutral';
-      let signalText = stock.signal || 'NETRAL';
-
-      if (signalText === 'SBR' || signalText === 'STRONG BUY') {
-        badgeClass = 'strong-buy'; signalText = 'STRONG BUY';
-      } else if (signalText === 'Break R' || signalText === 'BUY') {
-        badgeClass = 'buy'; signalText = 'BUY';
-      } else if (signalText === 'SBS' || signalText === 'STRONG SELL') {
-        badgeClass = 'strong-sell'; signalText = 'STRONG SELL';
-      } else if (signalText === 'Break S' || signalText === 'SELL') {
-        badgeClass = 'sell'; signalText = 'SELL';
-      } else {
-        badgeClass = 'neutral'; signalText = 'NETRAL';
-      }
-
-      let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
-      let percentage = '25%';
-
-      if (signalText === 'STRONG BUY') {
-        boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy']; percentage = '100%';
-      } else if (signalText === 'BUY') {
-        boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-off']; percentage = '75%';
-      } else if (signalText === 'STRONG SELL') {
-        boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell']; percentage = '100%';
-      } else if (signalText === 'SELL') {
-        boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-off']; percentage = '75%';
-      } else {
-        boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off']; percentage = '50%';
-      }
+      const entryVal = isReadyToBuy ? `Rp ${formatNum(stock.entry_price || closePrice)}` : 'Wait';
+      const tpVal = isReadyToBuy ? `Rp ${formatNum(stock.take_profit || stock.resistance || stock.resistance_1)}` : 'Wait';
+      const clVal = isReadyToBuy ? `Rp ${formatNum(stock.cut_loss || stock.support || stock.support_1)}` : 'Wait';
 
       let fiboBoxClass = 'fibo-normal';
       let fiboText = 'FIBO-RSI: NORMAL';
-      if (stock.fibo_rsi_status === 'OVER SOLD') {
+      if (fiboStatus === 'OVER SOLD') {
         fiboBoxClass = 'fibo-oversold'; fiboText = 'OVER SOLD';
-      } else if (stock.fibo_rsi_status === 'OVER BOUGHT') {
+      } else if (fiboStatus === 'OVER BOUGHT') {
         fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT';
       }
 
-      let rsiDot = stock.rsi_status === 'BUY' ? 'dot-buy' : stock.rsi_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-      let macdDot = stock.macd_status === 'BUY' ? 'dot-buy' : stock.macd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-      let volDot = stock.vol_status === 'BUY' ? 'dot-buy' : stock.vol_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
+      // Nilai Support 1, Support 2, Resistance 1, Resistance 2
+      const r1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
+      const r2 = stock.resistance_2 || Math.round(r1 * 1.02);
+      const s1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
+      const s2 = stock.support_2 || Math.round(s1 * 0.98);
 
       const lightningHtml = `<span class="lightning-box">${getLightningIcons(stock.vol_ratio || 1.0)}</span>`;
 
@@ -297,7 +389,7 @@
       card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
       if (!isIHSG) {
         card.draggable = true;
-        card.dataset.index = index;
+        card.dataset.ticker = stock.ticker;
       }
 
       card.innerHTML = `
@@ -322,20 +414,36 @@
           </div>
         </div>
 
-        <div class="price ${priceColorClass}">Rp ${Number(closePrice).toLocaleString('id-ID')}</div>
+        <div class="prev-close-row">
+          Penutupan Kemarin: <strong style="color:#cbd5e1;">Rp ${formatNum(prevClose)}</strong>
+        </div>
+
+        <div class="price-row">
+          <span class="open-percent ${openPercentColorClass}">${openPercentStr}</span>
+          <div class="price ${priceColorClass}">Rp ${formatNum(closePrice)}</div>
+        </div>
         
         <div class="ohl-stat">
-          <div class="ohl-row"><span>Prev: ${prevClose}</span> <span>O: ${openPrice}</span></div>
-          <div class="ohl-row"><span>H: ${stock.high || closePrice}</span> <span>L: ${stock.low || closePrice}</span></div>
+          <div class="ohl-row"><span>Prev: ${formatNum(prevClose)}</span> <span>O: ${formatNum(openPrice)}</span></div>
+          <div class="ohl-row"><span>H: ${formatNum(highPrice)}</span> <span>L: ${formatNum(lowPrice)}</span></div>
         </div>
 
         <div class="stat">
           RSI<span class="dot-indicator ${rsiDot}"></span>
           MACD<span class="dot-indicator ${macdDot}"></span>
           VOL<span class="dot-indicator ${volDot}"></span>
+          EMA<span class="dot-indicator ${emaDot}"></span>
+          TREND<span class="dot-indicator ${trendDot}"></span>
         </div>
         
-        <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
+        <div class="stat">Vol: ${stock.vol_ratio || 1.0}x Rerata | Trend: ${trendStatus}</div>
+
+        <div class="sr-stat-box">
+          <div class="sr-row"><span>Resistan 2 (R2):</span> <span class="sr-res">Rp ${formatNum(r2)}</span></div>
+          <div class="sr-row"><span>Resistan 1 (R1):</span> <span class="sr-res">Rp ${formatNum(r1)}</span></div>
+          <div class="sr-row"><span>Support 1 (S1):</span> <span class="sr-sup">Rp ${formatNum(s1)}</span></div>
+          <div class="sr-row"><span>Support 2 (S2):</span> <span class="sr-sup">Rp ${formatNum(s2)}</span></div>
+        </div>
 
         <div class="signal-badge-container">
           <span class="badge ${badgeClass}">${signalText}</span>
@@ -374,7 +482,7 @@
     }
 
     function handleDragStart(e) {
-      draggedItemIndex = parseInt(this.dataset.index);
+      draggedTicker = this.dataset.ticker;
       this.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
     }
@@ -386,53 +494,60 @@
 
     function handleDrop(e) {
       e.preventDefault();
-      const targetIndex = parseInt(this.dataset.index);
-      if (draggedItemIndex !== null && targetIndex !== draggedItemIndex) {
-        const item = stockOrder.splice(draggedItemIndex, 1)[0];
-        stockOrder.splice(targetIndex, 0, item);
-        saveState();
-        render();
+      const targetTicker = this.dataset.ticker;
+
+      if (draggedTicker && targetTicker && draggedTicker !== targetTicker) {
+        const fromIndex = stockOrder.indexOf(draggedTicker);
+        const toIndex = stockOrder.indexOf(targetTicker);
+
+        if (fromIndex !== -1 && toIndex !== -1) {
+          const [movedItem] = stockOrder.splice(fromIndex, 1);
+          stockOrder.splice(toIndex, 0, movedItem);
+          saveState();
+          render();
+        }
       }
     }
 
     function handleDragEnd() {
       this.classList.remove('dragging');
-      draggedItemIndex = null;
+      draggedTicker = null;
     }
 
     function render() {
       const grid = document.getElementById('stockGrid');
       grid.innerHTML = '';
 
-      // Tampilkan IHSG terlebih dahulu
+      // Render IHSG terlebih dahulu
       let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
         ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NETRAL'
       };
       grid.appendChild(createCardElement(ihsgData, true));
 
       let nonIhsgStocks = rawData.filter(s => s.ticker !== 'IHSG');
-      let displayList = [];
-
-      // Gabungkan urutan tersimpan dengan emiten baru secara otomatis di halaman depan
-      if (stockOrder.length > 0) {
-        stockOrder.forEach(ticker => {
-          let item = nonIhsgStocks.find(s => s.ticker === ticker);
-          if (item) displayList.push(item);
-        });
-        nonIhsgStocks.forEach(item => {
-          if (!displayList.some(s => s.ticker === item.ticker)) {
-            displayList.push(item);
+      
+      if (stockOrder.length === 0) {
+        stockOrder = nonIhsgStocks.map(s => s.ticker);
+        saveState();
+      } else {
+        nonIhsgStocks.forEach(s => {
+          if (!stockOrder.includes(s.ticker)) {
+            stockOrder.push(s.ticker);
           }
         });
-      } else {
-        displayList = nonIhsgStocks;
       }
 
-      displayList.forEach((stock, index) => {
+      let displayList = [];
+      stockOrder.forEach(ticker => {
+        let item = nonIhsgStocks.find(s => s.ticker === ticker);
+        if (item) displayList.push(item);
+      });
+
+      displayList.forEach(stock => {
         const group = stock.category || 'Lainnya';
         if (activeFilter !== 'ALL' && group !== activeFilter) return;
 
-        grid.appendChild(createCardElement(stock, false, index));
+        grid.appendChild(createCardElement(stock, false));
       });
     }
 
