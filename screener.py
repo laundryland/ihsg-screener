@@ -6,75 +6,81 @@ import yfinance as yf
 from datetime import datetime
 
 # ==========================================
-# 1. DAFTAR EMITEN & PEMETAAN SEKTOR (DIBERSIHKAN DARI DUPLIKAT)
+# 1. DAFTAR EMITEN & PEMETAAN SEKTOR (SANGAT LENGKAP & TANPA DUPLIKAT)
 # ==========================================
-# Menggunakan set & dict secara acak untuk memastikan tidak ada emiten ganda
 RAW_STOCKS = [
     # Indeks Utama
     "^JKSE",
     
-    # Perbankan & Keuangan
-    "BBCA.JK", "BBRI.JK", "BMRI.JK", "BBNI.JK", "BRIS.JK", "ARTO.JK", "BBTN.JK",
+    # Emiten Permintaan Khusus & Konglomerasi/Barito Group
+    "TPIA.JK", "CUAN.JK", "SRSN.JK", "LABA.JK", "PACK.JK", "AMMN.JK", "ENRG.JK", 
+    "INCO.JK", "INDY.JK", "PTRO.JK", "BREN.JK", "BUVA.JK", "ARTO.JK", "INDF.JK", 
+    "ADRO.JK", "KBLV.JK",
     
-    # Energi, Tambang & Komoditas
-    "ADRO.JK", "PTBA.JK", "ITMG.JK", "HRUM.JK", "AKRA.JK", "MEDC.JK", "PGAS.JK",
-    "ANTM.JK", "INCO.JK", "MDKA.JK", "MBMA.JK", "NCKL.JK", "TINS.JK", "ENRG.JK",
-    "BRMS.JK", "DEWA.JK", "AADI.JK", "BYAN.JK", "BULL.JK", "HUMI.JK", "DSSA.JK", "CBRE.JK",
+    # Tambahan Emiten Energi & Tambang (Movers & Liquid)
+    "PTBA.JK", "ITMG.JK", "HRUM.JK", "AKRA.JK", "MEDC.JK", "PGAS.JK", "ANTM.JK", 
+    "MDKA.JK", "MBMA.JK", "NCKL.JK", "TINS.JK", "BRMS.JK", "DEWA.JK", "AADI.JK", 
+    "BYAN.JK", "BULL.JK", "HUMI.JK", "DSSA.JK", "CBRE.JK", "DOOH.JK",
     
-    # Teknologi, Infrastruktur & Media
-    "GOTO.JK", "EMTK.JK", "SCMA.JK", "BUKA.JK", "TLKM.JK", "ISAT.JK", "EXCL.JK",
-    "JSMR.JK", "INET.JK", "WIFI.JK", "DOOH.JK", "BACH.JK", "KBLV.JK", "MDIA.JK", "DATA.JK", "MTDL.JK",
+    # Tambahan Perbankan & Keuangan
+    "BBCA.JK", "BBRI.JK", "BMRI.JK", "BBNI.JK", "BRIS.JK", "BBTN.JK", "BDMN.JK", "BNGA.JK",
     
-    # Konsumer, Ritel & Kesehatan
-    "ICBP.JK", "INDF.JK", "UNVR.JK", "MYOR.JK", "AMRT.JK", "ACES.JK", "AGAR.JK", "MUTU.JK", "NIKL.JK",
+    # Tambahan Teknologi, Telekomunikasi & Media
+    "GOTO.JK", "EMTK.JK", "SCMA.JK", "BUKA.JK", "TLKM.JK", "ISAT.JK", "EXCL.JK", 
+    "JSMR.JK", "INET.JK", "WIFI.JK", "BACH.JK", "MDIA.JK", "DATA.JK", "MTDL.JK",
     
-    # Properti, Konstruksi & Pariwisata
-    "BSDE.JK", "CTRA.JK", "PWON.JK", "KOTA.JK", "JGLE.JK", "BAPA.JK", "KOKA.JK",
-    "CDIA.JK", "ROCK.JK", "BUVA.JK", "MWOP.JK", "DL.JK", "WBSA.JK",
+    # Tambahan Konsumer, Ritel & Kesehatan
+    "ICBP.JK", "UNVR.JK", "MYOR.JK", "AMRT.JK", "ACES.JK", "AGAR.JK", "MUTU.JK", "NIKL.JK", "KLBF.JK",
     
-    # Industri, Otomotif & Konglomerasi
+    # Tambahan Properti, Infrastruktur & Pariwisata
+    "BSDE.JK", "CTRA.JK", "PWON.JK", "KOTA.JK", "JGLE.JK", "BAPA.JK", "KOKA.JK", 
+    "CDIA.JK", "ROCK.JK", "MWOP.JK", "DL.JK", "WBSA.JK", "SMRA.JK",
+    
+    # Tambahan Industri, Otomotif & Konglomerasi
     "ASII.JK", "UNTR.JK", "BNBR.JK"
 ]
 
-# Menghilangkan duplikat jika ada dengan mempertahankan urutan
+# Menghilangkan duplikat dengan mempertahankan urutan pertama
 STOCKS = list(dict.fromkeys(RAW_STOCKS))
 
 SECTOR_MAP = {
-    # Perbankan
+    # Perbankan & Keuangan
     "BBCA": "Perbankan", "BBRI": "Perbankan", "BMRI": "Perbankan", "BBNI": "Perbankan", 
-    "BRIS": "Perbankan", "ARTO": "Perbankan", "BBTN": "Perbankan",
+    "BRIS": "Perbankan", "ARTO": "Perbankan", "BBTN": "Perbankan", "BDMN": "Perbankan", "BNGA": "Perbankan",
     
-    # Energi & Tambang
+    # Energi, Tambang & Komoditas
     "ADRO": "Energi", "PTBA": "Energi", "ITMG": "Energi", "HRUM": "Energi", 
     "AKRA": "Energi", "MEDC": "Energi", "PGAS": "Energi", "ENRG": "Energi", "BYAN": "Energi",
+    "INDY": "Energi", "CUAN": "Energi", "BREN": "Energi", "AMMN": "Tambang",
     "ANTM": "Tambang", "INCO": "Tambang", "MDKA": "Tambang", "MBMA": "Tambang", 
     "NCKL": "Tambang", "TINS": "Tambang", "BRMS": "Tambang", "DEWA": "Tambang", "AADI": "Tambang",
-    "DSSA": "Energi", "BULL": "Energi", "HUMI": "Energi", "CBRE": "Energi",
+    "DSSA": "Energi", "BULL": "Energi", "HUMI": "Energi", "CBRE": "Energi", "PTRO": "Energi",
     
-    # Teknologi & Media
+    # Teknologi, Infrastruktur & Media
     "GOTO": "Teknologi", "EMTK": "Teknologi", "BUKA": "Teknologi", "INET": "Teknologi",
     "WIFI": "Teknologi", "DATA": "Teknologi", "MTDL": "Teknologi", "KBLV": "Teknologi",
-    "SCMA": "Media", "MDIA": "Media", "DOOH": "Media", "BACH": "Media",
+    "SCMA": "Media", "MDIA": "Media", "DOOH": "Media", "BACH": "Media", "LABA": "Teknologi",
     
     # Telekomunikasi & Industri
     "TLKM": "Industri", "ISAT": "Industri", "EXCL": "Industri", "JSMR": "Industri",
     "ASII": "Industri", "UNTR": "Industri", "BNBR": "Industri", "NIKL": "Industri",
+    "TPIA": "Industri", "SRSN": "Industri", "PACK": "Industri",
     
-    # Konsumer & Jasa
+    # Konsumer & Kesehatan
     "ICBP": "Konsumer", "INDF": "Konsumer", "UNVR": "Konsumer", "MYOR": "Konsumer", 
-    "AMRT": "Konsumer", "ACES": "Konsumer", "AGAR": "Konsumer", "MUTU": "Konsumer",
+    "AMRT": "Konsumer", "ACES": "Konsumer", "AGAR": "Konsumer", "MUTU": "Konsumer", "KLBF": "Konsumer",
     
     # Properti & Pariwisata
     "BSDE": "Properti", "CTRA": "Properti", "PWON": "Properti", "KOTA": "Properti",
     "JGLE": "Properti", "BAPA": "Properti", "KOKA": "Properti", "CDIA": "Properti",
-    "ROCK": "Properti", "BUVA": "Properti", "MWOP": "Properti", "DL": "Properti", "WBSA": "Properti"
+    "ROCK": "Properti", "BUVA": "Properti", "MWOP": "Properti", "DL": "Properti", 
+    "WBSA": "Properti", "SMRA": "Properti"
 }
 
 # ==========================================
 # 2. HELPER FUNCTIONS (INDIKATOR TEKNIKAL)
 # ==========================================
 def clean_val(val, default=0):
-    """Memastikan nilai terbebas dari NaN, Inf, atau format Series/Array."""
     if isinstance(val, (pd.Series, np.ndarray)):
         val = val.item() if val.size == 1 else val[-1]
     if pd.isna(val) or np.isinf(val):
@@ -108,7 +114,6 @@ def run_screener():
             clean_name = "IHSG" if ticker_symbol == "^JKSE" else ticker_symbol.replace(".JK", "")
             print(f"Mengunduh data: {clean_name} ...")
             
-            # Ambil data histori 100 hari terakhir
             df = yf.download(ticker_symbol, period="100d", interval="1d", progress=False)
             
             if df.empty or len(df) < 5:
@@ -130,7 +135,6 @@ def run_screener():
             last_low = round(clean_val(low_prices.iloc[-1]))
             prev_close = round(clean_val(close_prices.iloc[-2])) if len(close_prices) > 1 else last_open
 
-            # Indikator Teknikal
             ma20 = clean_val(close_prices.rolling(window=min(20, len(close_prices))).mean().iloc[-1])
             support = round(clean_val(low_prices.rolling(window=min(20, len(low_prices))).min().iloc[-1]))
             resistance = round(clean_val(high_prices.rolling(window=min(20, len(high_prices))).max().iloc[-1]))
@@ -183,7 +187,7 @@ def run_screener():
             elif sell_score >= 2 or (last_close < support):
                 signal = "SELL"
 
-            # Logika "Wait" untuk Entry, Take Profit, dan Cut Loss
+            # Penetapan Logika "Wait" untuk Entry, Cut Loss, dan Take Profit
             if signal in ["STRONG BUY", "BUY"]:
                 entry_price = last_close
                 cut_loss = round(support * 0.98)
