@@ -118,7 +118,7 @@
 
     .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; flex-wrap: wrap; }
     
-    /* Animation Blink untuk Text */
+    /* Animation Blink untuk Text & Icon */
     @keyframes blink-animation {
       0% { opacity: 1; }
       50% { opacity: 0.2; }
@@ -126,6 +126,9 @@
     }
     .blink-red { color: #ef4444; font-weight: bold; animation: blink-animation 1s infinite; }
     .blink-green { color: #22c55e; font-weight: bold; animation: blink-animation 1s infinite; }
+    
+    /* Animation Blink khusus untuk Segitiga Pivot */
+    .blink-icon { display: inline-block; animation: blink-animation 0.8s infinite; margin-left: 4px; font-size: 0.75rem; vertical-align: middle; }
 
     /* Animation Kedip untuk Kartu Hasil Pencarian */
     @keyframes card-highlight {
@@ -145,7 +148,7 @@
 
     /* Support & Resistance Box */
     .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; color: #cbd5e1; }
-    .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .sr-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
     .sr-row:last-child { margin-bottom: 0; }
     .sr-res { color: #f87171; font-weight: bold; }
     .sr-sup { color: #4ade80; font-weight: bold; }
@@ -158,10 +161,12 @@
       margin: 4px -6px;
       border-radius: 4px;
     }
-    /* Style Kondisional Pivot Point */
-    .sr-pivot-yellow { color: #eab308; font-weight: bold; }
-    .pivot-above { color: #4ade80; font-weight: bold; }
-    .pivot-below { color: #618a90; font-weight: bold; }
+    
+    /* Styling khusus Pivot */
+    .sr-pivot-title { color: #eab308; font-weight: bold; display: flex; align-items: center; }
+    .pivot-val-blue { color: #0618a9; font-weight: bold; }
+    .pivot-val-green { color: #22c55e; font-weight: bold; }
+    .pivot-val-yellow { color: #eab308; font-weight: bold; }
 
     /* Badge Sinyal Utama */
     .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
@@ -509,19 +514,16 @@
 
       const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
 
-      // Pembuatan tampilan Pivot Point dengan logika warna dan ikon baru
-      let pivotLabelHtml = '';
-      let pivotValueHtml = '';
+      // Logika khusus Warna dan Segitiga Pivot Point
+      let pivotValClass = 'pivot-val-yellow';
+      let pivotIconHtml = '';
 
-      if (closePrice > pivotPoint) {
-        pivotLabelHtml = `<span class="pivot-above"><span style="color: #22c55e;">▲</span> Pivot Point (P):</span>`;
-        pivotValueHtml = `<span class="pivot-above">Rp ${formatNum(pivotPoint)}</span>`;
-      } else if (closePrice < pivotPoint) {
-        pivotLabelHtml = `<span class="pivot-below"><span class="blink-red">▼</span> Pivot Point (P):</span>`;
-        pivotValueHtml = `<span class="pivot-below">Rp ${formatNum(pivotPoint)}</span>`;
-      } else {
-        pivotLabelHtml = `<span class="sr-pivot-yellow">Pivot Point (P):</span>`;
-        pivotValueHtml = `<span class="sr-pivot-yellow">Rp ${formatNum(pivotPoint)}</span>`;
+      if (closePrice < pivotPoint) {
+        pivotValClass = 'pivot-val-blue';
+        pivotIconHtml = '<span class="blink-icon">🔻</span>';
+      } else if (closePrice > pivotPoint) {
+        pivotValClass = 'pivot-val-green';
+        pivotIconHtml = '<span class="blink-icon">🔺</span>';
       }
 
       // Kedip-kedip jika tersentuh levelnya
@@ -599,8 +601,8 @@
           <div class="sr-row"><span>Resistan 1 (R1):</span> <span class="${r1Class}">Rp ${formatNum(r1)}</span></div>
           
           <div class="sr-row sr-pivot-separator">
-            ${pivotLabelHtml}
-            ${pivotValueHtml}
+            <span class="sr-pivot-title">Pivot Point (P):${pivotIconHtml}</span>
+            <span class="${pivotValClass}">Rp ${formatNum(pivotPoint)}</span>
           </div>
 
           <div class="sr-row"><span>Support 1 (S1):</span> <span class="${s1Class}">Rp ${formatNum(s1)}</span></div>
