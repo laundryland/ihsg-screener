@@ -21,13 +21,36 @@
     h1 { font-size: 1.35rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
     .update-time { font-size: 0.78rem; color: #94a3b8; margin-top: 3px; }
 
-    .control-box { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 16px; }
+    /* Sticky Control Box agar tetap berada di atas saat scroll */
+    .control-box { 
+      position: sticky; 
+      top: 10px; 
+      z-index: 100; 
+      background: #1e293b; 
+      padding: 12px; 
+      border-radius: 12px; 
+      border: 1px solid #334155; 
+      margin-bottom: 16px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
+    }
     .control-header { display: flex; justify-content: space-between; align-items: center; }
     .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-    .form-row { margin-top: 10px; display: flex; gap: 8px; }
+    .form-row { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
     .form-row.hidden { display: none; }
     
-    select { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 0.85rem; }
+    select, input[type="text"] { 
+      width: 100%; 
+      padding: 8px 12px; 
+      border-radius: 8px; 
+      border: 1px solid #475569; 
+      background: #0f172a; 
+      color: #fff; 
+      font-size: 0.85rem; 
+      outline: none;
+    }
+    input[type="text"]:focus {
+      border-color: #38bdf8;
+    }
 
     .group-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
     .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
@@ -104,6 +127,17 @@
     .blink-red { color: #ef4444; font-weight: bold; animation: blink-animation 1s infinite; }
     .blink-green { color: #22c55e; font-weight: bold; animation: blink-animation 1s infinite; }
 
+    /* Animation Kedip untuk Kartu Hasil Pencarian */
+    @keyframes card-highlight {
+      0% { box-shadow: 0 0 0px #eab308; border-color: #334155; }
+      50% { box-shadow: 0 0 20px #eab308; border-color: #eab308; transform: scale(1.02); }
+      100% { box-shadow: 0 0 0px #eab308; border-color: #334155; }
+    }
+    .highlight-card {
+      animation: card-highlight 0.8s ease-in-out 3;
+      z-index: 10;
+    }
+
     /* Box OHL & Prev Close */
     .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 5px; line-height: 1.4; position: relative; }
     .ohl-row { display: flex; justify-content: space-between; }
@@ -115,9 +149,17 @@
     .sr-row:last-child { margin-bottom: 0; }
     .sr-res { color: #f87171; font-weight: bold; }
     .sr-sup { color: #4ade80; font-weight: bold; }
-    .sr-pivot-white { color: #ffffff; font-weight: bold; }
+
+    /* Kolom Pemisah Pivot Point Warna Biru Tua */
+    .sr-pivot-separator {
+      background-color: #0369a1;
+      padding: 3px 6px;
+      margin: 4px -6px;
+      border-radius: 4px;
+    }
+    .sr-pivot-yellow { color: #eab308; font-weight: bold; }
     .sr-pivot-green { color: #4ade80; font-weight: bold; }
-    .sr-pivot-red { color: #f87171; font-weight: bold; }
+    .sr-pivot-pink { color: #f618a9; font-weight: bold; }
 
     /* Badge Sinyal Utama */
     .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
@@ -161,6 +203,7 @@
       <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ Sembunyikan Menu</button>
     </div>
     <div class="form-row" id="dropdownRow">
+      <input type="text" id="searchInput" placeholder="🔍 Cari Kode Emiten (Cth: BBCA)..." oninput="searchStock(this.value)">
       <select id="selectTickerOption" onchange="autoAddStock(this)">
         <option value="">-- Pilih Emiten Langsung Tampil --</option>
       </select>
@@ -261,7 +304,41 @@
         saveState();
         render();
       }
+      highlightStockCard(ticker);
       selectEl.value = '';
+    }
+
+    /* Fitur Pencarian Emiten dengan Efek Berkedip & Scroll */
+    function searchStock(query) {
+      const cleanQuery = query.trim().toUpperCase();
+      if (!cleanQuery) return;
+
+      const targetCard = document.querySelector(`.card[data-ticker="${cleanQuery}"]`);
+      if (targetCard) {
+        highlightStockCard(cleanQuery);
+      } else {
+        const foundData = rawData.find(s => s.ticker === cleanQuery);
+        if (foundData) {
+          if (!stockOrder.includes(cleanQuery)) {
+            stockOrder.push(cleanQuery);
+            saveState();
+            render();
+          }
+          highlightStockCard(cleanQuery);
+        }
+      }
+    }
+
+    function highlightStockCard(ticker) {
+      setTimeout(() => {
+        const cardEl = document.querySelector(`.card[data-ticker="${ticker}"]`);
+        if (cardEl) {
+          cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          cardEl.classList.remove('highlight-card');
+          void cardEl.offsetWidth; // Trigger reflow untuk reset animasi
+          cardEl.classList.add('highlight-card');
+        }
+      }, 100);
     }
 
     function getLightningIcons(volRatio = 1.0) {
@@ -420,7 +497,7 @@
         fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT';
       }
 
-      // Hitung Support, Resistan, dan Pivot Point
+      // Support, Resistan, dan Pivot Point
       const r1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
       const r2 = stock.resistance_2 || Math.round(r1 * 1.02);
       const r3 = stock.resistance_3 || Math.round(r2 * 1.02);
@@ -430,15 +507,15 @@
 
       const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
 
-      // Warna Pivot Point berdasarkan posisi harga terhadap pivot
-      let pivotClass = 'sr-pivot-white';
+      // Warna Kata "Pivot Point (P)" berdasarkan harga
+      let pivotClass = 'sr-pivot-yellow';
       if (closePrice > pivotPoint) {
         pivotClass = 'sr-pivot-green';
       } else if (closePrice < pivotPoint) {
-        pivotClass = 'sr-pivot-red';
+        pivotClass = 'sr-pivot-pink';
       }
 
-      // Kelas Blink untuk Resistan dan Support jika tersentuh/terlewati oleh harga (Close atau High/Low)
+      // Kedip-kedip jika tersentuh levelnya
       const r3Class = (highPrice >= r3 || closePrice >= r3) ? 'blink-red' : 'sr-res';
       const r2Class = (highPrice >= r2 || closePrice >= r2) ? 'blink-red' : 'sr-res';
       const r1Class = (highPrice >= r1 || closePrice >= r1) ? 'blink-red' : 'sr-res';
@@ -451,9 +528,9 @@
 
       const card = document.createElement('div');
       card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
+      card.dataset.ticker = stock.ticker;
       if (!isIHSG) {
         card.draggable = true;
-        card.dataset.ticker = stock.ticker;
       }
 
       card.innerHTML = `
@@ -511,7 +588,12 @@
           <div class="sr-row"><span>Resistan 3 (R3):</span> <span class="${r3Class}">Rp ${formatNum(r3)}</span></div>
           <div class="sr-row"><span>Resistan 2 (R2):</span> <span class="${r2Class}">Rp ${formatNum(r2)}</span></div>
           <div class="sr-row"><span>Resistan 1 (R1):</span> <span class="${r1Class}">Rp ${formatNum(r1)}</span></div>
-          <div class="sr-row"><span>Pivot Point (P):</span> <span class="${pivotClass}">Rp ${formatNum(pivotPoint)}</span></div>
+          
+          <div class="sr-row sr-pivot-separator">
+            <span class="${pivotClass}">Pivot Point (P):</span>
+            <span class="${pivotClass}">Rp ${formatNum(pivotPoint)}</span>
+          </div>
+
           <div class="sr-row"><span>Support 1 (S1):</span> <span class="${s1Class}">Rp ${formatNum(s1)}</span></div>
           <div class="sr-row"><span>Support 2 (S2):</span> <span class="${s2Class}">Rp ${formatNum(s2)}</span></div>
           <div class="sr-row"><span>Support 3 (S3):</span> <span class="${s3Class}">Rp ${formatNum(s3)}</span></div>
