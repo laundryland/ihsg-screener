@@ -387,15 +387,15 @@
         }
       }
 
-      // Deteksi WARNING! Trend TURUN!
+      // Deteksi WARNING! Teks Baru
       let warningHtml = '';
-      const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
-      const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
+      const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || trendStatus === 'BEARISH' || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
+      const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || trendStatus === 'BULLISH' || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
 
-      if (isReversalDown) {
+      if (trendStatus === 'BEARISH' || isReversalDown) {
         warningHtml = '<div class="warning-text blink-red">⚠️ WARNING! Trend TURUN!</div>';
-      } else if (isReversalUp || trendStatus === 'BULLISH') {
-        warningHtml = '<div class="warning-text blink-green">⚠️ WARNING! Trend TURUN</div>';
+      } else if (trendStatus === 'BULLISH' || isReversalUp) {
+        warningHtml = '<div class="warning-text blink-green">⚠️ WARNING! Trend NAIK!</div>';
       }
 
       const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
