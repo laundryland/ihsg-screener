@@ -259,7 +259,7 @@
     .pivot-price-green { color: #22c55e; }
     .pivot-price-yellow { color: #eab308; }
 
-    /* Hanya Icon Panah dan Kotaknya yang Berkedip */
+    /* Ikon Panah/Kotak Pivot Berkedip */
     .pivot-icon-box {
       display: inline-flex;
       align-items: center;
@@ -268,6 +268,7 @@
       border-radius: 4px;
       border: 1px solid transparent;
       margin: 0 auto 0 4px;
+      font-size: 0.75rem;
     }
     .pivot-icon-box.down { background: #450a0a; border-color: #ef4444; color: #ef4444; }
     .pivot-icon-box.up { background: #052e16; border-color: #22c55e; color: #22c55e; }
@@ -363,8 +364,8 @@
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
     let activeFilter = 'ALL';
-    let currentTimeframe = 'HARIAN'; // HARIAN, MINGGUAN, BULANAN
-    let selectedNewsTicker = 'BBCA'; // Default Berita
+    let currentTimeframe = 'HARIAN';
+    let selectedNewsTicker = 'BBCA';
     let draggedTicker = null;
 
     function formatWIB(timeStr) {
@@ -488,7 +489,6 @@
       return '⚡';
     }
 
-    // Mengambil data spesifik berdasarkan Timeframe yang dipilih
     function getTimeframeData(stock, tf) {
       if (!stock.timeframes || !stock.timeframes[tf]) {
         return {
@@ -504,7 +504,7 @@
           vol_ratio: stock.vol_ratio || 1.0,
           resistance_1: stock.resistance_1 || Math.round(stock.price * 1.02),
           support_1: stock.support_1 || Math.round(stock.price * 0.98),
-          pivot: stock.pivot || Math.round(stock.price)
+          pivot: stock.pivot || Math.round(( (stock.high ?? stock.price) + (stock.low ?? stock.price) + stock.price ) / 3)
         };
       }
       return stock.timeframes[tf];
@@ -622,7 +622,10 @@
       const s1 = tfData.support_1 || Math.round(closePrice * 0.98);
       const s2 = tfData.support_2 || Math.round(s1 * 0.98);
       const s3 = tfData.support_3 || Math.round(s2 * 0.98);
-      const pivotPoint = tfData.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+
+      // Hitung atau Ambil Pivot Point secara Presisi
+      const calculatedPivot = Math.round((highPrice + lowPrice + closePrice) / 3);
+      const pivotPoint = tfData.pivot || calculatedPivot;
 
       // Deteksi Breakout
       let breakoutHtml = '';
@@ -634,16 +637,25 @@
         }
       }
 
-      // HANYA Icon & Kotak Pivot yang Berkedip
+      // Evaluasi Ikon Panah & Warna Pivot Point
       let pivotPriceClass = 'pivot-price-yellow';
       let pivotIconHtml = '<span class="pivot-icon-box equal blink-mode">■</span>';
 
-      if (closePrice < pivotPoint) {
-        pivotPriceClass = 'pivot-price-blue';
-        pivotIconHtml = '<span class="pivot-icon-box down blink-mode">▼</span>';
-      } else if (closePrice > pivotPoint) {
+      if (closePrice > pivotPoint) {
         pivotPriceClass = 'pivot-price-green';
         pivotIconHtml = '<span class="pivot-icon-box up blink-mode">▲</span>';
+      } else if (closePrice < pivotPoint) {
+        pivotPriceClass = 'pivot-price-blue';
+        pivotIconHtml = '<span class="pivot-icon-box down blink-mode">▼</span>';
+      } else {
+        // Jika closePrice persis sama dengan pivotPoint, bandingkan dengan penutupan sebelumnya (prevClose)
+        if (closePrice >= prevClose) {
+          pivotPriceClass = 'pivot-price-green';
+          pivotIconHtml = '<span class="pivot-icon-box up blink-mode">▲</span>';
+        } else {
+          pivotPriceClass = 'pivot-price-blue';
+          pivotIconHtml = '<span class="pivot-icon-box down blink-mode">▼</span>';
+        }
       }
 
       // Sinyal Warna Bar Utama
@@ -781,7 +793,7 @@
             <div class="sr-row"><span>RESISTAN 2 (R2):</span> <span class="sr-res">RP ${formatNum(r2)}</span></div>
             <div class="sr-row"><span>RESISTAN 1 (R1):</span> <span class="sr-res">RP ${formatNum(r1)}</span></div>
             
-            <!-- Pivot Point: HANYA ikon & kotaknya yang berkedip -->
+            <!-- Pivot Point: HANYA ikon panah (▲/▼) dan kotaknya yang berkedip -->
             <div class="sr-row sr-pivot-separator">
               <span class="pivot-label-yellow">PIVOT POINT (P):</span>
               ${pivotIconHtml}
