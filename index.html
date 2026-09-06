@@ -51,35 +51,6 @@
     .form-row { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
     .form-row.hidden { display: none; }
     
-    /* Layout Pencarian dan Jam Digital */
-    .search-clock-wrapper {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      width: 100%;
-    }
-    .search-input-box {
-      flex: 1;
-    }
-
-    /* Box Jam Digital WIB */
-    .digital-clock-box {
-      background: #0f172a;
-      border: 1px solid #334155;
-      padding: 6px 10px;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-width: 120px;
-      text-align: center;
-    }
-    .clock-title { font-size: 0.6rem; color: #94a3b8; letter-spacing: 0.5px; }
-    .clock-time { font-size: 0.95rem; font-family: monospace; font-weight: bold; margin-top: 2px; }
-    .clock-open { color: #00ff66; text-shadow: 0 0 5px rgba(0,255,102,0.4); }
-    .clock-closed { color: #94a3b8; }
-
     select, input[type="text"] { 
       width: 100%; 
       padding: 8px 12px; 
@@ -337,46 +308,6 @@
     }
     .news-header { color: #38bdf8; font-weight: bold; font-size: 0.72rem; text-transform: uppercase; margin-bottom: 4px; display: flex; justify-content: space-between; }
     .news-content { color: #cbd5e1; line-height: 1.3; }
-
-    /* Kolom Jadwal Buka-Tutup Perdagangan IHSG */
-    .market-schedule-box {
-      margin-top: 8px;
-      padding: 8px;
-      background: #161c24;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      font-size: 0.7rem;
-    }
-    .schedule-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #38bdf8;
-      font-weight: bold;
-      font-size: 0.72rem;
-      margin-bottom: 6px;
-      padding-bottom: 4px;
-      border-bottom: 1px solid #2d3748;
-    }
-    .schedule-list { display: flex; flex-direction: column; gap: 4px; }
-    .schedule-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 3px 6px;
-      border-radius: 4px;
-      background: #0f172a;
-    }
-    .schedule-item.today {
-      border: 1px solid #0284c7;
-      background: #0c4a6e;
-      font-size: 0.8rem;
-      padding: 6px;
-    }
-    .day-name { font-weight: bold; }
-    .day-time { font-family: monospace; }
-    .status-open { color: #00ff66; text-shadow: 0 0 4px rgba(0,255,102,0.4); }
-    .status-closed { color: #94a3b8; }
   </style>
 </head>
 <body>
@@ -406,16 +337,7 @@
         <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ SEMBUNYIKAN MENU</button>
       </div>
       <div class="form-row" id="dropdownRow">
-        <div class="search-clock-wrapper">
-          <div class="search-input-box">
-            <input type="text" id="searchInput" placeholder="🔍 CARI KODE EMITEN (CTH: BBCA)..." oninput="searchStock(this.value)">
-          </div>
-          <!-- Box Jam WIB Digital Terpisah Samping Pencarian -->
-          <div class="digital-clock-box">
-            <span class="clock-title">WAKTU WIB</span>
-            <span class="clock-time" id="digitalClock">--:--:--</span>
-          </div>
-        </div>
+        <input type="text" id="searchInput" placeholder="🔍 CARI KODE EMITEN (CTH: BBCA)..." oninput="searchStock(this.value)">
         <select id="selectTickerOption" onchange="autoAddStock(this)">
           <option value="">-- PILIH EMITEN LANGSUNG TAMPIL --</option>
         </select>
@@ -446,51 +368,6 @@
     let selectedNewsTicker = 'BBCA';
     let draggedTicker = null;
 
-    // Logika Status Market Bursa Efek Indonesia (BEI/IHSG)
-    function getMarketStatusInfo(dateObj = new Date()) {
-      const day = dateObj.getDay(); // 0: Mingu, 1: Senin, ..., 6: Sabtu
-      const hours = dateObj.getHours();
-      const minutes = dateObj.getMinutes();
-      const timeNum = hours * 100 + minutes;
-
-      let isOpen = false;
-
-      // Senin - Kamis
-      if (day >= 1 && day <= 4) {
-        if ((timeNum >= 900 && timeNum < 1130) || (timeNum >= 1330 && timeNum < 1549)) {
-          isOpen = true;
-        }
-      } 
-      // Jumat
-      else if (day === 5) {
-        if ((timeNum >= 900 && timeNum < 1130) || (timeNum >= 1400 && timeNum < 1549)) {
-          isOpen = true;
-        }
-      }
-
-      return { isOpen, dayIndex: day };
-    }
-
-    // Update Jam Digital WIB & Status Market Samping Pencarian
-    function updateDigitalClock() {
-      const now = new Date();
-      const options = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-      const timeString = now.toLocaleTimeString('id-ID', options);
-      
-      const clockEl = document.getElementById('digitalClock');
-      const { isOpen } = getMarketStatusInfo(now);
-
-      if (clockEl) {
-        clockEl.innerText = timeString + " WIB";
-        if (isOpen) {
-          clockEl.className = "clock-time clock-open";
-        } else {
-          clockEl.className = "clock-time clock-closed";
-        }
-      }
-    }
-    setInterval(updateDigitalClock, 1000);
-
     function formatWIB(timeStr) {
       if (!timeStr) return "-";
       try {
@@ -518,7 +395,6 @@
         initMenuState();
         populateDropdownOptions();
         render();
-        updateDigitalClock();
       } catch (e) {
         document.getElementById('updateTime').innerText = "Gagal memuat data.json";
       }
@@ -772,6 +648,7 @@
         pivotPriceClass = 'pivot-price-blue';
         pivotIconHtml = '<span class="pivot-icon-box down blink-mode">▼</span>';
       } else {
+        // Jika closePrice persis sama dengan pivotPoint, bandingkan dengan penutupan sebelumnya (prevClose)
         if (closePrice >= prevClose) {
           pivotPriceClass = 'pivot-price-green';
           pivotIconHtml = '<span class="pivot-icon-box up blink-mode">▲</span>';
@@ -781,49 +658,31 @@
         }
       }
 
+      // Sinyal Warna Bar Utama
+      let signalBadgeBg = 'bg-signal-neutral';
+      if (score >= 4) signalBadgeBg = 'bg-signal-strong-buy';
+      else if (score >= 1) signalBadgeBg = 'bg-signal-buy';
+      else if (score <= -4) signalBadgeBg = 'bg-signal-strong-sell';
+      else if (score <= -1) signalBadgeBg = 'bg-signal-sell';
+
+      const isReadyToBuy = score >= 1;
+      const entryVal = isReadyToBuy ? `RP ${formatNum(stock.entry_price || closePrice)}` : 'WAIT';
+      const tpVal = isReadyToBuy ? `RP ${formatNum(stock.take_profit || r1)}` : 'WAIT';
+      const clVal = isReadyToBuy ? `RP ${formatNum(stock.cut_loss || s1)}` : 'WAIT';
+
+      let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
+      let fiboBoxClass = 'fibo-normal';
+      let fiboText = 'FIBO-RSI: NORMAL';
+      if (fiboStatus === 'OVER SOLD') { fiboBoxClass = 'fibo-oversold'; fiboText = 'OVER SOLD'; }
+      else if (fiboStatus === 'OVER BOUGHT') { fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT'; }
+
       // Status Kondisi IHSG
       let ihsgStatusTagText = closePrice > prevClose ? 'NAIK' : closePrice < prevClose ? 'TURUN' : 'FLAT';
       let ihsgStatusTagClass = closePrice > prevClose ? 'tag-buy' : closePrice < prevClose ? 'tag-sell' : 'tag-netral';
 
-      // Mengambil Berita Terkait Emiten yang Dipilih
+      // Mengambil Berita Terkait Emiten yang Dikit/Dipilih
       let newsStockObj = rawData.find(s => s.ticker === selectedNewsTicker) || stock;
       let newsText = newsStockObj.news || `Belum ada berita baru untuk emiten ${selectedNewsTicker}. Perhatikan pergerakan harga dan indikator teknikal.`;
-
-      // Render Kolom Jadwal Buka-Tutup Perdagangan IHSG
-      const currentMarketState = getMarketStatusInfo(new Date());
-      const daysList = [
-        { name: 'SENIN', idx: 1, time: 'SESI 1: 09:00-11:30 | SESI 2: 13:30-15:49' },
-        { name: 'SELASA', idx: 2, time: 'SESI 1: 09:00-11:30 | SESI 2: 13:30-15:49' },
-        { name: 'RABU', idx: 3, time: 'SESI 1: 09:00-11:30 | SESI 2: 13:30-15:49' },
-        { name: 'KAMIS', idx: 4, time: 'SESI 1: 09:00-11:30 | SESI 2: 13:30-15:49' },
-        { name: 'JUMAT', idx: 5, time: 'SESI 1: 09:00-11:30 | SESI 2: 14:00-15:49' },
-        { name: 'SABTU', idx: 6, time: 'TUTUP (LIBUR AKHIR PEKAN)' }
-      ];
-
-      let scheduleItemsHtml = '';
-      daysList.forEach(d => {
-        const isToday = currentMarketState.dayIndex === d.idx;
-        let dayStatusClass = 'status-closed';
-        let dayStatusText = 'CLOSED';
-
-        if (isToday) {
-          if (currentMarketState.isOpen) {
-            dayStatusClass = 'status-open';
-            dayStatusText = 'OPEN';
-          } else {
-            dayStatusClass = 'status-closed';
-            dayStatusText = 'CLOSED';
-          }
-        }
-
-        scheduleItemsHtml += `
-          <div class="schedule-item ${isToday ? 'today' : ''}">
-            <span class="day-name">${isToday ? '👉 ' : ''}${d.name} ${isToday ? '(HARI INI)' : ''}</span>
-            <span class="day-time">${d.time}</span>
-            <span class="${dayStatusClass}">${dayStatusText}</span>
-          </div>
-        `;
-      });
 
       const card = document.createElement('div');
       card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
@@ -840,9 +699,13 @@
           </div>
         </div>
 
+        <!-- Warning Box Di Atas Kolom Emiten -->
         ${warningHtml}
+
+        <!-- Breakout Box jika Mengindikasikan Pola Breakout -->
         ${breakoutHtml}
 
+        <!-- Kolom Nama Emiten Sisi Kanan Harga -->
         <div class="ticker-price-row ${rowColorClass}">
           <div class="ticker-title">
             ${stock.ticker} ${isIHSG ? '📌' : ''} ${!isIHSG ? lightningHtml : ''}
@@ -850,16 +713,19 @@
           <div class="price-display">RP ${formatNum(closePrice)}</div>
         </div>
 
+        <!-- Persentase & Timeframe dalam Kolom-Kolom -->
         <div class="percent-middle-row">
           <span class="open-percent-badge ${percentClass}">${openPercentStr}</span>
           <span class="timeframe-tag-box">TIMEFRAME: ${currentTimeframe}</span>
         </div>
 
+        <!-- Penutupan Kemarin Kolom Hitam Doff -->
         <div class="prev-close-container">
           <span class="prev-label">PENUTUPAN KEMARIN</span>
           <span class="prev-val">RP ${formatNum(prevClose)}</span>
         </div>
 
+        <!-- Kolom-Kolom Hitam Doff Terpisah PREV, OPEN, HIGH, LOW -->
         <div class="ohl-grid-container">
           <div class="ohl-item-box">
             <span class="ohl-item-label">PREV</span>
@@ -880,6 +746,7 @@
         </div>
 
         ${isIHSG ? `
+          <!-- Kolom Kotak Persentase Khusus Kartu IHSG -->
           <div class="doff-box">
             <div class="multi-box-bar" style="margin-top:0; padding-top:0; border-top:none;">
               <div class="boxes-grid">
@@ -889,26 +756,17 @@
             </div>
           </div>
 
-          <!-- Kolom Ringkasan Berita Emiten -->
+          <!-- Kolom Ringkasan Berita Penting Emiten Terkait (Di Bawah Kotak IHSG) -->
           <div class="news-summary-box">
             <div class="news-header">
               <span>📰 BERITA EMITEN: ${selectedNewsTicker}</span>
             </div>
             <div class="news-content">${newsText}</div>
           </div>
-
-          <!-- Kolom Jam Buka Tutup Perdagangan IHSG (Senin - Sabtu) -->
-          <div class="market-schedule-box">
-            <div class="schedule-header">
-              <span>🕒 JADWAL TRADING PERDAGANGAN IHSG (WIB)</span>
-            </div>
-            <div class="schedule-list">
-              ${scheduleItemsHtml}
-            </div>
-          </div>
         ` : ''}
 
         ${!isIHSG ? `
+          <!-- Kolom Hitam Doff Indikator -->
           <div class="doff-box">
             <div class="ind-row"><span class="ind-name">RSI</span><span class="${rsiStatus === 'BUY' ? 'ind-val-green' : rsiStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white'}">${rsiStatus}</span></div>
             <div class="ind-row"><span class="ind-name">MACD</span><span class="${macdStatus === 'BUY' ? 'ind-val-green' : macdStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white'}">${macdStatus}</span></div>
@@ -916,6 +774,7 @@
             <div class="ind-row"><span class="ind-name">EMA</span><span class="${emaStatus === 'BUY' ? 'ind-val-green' : emaStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white'}">${emaStatus}</span></div>
             <div class="ind-row"><span class="ind-name">TREND</span><span class="${trendStatus === 'BULLISH' ? 'ind-val-green' : trendStatus === 'BEARISH' ? 'ind-val-red' : 'ind-val-white'}">${trendStatus}</span></div>
             
+            <!-- Baris Kotak Menyala -->
             <div class="multi-box-bar">
               <div class="boxes-grid">
                 ${boxesHtml}
@@ -924,6 +783,7 @@
             </div>
           </div>
 
+          <!-- Volume Box Berkedip Jika Besar -->
           <div class="doff-box" style="font-size:0.72rem; text-align:center;">
             VOLUME: <span class="${volColorClass} ${volBlinkClass}">${vRatio}X RERATA</span>
           </div>
@@ -933,6 +793,7 @@
             <div class="sr-row"><span>RESISTAN 2 (R2):</span> <span class="sr-res">RP ${formatNum(r2)}</span></div>
             <div class="sr-row"><span>RESISTAN 1 (R1):</span> <span class="sr-res">RP ${formatNum(r1)}</span></div>
             
+            <!-- Pivot Point: HANYA ikon panah (▲/▼) dan kotaknya yang berkedip -->
             <div class="sr-row sr-pivot-separator">
               <span class="pivot-label-yellow">PIVOT POINT (P):</span>
               ${pivotIconHtml}
@@ -944,6 +805,7 @@
             <div class="sr-row"><span>SUPPORT 3 (S3):</span> <span class="sr-sup">RP ${formatNum(s3)}</span></div>
           </div>
 
+          <!-- Bar Sinyal Utama -->
           <div class="signal-badge-container">
             <div class="badge-bar ${signalBadgeBg}"></div>
           </div>
