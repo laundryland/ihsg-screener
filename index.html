@@ -348,7 +348,7 @@
         }
       }
 
-      // Warna Petir Volume (Poin 2)
+      // Warna Petir Volume
       const vRatio = parseFloat(stock.vol_ratio) || 1.0;
       let lightningClass = 'lightning-white';
       if (vRatio >= 1.2 || volStatus === 'BUY') {
@@ -387,15 +387,15 @@
         }
       }
 
-      // Deteksi WARNING! Reversal (Poin 3)
+      // Deteksi WARNING! Trend TURUN!
       let warningHtml = '';
       const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
       const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
 
       if (isReversalDown) {
-        warningHtml = '<div class="warning-text blink-red">⚠️ WARNING! REVERSAL TURUN</div>';
-      } else if (isReversalUp) {
-        warningHtml = '<div class="warning-text blink-green">⚠️ WARNING! REVERSAL NAIK</div>';
+        warningHtml = '<div class="warning-text blink-red">⚠️ WARNING! Trend TURUN!</div>';
+      } else if (isReversalUp || trendStatus === 'BULLISH') {
+        warningHtml = '<div class="warning-text blink-green">⚠️ WARNING! Trend TURUN</div>';
       }
 
       const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
