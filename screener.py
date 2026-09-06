@@ -1,512 +1,244 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IHSG SH4NDY's SCREENER</title>
-  
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0f172a">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-  <link rel="apple-touch-icon" href="./icon-192x192.png">
-  
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
-    body { background-color: #0f172a; color: #f8fafc; padding: 16px; padding-bottom: 40px; }
+import os
+import json
+import numpy as np
+import pandas as pd
+import yfinance as yf
+from datetime import datetime
+
+# ==========================================
+# 1. DAFTAR EMITEN & PEMETAAN SEKTOR (SANGAT LENGKAP & TANPA DUPLIKAT)
+# ==========================================
+RAW_STOCKS = [
+    # Indeks Utama
+    "^JKSE",
     
-    header { margin-bottom: 16px; }
-    .header-container { display: flex; align-items: center; justify-content: flex-start; gap: 14px; }
-    .app-logo { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid #334155; }
-    .header-text { display: flex; flex-direction: column; }
-    h1 { font-size: 1.35rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
-    .update-time { font-size: 0.78rem; color: #94a3b8; margin-top: 3px; }
-
-    .control-box { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 16px; }
-    .control-header { display: flex; justify-content: space-between; align-items: center; }
-    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-    .form-row { margin-top: 10px; display: flex; gap: 8px; }
-    .form-row.hidden { display: none; }
+    # Emiten Permintaan Khusus & Konglomerasi/Barito Group
+    "TPIA.JK", "CUAN.JK", "SRSN.JK", "LABA.JK", "PACK.JK", "AMMN.JK", "ENRG.JK", 
+    "INCO.JK", "INDY.JK", "PTRO.JK", "BREN.JK", "BUVA.JK", "ARTO.JK", "INDF.JK", 
+    "ADRO.JK", "KBLV.JK",
     
-    select { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 0.85rem; }
-
-    .group-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
-    .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
-    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
-
-    /* Grid Kartu Responsif */
-    .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+    # Tambahan Emiten Energi & Tambang (Movers & Liquid)
+    "PTBA.JK", "ITMG.JK", "HRUM.JK", "AKRA.JK", "MEDC.JK", "PGAS.JK", "ANTM.JK", 
+    "MDKA.JK", "MBMA.JK", "NCKL.JK", "TINS.JK", "BRMS.JK", "DEWA.JK", "AADI.JK", 
+    "BYAN.JK", "BULL.JK", "HUMI.JK", "DSSA.JK", "CBRE.JK", "DOOH.JK",
     
-    .card { background: #1e293b; padding: 14px; border-radius: 12px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
-    .card:active { cursor: grabbing; }
-    .card.dragging { opacity: 0.4; transform: scale(0.96); border-style: dashed; }
+    # Tambahan Perbankan & Keuangan
+    "BBCA.JK", "BBRI.JK", "BMRI.JK", "BBNI.JK", "BRIS.JK", "BBTN.JK", "BDMN.JK", "BNGA.JK",
     
-    .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
-
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .ticker-box { display: flex; align-items: center; gap: 6px; }
-    .ticker { font-weight: bold; font-size: 1.15rem; color: #fff; }
-    .close-btn { background: transparent; border: none; color: #ef4444; font-size: 1.1rem; font-weight: bold; cursor: pointer; padding: 0 4px; }
-    .close-btn:hover { color: #f87171; }
-
-    .lightning-box { color: #eab308; font-size: 0.8rem; letter-spacing: -1px; }
-
-    .price { font-size: 1.2rem; font-weight: bold; margin-bottom: 4px; }
-    .price-up { color: #22c55e; }
-    .price-down { color: #ef4444; }
-    .price-flat { color: #ffffff; }
-
-    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+    # Tambahan Teknologi, Telekomunikasi & Media
+    "GOTO.JK", "EMTK.JK", "SCMA.JK", "BUKA.JK", "TLKM.JK", "ISAT.JK", "EXCL.JK", 
+    "JSMR.JK", "INET.JK", "WIFI.JK", "BACH.JK", "MDIA.JK", "DATA.JK", "MTDL.JK",
     
-    .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
-    .box-container { display: flex; gap: 2px; }
-    .signal-box { width: 7px; height: 10px; border-radius: 1px; background-color: #475569; }
+    # Tambahan Konsumer, Ritel & Kesehatan
+    "ICBP.JK", "UNVR.JK", "MYOR.JK", "AMRT.JK", "ACES.JK", "AGAR.JK", "MUTU.JK", "NIKL.JK", "KLBF.JK",
     
-    .box-buy { background-color: #22c55e; }
-    .box-sell { background-color: #ef4444; }
-    .box-off { background-color: #334155; }
-
-    .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
-
-    /* Bulatan Warna Status Indikator (Memberi Spasi Lebih Luas) */
-    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
-    .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
-    .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
-
-    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 3px; margin-right: 12px; vertical-align: middle; }
-    .dot-buy { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
-    .dot-neutral { background-color: #64748b; }
-    .dot-sell { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
-
-    .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 4px; display: flex; align-items: center; flex-wrap: wrap; }
+    # Tambahan Properti, Infrastruktur & Pariwisata
+    "BSDE.JK", "CTRA.JK", "PWON.JK", "KOTA.JK", "JGLE.JK", "BAPA.JK", "KOKA.JK", 
+    "CDIA.JK", "ROCK.JK", "MWOP.JK", "DL.JK", "WBSA.JK", "SMRA.JK",
     
-    /* Box OHL & Prev Close */
-    .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 5px; line-height: 1.4; }
-    .ohl-row { display: flex; justify-content: space-between; }
+    # Tambahan Industri, Otomotif & Konglomerasi
+    "ASII.JK", "UNTR.JK", "BNBR.JK"
+]
 
-    /* Desain & Animasi Panah Pivot */
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.15; }
-    }
-    .pivot-container { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.72rem; }
-    .stacked-arrows { display: inline-flex; flex-direction: column; line-height: 0.8; font-size: 0.7rem; font-weight: bold; }
-    .arrow-blink-up { color: #22c55e; animation: blink 0.8s infinite; }
-    .arrow-blink-down { color: #ef4444; animation: blink 0.8s infinite; }
-    .arrow-white { color: #ffffff; }
+# Menghilangkan duplikat dengan mempertahankan urutan pertama
+STOCKS = list(dict.fromkeys(RAW_STOCKS))
 
-    .text-green-glow { color: #22c55e; text-shadow: 0 0 3px #22c55e; font-weight: bold; }
-    .text-red { color: #ef4444; font-weight: bold; }
-    .text-white { color: #ffffff; font-weight: bold; }
+SECTOR_MAP = {
+    # Perbankan & Keuangan
+    "BBCA": "Perbankan", "BBRI": "Perbankan", "BMRI": "Perbankan", "BBNI": "Perbankan", 
+    "BRIS": "Perbankan", "ARTO": "Perbankan", "BBTN": "Perbankan", "BDMN": "Perbankan", "BNGA": "Perbankan",
+    
+    # Energi, Tambang & Komoditas
+    "ADRO": "Energi", "PTBA": "Energi", "ITMG": "Energi", "HRUM": "Energi", 
+    "AKRA": "Energi", "MEDC": "Energi", "PGAS": "Energi", "ENRG": "Energi", "BYAN": "Energi",
+    "INDY": "Energi", "CUAN": "Energi", "BREN": "Energi", "AMMN": "Tambang",
+    "ANTM": "Tambang", "INCO": "Tambang", "MDKA": "Tambang", "MBMA": "Tambang", 
+    "NCKL": "Tambang", "TINS": "Tambang", "BRMS": "Tambang", "DEWA": "Tambang", "AADI": "Tambang",
+    "DSSA": "Energi", "BULL": "Energi", "HUMI": "Energi", "CBRE": "Energi", "PTRO": "Energi",
+    
+    # Teknologi, Infrastruktur & Media
+    "GOTO": "Teknologi", "EMTK": "Teknologi", "BUKA": "Teknologi", "INET": "Teknologi",
+    "WIFI": "Teknologi", "DATA": "Teknologi", "MTDL": "Teknologi", "KBLV": "Teknologi",
+    "SCMA": "Media", "MDIA": "Media", "DOOH": "Media", "BACH": "Media", "LABA": "Teknologi",
+    
+    # Telekomunikasi & Industri
+    "TLKM": "Industri", "ISAT": "Industri", "EXCL": "Industri", "JSMR": "Industri",
+    "ASII": "Industri", "UNTR": "Industri", "BNBR": "Industri", "NIKL": "Industri",
+    "TPIA": "Industri", "SRSN": "Industri", "PACK": "Industri",
+    
+    # Konsumer & Kesehatan
+    "ICBP": "Konsumer", "INDF": "Konsumer", "UNVR": "Konsumer", "MYOR": "Konsumer", 
+    "AMRT": "Konsumer", "ACES": "Konsumer", "AGAR": "Konsumer", "MUTU": "Konsumer", "KLBF": "Konsumer",
+    
+    # Properti & Pariwisata
+    "BSDE": "Properti", "CTRA": "Properti", "PWON": "Properti", "KOTA": "Properti",
+    "JGLE": "Properti", "BAPA": "Properti", "KOKA": "Properti", "CDIA": "Properti",
+    "ROCK": "Properti", "BUVA": "Properti", "MWOP": "Properti", "DL": "Properti", 
+    "WBSA": "Properti", "SMRA": "Properti"
+}
 
-    /* Badge Sinyal Utama */
-    .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
-    .badge { display: block; width: 100%; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; text-align: center; letter-spacing: 0.5px; }
-    .strong-buy { background: #047857; color: #34d399; border: 1px solid #10b981; }
-    .buy { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
-    .neutral { background: #334155; color: #cbd5e1; border: 1px solid #475569; }
-    .sell { background: #991b1b; color: #fca5a5; border: 1px solid #ef4444; }
-    .strong-sell { background: #881337; color: #fda4af; border: 1px solid #f43f5e; }
+# ==========================================
+# 2. HELPER FUNCTIONS (INDIKATOR TEKNIKAL)
+# ==========================================
+def clean_val(val, default=0):
+    if isinstance(val, (pd.Series, np.ndarray)):
+        val = val.item() if val.size == 1 else val[-1]
+    if pd.isna(val) or np.isinf(val):
+        return default
+    return float(val)
 
-    .fibo-stat-box { margin-top: 4px; padding: 4px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; text-align: center; font-weight: bold; }
-    .fibo-oversold { color: #22c55e; border-color: #22c55e; }
-    .fibo-overbought { color: #ef4444; border-color: #ef4444; }
-    .fibo-normal { color: #64748b; }
+def calculate_rsi(series, period=14):
+    delta = series.diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
 
-    /* Trading Plan Box dengan Bulatan Merah / Hijau */
-    .trading-plan-box { margin-top: 8px; padding: 8px 10px; background: #0f172a; border-radius: 8px; border: 1px dashed #475569; font-size: 0.72rem; }
-    .plan-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .plan-row:last-child { margin-bottom: 0; }
-    .plan-label { display: flex; align-items: center; color: #94a3b8; font-weight: 500; }
-    .plan-value { font-weight: bold; }
-    .val-wait { color: #f59e0b; }
-    .val-active { color: #f8fafc; }
-  </style>
-</head>
-<body>
+def calculate_macd(series):
+    exp1 = series.ewm(span=12, adjust=False).mean()
+    exp2 = series.ewm(span=26, adjust=False).mean()
+    macd = exp1 - exp2
+    signal = macd.ewm(span=9, adjust=False).mean()
+    return macd, signal
 
-  <header>
-    <div class="header-container">
-      <img src="./icon-192x192.png" alt="Logo" class="app-logo">
-      <div class="header-text">
-        <h1>IHSG SH4NDY's SCREENER</h1>
-        <p class="update-time" id="updateTime">Memuat data...</p>
-      </div>
-    </div>
-  </header>
+# ==========================================
+# 3. PROSES UTAMA SCREENING
+# ==========================================
+def run_screener():
+    print(f"Memulai proses screening untuk {len(STOCKS)} emiten...")
+    results = []
+    
+    for ticker_symbol in STOCKS:
+        try:
+            clean_name = "IHSG" if ticker_symbol == "^JKSE" else ticker_symbol.replace(".JK", "")
+            print(f"Mengunduh data: {clean_name} ...")
+            
+            df = yf.download(ticker_symbol, period="100d", interval="1d", progress=False)
+            
+            if df.empty or len(df) < 5:
+                print(f"Data {clean_name} kurang / tidak tersedia. Dilewati.")
+                continue
 
-  <div class="control-box">
-    <div class="control-header">
-      <span style="font-size: 0.85rem; color: #94a3b8;">Menu Pilih Emiten</span>
-      <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ Sembunyikan Menu</button>
-    </div>
-    <div class="form-row" id="dropdownRow">
-      <select id="selectTickerOption" onchange="autoAddStock(this)">
-        <option value="">-- Pilih Emiten Langsung Tampil --</option>
-      </select>
-    </div>
-  </div>
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)
 
-  <div class="group-tabs" id="groupTabs">
-    <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
-    <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
-    <div class="tab" onclick="filterGroup('Energi', this)">Energi</div>
-    <div class="tab" onclick="filterGroup('Tambang', this)">Tambang</div>
-    <div class="tab" onclick="filterGroup('Teknologi', this)">Teknologi</div>
-    <div class="tab" onclick="filterGroup('Media', this)">Media</div>
-    <div class="tab" onclick="filterGroup('Konsumer', this)">Konsumer</div>
-    <div class="tab" onclick="filterGroup('Properti', this)">Properti</div>
-    <div class="tab" onclick="filterGroup('Industri', this)">Industri</div>
-  </div>
+            close_prices = df['Close']
+            open_prices = df['Open']
+            high_prices = df['High']
+            low_prices = df['Low']
+            volumes = df['Volume']
 
-  <div class="card-grid" id="stockGrid"></div>
+            last_close = round(clean_val(close_prices.iloc[-1]))
+            last_open = round(clean_val(open_prices.iloc[-1]))
+            last_high = round(clean_val(high_prices.iloc[-1]))
+            last_low = round(clean_val(low_prices.iloc[-1]))
+            prev_close = round(clean_val(close_prices.iloc[-2])) if len(close_prices) > 1 else last_open
 
-  <script>
-    let rawData = [];
-    let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
-    let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
-    let activeFilter = 'ALL';
-    let draggedItemIndex = null;
+            ma20 = clean_val(close_prices.rolling(window=min(20, len(close_prices))).mean().iloc[-1])
+            support = round(clean_val(low_prices.rolling(window=min(20, len(low_prices))).min().iloc[-1]))
+            resistance = round(clean_val(high_prices.rolling(window=min(20, len(high_prices))).max().iloc[-1]))
 
-    function formatWIB(timeStr) {
-      if (!timeStr) return "-";
-      try {
-        const date = new Date(timeStr);
-        if (isNaN(date.getTime())) return timeStr;
-        return date.toLocaleString('id-ID', {
-          timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-        }) + " WIB";
-      } catch (e) { return timeStr; }
-    }
+            # RSI
+            rsi_series = calculate_rsi(close_prices, 14)
+            rsi_val = clean_val(rsi_series.iloc[-1], default=50)
+            
+            rsi_status = "NEUTRAL"
+            if rsi_val <= 38:
+                rsi_status = "BUY"
+            elif rsi_val >= 62:
+                rsi_status = "SELL"
 
-    async function loadData() {
-      try {
-        const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
-        const data = await res.json();
-        
-        document.getElementById('updateTime').innerText = "Diperbarui: " + formatWIB(data.updated_at);
-        rawData = data.stocks || [];
+            # MACD
+            macd, macd_sig = calculate_macd(close_prices)
+            macd_val = clean_val(macd.iloc[-1])
+            macd_sig_val = clean_val(macd_sig.iloc[-1])
+            macd_status = "BUY" if macd_val > macd_sig_val else "SELL"
 
-        initMenuState();
-        populateDropdownOptions();
-        render();
-      } catch (e) {
-        document.getElementById('updateTime').innerText = "Gagal memuat data.json";
-      }
-    }
+            # Volume Ratio
+            vol_ma20 = clean_val(volumes.rolling(window=min(20, len(volumes))).mean().iloc[-1], default=1)
+            last_vol = clean_val(volumes.iloc[-1])
+            vol_ratio = round(last_vol / vol_ma20, 2) if vol_ma20 > 0 else 1.0
+            vol_status = "BUY" if vol_ratio >= 1.2 else ("SELL" if vol_ratio <= 0.8 else "NEUTRAL")
 
-    function initMenuState() {
-      const row = document.getElementById('dropdownRow');
-      const btn = document.getElementById('toggleBtn');
-      if (isMenuVisible) {
-        row.classList.remove('hidden');
-        btn.innerText = "👁️ Sembunyikan Menu";
-      } else {
-        row.classList.add('hidden');
-        btn.innerText = "👁️ Tampilkan Menu";
-      }
-    }
+            # FIBO RSI
+            fibo_rsi_status = "NORMAL"
+            if rsi_val <= 30:
+                fibo_rsi_status = "OVER SOLD"
+            elif rsi_val >= 70:
+                fibo_rsi_status = "OVER BOUGHT"
 
-    function toggleDropdownMenu() {
-      isMenuVisible = !isMenuVisible;
-      localStorage.setItem('menu_visible', JSON.stringify(isMenuVisible));
-      initMenuState();
-    }
+            # Sinyal Utama
+            buy_score = (1 if rsi_status == "BUY" else 0) + \
+                        (1 if macd_status == "BUY" else 0) + \
+                        (1 if vol_status == "BUY" else 0)
 
-    function populateDropdownOptions() {
-      const selectEl = document.getElementById('selectTickerOption');
-      selectEl.innerHTML = '<option value="">-- Pilih Emiten Langsung Tampil --</option>';
-      
-      let sortedStocks = [...rawData].filter(s => s.ticker !== 'IHSG').sort((a, b) => a.ticker.localeCompare(b.ticker));
+            sell_score = (1 if rsi_status == "SELL" else 0) + \
+                         (1 if macd_status == "SELL" else 0) + \
+                         (1 if vol_status == "SELL" else 0)
 
-      sortedStocks.forEach(stock => {
-        const option = document.createElement('option');
-        option.value = stock.ticker;
-        option.textContent = `${stock.ticker} (${stock.category})`;
-        selectEl.appendChild(option);
-      });
-    }
+            signal = "NETRAL"
+            if (last_close >= resistance and vol_ratio > 1.2) or buy_score == 3:
+                signal = "STRONG BUY"
+            elif buy_score >= 2 or (last_close > ma20 and macd_status == "BUY"):
+                signal = "BUY"
+            elif (last_close <= support and vol_ratio > 1.2) or sell_score == 3:
+                signal = "STRONG SELL"
+            elif sell_score >= 2 or (last_close < support):
+                signal = "SELL"
 
-    function autoAddStock(selectEl) {
-      const ticker = selectEl.value;
-      if (!ticker) return;
+            # Penetapan Logika "Wait" untuk Entry, Cut Loss, dan Take Profit
+            if signal in ["STRONG BUY", "BUY"]:
+                entry_price = last_close
+                cut_loss = round(support * 0.98)
+                risk = entry_price - cut_loss
+                if risk <= 0:
+                    risk = entry_price * 0.02
+                take_profit = round(entry_price + (risk * 2))
+            else:
+                entry_price = "Wait"
+                cut_loss = "Wait"
+                take_profit = "Wait"
 
-      if (!stockOrder.includes(ticker)) {
-        stockOrder.push(ticker);
-        saveState();
-        render();
-      }
-      selectEl.value = '';
-    }
+            stock_data = {
+                "ticker": clean_name,
+                "category": "Indeks Utama" if clean_name == "IHSG" else SECTOR_MAP.get(clean_name, "Lainnya"),
+                "price": last_close,
+                "prev_close": prev_close,
+                "open": last_open,
+                "high": last_high,
+                "low": last_low,
+                "rsi": round(rsi_val, 2),
+                "rsi_status": rsi_status,
+                "ma20": round(ma20),
+                "support": support,
+                "resistance": resistance,
+                "vol_ratio": vol_ratio,
+                "vol_status": vol_status,
+                "macd_status": macd_status,
+                "fibo_rsi_status": fibo_rsi_status,
+                "signal": signal,
+                "entry_price": entry_price,
+                "cut_loss": cut_loss,
+                "take_profit": take_profit,
+                "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+                "image_source": "tupungato / Getty Images"
+            }
 
-    function getLightningIcons(volRatio) {
-      if (volRatio >= 2.5) return '⚡⚡⚡⚡⚡';
-      if (volRatio >= 1.5) return '⚡⚡⚡';
-      if (volRatio >= 1.0) return '⚡⚡';
-      return '⚡';
-    }
+            results.append(stock_data)
 
-    function createCardElement(stock, isIHSG = false, index = -1) {
-      const group = isIHSG ? 'Indeks Utama' : (stock.category || 'Lainnya');
+        except Exception as e:
+            print(f"Gagal memproses {ticker_symbol}: {str(e)}")
 
-      const openPrice = stock.open || stock.price;
-      const closePrice = stock.price;
-      const prevClose = stock.prev_close || openPrice;
-
-      let priceColorClass = 'price-flat';
-      if (closePrice > prevClose) priceColorClass = 'price-up';
-      else if (closePrice < prevClose) priceColorClass = 'price-down';
-
-      const isReadyToBuy = stock.signal === 'STRONG BUY' || stock.signal === 'BUY';
-      const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
-
-      const entryVal = isReadyToBuy ? `Rp ${Number(stock.entry_price || closePrice).toLocaleString('id-ID')}` : 'Wait';
-      const tpVal = isReadyToBuy ? `Rp ${Number(stock.take_profit || stock.resistance).toLocaleString('id-ID')}` : 'Wait';
-      const clVal = isReadyToBuy ? `Rp ${Number(stock.cut_loss || stock.support).toLocaleString('id-ID')}` : 'Wait';
-
-      let badgeClass = 'neutral';
-      let signalText = stock.signal || 'NETRAL';
-
-      if (signalText === 'SBR' || signalText === 'STRONG BUY') {
-        badgeClass = 'strong-buy'; signalText = 'STRONG BUY';
-      } else if (signalText === 'Break R' || signalText === 'BUY') {
-        badgeClass = 'buy'; signalText = 'BUY';
-      } else if (signalText === 'SBS' || signalText === 'STRONG SELL') {
-        badgeClass = 'strong-sell'; signalText = 'STRONG SELL';
-      } else if (signalText === 'Break S' || signalText === 'SELL') {
-        badgeClass = 'sell'; signalText = 'SELL';
-      } else {
-        badgeClass = 'neutral'; signalText = 'NETRAL';
-      }
-
-      let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
-      let percentage = '25%';
-
-      if (signalText === 'STRONG BUY') {
-        boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy']; percentage = '100%';
-      } else if (signalText === 'BUY') {
-        boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-off']; percentage = '75%';
-      } else if (signalText === 'STRONG SELL') {
-        boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell']; percentage = '100%';
-      } else if (signalText === 'SELL') {
-        boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-off']; percentage = '75%';
-      } else {
-        boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off']; percentage = '50%';
-      }
-
-      let fiboBoxClass = 'fibo-normal';
-      let fiboText = 'FIBO-RSI: NORMAL';
-      if (stock.fibo_rsi_status === 'OVER SOLD') {
-        fiboBoxClass = 'fibo-oversold'; fiboText = 'OVER SOLD';
-      } else if (stock.fibo_rsi_status === 'OVER BOUGHT') {
-        fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT';
-      }
-
-      let rsiDot = stock.rsi_status === 'BUY' ? 'dot-buy' : stock.rsi_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-      let macdDot = stock.macd_status === 'BUY' ? 'dot-buy' : stock.macd_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-      let volDot = stock.vol_status === 'BUY' ? 'dot-buy' : stock.vol_status === 'SELL' ? 'dot-sell' : 'dot-neutral';
-
-      /* LOGIKA PANAH & SELISIH PIVOT TERBARU */
-      const highP = stock.high || closePrice;
-      const lowP = stock.low || closePrice;
-      const pivotVal = Math.round((highP + lowP + closePrice) / 3);
-      const diffVal = closePrice - pivotVal;
-
-      let stackedArrowHtml = '';
-      let priceTextClass = '';
-      let rightArrowSymbol = '➔';
-      let rightArrowClass = '';
-      let formattedDiff = '';
-
-      if (closePrice > pivotVal) {
-        stackedArrowHtml = `<div class="stacked-arrows"><span class="arrow-blink-up">▲</span><span class="arrow-white">▼</span></div>`;
-        priceTextClass = 'text-green-glow';
-        rightArrowClass = 'text-green-glow';
-        formattedDiff = `+${diffVal.toLocaleString('id-ID')}`;
-      } else if (closePrice < pivotVal) {
-        stackedArrowHtml = `<div class="stacked-arrows"><span class="arrow-white">▲</span><span class="arrow-blink-down">▼</span></div>`;
-        priceTextClass = 'text-red';
-        rightArrowClass = 'text-red';
-        formattedDiff = `${diffVal.toLocaleString('id-ID')}`;
-      } else {
-        stackedArrowHtml = `<div class="stacked-arrows"><span class="arrow-white">▲</span><span class="arrow-white">▼</span></div>`;
-        priceTextClass = 'text-white';
-        rightArrowClass = 'text-white';
-        formattedDiff = '0';
-      }
-
-      const pivotSectionHtml = `
-        <div class="pivot-container">
-          <span style="color: #94a3b8;">Pivot: ${pivotVal.toLocaleString('id-ID')}</span>
-          ${stackedArrowHtml}
-          <span>(<span class="${priceTextClass}">Rp ${closePrice.toLocaleString('id-ID')}</span> <span class="${rightArrowClass}">${rightArrowSymbol} ${formattedDiff}</span>)</span>
-        </div>
-      `;
-
-      const lightningHtml = `<span class="lightning-box">${getLightningIcons(stock.vol_ratio || 1.0)}</span>`;
-
-      const card = document.createElement('div');
-      card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
-      if (!isIHSG) {
-        card.draggable = true;
-        card.dataset.index = index;
-      }
-
-      card.innerHTML = `
-        <div class="card-header">
-          <div class="ticker-box">
-            <span class="ticker">${stock.ticker} ${isIHSG ? '📌' : ''}</span>
-            ${lightningHtml}
-          </div>
-          ${!isIHSG ? `<button class="close-btn" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
-        </div>
-
-        <div class="sub-header">
-          <span class="group-tag">${group}</span>
-          <div class="signal-indicator-box">
-            <div class="box-container">
-              <div class="signal-box ${boxClasses[0]}"></div>
-              <div class="signal-box ${boxClasses[1]}"></div>
-              <div class="signal-box ${boxClasses[2]}"></div>
-              <div class="signal-box ${boxClasses[3]}"></div>
-            </div>
-            <span class="signal-percent">${percentage}</span>
-          </div>
-        </div>
-
-        <div class="price ${priceColorClass}">Rp ${Number(closePrice).toLocaleString('id-ID')}</div>
-        
-        <div class="ohl-stat">
-          <div class="ohl-row"><span>Prev: ${prevClose}</span> <span>O: ${openPrice}</span></div>
-          <div class="ohl-row"><span>H: ${stock.high || closePrice}</span> <span>L: ${stock.low || closePrice}</span></div>
-        </div>
-
-        ${pivotSectionHtml}
-
-        <div class="stat">
-          RSI<span class="dot-indicator ${rsiDot}"></span>
-          MACD<span class="dot-indicator ${macdDot}"></span>
-          VOL<span class="dot-indicator ${volDot}"></span>
-        </div>
-        
-        <div class="stat">Vol: ${stock.vol_ratio}x Rerata</div>
-
-        <div class="signal-badge-container">
-          <span class="badge ${badgeClass}">${signalText}</span>
-        </div>
-
-        <div class="fibo-stat-box ${fiboBoxClass}">
-          ${fiboText}
-        </div>
-
-        ${!isIHSG ? `
-          <div class="trading-plan-box">
-            <div class="plan-row">
-              <span class="plan-label">${statusDotHtml} ENTRY:</span>
-              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${entryVal}</span>
-            </div>
-            <div class="plan-row">
-              <span class="plan-label">${statusDotHtml} TAKE PROFIT:</span>
-              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${tpVal}</span>
-            </div>
-            <div class="plan-row">
-              <span class="plan-label">${statusDotHtml} CUT LOSS:</span>
-              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${clVal}</span>
-            </div>
-          </div>
-        ` : ''}
-      `;
-
-      if (!isIHSG) {
-        card.addEventListener('dragstart', handleDragStart);
-        card.addEventListener('dragover', handleDragOver);
-        card.addEventListener('drop', handleDrop);
-        card.addEventListener('dragend', handleDragEnd);
-      }
-
-      return card;
+    output_json = {
+        "updated_at": datetime.now().isoformat(),
+        "stocks": results
     }
 
-    function handleDragStart(e) {
-      draggedItemIndex = parseInt(this.dataset.index);
-      this.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    }
+    with open("data.json", "w", encoding="utf-8") as f:
+        json.dump(output_json, f, indent=2, ensure_ascii=False)
 
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }
+    print("\nProses screening selesai! Hasil telah disimpan ke 'data.json'.")
 
-    function handleDrop(e) {
-      e.preventDefault();
-      const targetIndex = parseInt(this.dataset.index);
-      if (draggedItemIndex !== null && targetIndex !== draggedItemIndex) {
-        const item = stockOrder.splice(draggedItemIndex, 1)[0];
-        stockOrder.splice(targetIndex, 0, item);
-        saveState();
-        render();
-      }
-    }
-
-    function handleDragEnd() {
-      this.classList.remove('dragging');
-      draggedItemIndex = null;
-    }
-
-    function render() {
-      const grid = document.getElementById('stockGrid');
-      grid.innerHTML = '';
-
-      let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
-        ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NETRAL'
-      };
-      grid.appendChild(createCardElement(ihsgData, true));
-
-      let nonIhsgStocks = rawData.filter(s => s.ticker !== 'IHSG');
-      let displayList = [];
-
-      if (stockOrder.length > 0) {
-        stockOrder.forEach(ticker => {
-          let item = nonIhsgStocks.find(s => s.ticker === ticker);
-          if (item) displayList.push(item);
-        });
-        nonIhsgStocks.forEach(item => {
-          if (!displayList.some(s => s.ticker === item.ticker)) {
-            displayList.push(item);
-          }
-        });
-      } else {
-        displayList = nonIhsgStocks;
-      }
-
-      displayList.forEach((stock, index) => {
-        const group = stock.category || 'Lainnya';
-        if (activeFilter !== 'ALL' && group !== activeFilter) return;
-
-        grid.appendChild(createCardElement(stock, false, index));
-      });
-    }
-
-    function removeStock(ticker) {
-      stockOrder = stockOrder.filter(t => t !== ticker);
-      saveState();
-      render();
-    }
-
-    function filterGroup(group, el) {
-      activeFilter = group;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      el.classList.add('active');
-      render();
-    }
-
-    function saveState() {
-      localStorage.setItem('stock_order', JSON.stringify(stockOrder));
-    }
-
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-    loadData();
-  </script>
-</body>
-</html>
+if __name__ == "__main__":
+    run_screener()
