@@ -1,249 +1,1404 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screener Saham Multi-Strategi</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .tab-active {
-            border-bottom: 4px solid #2563eb;
-            color: #2563eb;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IHSG SH4NDY'S SCREENER</title>
+  
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" type="image/png" sizes="192x192" href="./laundry1-512x512.png">
+  <link rel="apple-touch-icon" href="./laundry1-512x512.png">
+  
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      user-select: none; 
+      text-transform: uppercase; 
+      font-weight: bold; 
+    }
+
+    body { 
+      background-color: #0f172a; 
+      color: #f8fafc; 
+      padding: 16px; 
+      padding-top: 90px; 
+      padding-bottom: 40px; 
+    }
+    
+    header { 
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background-color: #0f172a;
+      border-bottom: 1px solid #334155;
+      padding: 12px 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    
+    .app-logo { 
+      width: 40px; 
+      height: 40px; 
+      border-radius: 50%; 
+      object-fit: cover; 
+      flex-shrink: 0; 
+      border: 2px solid #38bdf8; 
+    }
+
+    .header-text { display: flex; flex-direction: column; }
+    h1 { font-size: 1rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
+    .update-time { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
+
+    .header-actions { display: flex; gap: 6px; align-items: center; }
+
+    .btn-header {
+      background: #0284c7;
+      color: #fff;
+      border: 1px solid #38bdf8;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .btn-header:hover { background: #0369a1; }
+    .btn-reload-header { background: #334155; border-color: #475569; }
+    .btn-reload-header:hover { background: #475569; }
+
+    .control-box { 
+      position: sticky; 
+      top: 75px; 
+      z-index: 90; 
+      background: #1e293b; 
+      padding: 10px 12px; 
+      border-radius: 10px; 
+      border: 1px solid #334155; 
+      margin-bottom: 12px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
+    }
+    .control-header { display: flex; justify-content: space-between; align-items: center; }
+    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
+    
+    .form-row { 
+      margin-top: 8px; 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 8px; 
+    }
+    .form-row.hidden { display: none; }
+    
+    select, input[type="text"] { 
+      width: 100%; 
+      padding: 8px 10px; 
+      border-radius: 6px; 
+      border: 1px solid #475569; 
+      background: #0f172a; 
+      color: #fff; 
+      font-size: 0.75rem; 
+      outline: none;
+    }
+    select option { background: #0f172a; color: #fff; }
+    input[type="text"]:focus, select:focus { border-color: #38bdf8; }
+
+    /* BARISAN KATEGORI STICKY */
+    .group-tabs { 
+      position: sticky;
+      top: 135px;
+      z-index: 85;
+      background: #0f172a;
+      padding: 6px 0;
+      margin-bottom: 12px; 
+      display: flex; 
+      gap: 6px; 
+      overflow-x: auto; 
+      scrollbar-width: none; 
+      border-bottom: 1px solid #1e293b;
+    }
+    .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
+    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
+
+    /* TAB KHUSUS LAYAK BELI */
+    .tab.tab-buy-worthy {
+      background: #064e3b;
+      color: #4ade80;
+      border-color: #22c55e;
+    }
+    .tab.tab-buy-worthy.active {
+      background: #166534;
+      color: #ffffff;
+      border-color: #4ade80;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+    }
+
+    /* STYLING INFO BURSA */
+    .market-info-tab {
+      padding: 6px 10px;
+      border-radius: 16px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      border: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .info-tab-1 { background: #111827; border-color: #374151; }
+    .info-tab-2 { background: #312e81; border-color: #4338ca; color: #c7d2fe; }
+
+    /* KOLOM JAM HITAM DOFF */
+    .info-tab-3 { 
+      background: #121212 !important; 
+      border-color: #27272a !important; 
+    }
+
+    /* STATE WARNA TEKS DOKUMEN BURSA & JAM */
+    .status-text-open { color: #4ade80 !important; }
+    .status-text-break { color: #a1a1aa !important; }
+    .status-text-closed { color: #f4f4f5 !important; }
+    .status-clock-open { color: #4ade80 !important; font-weight: 800; text-shadow: none !important; }
+
+    .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    
+    .card { background: #1e293b; padding: 12px; border-radius: 10px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
+    .card:active { cursor: grabbing; }
+    .card.dragging { opacity: 0.4; transform: scale(0.96); border-style: dashed; }
+    .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
+
+    .compact-actions-top {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      align-items: center;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .compact-btn {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      color: #38bdf8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      transition: background 0.2s;
+    }
+    .compact-btn:hover { background: #334155; }
+    .compact-btn.close-compact { color: #fca5a5; border-left: 1px solid #334155; }
+    .compact-btn.close-compact:hover { background: #7f1d1d; color: #fff; }
+
+    .card-header-full {
+      background: #0f172a;
+      border: 1px solid #334155;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .ticker-price-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding-right: 50px;
+    }
+
+    .ticker-large { 
+      font-size: 1.3rem; 
+      color: #fff; 
+      letter-spacing: 0.5px;
+    }
+
+    .price-large { 
+      font-size: 1.25rem; 
+    }
+    
+    .price-up { color: #22c55e; }
+    .price-down { color: #ef4444; }
+    .price-flat { color: #ffffff; }
+
+    .lightning-grid-container {
+      display: flex;
+      gap: 3px;
+      width: 100%;
+      height: 18px;
+      margin-top: 2px;
+    }
+
+    .lightning-box-slot {
+      flex: 1;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #475569;
+      transition: all 0.2s ease;
+    }
+
+    /* PETIR AKUMULASI (HIJAU SESUAI VOLUME) */
+    .lightning-box-slot.active-green {
+      background: #064e3b;
+      border-color: #22c55e;
+      color: #4ade80;
+    }
+
+    /* PETIR BANDAR DISTRIBUSI (MERAH SESUAI VOLUME) */
+    .lightning-box-slot.active-red {
+      background: #7f1d1d;
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+
+    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .group-tag { font-size: 0.65rem; color: #38bdf8; background: #0c4a6e; padding: 2px 5px; border-radius: 4px; display: inline-block; }
+    
+    .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
+    .box-container { display: flex; gap: 3px; }
+    .signal-box { 
+      width: 8px; 
+      height: 12px; 
+      border-radius: 2px; 
+      background-color: #334155; 
+      transition: all 0.3s ease;
+    }
+    
+    .box-neon-green { 
+      background-color: #22c55e; 
+      box-shadow: 0 0 4px #22c55e; 
+      border: 1px solid #4ade80;
+    }
+    .box-neon-red { 
+      background-color: #ef4444; 
+      box-shadow: 0 0 4px #ef4444; 
+      border: 1px solid #f87171;
+    }
+    .box-off { background-color: #1e293b; border: 1px solid #334155; }
+
+    .signal-percent { font-size: 0.7rem; color: #cbd5e1; }
+
+    .open-percent-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; display: inline-block; }
+
+    .indicator-column-box, .ohlc-grid-box, .trend-vol-row {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 6px;
+      margin: 6px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      font-size: 0.65rem;
+    }
+    
+    .indicator-item, .ohlc-item { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: #1e293b; 
+      padding: 5px 6px; 
+      border-radius: 4px; 
+      height: 26px;
+    }
+
+    @keyframes dot-blink {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .dot-indicator { 
+      display: inline-block; 
+      width: 10px; 
+      height: 10px; 
+      border-radius: 50%; 
+      flex-shrink: 0;
+    }
+    .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; animation: dot-blink 1s infinite; }
+    .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; animation: dot-blink 1s infinite; }
+    .dot-neutral { background-color: #64748b; }
+    .dot-sideways { background-color: #ffffff; box-shadow: 0 0 4px #ffffff; }
+
+    .ohlc-val { color: #fff; }
+
+    .warning-box-col {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 6px;
+      margin-bottom: 6px;
+      text-align: center;
+      font-size: 0.68rem;
+    }
+
+    .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
+    .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; animation: dot-blink 1s infinite; }
+    .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; animation: dot-blink 1s infinite; }
+
+    @keyframes blink-animation {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+    .blink-red { color: #ef4444; animation: blink-animation 1s infinite; }
+    .blink-green { color: #22c55e; animation: blink-animation 1s infinite; }
+
+    @keyframes card-highlight {
+      0% { box-shadow: 0 0 0px #eab308; border-color: #334155; transform: scale(1); }
+      50% { box-shadow: 0 0 20px #eab308; border-color: #eab308; transform: scale(1.02); }
+      100% { box-shadow: 0 0 0px #eab308; border-color: #334155; transform: scale(1); }
+    }
+    .highlight-card { animation: card-highlight 0.7s ease-in-out 3; z-index: 10; }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
+
+    .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; color: #cbd5e1; }
+    .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; align-items: center; }
+    .sr-row:last-child { margin-bottom: 0; }
+    .sr-res { color: #f87171; }
+    .sr-sup { color: #4ade80; }
+
+    .sr-pivot-separator {
+      background-color: #0f172a;
+      border: 1px solid #ffffff;
+      padding: 3px 5px;
+      margin: 4px -5px;
+      border-radius: 4px;
+    }
+    .pivot-label-yellow { color: #eab308; }
+    .pivot-price-blue { color: #38bdf8; }
+    .pivot-price-green { color: #4ade80; }
+    .pivot-price-yellow { color: #eab308; }
+
+    .pivot-dots-container {
+      display: inline-flex;
+      gap: 2px;
+      align-items: center;
+      margin-left: 4px;
+      margin-right: auto;
+    }
+
+    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; }
+    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; }
+
+    .pivot-price-wrapper {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .signal-badge-container { margin: 6px 0 4px 0; text-align: center; }
+    .badge { display: block; width: 100%; padding: 5px 6px; border-radius: 5px; font-size: 0.7rem; text-align: center; letter-spacing: 0.5px; }
+    .strong-buy { background: #047857; color: #34d399; border: 1px solid #10b981; }
+    .buy { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
+    .neutral { background: #334155; color: #cbd5e1; border: 1px solid #475569; }
+    .sell { background: #991b1b; color: #fca5a5; border: 1px solid #ef4444; }
+    .strong-sell { background: #881337; color: #fda4af; border: 1px solid #f43f5e; }
+
+    .fibo-stat-box { margin-top: 4px; padding: 3px 5px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; text-align: center; }
+    .fibo-oversold { color: #22c55e; border-color: #22c55e; }
+    .fibo-overbought { color: #ef4444; border-color: #ef4444; }
+    .fibo-normal { color: #64748b; }
+
+    /* MULTI-COLUMN TRADING PLAN STYLING */
+    .trading-plan-wrapper { 
+      margin-top: 8px; 
+      padding: 8px; 
+      background: #0f172a; 
+      border-radius: 8px; 
+      border: 1px dashed #475569; 
+    }
+    .trading-plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .plan-col {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 6px 4px;
+      font-size: 0.6rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .plan-col.active-style {
+      border-color: #38bdf8;
+      background: #0f2744;
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+    }
+    .plan-col-title {
+      font-size: 0.62rem;
+      color: #38bdf8;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .plan-row-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      padding: 3px 2px;
+      border-radius: 4px;
+      border: 1px solid #1e293b;
+    }
+    .plan-item-label { color: #94a3b8; font-size: 0.55rem; margin-bottom: 1px; }
+    .plan-item-val { color: #fff; font-size: 0.62rem; }
+    .val-tp { color: #4ade80; }
+    .val-cl { color: #f87171; }
+    .val-entry { color: #38bdf8; }
+    .val-wait { color: #f59e0b; }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800">
+<body>
 
-    <div class="container mx-auto px-4 py-8">
-        <!-- HEADER -->
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Screener & Analytics Saham IHSG</h1>
-            <p class="text-gray-600">Rekomendasi teknikal terintegrasi berdasarkan pilihan gaya trading Anda.</p>
-            <p id="updated-at" class="text-xs text-gray-400 mt-1"></p>
-        </header>
-
-        <!-- 3 TAB STRATEGI HEADER -->
-        <div class="bg-white rounded-xl shadow-md mb-8 overflow-hidden">
-            <div class="grid grid-cols-1 md:grid-cols-3 text-center border-b border-gray-200">
-                
-                <!-- Tab 1: Scalping -->
-                <button onclick="switchTab('scalping')" id="tab-scalping" class="tab-btn py-4 px-6 text-gray-600 hover:text-blue-600 font-semibold flex flex-col items-center justify-center border-b-2 md:border-b-0 md:border-r border-gray-100 transition">
-                    <span class="text-lg">1. Scalping / Short-term</span>
-                    <span class="text-xs font-normal text-gray-500 mt-1">Orderbook, Momentum RSI & Volumemania</span>
-                </button>
-
-                <!-- Tab 2: Swing -->
-                <button onclick="switchTab('swing')" id="tab-swing" class="tab-btn py-4 px-6 text-gray-600 hover:text-blue-600 font-semibold flex flex-col items-center justify-center border-b-2 md:border-b-0 md:border-r border-gray-100 transition">
-                    <span class="text-lg">2. Swing / Middle-term</span>
-                    <span class="text-xs font-normal text-gray-500 mt-1">MA20, Support/Resistance & MACD Crossover</span>
-                </button>
-
-                <!-- Tab 3: Investasi -->
-                <button onclick="switchTab('investasi')" id="tab-investasi" class="tab-btn py-4 px-6 text-gray-600 hover:text-blue-600 font-semibold flex flex-col items-center justify-center transition">
-                    <span class="text-lg">3. Investasi / Long-term</span>
-                    <span class="text-xs font-normal text-gray-500 mt-1">Trend Base MA20, Value Range & Diskon Fibo</span>
-                </button>
-
-            </div>
+  <header>
+    <div class="header-container">
+      <div class="header-left">
+        <img src="laundry1-512x512.png" alt="LOGO" class="app-logo">
+        <div class="header-text">
+          <h1>IHSG SCREENER</h1>
+          <p class="update-time" id="updateTime">MEMUAT DATA...</p>
         </div>
-
-        <!-- SEARCH & FILTER -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <input type="text" id="search-input" onkeyup="renderData()" placeholder="Cari Kode Ticker (contoh: BBCA)..." class="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <div class="text-sm text-gray-500">
-                Menampilkan data untuk strategi: <span id="current-strategy-label" class="font-bold text-blue-600">Scalping</span>
-            </div>
-        </div>
-
-        <!-- CONTAINER KARTU SAHAM -->
-        <div id="stock-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Data akan di-load lewat JavaScript -->
-        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-header" onclick="refreshAllData(this)">
+          <span class="refresh-icon">🔄</span> REFRESH
+        </button>
+        <button class="btn-header btn-reload-header" onclick="reloadPage()">
+          <span>⚡</span> RELOAD
+        </button>
+      </div>
     </div>
+  </header>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        let globalData = [];
-        let currentStrategy = 'scalping'; // Default: scalping
+  <div class="control-box">
+    <div class="control-header">
+      <span style="font-size: 0.75rem; color: #94a3b8;">MENU EMITEN & GAYA TRADING</span>
+      <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ SEMBUNYIKAN MENU</button>
+    </div>
+    <div class="form-row" id="dropdownRow">
+      <input type="text" id="searchInput" placeholder="🔍 CARI EMITEN..." onkeyup="handleSearchKey(event)">
+      
+      <select id="selectTradingStyle" onchange="changeTradingStyle(this.value)">
+        <option value="SCALPING">⚡ 1. SCALPING / SHORTTERM</option>
+        <option value="SWING" selected>📈 2. SWING / MIDDLETERM</option>
+        <option value="INVESTMENT">💎 3. INVESTASI / LONGTERM</option>
+      </select>
 
-        // Fetch data.json
-        async function loadStockData() {
-            try {
-                const response = await fetch('data.json');
-                const data = await response.json();
-                globalData = data.stocks;
-                
-                document.getElementById('updated-at').innerText = `Terakhir Diperbarui: ${new Date(data.updated_at).toLocaleString('id-ID')}`;
-                
-                switchTab('scalping'); // Default tab
-            } catch (error) {
-                console.error("Gagal memuat data.json:", error);
-                document.getElementById('stock-container').innerHTML = `<p class="text-red-500 text-center col-span-3">Gagal memuat data JSON. Pastikan script Python sudah dijalankan.</p>`;
-            }
+      <select id="selectTickerOption" onchange="autoAddStock(this)">
+        <option value="">-- PILIH EMITEN --</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="group-tabs" id="groupTabs">
+    <div class="tab active" onclick="filterGroup('ALL', this)">SEMUA</div>
+    <!-- TAB BARU: LAYAK BELI -->
+    <div class="tab tab-buy-worthy" onclick="filterGroup('LAYAK_BELI', this)">🔥 LAYAK BELI</div>
+    <div class="tab" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
+    <div class="tab" onclick="filterGroup('ENERGI', this)">ENERGI</div>
+    <div class="tab" onclick="filterGroup('TAMBANG', this)">TAMBANG</div>
+    <div class="tab" onclick="filterGroup('TEKNOLOGI', this)">TEKNOLOGI</div>
+    <div class="tab" onclick="filterGroup('MEDIA', this)">MEDIA</div>
+    <div class="tab" onclick="filterGroup('KONSUMER', this)">KONSUMER</div>
+    <div class="tab" onclick="filterGroup('PROPERTI', this)">PROPERTI</div>
+    <div class="tab" onclick="filterGroup('INDUSTRI', this)">INDUSTRI</div>
+
+    <div class="market-info-tab info-tab-1" id="marketSessionCol">
+      🏛️ <span id="marketSessionText">SESI 1: 09:00-12:00</span>
+    </div>
+    <div class="market-info-tab info-tab-2" id="holidayWarningCol">
+      📅 <span id="holidayWarningText">BURSA BUKA (SENIN-JUMAT)</span>
+    </div>
+    <div class="market-info-tab info-tab-3" id="clockWibCol">
+      🕒 <span id="clockWibText">00:00:00 WIB</span>
+    </div>
+  </div>
+
+  <div class="card-grid" id="stockGrid"></div>
+
+  <script>
+    let rawData = [];
+    let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
+    let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
+    let selectedTradingStyle = localStorage.getItem('trading_style') || 'SWING';
+    let activeFilter = 'ALL';
+    let draggedTicker = null;
+
+    function formatWIB(timeStr) {
+      if (!timeStr) return "-";
+      try {
+        const date = new Date(timeStr);
+        if (isNaN(date.getTime())) return timeStr;
+        return date.toLocaleString('id-ID', {
+          timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        }) + " WIB";
+      } catch (e) { return timeStr; }
+    }
+
+    function formatNum(val) {
+      if (val === undefined || val === null || isNaN(val)) return '0';
+      return Number(val).toLocaleString('id-ID');
+    }
+
+    function reloadPage() {
+      window.location.reload();
+    }
+
+    function updateMarketClock() {
+      const now = new Date();
+      const options = { timeZone: 'Asia/Jakarta', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const timeString = now.toLocaleTimeString('id-ID', options);
+      
+      const day = now.getDay();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      const clockEl = document.getElementById('clockWibText');
+      const sessionEl = document.getElementById('marketSessionText');
+      const holidayEl = document.getElementById('holidayWarningText');
+
+      if (clockEl) clockEl.innerText = `${timeString} WIB`;
+
+      let isWeekend = (day === 0 || day === 6);
+      let isFriday = (day === 5);
+
+      if (isWeekend) {
+        if (holidayEl) holidayEl.innerText = "LIBUR SABTU/MINGGU";
+        if (sessionEl) {
+          sessionEl.innerText = "BURSA TUTUP (WEEKEND)";
+          sessionEl.className = "status-text-closed";
         }
+        if (clockEl) clockEl.className = "status-text-closed";
+        return;
+      } else {
+        if (holidayEl) holidayEl.innerText = "BURSA BUKA (HARI KERJA)";
+      }
 
-        // Fungsi Ganti Tab
-        function switchTab(strategy) {
-            currentStrategy = strategy;
+      const s1Start = 9 * 60; 
+      const s1End = 12 * 60;  
+      const s2StartNormal = 13 * 60 + 30; 
+      const s2StartFriday = 14 * 60;      
+      const s2Start = isFriday ? s2StartFriday : s2StartNormal;
+      const s2End = 16 * 60;  
+
+      if (totalMinutes >= s1Start && totalMinutes < s1End) {
+        if (sessionEl) {
+          sessionEl.innerText = "SESI 1 OPEN (09:00 - 12:00)";
+          sessionEl.className = "status-text-open";
+        }
+        if (clockEl) clockEl.className = "status-clock-open";
+      } else if (totalMinutes >= s1End && totalMinutes < s2Start) {
+        if (sessionEl) {
+          sessionEl.innerText = isFriday ? "ISTIRAHAT (12:00 - 14:00)" : "ISTIRAHAT (12:00 - 13:30)";
+          sessionEl.className = "status-text-break";
+        }
+        if (clockEl) clockEl.className = "status-text-break";
+      } else if (totalMinutes >= s2Start && totalMinutes < s2End) {
+        if (sessionEl) {
+          sessionEl.innerText = isFriday ? "SESI 2 OPEN (14:00 - 16:00)" : "SESI 2 OPEN (13:30 - 16:00)";
+          sessionEl.className = "status-text-open";
+        }
+        if (clockEl) clockEl.className = "status-clock-open";
+      } else {
+        if (sessionEl) {
+          sessionEl.innerText = "BURSA TUTUP";
+          sessionEl.className = "status-text-closed";
+        }
+        if (clockEl) clockEl.className = "status-text-closed";
+      }
+    }
+
+    setInterval(updateMarketClock, 1000);
+
+    async function fetchLatestData() {
+      const timestamp = new Date().getTime();
+      const res = await fetch(`./data.json?t=${timestamp}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error("Gagal mengambil data");
+      return await res.json();
+    }
+
+    async function loadData() {
+      try {
+        const data = await fetchLatestData();
+        document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
+        rawData = data.stocks || [];
+
+        initMenuState();
+        populateDropdownOptions();
+        render();
+        updateMarketClock();
+      } catch (e) {
+        document.getElementById('updateTime').innerText = "GAGAL MEMUAT DATA.JSON";
+      }
+    }
+
+    async function refreshAllData(btnEl) {
+      const icon = btnEl.querySelector('.refresh-icon');
+      if (icon) icon.classList.add('spinning');
+      await loadData();
+      setTimeout(() => {
+        if (icon) icon.classList.remove('spinning');
+      }, 500);
+    }
+
+    async function refreshSingleCard(ticker, btnEl) {
+      btnEl.classList.add('spinning');
+      try {
+        const data = await fetchLatestData();
+        document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
+        rawData = data.stocks || [];
+
+        const targetStock = rawData.find(s => s.ticker === ticker);
+        if (targetStock) {
+          const oldCard = document.querySelector(`.card[data-ticker="${ticker}"]`);
+          if (oldCard) {
+            const isIHSG = (ticker === 'IHSG');
+            const newCard = createCardElement(targetStock, isIHSG);
+            oldCard.replaceWith(newCard);
+            highlightStockCard(ticker);
+          }
+        }
+      } catch (e) {
+        alert(`GAGAL MEMPERBARUI DATA ${ticker}`);
+      } finally {
+        btnEl.classList.remove('spinning');
+      }
+    }
+
+    function initMenuState() {
+      const row = document.getElementById('dropdownRow');
+      const btn = document.getElementById('toggleBtn');
+      const selectStyle = document.getElementById('selectTradingStyle');
+      
+      if (selectStyle) selectStyle.value = selectedTradingStyle;
+
+      if (isMenuVisible) {
+        row.classList.remove('hidden');
+        btn.innerText = "👁️ SEMBUNYIKAN MENU";
+      } else {
+        row.classList.add('hidden');
+        btn.innerText = "👁️ TAMPILKAN MENU";
+      }
+    }
+
+    function toggleDropdownMenu() {
+      isMenuVisible = !isMenuVisible;
+      localStorage.setItem('menu_visible', JSON.stringify(isMenuVisible));
+      initMenuState();
+    }
+
+    function changeTradingStyle(styleVal) {
+      selectedTradingStyle = styleVal;
+      localStorage.setItem('trading_style', selectedTradingStyle);
+      render();
+    }
+
+    function populateDropdownOptions() {
+      const selectEl = document.getElementById('selectTickerOption');
+      selectEl.innerHTML = '<option value="">-- PILIH EMITEN --</option>';
+      
+      let sortedStocks = [...rawData].filter(s => s.ticker !== 'IHSG').sort((a, b) => a.ticker.localeCompare(b.ticker));
+
+      sortedStocks.forEach(stock => {
+        const option = document.createElement('option');
+        option.value = stock.ticker;
+        option.textContent = `${stock.ticker} (${stock.category || 'LAINNYA'})`;
+        selectEl.appendChild(option);
+      });
+    }
+
+    function autoAddStock(selectEl) {
+      const ticker = selectEl.value;
+      if (!ticker) return;
+
+      if (!stockOrder.includes(ticker)) {
+        stockOrder.push(ticker);
+        saveState();
+        render();
+      }
+      highlightStockCard(ticker);
+      selectEl.value = '';
+    }
+
+    function handleSearchKey(event) {
+      searchStock(event.target.value);
+    }
+
+    function searchStock(query) {
+      const cleanQuery = query.trim().toUpperCase();
+      if (!cleanQuery) return;
+
+      const targetCard = document.querySelector(`.card[data-ticker="${cleanQuery}"]`);
+      if (targetCard) {
+        highlightStockCard(cleanQuery);
+      } else {
+        const foundData = rawData.find(s => s.ticker === cleanQuery);
+        if (foundData) {
+          if (!stockOrder.includes(cleanQuery)) {
+            stockOrder.push(cleanQuery);
+            saveState();
+            render();
+          }
+          highlightStockCard(cleanQuery);
+        }
+      }
+    }
+
+    function highlightStockCard(ticker) {
+      setTimeout(() => {
+        const cardEl = document.querySelector(`.card[data-ticker="${ticker}"]`);
+        if (cardEl) {
+          cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          cardEl.classList.remove('highlight-card');
+          void cardEl.offsetWidth;
+          cardEl.classList.add('highlight-card');
+        }
+      }, 100);
+    }
+
+    /* LOGIKA CEK DOKUMEN LAYAK BELI BERDASARKAN AKUMULASI INDIKATOR HARI INI */
+    function isBuyWorthyStock(stock) {
+      const signalText = (stock.signal || '').toUpperCase();
+      const isBuySignal = signalText.includes('BUY') || signalText.includes('STRONG BUY');
+      if (!isBuySignal) return false;
+
+      let score = 0;
+      const closePrice = stock.price ?? 0;
+      const highPrice = stock.high ?? closePrice;
+      const lowPrice = stock.low ?? closePrice;
+      const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+
+      // Volume & Vol Ratio
+      if ((stock.vol_status || '').toUpperCase() === 'BUY' || (parseFloat(stock.vol_ratio) || 0) >= 1.2) score++;
+      // MACD
+      if ((stock.macd_status || '').toUpperCase() === 'BUY') score++;
+      // EMA / MA20
+      if ((stock.ema_status || '').toUpperCase() === 'BUY' || closePrice >= (stock.ma20 || closePrice)) score++;
+      // RSI
+      if ((stock.rsi_status || '').toUpperCase() === 'BUY' || (stock.fibo_rsi_status || '').toUpperCase() === 'OVER SOLD') score++;
+      // Pivot
+      if (closePrice >= pivotPoint) score++;
+
+      // Kriteria: Berstatus BUY/STRONG BUY dan minimal 3 indikator teknis positif
+      return score >= 3;
+    }
+
+    /* LOGIKA 3 KOLOM TRADING PLAN (SCALPING, SWING, INVESTASI) */
+    function calculateMultiTradingPlans(stock, isReadyToBuy) {
+      if (!isReadyToBuy) {
+        return {
+          scalping: { entry: 'WAIT', tp1: 'WAIT', tp2: 'WAIT', tp3: 'WAIT', cl1: 'WAIT', cl2: 'WAIT', cl3: 'WAIT' },
+          swing: { entry: 'WAIT', tp1: 'WAIT', tp2: 'WAIT', tp3: 'WAIT', cl1: 'WAIT', cl2: 'WAIT', cl3: 'WAIT' },
+          investment: { entry: 'WAIT', tp1: 'WAIT', tp2: 'WAIT', tp3: 'WAIT', cl1: 'WAIT', cl2: 'WAIT', cl3: 'WAIT' }
+        };
+      }
+
+      const closePrice = stock.price ?? 0;
+      const highPrice = stock.high ?? closePrice;
+      const lowPrice = stock.low ?? closePrice;
+      const pivot = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+
+      const r1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
+      const r2 = stock.resistance_2 || Math.round(r1 * 1.02);
+      const r3 = stock.resistance_3 || Math.round(r2 * 1.02);
+
+      const s1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
+      const s2 = stock.support_2 || Math.round(s1 * 0.98);
+      const s3 = stock.support_3 || Math.round(s2 * 0.98);
+
+      // 1. SCALPING / SHORTTERM
+      const scEntry = stock.entry_price || closePrice;
+      const scTp1 = Math.round(scEntry * 1.015); // +1.5%
+      const scTp2 = stock.take_profit || Math.round(scEntry * 1.03); // +3%
+      const scTp3 = Math.round(scEntry * 1.05); // +5%
+      const scCl1 = Math.round(scEntry * 0.99); // -1%
+      const scCl2 = stock.cut_loss || Math.round(scEntry * 0.985); // -1.5%
+      const scCl3 = Math.round(scEntry * 0.98); // -2%
+
+      // 2. SWING / MIDDLETERM
+      const swEntry = Math.min(closePrice, pivot);
+      const swTp1 = r1;
+      const swTp2 = r2;
+      const swTp3 = r3;
+      const swCl1 = s1;
+      const swCl2 = s2;
+      const swCl3 = s3;
+
+      // 3. INVESTASI / LONGTERM
+      const invEntry = Math.min(s1, pivot);
+      const invTp1 = r2;
+      const invTp2 = r3;
+      const invTp3 = Math.round(invEntry * 1.15); // Target ATH / +15%
+      const invCl1 = s3;
+      const invCl2 = Math.round(invEntry * 0.90); // -10%
+      const invCl3 = Math.round(invEntry * 0.85); // -15%
+
+      return {
+        scalping: {
+          entry: formatNum(scEntry),
+          tp1: formatNum(scTp1), tp2: formatNum(scTp2), tp3: formatNum(scTp3),
+          cl1: formatNum(scCl1), cl2: formatNum(scCl2), cl3: formatNum(scCl3)
+        },
+        swing: {
+          entry: formatNum(swEntry),
+          tp1: formatNum(swTp1), tp2: formatNum(swTp2), tp3: formatNum(swTp3),
+          cl1: formatNum(swCl1), cl2: formatNum(swCl2), cl3: formatNum(swCl3)
+        },
+        investment: {
+          entry: formatNum(invEntry),
+          tp1: formatNum(invTp1), tp2: formatNum(invTp2), tp3: formatNum(invTp3),
+          cl1: formatNum(invCl1), cl2: formatNum(invCl2), cl3: formatNum(invCl3)
+        }
+      };
+    }
+
+    function renderLightningBoxes(stock) {
+      const isSuspended = stock.is_suspended || stock.status === 'SUSPEND' || stock.volume === 0;
+      const vRatio = parseFloat(stock.vol_ratio) || 0;
+      const closePrice = stock.price ?? 0;
+      const prevClose = stock.prev_close ?? closePrice;
+      const volStatus = (stock.vol_status || '').toUpperCase();
+      const signalText = (stock.signal || '').toUpperCase();
+
+      let activeCount = 0;
+
+      if (!isSuspended) {
+        if (vRatio >= 2.5) activeCount = 5;
+        else if (vRatio >= 2.0) activeCount = 4;
+        else if (vRatio >= 1.5) activeCount = 3;
+        else if (vRatio >= 1.2) activeCount = 2;
+        else if (vRatio >= 1.0) activeCount = 1;
+        else activeCount = 0;
+      }
+
+      const isDistribution = (volStatus === 'SELL') || (closePrice < prevClose) || signalText.includes('SELL');
+      let activeClass = isDistribution ? 'active-red' : 'active-green';
+
+      let html = '<div class="lightning-grid-container">';
+      for (let i = 1; i <= 5; i++) {
+        if (!isSuspended && i <= activeCount) {
+          html += `<div class="lightning-box-slot ${activeClass}">⚡</div>`;
+        } else {
+          html += `<div class="lightning-box-slot">⚡</div>`;
+        }
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function createCardElement(stock, isIHSG = false) {
+      const group = isIHSG ? 'INDEKS UTAMA' : (stock.category || 'LAINNYA');
+
+      const openPrice = stock.open ?? stock.price;
+      const closePrice = stock.price ?? 0;
+      const prevClose = stock.prev_close ?? openPrice;
+      const highPrice = stock.high ?? closePrice;
+      const lowPrice = stock.low ?? closePrice;
+
+      let openPercentVal = 0;
+      if (openPrice > 0) {
+        openPercentVal = ((closePrice - openPrice) / openPrice) * 100;
+      }
+      const openPercentSign = openPercentVal > 0 ? '+' : '';
+      const openPercentStr = `${openPercentSign}${openPercentVal.toFixed(2)}%`;
+      
+      let priceColorClass = 'price-flat';
+      if (closePrice > prevClose) priceColorClass = 'price-up';
+      else if (closePrice < prevClose) priceColorClass = 'price-down';
+
+      let score = 0;
+
+      let rsiStatus = stock.rsi_status || 'NEUTRAL';
+      let rsiDot = 'dot-neutral';
+      if (rsiStatus === 'BUY') { score += 1; rsiDot = 'dot-buy'; }
+      else if (rsiStatus === 'SELL') { score -= 1; rsiDot = 'dot-sell'; }
+
+      let macdStatus = stock.macd_status || 'NEUTRAL';
+      let macdDot = 'dot-neutral';
+      if (macdStatus === 'BUY') { score += 1; macdDot = 'dot-buy'; }
+      else if (macdStatus === 'SELL') { score -= 1; macdDot = 'dot-sell'; }
+
+      let volStatus = stock.vol_status || 'NEUTRAL';
+      let volDot = 'dot-neutral';
+      if (volStatus === 'BUY') { score += 1; volDot = 'dot-buy'; }
+      else if (volStatus === 'SELL') { score -= 1; volDot = 'dot-sell'; }
+
+      let emaStatus = stock.ema_status || (closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL');
+      let emaDot = 'dot-neutral';
+      if (emaStatus === 'BUY') { score += 1; emaDot = 'dot-buy'; }
+      else if (emaStatus === 'SELL') { score -= 1; emaDot = 'dot-sell'; }
+
+      let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
+      if (fiboStatus === 'OVER SOLD') score += 1;
+      else if (fiboStatus === 'OVER BOUGHT') score -= 1;
+
+      let rawTrend = (stock.trend_status || '').toUpperCase();
+      let trendStatus = 'SIDEWAYS';
+      let trendDot = 'dot-sideways';
+
+      if (rawTrend.includes('BULL') || rawTrend === 'BUY') {
+        score += 1; trendDot = 'dot-buy'; trendStatus = 'BULLISH';
+      } else if (rawTrend.includes('BEAR') || rawTrend === 'SELL') {
+        score -= 1; trendDot = 'dot-sell'; trendStatus = 'BEARISH';
+      } else {
+        if (closePrice > prevClose) {
+          trendDot = 'dot-buy'; trendStatus = 'BULLISH';
+        } else if (closePrice < prevClose) {
+          trendDot = 'dot-sell'; trendStatus = 'BEARISH';
+        } else {
+          trendDot = 'dot-sideways'; trendStatus = 'SIDEWAYS';
+        }
+      }
+
+      let signalText = 'NETRAL';
+      let badgeClass = 'neutral';
+      let percentageNum = 50;
+      let isBullishMode = score >= 0;
+
+      if (score >= 4) percentageNum = 100;
+      else if (score >= 2) percentageNum = 80;
+      else if (score >= 0) percentageNum = 60;
+      else if (score >= -2) percentageNum = 40;
+      else percentageNum = 20;
+
+      if (stock.signal) {
+        if (stock.signal.includes('STRONG BUY')) { percentageNum = 100; signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
+        else if (stock.signal.includes('BUY')) { percentageNum = 80; signalText = 'BUY'; badgeClass = 'buy'; }
+        else if (stock.signal.includes('STRONG SELL')) { percentageNum = 100; isBullishMode = false; signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
+        else if (stock.signal.includes('SELL')) { percentageNum = 80; isBullishMode = false; signalText = 'SELL'; badgeClass = 'sell'; }
+      }
+
+      const activeBoxes = Math.round(percentageNum / 20);
+      let neonBoxClass = isBullishMode ? 'box-neon-green' : 'box-neon-red';
+      
+      let boxesHtml = '';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= activeBoxes) {
+          boxesHtml += `<div class="signal-box ${neonBoxClass}"></div>`;
+        } else {
+          boxesHtml += `<div class="signal-box box-off"></div>`;
+        }
+      }
+
+      let warningHtml = '';
+      const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || trendStatus === 'BEARISH' || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
+      const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || trendStatus === 'BULLISH' || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
+
+      if (trendStatus === 'BEARISH' || isReversalDown) {
+        warningHtml = '<div class="warning-box-col blink-red">⚠️ WARNING! TREND TURUN!</div>';
+      } else if (trendStatus === 'BULLISH' || isReversalUp) {
+        warningHtml = '<div class="warning-box-col blink-green">⚠️ WARNING! TREND NAIK!</div>';
+      } else {
+        warningHtml = '<div class="warning-box-col" style="color:#64748b;">⚠️ WARNING! NETRAL</div>';
+      }
+
+      const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
+      const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
+
+      const plans = calculateMultiTradingPlans(stock, isReadyToBuy);
+
+      let fiboBoxClass = 'fibo-normal';
+      let fiboText = 'FIBO-RSI: NORMAL';
+      if (fiboStatus === 'OVER SOLD') {
+        fiboBoxClass = 'fibo-oversold'; fiboText = 'OVER SOLD';
+      } else if (fiboStatus === 'OVER BOUGHT') {
+        fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT';
+      }
+
+      const r1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
+      const r2 = stock.resistance_2 || Math.round(r1 * 1.02);
+      const r3 = stock.resistance_3 || Math.round(r2 * 1.02);
+      const s1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
+      const s2 = stock.support_2 || Math.round(s1 * 0.98);
+      const s3 = stock.support_3 || Math.round(s2 * 0.98);
+
+      const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+
+      let pivotPriceClass = 'pivot-price-yellow';
+      let pivotArrowIcon = '';
+      let dotColorClass = 'dot-green';
+      
+      let diffRatio = 0;
+      if (pivotPoint > 0) {
+        diffRatio = Math.abs(closePrice - pivotPoint) / pivotPoint;
+      }
+      
+      let dotCount = 1;
+      if (diffRatio >= 0.04) dotCount = 5;
+      else if (diffRatio >= 0.03) dotCount = 4;
+      else if (diffRatio >= 0.02) dotCount = 3;
+      else if (diffRatio >= 0.01) dotCount = 2;
+
+      if (closePrice < pivotPoint) {
+        pivotPriceClass = 'pivot-price-blue';
+        pivotArrowIcon = '<span class="pivot-arrow-down">▼&nbsp;&nbsp;</span>';
+        dotColorClass = 'dot-red';
+      } else if (closePrice > pivotPoint) {
+        pivotPriceClass = 'pivot-price-green';
+        pivotArrowIcon = '<span class="pivot-arrow-up">▲&nbsp;&nbsp;</span>';
+        dotColorClass = 'dot-green';
+      }
+
+      let pivotDotsHtml = '<div class="pivot-dots-container">';
+      for (let d = 0; d < dotCount; d++) {
+        pivotDotsHtml += `<span class="dot-indicator ${dotColorClass}"></span>`;
+      }
+      pivotDotsHtml += '</div>';
+
+      const r3Class = (highPrice >= r3 || closePrice >= r3) ? 'blink-red' : 'sr-res';
+      const r2Class = (highPrice >= r2 || closePrice >= r2) ? 'blink-red' : 'sr-res';
+      const r1Class = (highPrice >= r1 || closePrice >= r1) ? 'blink-red' : 'sr-res';
+      
+      const s1Class = (lowPrice <= s1 || closePrice <= s1) ? 'blink-green' : 'sr-sup';
+      const s2Class = (lowPrice <= s2 || closePrice <= s2) ? 'blink-green' : 'sr-sup';
+      const s3Class = (lowPrice <= s3 || closePrice <= s3) ? 'blink-green' : 'sr-sup';
+
+      const card = document.createElement('div');
+      card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
+      card.dataset.ticker = stock.ticker;
+      if (!isIHSG) {
+        card.draggable = true;
+      }
+
+      card.innerHTML = `
+        <div class="compact-actions-top">
+          <button class="compact-btn" title="REFRESH DATA" onclick="refreshSingleCard('${stock.ticker}', this)">🔄</button>
+          ${!isIHSG ? `<button class="compact-btn close-compact" title="HAPUS EMITEN" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
+        </div>
+
+        <div class="card-header-full">
+          <div class="ticker-price-row">
+            <span class="ticker-large">${stock.ticker}</span>
+            <span class="price-large ${priceColorClass}">${formatNum(closePrice)}</span>
+          </div>
+          ${renderLightningBoxes(stock)}
+        </div>
+
+        <div class="sub-header">
+          <span class="group-tag">${group}</span>
+          <span class="open-percent-badge ${priceColorClass}">${openPercentStr}</span>
+          <div class="signal-indicator-box">
+            <div class="box-container">
+              ${boxesHtml}
+            </div>
+            <span class="signal-percent">${percentageNum}%</span>
+          </div>
+        </div>
+
+        <div class="indicator-column-box">
+          <div class="indicator-item"><span>RSI</span><span class="dot-indicator ${rsiDot}"></span></div>
+          <div class="indicator-item"><span>MACD</span><span class="dot-indicator ${macdDot}"></span></div>
+          <div class="indicator-item"><span>VOL</span><span class="dot-indicator ${volDot}"></span></div>
+          <div class="indicator-item"><span>EMA</span><span class="dot-indicator ${emaDot}"></span></div>
+        </div>
+
+        <div class="ohlc-grid-box">
+          <div class="ohlc-item"><span>PREV</span><span class="ohlc-val">${formatNum(prevClose)}</span></div>
+          <div class="ohlc-item"><span>OPEN</span><span class="ohlc-val">${formatNum(openPrice)}</span></div>
+          <div class="ohlc-item"><span>HIGH</span><span class="ohlc-val">${formatNum(highPrice)}</span></div>
+          <div class="ohlc-item"><span>LOW</span><span class="ohlc-val">${formatNum(lowPrice)}</span></div>
+        </div>
+
+        <div class="trend-vol-row">
+          <div class="indicator-item">
+            <span>TREND</span>
+            <span class="dot-indicator ${trendDot}"></span>
+          </div>
+          <div class="indicator-item">
+            <span>VOL RATIO</span>
+            <span style="color:#fff;">${stock.vol_ratio || 1.0}X</span>
+          </div>
+        </div>
+
+        ${warningHtml}
+
+        <div class="sr-stat-box">
+          <div class="sr-row"><span>RESISTAN 3 (R3):</span> <span class="${r3Class}">${formatNum(r3)}</span></div>
+          <div class="sr-row"><span>RESISTAN 2 (R2):</span> <span class="${r2Class}">${formatNum(r2)}</span></div>
+          <div class="sr-row"><span>RESISTAN 1 (R1):</span> <span class="${r1Class}">${formatNum(r1)}</span></div>
+          
+          <div class="sr-row sr-pivot-separator">
+            <span class="pivot-label-yellow">PIVOT POINT (P):</span>
+            ${pivotDotsHtml}
+            <div class="pivot-price-wrapper">
+              ${pivotArrowIcon}
+              <span class="${pivotPriceClass}">${formatNum(pivotPoint)}</span>
+            </div>
+          </div>
+
+          <div class="sr-row"><span>SUPPORT 1 (S1):</span> <span class="${s1Class}">${formatNum(s1)}</span></div>
+          <div class="sr-row"><span>SUPPORT 2 (S2):</span> <span class="${s2Class}">${formatNum(s2)}</span></div>
+          <div class="sr-row"><span>SUPPORT 3 (S3):</span> <span class="${s3Class}">${formatNum(s3)}</span></div>
+        </div>
+
+        <div class="signal-badge-container">
+          <span class="badge ${badgeClass}">${signalText}</span>
+        </div>
+
+        <div class="fibo-stat-box ${fiboBoxClass}">
+          ${fiboText}
+        </div>
+
+        ${!isIHSG ? `
+          <div class="trading-plan-wrapper">
+            <div style="text-align:center; font-size:0.65rem; color:#cbd5e1; margin-bottom:4px;">
+              ${statusDotHtml} 🎯 STRATEGI TRADING PLAN (ENTRY, TP 1-3, CL 1-3)
+            </div>
             
-            // Reset tab style
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active', 'bg-blue-50'));
-            
-            // Set active style
-            const activeTab = document.getElementById(`tab-${strategy}`);
-            activeTab.classList.add('tab-active', 'bg-blue-50');
-
-            // Update Label
-            const labels = {
-                'scalping': 'Scalping / Short-term (Menit - Hari)',
-                'swing': 'Swing / Middle-term (Minggu - Bulan)',
-                'investasi': 'Investasi / Long-term (Bulan - Tahun)'
-            };
-            document.getElementById('current-strategy-label').innerText = labels[strategy];
-
-            renderData();
-        }
-
-        // Kalkulasi Level TP, CL, dan Area Entry Berdasarkan Strategi
-        function calculateLevels(stock, strategy) {
-            const price = stock.price;
-            const supp = stock.support;
-            const res = stock.resistance;
-
-            if (strategy === 'scalping') {
-                // Scalping: TP tipis (1-3%), CL sangat ketat (1-2%)
-                return {
-                    entryArea: `${price} - ${Math.round(price * 1.005)}`,
-                    tp1: Math.round(price * 1.015), // +1.5%
-                    tp2: Math.round(price * 1.025), // +2.5%
-                    tp3: Math.round(price * 1.040), // +4.0%
-                    cl1: Math.round(price * 0.990), // -1.0%
-                    cl2: Math.round(price * 0.980), // -2.0%
-                    cl3: Math.round(price * 0.970), // -3.0%
-                    timeframe: '1 - 3 Hari (Fast Trade)',
-                    indicatorInfo: `RSI: ${stock.rsi} | Vol Ratio: ${stock.vol_ratio}x`
-                };
-            } else if (strategy === 'swing') {
-                // Swing: Menyesuaikan Area Support/Resistance & MA20
-                return {
-                    entryArea: `${Math.round(supp * 1.01)} - ${Math.round(price)}`,
-                    tp1: Math.round(price + (res - price) * 0.5), 
-                    tp2: res, 
-                    tp3: Math.round(res * 1.08), 
-                    cl1: Math.round(supp * 0.99), 
-                    cl2: Math.round(supp * 0.97), 
-                    cl3: Math.round(supp * 0.95), 
-                    timeframe: '1 - 4 Minggu',
-                    indicatorInfo: `MACD: ${stock.macd_status} | MA20: ${stock.ma20}`
-                };
-            } else {
-                // Investasi: Buy on Weakness / Area Diskon
-                const buyLow = Math.min(supp, Math.round(price * 0.95));
-                return {
-                    entryArea: `${buyLow} - ${price}`,
-                    tp1: Math.round(price * 1.15), // +15%
-                    tp2: Math.round(price * 1.30), // +30%
-                    tp3: Math.round(price * 1.50), // +50%
-                    cl1: Math.round(buyLow * 0.92), // -8%
-                    cl2: Math.round(buyLow * 0.85), // -15%
-                    cl3: Math.round(buyLow * 0.80), // -20%
-                    timeframe: '3 - 12+ Bulan',
-                    indicatorInfo: `Fibo/RSI: ${stock.fibo_rsi_status} | Base Supp: ${stock.support}`
-                };
-            }
-        }
-
-        // Render Kartu Saham
-        function renderData() {
-            const container = document.getElementById('stock-container');
-            const searchVal = document.getElementById('search-input').value.toUpperCase();
-            container.innerHTML = '';
-
-            const filteredData = globalData.filter(s => s.ticker.includes(searchVal));
-
-            if (filteredData.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-500 col-span-3">Emiten tidak ditemukan.</p>`;
-                return;
-            }
-
-            filteredData.forEach(stock => {
-                const lvl = calculateLevels(stock, currentStrategy);
+            <div class="trading-plan-grid">
+              <!-- KOLOM 1: SCALPING -->
+              <div class="plan-col ${selectedTradingStyle === 'SCALPING' ? 'active-style' : ''}">
+                <div class="plan-col-title">⚡ SCALPING</div>
                 
-                // Badge Sinyal
-                let signalBadge = 'bg-gray-100 text-gray-800';
-                if (stock.signal.includes('BUY')) signalBadge = 'bg-green-100 text-green-800 font-bold';
-                if (stock.signal.includes('SELL')) signalBadge = 'bg-red-100 text-red-800 font-bold';
+                <div class="plan-row-item">
+                  <span class="plan-item-label">ENTRY</span>
+                  <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.entry}</span>
+                </div>
 
-                const cardHtml = `
-                    <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition p-5 border border-gray-100 flex flex-col justify-between">
-                        <div>
-                            <!-- Header Kartu -->
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h2 class="text-xl font-bold text-gray-900">${stock.ticker}</h2>
-                                    <span class="text-xs text-gray-500">${stock.category}</span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-lg font-bold">Rp ${stock.price.toLocaleString('id-ID')}</span>
-                                    <div class="text-xs px-2 py-0.5 rounded ${signalBadge} mt-1 inline-block">
-                                        ${stock.signal}
-                                    </div>
-                                </div>
-                            </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 1</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp1}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 2</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp2}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 3</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp3}</span>
+                </div>
 
-                            <!-- Context Indicator -->
-                            <div class="bg-gray-50 p-2.5 rounded-lg text-xs text-gray-600 mb-4 flex justify-between">
-                                <span>${lvl.indicatorInfo}</span>
-                                <span class="font-semibold text-blue-600">${lvl.timeframe}</span>
-                            </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 1</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl1}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 2</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl2}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 3</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl3}</span>
+                </div>
+              </div>
 
-                            <!-- Area Entry -->
-                            <div class="mb-3">
-                                <span class="text-xs text-gray-500 uppercase font-semibold">Area Entry Ideal</span>
-                                <div class="text-sm font-bold text-blue-700 bg-blue-50 px-3 py-1.5 rounded border border-blue-100 mt-1">
-                                    Rp ${lvl.entryArea}
-                                </div>
-                            </div>
+              <!-- KOLOM 2: SWING -->
+              <div class="plan-col ${selectedTradingStyle === 'SWING' ? 'active-style' : ''}">
+                <div class="plan-col-title">📈 SWING</div>
 
-                            <!-- Level Target Profit (TP) & Cut Loss (CL) -->
-                            <div class="grid grid-cols-2 gap-3 mb-4">
-                                <!-- Take Profit -->
-                                <div class="bg-green-50 p-2.5 rounded-lg border border-green-100">
-                                    <span class="text-xs font-bold text-green-700 uppercase block mb-1">Take Profit</span>
-                                    <ul class="text-xs space-y-1 text-green-900">
-                                        <li><strong>TP 1:</strong> Rp ${lvl.tp1.toLocaleString('id-ID')}</li>
-                                        <li><strong>TP 2:</strong> Rp ${lvl.tp2.toLocaleString('id-ID')}</li>
-                                        <li><strong>TP 3:</strong> Rp ${lvl.tp3.toLocaleString('id-ID')}</li>
-                                    </ul>
-                                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">ENTRY</span>
+                  <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.entry}</span>
+                </div>
 
-                                <!-- Cut Loss -->
-                                <div class="bg-red-50 p-2.5 rounded-lg border border-red-100">
-                                    <span class="text-xs font-bold text-red-700 uppercase block mb-1">Cut Loss</span>
-                                    <ul class="text-xs space-y-1 text-red-900">
-                                        <li><strong>CL 1:</strong> Rp ${lvl.cl1.toLocaleString('id-ID')}</li>
-                                        <li><strong>CL 2:</strong> Rp ${lvl.cl2.toLocaleString('id-ID')}</li>
-                                        <li><strong>CL 3:</strong> Rp ${lvl.cl3.toLocaleString('id-ID')}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 1</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp1}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 2</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp2}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 3</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp3}</span>
+                </div>
 
-                        <!-- Footer Kartu -->
-                        <div class="text-xs text-gray-400 border-t pt-2 flex justify-between">
-                            <span>Supp: ${stock.support}</span>
-                            <span>Res: ${stock.resistance}</span>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += cardHtml;
-            });
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 1</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl1}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 2</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl2}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 3</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl3}</span>
+                </div>
+              </div>
+
+              <!-- KOLOM 3: INVESTASI -->
+              <div class="plan-col ${selectedTradingStyle === 'INVESTMENT' ? 'active-style' : ''}">
+                <div class="plan-col-title">💎 INVESTASI</div>
+
+                <div class="plan-row-item">
+                  <span class="plan-item-label">ENTRY</span>
+                  <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.entry}</span>
+                </div>
+
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 1</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp1}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 2</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp2}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">TP 3</span>
+                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp3}</span>
+                </div>
+
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 1</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl1}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 2</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl2}</span>
+                </div>
+                <div class="plan-row-item">
+                  <span class="plan-item-label">CL 3</span>
+                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl3}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+      `;
+
+      if (!isIHSG) {
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragover', handleDragOver);
+        card.addEventListener('drop', handleDrop);
+        card.addEventListener('dragend', handleDragEnd);
+      }
+
+      return card;
+    }
+
+    function handleDragStart(e) {
+      draggedTicker = this.dataset.ticker;
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const targetTicker = this.dataset.ticker;
+
+      if (draggedTicker && targetTicker && draggedTicker !== targetTicker) {
+        const fromIndex = stockOrder.indexOf(draggedTicker);
+        const toIndex = stockOrder.indexOf(targetTicker);
+
+        if (fromIndex !== -1 && toIndex !== -1) {
+          const [movedItem] = stockOrder.splice(fromIndex, 1);
+          stockOrder.splice(toIndex, 0, movedItem);
+          saveState();
+          render();
+        }
+      }
+    }
+
+    function handleDragEnd() {
+      this.classList.remove('dragging');
+      draggedTicker = null;
+    }
+
+    function render() {
+      const grid = document.getElementById('stockGrid');
+      grid.innerHTML = '';
+
+      let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
+        ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NETRAL'
+      };
+      grid.appendChild(createCardElement(ihsgData, true));
+
+      let nonIhsgStocks = rawData.filter(s => s.ticker !== 'IHSG');
+      
+      if (stockOrder.length === 0) {
+        stockOrder = nonIhsgStocks.map(s => s.ticker);
+        saveState();
+      } else {
+        nonIhsgStocks.forEach(s => {
+          if (!stockOrder.includes(s.ticker)) {
+            stockOrder.push(s.ticker);
+          }
+        });
+      }
+
+      let displayList = [];
+      stockOrder.forEach(ticker => {
+        let item = nonIhsgStocks.find(s => s.ticker === ticker);
+        if (item) displayList.push(item);
+      });
+
+      displayList.forEach(stock => {
+        const group = (stock.category || 'LAINNYA').toUpperCase();
+
+        // PENYARINGAN KATEGORI "LAYAK BELI" vs KATEGORI BIASA
+        if (activeFilter === 'LAYAK_BELI') {
+          if (!isBuyWorthyStock(stock)) return;
+        } else if (activeFilter !== 'ALL' && group !== activeFilter) {
+          return;
         }
 
-        // Inisialisasi saat load
-        window.onload = loadStockData;
-    </script>
+        grid.appendChild(createCardElement(stock, false));
+      });
+    }
+
+    function removeStock(ticker) {
+      stockOrder = stockOrder.filter(t => t !== ticker);
+      saveState();
+      render();
+    }
+
+    function filterGroup(group, el) {
+      activeFilter = group;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      render();
+    }
+
+    function saveState() {
+      localStorage.setItem('stock_order', JSON.stringify(stockOrder));
+    }
+
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+    loadData();
+  </script>
 </body>
 </html>
