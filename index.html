@@ -529,6 +529,119 @@
   <div class="card-grid" id="stockGrid"></div>
 
   <script>
+// --- CONFIG & STATE ---
+const REFRESH_INTERVAL_MS = 60000; // Auto refresh tiap 1 menit (60.000 ms)
+let fetchTimer = null;
+
+// Mock/Static Data IPO (Bisa diganti panggil file ipo.json dari repositori)
+const ipoData = [
+  { nama: "PT Elephant Oil Tbk (ELEE)", tgl: "15 Sep 2026" },
+  { nama: "PT Digital Nusa Tbk (NUSA)", tgl: "22 Sep 2026" }
+];
+
+// --- 1. FUNGSIONALITAS MENUTUP & MENAMPILKAN TOMBOL 'X' ---
+function toggleElementVisibility(elementId, show) {
+  const el = document.getElementById(elementId);
+  if (el) {
+    el.style.display = show ? "block" : "none";
+  }
+}
+
+// --- 2. CEK STATUS OPEN MARKET BEI ---
+function isMarketOpen() {
+  const now = new Date();
+  // Konversi ke Waktu Indonesia Barat (WIB / UTC+7)
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const wibDate = new Date(utc + (3600000 * 7));
+  
+  const day = wibDate.getDay(); // 0 = Minggu, 6 = Sabtu
+  const hours = wibDate.getHours();
+  const minutes = wibDate.getMinutes();
+  const timeInMinutes = (hours * 60) + minutes;
+
+  // Akhir pekan tutup
+  if (day === 0 || day === 6) return false;
+
+  // Senin - Kamis
+  if (day >= 1 && day <= 4) {
+    const session1 = timeInMinutes >= (9 * 60) && timeInMinutes <= (12 * 60);
+    const session2 = timeInMinutes >= (13 * 60 + 30) && timeInMinutes <= (15 * 60 + 50);
+    return session1 || session2;
+  }
+
+  // Jumat
+  if (day === 5) {
+    const session1 = timeInMinutes >= (9 * 60) && timeInMinutes <= (11 * 60 + 30);
+    const session2 = timeInMinutes >= (14 * 60) && timeInMinutes <= (15 * 60 + 50);
+    return session1 || session2;
+  }
+
+  return false;
+}
+
+// --- 3. FETCH DATA IHSG REALTIME ---
+async function fetchIHSGData() {
+  try {
+    // Menggunakan API proxy publik gratis untuk Yahoo Finance (^JKSE = IHSG)
+    const response = await fetch("https://query1.finance.yahoo.com/v8/finance/chart/^JKSE?interval=1m");
+    const data = await response.json();
+    
+    const result = data.chart.result[0];
+    const price = result.meta.regularMarketPrice;
+    const previousClose = result.meta.chartPreviousClose;
+    const changePct = (((price - previousClose) / previousClose) * 100).toFixed(2);
+    
+    // Render ke UI Kartu IHSG
+    renderIHSGCard(price, changePct);
+  } catch (error) {
+    console.error("Gagal mengambil data IHSG:", error);
+  }
+}
+
+// Update Tampilan Kartu IHSG
+function renderIHSGCard(price, changePct) {
+  const priceEl = document.getElementById("ihsgPrice");
+  const changeEl = document.getElementById("ihsgChange");
+  
+  if (priceEl && changeEl) {
+    priceEl.innerText = price.toLocaleString("id-ID");
+    const isPositive = parseFloat(changePct) >= 0;
+    changeEl.innerText = `${isPositive ? '+' : ''}${changePct}%`;
+    changeEl.className = isPositive ? "text-green" : "text-red";
+  }
+}
+
+// --- 4. RENDER RUNNING TEXT IPO ---
+function loadIPOTicker() {
+  const container = document.getElementById("ipoTickerContainer");
+  if (!container || ipoData.length === 0) return;
+
+  const tickerText = ipoData
+    .map(item => `🔥 <strong>${item.nama}</strong> — Tgl IPO: ${item.tgl}`)
+    .join(" &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; ");
+
+  container.innerHTML = `<div class="ipo-ticker-text">${tickerText}</div>`;
+}
+
+// --- 5. INITIALIZATION & SCHEDULER ---
+function initApp() {
+  loadIPOTicker();
+  fetchIHSGData(); // Load pertama kali saat halaman dibuka
+
+  // Set interval 1 menit
+  fetchTimer = setInterval(() => {
+    if (isMarketOpen()) {
+      console.log("Market Open: Fetching data IHSG terbaru...");
+      fetchIHSGData();
+    } else {
+      console.log("Market Close: Auto-refresh diistirahatkan.");
+    }
+  }, REFRESH_INTERVAL_MS);
+}
+
+// Jalankan aplikasi saat DOM siap
+document.addEventListener("DOMContentLoaded", initApp);
+    
     let rawData = [];
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
