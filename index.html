@@ -122,7 +122,6 @@
     .card.dragging { opacity: 0.4; transform: scale(0.96); border-style: dashed; }
     .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
 
-    /* AKSI TOMBOL GABUNGAN DI ATAS HARGA (HEMAT TEMPAT) */
     .compact-actions-top {
       position: absolute;
       top: 8px;
@@ -153,7 +152,6 @@
     .compact-btn.close-compact { color: #fca5a5; border-left: 1px solid #334155; }
     .compact-btn.close-compact:hover { background: #7f1d1d; color: #fff; }
 
-    /* KOLOM HEADER EMITEN, HARGA & PETIR LEBIH BESAR & PENUH */
     .card-header-full {
       background: #0f172a;
       border: 1px solid #334155;
@@ -170,7 +168,7 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      padding-right: 50px; /* Memberi ruang untuk tombol aksi mengambang */
+      padding-right: 50px;
     }
 
     .ticker-large { 
@@ -187,7 +185,6 @@
     .price-down { color: #ef4444; }
     .price-flat { color: #ffffff; }
 
-    /* KOTAK PETIR BAYANGAN (0-5) */
     .lightning-grid-container {
       display: flex;
       gap: 3px;
@@ -205,11 +202,10 @@
       align-items: center;
       justify-content: center;
       font-size: 0.7rem;
-      color: #475569; /* Warna bayangan/mati */
+      color: #475569;
       transition: all 0.2s ease;
     }
 
-    /* KONDISI PETIR AKTIF NAIK */
     .lightning-box-slot.active-green {
       background: #064e3b;
       border-color: #22c55e;
@@ -217,7 +213,6 @@
       box-shadow: 0 0 5px rgba(34, 197, 94, 0.4);
     }
 
-    /* KONDISI PETIR AKTIF TURUN */
     .lightning-box-slot.active-red {
       background: #4c0519;
       border-color: #f43f5e;
@@ -225,8 +220,69 @@
       box-shadow: 0 0 5px rgba(244, 63, 94, 0.4);
     }
 
+    /* KELOMPOK TAG KATEGORI DAN 3 STATUS MARKET */
+    .market-tags-row {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin-bottom: 6px;
+    }
+    
+    .group-tag { 
+      font-size: 0.6rem; 
+      color: #38bdf8; 
+      background: #0c4a6e; 
+      padding: 2px 5px; 
+      border-radius: 4px; 
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* 3 KOLOM STATUS BARU DENGAN WARNA BERBEDA */
+    .status-tag-session {
+      font-size: 0.6rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: 1px solid #334155;
+    }
+    .status-tag-session.open { background: #052e16; color: #22c55e; border-color: #15803d; }
+    .status-tag-session.break { background: #1c1917; color: #9ca3af; border-color: #4b5563; }
+    .status-tag-session.closed { background: #0f172a; color: #ffffff; border-color: #334155; }
+
+    .status-tag-holiday {
+      font-size: 0.6rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      background: #312e81;
+      color: #a5b4fc;
+      border: 1px solid #4338ca;
+    }
+    .status-tag-holiday.is-holiday {
+      background: #450a0a;
+      color: #fca5a5;
+      border-color: #991b1b;
+    }
+
+    .status-tag-clock {
+      font-size: 0.6rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      background: #1e1b4b;
+      border: 1px solid #3730a3;
+    }
+    .status-tag-clock.time-open { color: #4ade80; }
+    .status-tag-clock.time-break { color: #9ca3af; }
+    .status-tag-clock.time-closed { color: #ffffff; }
+
     .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .group-tag { font-size: 0.65rem; color: #38bdf8; background: #0c4a6e; padding: 2px 5px; border-radius: 4px; display: inline-block; }
     
     .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
     .box-container { display: flex; gap: 3px; }
@@ -357,8 +413,18 @@
       margin-right: auto;
     }
 
-    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; margin-left: 2px; }
-    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; margin-left: 2px; }
+    /* PANAH DI SAMPING KIRI HARGA DENGAN JARAK 2 SPASI */
+    .pivot-price-wrapper {
+      display: inline-flex;
+      align-items: center;
+    }
+    .pivot-arrow-left {
+      margin-right: 0.5em; /* Jarak 2 spasi */
+      font-size: 0.75rem;
+      animation: blink-animation 1s infinite;
+    }
+    .pivot-arrow-down { color: #ef4444; }
+    .pivot-arrow-up { color: #4ade80; }
 
     .signal-badge-container { margin: 6px 0 4px 0; text-align: center; }
     .badge { display: block; width: 100%; padding: 5px 6px; border-radius: 5px; font-size: 0.7rem; text-align: center; letter-spacing: 0.5px; }
@@ -456,6 +522,72 @@
 
     function reloadPage() {
       window.location.reload();
+    }
+
+    /* SISTEM ANALISA STATUS PASAR BURSA REALTIME (WIB) */
+    function getMarketStatus() {
+      const now = new Date();
+      
+      // Hitung Waktu WIB (UTC+7)
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const wibTime = new Date(utc + (3600000 * 7));
+      
+      const day = wibTime.getDay(); // 0 = Minggu, 6 = Sabtu
+      const hours = wibTime.getHours();
+      const minutes = wibTime.getMinutes();
+      const timeNum = hours * 100 + minutes;
+
+      const isWeekend = (day === 0 || day === 6);
+      
+      // Format Teks Jam WIB
+      const pad = (n) => n.toString().padStart(2, '0');
+      const clockStr = `${pad(hours)}:${pad(minutes)}:${pad(wibTime.getSeconds())} WIB`;
+
+      let sessionText = "SESI: CLOSED";
+      let sessionClass = "closed"; // default closed
+      let clockClass = "time-closed";
+      let holidayText = isWeekend ? "LIBUR BURSA (WEEKEND)" : "HARI KERJA BURSA";
+      let isHoliday = isWeekend;
+
+      if (!isWeekend) {
+        // Sesi 1 (09:00 - 12:00)
+        if (timeNum >= 900 && timeNum < 1200) {
+          sessionText = "SESI 1: OPEN";
+          sessionClass = "open";
+          clockClass = "time-open";
+        } 
+        // Istirahat (12:00 - 13:30)
+        else if (timeNum >= 1200 && timeNum < 1330) {
+          sessionText = "ISTIRAHAT PASAR";
+          sessionClass = "break";
+          clockClass = "time-break";
+        } 
+        // Sesi 2 (13:30 - 16:00)
+        else if (timeNum >= 1330 && timeNum < 1600) {
+          sessionText = "SESI 2: OPEN";
+          sessionClass = "open";
+          clockClass = "time-open";
+        } 
+        // Tutup
+        else {
+          sessionText = "PASAR TUTUP";
+          sessionClass = "closed";
+          clockClass = "time-closed";
+        }
+      } else {
+        sessionText = "BURSA LIBUR";
+        sessionClass = "closed";
+        clockClass = "time-closed";
+      }
+
+      return {
+        sessionText,
+        sessionClass,
+        holidayText,
+        isHoliday,
+        clockStr,
+        clockClass
+      };
     }
 
     async function fetchLatestData() {
@@ -593,7 +725,6 @@
       }, 100);
     }
 
-    /* FUNGSI HITUNG 5 KOTAK PETIR BAYANGAN */
     function renderLightningBoxes(stock) {
       const isSuspended = stock.is_suspended || stock.status === 'SUSPEND' || stock.volume === 0;
       const vRatio = parseFloat(stock.vol_ratio) || 0;
@@ -607,7 +738,7 @@
         else if (vRatio >= 1.5) activeCount = 3;
         else if (vRatio >= 1.2) activeCount = 2;
         else if (vRatio >= 1.0) activeCount = 1;
-        else activeCount = 0; // ratio di bawah 1.0
+        else activeCount = 0;
 
         if (stock.vol_status === 'SELL' || (stock.price < stock.prev_close && vRatio >= 1.2)) {
           activeClass = 'active-red';
@@ -628,6 +759,7 @@
 
     function createCardElement(stock, isIHSG = false) {
       const group = isIHSG ? 'INDEKS UTAMA' : (stock.category || 'LAINNYA');
+      const mState = getMarketStatus();
 
       const openPrice = stock.open ?? stock.price;
       const closePrice = stock.price ?? 0;
@@ -771,13 +903,14 @@
       else if (diffRatio >= 0.02) dotCount = 3;
       else if (diffRatio >= 0.01) dotCount = 2;
 
+      /* PANAH TERAPKAN DI SAMPING KIRI HARGA DENGAN 2 SPASI */
       if (closePrice < pivotPoint) {
         pivotPriceClass = 'pivot-price-blue';
-        pivotArrowIcon = '<span class="pivot-arrow-down">▼</span>';
+        pivotArrowIcon = '<span class="pivot-arrow-left pivot-arrow-down">▼</span>';
         dotColorClass = 'dot-red';
       } else if (closePrice > pivotPoint) {
         pivotPriceClass = 'pivot-price-green';
-        pivotArrowIcon = '<span class="pivot-arrow-up">▲</span>';
+        pivotArrowIcon = '<span class="pivot-arrow-left pivot-arrow-up">▲</span>';
         dotColorClass = 'dot-green';
       }
 
@@ -785,7 +918,7 @@
       for (let d = 0; d < dotCount; d++) {
         pivotDotsHtml += `<span class="dot-indicator ${dotColorClass}"></span>`;
       }
-      pivotDotsHtml += `${pivotArrowIcon}</div>`;
+      pivotDotsHtml += '</div>';
 
       const r3Class = (highPrice >= r3 || closePrice >= r3) ? 'blink-red' : 'sr-res';
       const r2Class = (highPrice >= r2 || closePrice >= r2) ? 'blink-red' : 'sr-res';
@@ -803,13 +936,11 @@
       }
 
       card.innerHTML = `
-        <!-- TOMBOL AKSI REFRESH & X GABUNGAN DI ATAS HARGA (KANAN ATAS) -->
         <div class="compact-actions-top">
           <button class="compact-btn" title="REFRESH DATA" onclick="refreshSingleCard('${stock.ticker}', this)">🔄</button>
           ${!isIHSG ? `<button class="compact-btn close-compact" title="HAPUS EMITEN" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
         </div>
 
-        <!-- KOLOM EMITEN, HARGA, DAN PETIR DIBUAT PENUH & LEBIH BESAR -->
         <div class="card-header-full">
           <div class="ticker-price-row">
             <span class="ticker-large">${stock.ticker}</span>
@@ -818,8 +949,15 @@
           ${renderLightningBoxes(stock)}
         </div>
 
-        <div class="sub-header">
+        <!-- BARIS TAG KATEGORI DAN 3 KOLOM STATUS MARKET -->
+        <div class="market-tags-row">
           <span class="group-tag">${group}</span>
+          <span class="status-tag-session ${mState.sessionClass}">${mState.sessionText}</span>
+          <span class="status-tag-holiday ${mState.isHoliday ? 'is-holiday' : ''}">${mState.holidayText}</span>
+          <span class="status-tag-clock ${mState.clockClass}">${mState.clockStr}</span>
+        </div>
+
+        <div class="sub-header">
           <span class="open-percent-badge ${priceColorClass}">${openPercentStr}</span>
           <div class="signal-indicator-box">
             <div class="box-container">
@@ -829,7 +967,6 @@
           </div>
         </div>
 
-        <!-- INDIKATOR -->
         <div class="indicator-column-box">
           <div class="indicator-item"><span>RSI</span><span class="dot-indicator ${rsiDot}"></span></div>
           <div class="indicator-item"><span>MACD</span><span class="dot-indicator ${macdDot}"></span></div>
@@ -837,7 +974,6 @@
           <div class="indicator-item"><span>EMA</span><span class="dot-indicator ${emaDot}"></span></div>
         </div>
 
-        <!-- OHLC -->
         <div class="ohlc-grid-box">
           <div class="ohlc-item"><span>PREV</span><span class="ohlc-val">${formatNum(prevClose)}</span></div>
           <div class="ohlc-item"><span>OPEN</span><span class="ohlc-val">${formatNum(openPrice)}</span></div>
@@ -845,7 +981,6 @@
           <div class="ohlc-item"><span>LOW</span><span class="ohlc-val">${formatNum(lowPrice)}</span></div>
         </div>
 
-        <!-- TREND & VOL RATIO -->
         <div class="trend-vol-row">
           <div class="indicator-item">
             <span>TREND</span>
@@ -857,7 +992,6 @@
           </div>
         </div>
 
-        <!-- WARNING -->
         ${warningHtml}
 
         <div class="sr-stat-box">
@@ -868,7 +1002,10 @@
           <div class="sr-row sr-pivot-separator">
             <span class="pivot-label-yellow">PIVOT POINT (P):</span>
             ${pivotDotsHtml}
-            <span class="${pivotPriceClass}">${formatNum(pivotPoint)}</span>
+            <div class="pivot-price-wrapper">
+              ${pivotArrowIcon}
+              <span class="${pivotPriceClass}">${formatNum(pivotPoint)}</span>
+            </div>
           </div>
 
           <div class="sr-row"><span>SUPPORT 1 (S1):</span> <span class="${s1Class}">${formatNum(s1)}</span></div>
@@ -997,6 +1134,11 @@
     function saveState() {
       localStorage.setItem('stock_order', JSON.stringify(stockOrder));
     }
+
+    // UPDATE JAM SECARA PERIODIK UNTUK MEMASTIKAN STATUS TETAP AKURAT
+    setInterval(() => {
+      if (rawData.length > 0) render();
+    }, 10000);
 
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
     loadData();
