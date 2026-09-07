@@ -1,17 +1,17 @@
 {
-  "updated_at": "2026-09-07T08:14:17.245002",
+  "updated_at": "2026-09-07T09:05:19.960295",
   "stocks": [
     {
       "ticker": "IHSG",
       "category": "Indeks Utama",
-      "price": 6629,
+      "price": 6624,
       "prev_close": 6636,
       "open": 6652,
       "high": 6668,
       "low": 6611,
-      "rsi": 66.91,
+      "rsi": 66.39,
       "rsi_status": "SELL",
-      "ma20": 6480,
+      "ma20": 6479,
       "support": 6230,
       "resistance": 6704,
       "vol_ratio": 0.0,
@@ -21,23 +21,23 @@
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 6629,
+          "entry": 6624,
           "tp": [
-            6728,
-            6828,
-            6960
+            6723,
+            6823,
+            6955
           ],
           "cl": [
-            6563,
-            6530,
-            6496
+            6558,
+            6525,
+            6492
           ]
         },
         "swing": {
-          "entry": 6629,
+          "entry": 6624,
           "tp": [
-            7028,
-            7347,
+            7018,
+            7333,
             6704
           ],
           "cl": [
@@ -47,11 +47,11 @@
           ]
         },
         "investasi": {
-          "entry": "6496 - 6629",
+          "entry": "6492 - 6624",
           "tp": [
-            7623,
-            8618,
-            9944
+            7618,
+            8611,
+            9936
           ],
           "cl": [
             5732,
@@ -66,40 +66,40 @@
     {
       "ticker": "TPIA",
       "category": "Industri",
-      "price": 1975,
+      "price": 1980,
       "prev_close": 1995,
       "open": 1995,
       "high": 2010,
       "low": 1970,
-      "rsi": 46.6,
+      "rsi": 47.06,
       "rsi_status": "NEUTRAL",
-      "ma20": 2014,
+      "ma20": 2015,
       "support": 1830,
       "resistance": 2270,
-      "vol_ratio": 0.42,
+      "vol_ratio": 0.49,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 1975,
+          "entry": 1980,
           "tp": [
-            2005,
-            2034,
-            2074
+            2010,
+            2039,
+            2079
           ],
           "cl": [
-            1955,
-            1945,
-            1936
+            1960,
+            1950,
+            1940
           ]
         },
         "swing": {
-          "entry": 1975,
+          "entry": 1980,
           "tp": [
-            2120,
-            2236,
+            2130,
+            2250,
             2270
           ],
           "cl": [
@@ -109,11 +109,11 @@
           ]
         },
         "investasi": {
-          "entry": "1936 - 1975",
+          "entry": "1940 - 1980",
           "tp": [
-            2271,
-            2568,
-            2962
+            2277,
+            2574,
+            2970
           ],
           "cl": [
             1684,
@@ -138,7 +138,7 @@
       "ma20": 832,
       "support": 670,
       "resistance": 980,
-      "vol_ratio": 0.56,
+      "vol_ratio": 0.61,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -190,40 +190,40 @@
     {
       "ticker": "SRSN",
       "category": "Industri",
-      "price": 102,
+      "price": 104,
       "prev_close": 106,
       "open": 106,
       "high": 107,
       "low": 101,
-      "rsi": 77.19,
+      "rsi": 80.0,
       "rsi_status": "SELL",
       "ma20": 80,
       "support": 67,
       "resistance": 122,
-      "vol_ratio": 0.75,
+      "vol_ratio": 0.79,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 102,
+          "entry": 104,
           "tp": [
-            104,
-            105,
-            107
+            106,
+            107,
+            109
           ],
           "cl": [
-            101,
-            100,
-            100
+            103,
+            102,
+            102
           ]
         },
         "swing": {
-          "entry": 102,
+          "entry": 104,
           "tp": [
-            137,
-            165,
+            141,
+            171,
             122
           ],
           "cl": [
@@ -233,11 +233,11 @@
           ]
         },
         "investasi": {
-          "entry": "100 - 102",
+          "entry": "102 - 104",
           "tp": [
-            117,
-            133,
-            153
+            120,
+            135,
+            156
           ],
           "cl": [
             62,
@@ -262,7 +262,7 @@
       "ma20": 107,
       "support": 92,
       "resistance": 148,
-      "vol_ratio": 0.58,
+      "vol_ratio": 0.61,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -376,40 +376,40 @@
     {
       "ticker": "AMMN",
       "category": "Tambang",
-      "price": 4400,
+      "price": 4410,
       "prev_close": 4390,
       "open": 4390,
       "high": 4430,
       "low": 4360,
-      "rsi": 55.86,
+      "rsi": 56.25,
       "rsi_status": "NEUTRAL",
       "ma20": 4358,
       "support": 4140,
       "resistance": 4600,
-      "vol_ratio": 0.42,
+      "vol_ratio": 0.49,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 4400,
+          "entry": 4410,
           "tp": [
-            4466,
-            4532,
-            4620
+            4476,
+            4542,
+            4630
           ],
           "cl": [
-            4356,
-            4334,
-            4312
+            4366,
+            4344,
+            4322
           ]
         },
         "swing": {
-          "entry": 4400,
+          "entry": 4410,
           "tp": [
-            4660,
-            4868,
+            4680,
+            4896,
             4600
           ],
           "cl": [
@@ -419,11 +419,11 @@
           ]
         },
         "investasi": {
-          "entry": "4312 - 4400",
+          "entry": "4322 - 4410",
           "tp": [
-            5060,
-            5720,
-            6600
+            5072,
+            5733,
+            6615
           ],
           "cl": [
             3809,
@@ -438,40 +438,40 @@
     {
       "ticker": "ENRG",
       "category": "Energi",
-      "price": 1365,
+      "price": 1360,
       "prev_close": 1340,
       "open": 1345,
       "high": 1390,
       "low": 1345,
-      "rsi": 65.15,
+      "rsi": 64.62,
       "rsi_status": "SELL",
-      "ma20": 1246,
+      "ma20": 1245,
       "support": 928,
       "resistance": 1395,
-      "vol_ratio": 0.49,
+      "vol_ratio": 0.54,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 1365,
+          "entry": 1360,
           "tp": [
-            1385,
-            1406,
-            1433
+            1380,
+            1401,
+            1428
           ],
           "cl": [
-            1351,
-            1345,
-            1338
+            1346,
+            1340,
+            1333
           ]
         },
         "swing": {
-          "entry": 1365,
+          "entry": 1360,
           "tp": [
-            1802,
-            2152,
+            1792,
+            2138,
             1395
           ],
           "cl": [
@@ -481,11 +481,11 @@
           ]
         },
         "investasi": {
-          "entry": "1338 - 1365",
+          "entry": "1333 - 1360",
           "tp": [
-            1570,
-            1774,
-            2048
+            1564,
+            1768,
+            2040
           ],
           "cl": [
             854,
@@ -504,17 +504,17 @@
       "prev_close": 4960,
       "open": 4960,
       "high": 4980,
-      "low": 4860,
+      "low": 4840,
       "rsi": 36.27,
       "rsi_status": "BUY",
       "ma20": 5153,
       "support": 4790,
       "resistance": 5500,
-      "vol_ratio": 0.81,
-      "vol_status": "NEUTRAL",
+      "vol_ratio": 1.25,
+      "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL",
+      "signal": "BUY",
       "plans": {
         "scalping": {
           "entry": 4860,
@@ -562,40 +562,40 @@
     {
       "ticker": "INDY",
       "category": "Energi",
-      "price": 2780,
+      "price": 2790,
       "prev_close": 2790,
       "open": 2800,
       "high": 2850,
       "low": 2750,
-      "rsi": 63.41,
+      "rsi": 64.2,
       "rsi_status": "SELL",
       "ma20": 2680,
       "support": 2430,
       "resistance": 2870,
-      "vol_ratio": 0.62,
+      "vol_ratio": 0.69,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "STRONG SELL",
       "plans": {
         "scalping": {
-          "entry": 2780,
+          "entry": 2790,
           "tp": [
-            2822,
-            2863,
-            2919
+            2832,
+            2874,
+            2930
           ],
           "cl": [
-            2752,
-            2738,
-            2724
+            2762,
+            2748,
+            2734
           ]
         },
         "swing": {
-          "entry": 2780,
+          "entry": 2790,
           "tp": [
-            3130,
-            3410,
+            3150,
+            3438,
             2870
           ],
           "cl": [
@@ -605,11 +605,11 @@
           ]
         },
         "investasi": {
-          "entry": "2724 - 2780",
+          "entry": "2734 - 2790",
           "tp": [
-            3197,
-            3614,
-            4170
+            3208,
+            3627,
+            4185
           ],
           "cl": [
             2236,
@@ -634,7 +634,7 @@
       "ma20": 5205,
       "support": 4800,
       "resistance": 5675,
-      "vol_ratio": 1.24,
+      "vol_ratio": 1.33,
       "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -686,40 +686,40 @@
     {
       "ticker": "BREN",
       "category": "Energi",
-      "price": 3340,
+      "price": 3330,
       "prev_close": 3360,
       "open": 3370,
       "high": 3380,
       "low": 3310,
-      "rsi": 32.31,
+      "rsi": 31.82,
       "rsi_status": "BUY",
-      "ma20": 3434,
+      "ma20": 3433,
       "support": 3250,
       "resistance": 3940,
-      "vol_ratio": 0.26,
+      "vol_ratio": 0.31,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 3340,
+          "entry": 3330,
           "tp": [
-            3390,
-            3440,
-            3507
+            3380,
+            3430,
+            3496
           ],
           "cl": [
-            3307,
-            3290,
-            3273
+            3297,
+            3280,
+            3263
           ]
         },
         "swing": {
-          "entry": 3340,
+          "entry": 3330,
           "tp": [
-            3440,
-            3520,
+            3430,
+            3510,
             3940
           ],
           "cl": [
@@ -729,11 +729,11 @@
           ]
         },
         "investasi": {
-          "entry": "3273 - 3340",
+          "entry": "3263 - 3330",
           "tp": [
-            3841,
-            4342,
-            5010
+            3829,
+            4329,
+            4995
           ],
           "cl": [
             2990,
@@ -748,40 +748,40 @@
     {
       "ticker": "BUVA",
       "category": "Properti",
-      "price": 750,
+      "price": 745,
       "prev_close": 770,
       "open": 765,
       "high": 775,
-      "low": 745,
-      "rsi": 54.72,
+      "low": 735,
+      "rsi": 53.7,
       "rsi_status": "NEUTRAL",
-      "ma20": 747,
+      "ma20": 746,
       "support": 695,
       "resistance": 805,
-      "vol_ratio": 0.6,
-      "vol_status": "SELL",
+      "vol_ratio": 0.83,
+      "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY",
+      "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 750,
+          "entry": 745,
           "tp": [
-            761,
-            772,
-            788
+            756,
+            767,
+            782
           ],
           "cl": [
-            742,
-            739,
-            735
+            738,
+            734,
+            730
           ]
         },
         "swing": {
-          "entry": 750,
+          "entry": 745,
           "tp": [
-            805,
-            849,
+            795,
+            835,
             805
           ],
           "cl": [
@@ -791,11 +791,11 @@
           ]
         },
         "investasi": {
-          "entry": "735 - 750",
+          "entry": "730 - 745",
           "tp": [
-            862,
-            975,
-            1125
+            857,
+            968,
+            1118
           ],
           "cl": [
             639,
@@ -810,40 +810,40 @@
     {
       "ticker": "ARTO",
       "category": "Perbankan",
-      "price": 1035,
+      "price": 1030,
       "prev_close": 1050,
       "open": 1050,
       "high": 1050,
       "low": 1010,
-      "rsi": 29.17,
+      "rsi": 28.77,
       "rsi_status": "BUY",
       "ma20": 1094,
       "support": 940,
       "resistance": 1325,
-      "vol_ratio": 0.74,
+      "vol_ratio": 0.78,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "OVER SOLD",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 1035,
+          "entry": 1030,
           "tp": [
-            1051,
-            1066,
-            1087
+            1045,
+            1061,
+            1082
           ],
           "cl": [
-            1025,
-            1019,
-            1014
+            1020,
+            1015,
+            1009
           ]
         },
         "swing": {
-          "entry": 1035,
+          "entry": 1030,
           "tp": [
-            1130,
-            1206,
+            1120,
+            1192,
             1325
           ],
           "cl": [
@@ -853,11 +853,11 @@
           ]
         },
         "investasi": {
-          "entry": "1014 - 1035",
+          "entry": "1009 - 1030",
           "tp": [
-            1190,
-            1346,
-            1552
+            1184,
+            1339,
+            1545
           ],
           "cl": [
             865,
@@ -882,8 +882,8 @@
       "ma20": 7321,
       "support": 7075,
       "resistance": 7500,
-      "vol_ratio": 1.19,
-      "vol_status": "NEUTRAL",
+      "vol_ratio": 1.46,
+      "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "NETRAL",
@@ -934,40 +934,40 @@
     {
       "ticker": "ADRO",
       "category": "Energi",
-      "price": 2690,
+      "price": 2700,
       "prev_close": 2720,
       "open": 2740,
       "high": 2760,
-      "low": 2690,
-      "rsi": 60.26,
+      "low": 2680,
+      "rsi": 61.04,
       "rsi_status": "NEUTRAL",
       "ma20": 2620,
       "support": 2460,
       "resistance": 2860,
-      "vol_ratio": 0.63,
+      "vol_ratio": 0.71,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 2690,
+          "entry": 2700,
           "tp": [
-            2730,
-            2771,
-            2824
+            2740,
+            2781,
+            2835
           ],
           "cl": [
-            2663,
-            2650,
-            2636
+            2673,
+            2660,
+            2646
           ]
         },
         "swing": {
-          "entry": 2690,
+          "entry": 2700,
           "tp": [
-            2920,
-            3104,
+            2940,
+            3132,
             2860
           ],
           "cl": [
@@ -977,11 +977,11 @@
           ]
         },
         "investasi": {
-          "entry": "2636 - 2690",
+          "entry": "2646 - 2700",
           "tp": [
-            3093,
-            3497,
-            4035
+            3105,
+            3510,
+            4050
           ],
           "cl": [
             2263,
@@ -996,40 +996,40 @@
     {
       "ticker": "KBLV",
       "category": "Teknologi",
-      "price": 134,
+      "price": 133,
       "prev_close": 134,
       "open": 134,
       "high": 137,
       "low": 132,
-      "rsi": 40.38,
+      "rsi": 39.62,
       "rsi_status": "NEUTRAL",
       "ma20": 143,
       "support": 126,
       "resistance": 172,
-      "vol_ratio": 0.09,
+      "vol_ratio": 0.11,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 134,
+          "entry": 133,
           "tp": [
-            136,
-            138,
-            141
+            135,
+            137,
+            140
           ],
           "cl": [
-            133,
             132,
-            131
+            131,
+            130
           ]
         },
         "swing": {
-          "entry": 134,
+          "entry": 133,
           "tp": [
-            142,
-            148,
+            140,
+            146,
             172
           ],
           "cl": [
@@ -1039,11 +1039,11 @@
           ]
         },
         "investasi": {
-          "entry": "131 - 134",
+          "entry": "130 - 133",
           "tp": [
-            154,
-            174,
-            201
+            153,
+            173,
+            200
           ],
           "cl": [
             116,
@@ -1058,40 +1058,40 @@
     {
       "ticker": "PTBA",
       "category": "Energi",
-      "price": 3030,
+      "price": 3020,
       "prev_close": 2880,
       "open": 2900,
       "high": 3040,
       "low": 2900,
-      "rsi": 91.25,
+      "rsi": 91.14,
       "rsi_status": "SELL",
       "ma20": 2524,
       "support": 2320,
       "resistance": 3040,
-      "vol_ratio": 2.41,
+      "vol_ratio": 2.71,
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 3030,
+          "entry": 3020,
           "tp": [
-            3075,
-            3121,
-            3182
+            3065,
+            3111,
+            3171
           ],
           "cl": [
-            3000,
-            2985,
-            2969
+            2990,
+            2975,
+            2960
           ]
         },
         "swing": {
-          "entry": 3030,
+          "entry": 3020,
           "tp": [
-            3740,
-            4308,
+            3720,
+            4280,
             3040
           ],
           "cl": [
@@ -1101,11 +1101,11 @@
           ]
         },
         "investasi": {
-          "entry": "2969 - 3030",
+          "entry": "2960 - 3020",
           "tp": [
-            3484,
-            3939,
-            4545
+            3473,
+            3926,
+            4530
           ],
           "cl": [
             2134,
@@ -1120,40 +1120,40 @@
     {
       "ticker": "ITMG",
       "category": "Energi",
-      "price": 26625,
+      "price": 26500,
       "prev_close": 26100,
       "open": 26100,
       "high": 26725,
       "low": 26100,
-      "rsi": 80.49,
+      "rsi": 79.66,
       "rsi_status": "SELL",
-      "ma20": 25411,
+      "ma20": 25405,
       "support": 24200,
       "resistance": 26775,
-      "vol_ratio": 0.85,
+      "vol_ratio": 0.97,
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 26625,
+          "entry": 26500,
           "tp": [
-            27024,
-            27424,
-            27956
+            26897,
+            27295,
+            27825
           ],
           "cl": [
-            26359,
-            26226,
-            26092
+            26235,
+            26102,
+            25970
           ]
         },
         "swing": {
-          "entry": 26625,
+          "entry": 26500,
           "tp": [
-            29050,
-            30990,
+            28800,
+            30640,
             26775
           ],
           "cl": [
@@ -1163,11 +1163,11 @@
           ]
         },
         "investasi": {
-          "entry": "26092 - 26625",
+          "entry": "25970 - 26500",
           "tp": [
-            30619,
-            34612,
-            39938
+            30475,
+            34450,
+            39750
           ],
           "cl": [
             22264,
@@ -1182,40 +1182,40 @@
     {
       "ticker": "HRUM",
       "category": "Energi",
-      "price": 940,
+      "price": 945,
       "prev_close": 950,
       "open": 950,
       "high": 960,
       "low": 930,
-      "rsi": 70.45,
+      "rsi": 72.09,
       "rsi_status": "SELL",
       "ma20": 896,
       "support": 805,
       "resistance": 975,
-      "vol_ratio": 0.41,
+      "vol_ratio": 0.52,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 940,
+          "entry": 945,
           "tp": [
-            954,
-            968,
-            987
+            959,
+            973,
+            992
           ],
           "cl": [
+            936,
             931,
-            926,
-            921
+            926
           ]
         },
         "swing": {
-          "entry": 940,
+          "entry": 945,
           "tp": [
-            1075,
-            1183,
+            1085,
+            1197,
             975
           ],
           "cl": [
@@ -1225,11 +1225,11 @@
           ]
         },
         "investasi": {
-          "entry": "921 - 940",
+          "entry": "926 - 945",
           "tp": [
-            1081,
-            1222,
-            1410
+            1087,
+            1228,
+            1418
           ],
           "cl": [
             741,
@@ -1244,40 +1244,40 @@
     {
       "ticker": "AKRA",
       "category": "Energi",
-      "price": 1440,
+      "price": 1450,
       "prev_close": 1385,
       "open": 1405,
-      "high": 1445,
+      "high": 1455,
       "low": 1390,
-      "rsi": 55.56,
+      "rsi": 56.76,
       "rsi_status": "NEUTRAL",
       "ma20": 1399,
       "support": 1350,
       "resistance": 1455,
-      "vol_ratio": 3.22,
+      "vol_ratio": 3.81,
       "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 1440,
+          "entry": 1450,
           "tp": [
-            1462,
-            1483,
-            1512
+            1472,
+            1494,
+            1522
           ],
           "cl": [
-            1426,
-            1418,
-            1411
+            1436,
+            1428,
+            1421
           ]
         },
         "swing": {
-          "entry": 1440,
+          "entry": 1450,
           "tp": [
-            1530,
-            1602,
+            1550,
+            1630,
             1455
           ],
           "cl": [
@@ -1287,11 +1287,11 @@
           ]
         },
         "investasi": {
-          "entry": "1411 - 1440",
+          "entry": "1421 - 1450",
           "tp": [
-            1656,
-            1872,
-            2160
+            1667,
+            1885,
+            2175
           ],
           "cl": [
             1242,
@@ -1306,40 +1306,40 @@
     {
       "ticker": "MEDC",
       "category": "Energi",
-      "price": 1500,
+      "price": 1485,
       "prev_close": 1495,
       "open": 1500,
       "high": 1555,
-      "low": 1485,
-      "rsi": 69.05,
+      "low": 1480,
+      "rsi": 67.06,
       "rsi_status": "SELL",
       "ma20": 1388,
       "support": 1265,
       "resistance": 1555,
-      "vol_ratio": 1.13,
-      "vol_status": "NEUTRAL",
+      "vol_ratio": 1.25,
+      "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 1500,
+          "entry": 1485,
           "tp": [
-            1522,
-            1545,
-            1575
+            1507,
+            1530,
+            1559
           ],
           "cl": [
-            1485,
-            1478,
-            1470
+            1470,
+            1463,
+            1455
           ]
         },
         "swing": {
-          "entry": 1500,
+          "entry": 1485,
           "tp": [
-            1735,
-            1923,
+            1705,
+            1881,
             1555
           ],
           "cl": [
@@ -1349,11 +1349,11 @@
           ]
         },
         "investasi": {
-          "entry": "1470 - 1500",
+          "entry": "1455 - 1485",
           "tp": [
-            1725,
-            1950,
-            2250
+            1708,
+            1930,
+            2228
           ],
           "cl": [
             1164,
@@ -1368,40 +1368,40 @@
     {
       "ticker": "PGAS",
       "category": "Energi",
-      "price": 1520,
+      "price": 1515,
       "prev_close": 1520,
       "open": 1490,
       "high": 1525,
       "low": 1490,
-      "rsi": 51.22,
+      "rsi": 50.0,
       "rsi_status": "NEUTRAL",
       "ma20": 1518,
       "support": 1470,
       "resistance": 1570,
-      "vol_ratio": 0.79,
-      "vol_status": "SELL",
+      "vol_ratio": 0.88,
+      "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL",
+      "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 1520,
+          "entry": 1515,
           "tp": [
-            1543,
-            1566,
-            1596
+            1538,
+            1560,
+            1591
           ],
           "cl": [
-            1505,
-            1497,
-            1490
+            1500,
+            1492,
+            1485
           ]
         },
         "swing": {
-          "entry": 1520,
+          "entry": 1515,
           "tp": [
-            1570,
-            1610,
+            1560,
+            1597,
             1570
           ],
           "cl": [
@@ -1411,11 +1411,11 @@
           ]
         },
         "investasi": {
-          "entry": "1490 - 1520",
+          "entry": "1485 - 1515",
           "tp": [
-            1748,
-            1976,
-            2280
+            1742,
+            1970,
+            2272
           ],
           "cl": [
             1352,
@@ -1430,40 +1430,40 @@
     {
       "ticker": "ANTM",
       "category": "Tambang",
-      "price": 3100,
+      "price": 3090,
       "prev_close": 3120,
       "open": 3120,
       "high": 3120,
       "low": 3070,
-      "rsi": 50.0,
+      "rsi": 49.18,
       "rsi_status": "NEUTRAL",
       "ma20": 3114,
       "support": 2970,
       "resistance": 3290,
-      "vol_ratio": 0.63,
+      "vol_ratio": 0.73,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 3100,
+          "entry": 3090,
           "tp": [
-            3146,
-            3193,
-            3255
+            3136,
+            3183,
+            3244
           ],
           "cl": [
-            3069,
-            3054,
-            3038
+            3059,
+            3044,
+            3028
           ]
         },
         "swing": {
-          "entry": 3100,
+          "entry": 3090,
           "tp": [
-            3230,
-            3334,
+            3210,
+            3306,
             3290
           ],
           "cl": [
@@ -1473,11 +1473,11 @@
           ]
         },
         "investasi": {
-          "entry": "3038 - 3100",
+          "entry": "3028 - 3090",
           "tp": [
-            3565,
-            4030,
-            4650
+            3553,
+            4017,
+            4635
           ],
           "cl": [
             2732,
@@ -1502,7 +1502,7 @@
       "ma20": 2930,
       "support": 2740,
       "resistance": 3180,
-      "vol_ratio": 0.44,
+      "vol_ratio": 0.51,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -1558,13 +1558,13 @@
       "prev_close": 520,
       "open": 525,
       "high": 530,
-      "low": 515,
+      "low": 510,
       "rsi": 47.22,
       "rsi_status": "NEUTRAL",
       "ma20": 539,
       "support": 500,
       "resistance": 595,
-      "vol_ratio": 0.54,
+      "vol_ratio": 0.76,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -1626,8 +1626,8 @@
       "ma20": 944,
       "support": 900,
       "resistance": 990,
-      "vol_ratio": 1.09,
-      "vol_status": "NEUTRAL",
+      "vol_ratio": 1.21,
+      "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "NETRAL",
@@ -1678,40 +1678,40 @@
     {
       "ticker": "TINS",
       "category": "Tambang",
-      "price": 4380,
+      "price": 4480,
       "prev_close": 4420,
       "open": 4420,
       "high": 4500,
       "low": 4320,
-      "rsi": 70.69,
+      "rsi": 74.58,
       "rsi_status": "SELL",
-      "ma20": 4023,
+      "ma20": 4028,
       "support": 3690,
       "resistance": 4500,
-      "vol_ratio": 0.95,
+      "vol_ratio": 1.12,
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 4380,
+          "entry": 4480,
           "tp": [
-            4446,
-            4511,
-            4599
+            4547,
+            4614,
+            4704
           ],
           "cl": [
-            4336,
-            4314,
-            4292
+            4435,
+            4413,
+            4390
           ]
         },
         "swing": {
-          "entry": 4380,
+          "entry": 4480,
           "tp": [
-            5070,
-            5622,
+            5270,
+            5902,
             4500
           ],
           "cl": [
@@ -1721,11 +1721,11 @@
           ]
         },
         "investasi": {
-          "entry": "4292 - 4380",
+          "entry": "4390 - 4480",
           "tp": [
-            5037,
-            5694,
-            6570
+            5152,
+            5824,
+            6720
           ],
           "cl": [
             3395,
@@ -1750,7 +1750,7 @@
       "ma20": 684,
       "support": 590,
       "resistance": 785,
-      "vol_ratio": 0.24,
+      "vol_ratio": 0.32,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -1812,7 +1812,7 @@
       "ma20": 451,
       "support": 414,
       "resistance": 496,
-      "vol_ratio": 0.95,
+      "vol_ratio": 1.04,
       "vol_status": "NEUTRAL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -1864,40 +1864,40 @@
     {
       "ticker": "AADI",
       "category": "Tambang",
-      "price": 11725,
+      "price": 11700,
       "prev_close": 11250,
       "open": 11250,
       "high": 11850,
       "low": 11250,
-      "rsi": 83.33,
+      "rsi": 83.21,
       "rsi_status": "SELL",
-      "ma20": 10082,
+      "ma20": 10081,
       "support": 9000,
       "resistance": 11850,
-      "vol_ratio": 1.45,
+      "vol_ratio": 1.58,
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 11725,
+          "entry": 11700,
           "tp": [
-            11901,
-            12077,
-            12311
+            11875,
+            12051,
+            12285
           ],
           "cl": [
-            11608,
-            11549,
-            11490
+            11583,
+            11524,
+            11466
           ]
         },
         "swing": {
-          "entry": 11725,
+          "entry": 11700,
           "tp": [
-            14450,
-            16630,
+            14400,
+            16560,
             11850
           ],
           "cl": [
@@ -1907,11 +1907,11 @@
           ]
         },
         "investasi": {
-          "entry": "11490 - 11725",
+          "entry": "11466 - 11700",
           "tp": [
-            13484,
-            15242,
-            17588
+            13455,
+            15210,
+            17550
           ],
           "cl": [
             8280,
@@ -1926,40 +1926,40 @@
     {
       "ticker": "BYAN",
       "category": "Energi",
-      "price": 13850,
+      "price": 13800,
       "prev_close": 13800,
       "open": 13850,
       "high": 14000,
       "low": 13775,
-      "rsi": 46.63,
+      "rsi": 46.3,
       "rsi_status": "NEUTRAL",
-      "ma20": 14129,
+      "ma20": 14126,
       "support": 11100,
       "resistance": 18650,
-      "vol_ratio": 0.26,
+      "vol_ratio": 0.27,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 13850,
+          "entry": 13800,
           "tp": [
-            14058,
-            14266,
-            14542
+            14007,
+            14214,
+            14490
           ],
           "cl": [
-            13712,
-            13642,
-            13573
+            13662,
+            13593,
+            13524
           ]
         },
         "swing": {
-          "entry": 13850,
+          "entry": 13800,
           "tp": [
-            16600,
-            18800,
+            16500,
+            18660,
             18650
           ],
           "cl": [
@@ -1969,11 +1969,11 @@
           ]
         },
         "investasi": {
-          "entry": "13573 - 13850",
+          "entry": "13524 - 13800",
           "tp": [
-            15927,
-            18005,
-            20775
+            15870,
+            17940,
+            20700
           ],
           "cl": [
             10212,
@@ -1998,7 +1998,7 @@
       "ma20": 441,
       "support": 404,
       "resistance": 482,
-      "vol_ratio": 0.56,
+      "vol_ratio": 0.64,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -2050,40 +2050,40 @@
     {
       "ticker": "HUMI",
       "category": "Energi",
-      "price": 142,
+      "price": 141,
       "prev_close": 144,
       "open": 144,
       "high": 144,
       "low": 140,
-      "rsi": 46.03,
+      "rsi": 45.31,
       "rsi_status": "NEUTRAL",
       "ma20": 146,
       "support": 127,
       "resistance": 158,
-      "vol_ratio": 0.5,
+      "vol_ratio": 0.53,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 142,
+          "entry": 141,
           "tp": [
-            144,
-            146,
-            149
+            143,
+            145,
+            148
           ],
           "cl": [
-            141,
             140,
-            139
+            139,
+            138
           ]
         },
         "swing": {
-          "entry": 142,
+          "entry": 141,
           "tp": [
-            157,
-            169,
+            155,
+            166,
             158
           ],
           "cl": [
@@ -2093,11 +2093,11 @@
           ]
         },
         "investasi": {
-          "entry": "139 - 142",
+          "entry": "138 - 141",
           "tp": [
-            163,
-            185,
-            213
+            162,
+            183,
+            212
           ],
           "cl": [
             117,
@@ -2112,40 +2112,40 @@
     {
       "ticker": "DSSA",
       "category": "Energi",
-      "price": 1165,
+      "price": 1155,
       "prev_close": 1180,
       "open": 1180,
       "high": 1195,
-      "low": 1160,
-      "rsi": 71.62,
+      "low": 1155,
+      "rsi": 69.74,
       "rsi_status": "SELL",
       "ma20": 1067,
       "support": 920,
       "resistance": 1290,
-      "vol_ratio": 0.21,
+      "vol_ratio": 0.26,
       "vol_status": "SELL",
       "macd_status": "BUY",
-      "fibo_rsi_status": "OVER BOUGHT",
+      "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 1165,
+          "entry": 1155,
           "tp": [
-            1182,
-            1200,
-            1223
+            1172,
+            1190,
+            1213
           ],
           "cl": [
-            1153,
-            1148,
-            1142
+            1143,
+            1138,
+            1132
           ]
         },
         "swing": {
-          "entry": 1165,
+          "entry": 1155,
           "tp": [
-            1410,
-            1606,
+            1390,
+            1578,
             1290
           ],
           "cl": [
@@ -2155,11 +2155,11 @@
           ]
         },
         "investasi": {
-          "entry": "1142 - 1165",
+          "entry": "1132 - 1155",
           "tp": [
-            1340,
-            1514,
-            1748
+            1328,
+            1502,
+            1732
           ],
           "cl": [
             846,
@@ -2184,7 +2184,7 @@
       "ma20": 698,
       "support": 655,
       "resistance": 815,
-      "vol_ratio": 1.04,
+      "vol_ratio": 1.11,
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -2308,7 +2308,7 @@
       "ma20": 6437,
       "support": 6176,
       "resistance": 6850,
-      "vol_ratio": 0.5,
+      "vol_ratio": 0.59,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -2360,40 +2360,40 @@
     {
       "ticker": "BBRI",
       "category": "Perbankan",
-      "price": 3370,
+      "price": 3350,
       "prev_close": 3390,
       "open": 3400,
       "high": 3400,
       "low": 3330,
-      "rsi": 75.44,
+      "rsi": 72.88,
       "rsi_status": "SELL",
       "ma20": 3204,
       "support": 3040,
       "resistance": 3440,
-      "vol_ratio": 0.64,
+      "vol_ratio": 0.7,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 3370,
+          "entry": 3350,
           "tp": [
-            3421,
-            3471,
-            3538
+            3400,
+            3450,
+            3518
           ],
           "cl": [
-            3336,
-            3319,
-            3303
+            3316,
+            3300,
+            3283
           ]
         },
         "swing": {
-          "entry": 3370,
+          "entry": 3350,
           "tp": [
-            3700,
-            3964,
+            3660,
+            3908,
             3440
           ],
           "cl": [
@@ -2403,11 +2403,11 @@
           ]
         },
         "investasi": {
-          "entry": "3303 - 3370",
+          "entry": "3283 - 3350",
           "tp": [
-            3875,
-            4381,
-            5055
+            3852,
+            4355,
+            5025
           ],
           "cl": [
             2797,
@@ -2422,20 +2422,268 @@
     {
       "ticker": "BMRI",
       "category": "Perbankan",
-      "price": 4400,
+      "price": 4390,
       "prev_close": 4420,
       "open": 4450,
       "high": 4450,
       "low": 4370,
-      "rsi": 72.73,
+      "rsi": 71.43,
       "rsi_status": "SELL",
       "ma20": 4230,
       "support": 4080,
       "resistance": 4480,
-      "vol_ratio": 0.63,
+      "vol_ratio": 0.71,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
+      "signal": "BUY",
+      "plans": {
+        "scalping": {
+          "entry": 4390,
+          "tp": [
+            4456,
+            4522,
+            4610
+          ],
+          "cl": [
+            4346,
+            4324,
+            4302
+          ]
+        },
+        "swing": {
+          "entry": 4390,
+          "tp": [
+            4700,
+            4948,
+            4480
+          ],
+          "cl": [
+            4080,
+            3998,
+            3876
+          ]
+        },
+        "investasi": {
+          "entry": "4302 - 4390",
+          "tp": [
+            5048,
+            5707,
+            6585
+          ],
+          "cl": [
+            3754,
+            3590,
+            3346
+          ]
+        }
+      },
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
+    },
+    {
+      "ticker": "BBNI",
+      "category": "Perbankan",
+      "price": 3890,
+      "prev_close": 3940,
+      "open": 3900,
+      "high": 3930,
+      "low": 3880,
+      "rsi": 75.0,
+      "rsi_status": "SELL",
+      "ma20": 3722,
+      "support": 3550,
+      "resistance": 4000,
+      "vol_ratio": 0.54,
+      "vol_status": "SELL",
+      "macd_status": "BUY",
+      "fibo_rsi_status": "OVER BOUGHT",
+      "signal": "BUY",
+      "plans": {
+        "scalping": {
+          "entry": 3890,
+          "tp": [
+            3948,
+            4007,
+            4084
+          ],
+          "cl": [
+            3851,
+            3832,
+            3812
+          ]
+        },
+        "swing": {
+          "entry": 3890,
+          "tp": [
+            4230,
+            4502,
+            4000
+          ],
+          "cl": [
+            3550,
+            3479,
+            3372
+          ]
+        },
+        "investasi": {
+          "entry": "3812 - 3890",
+          "tp": [
+            4474,
+            5057,
+            5835
+          ],
+          "cl": [
+            3266,
+            3124,
+            2911
+          ]
+        }
+      },
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
+    },
+    {
+      "ticker": "BRIS",
+      "category": "Perbankan",
+      "price": 1775,
+      "prev_close": 1790,
+      "open": 1790,
+      "high": 1795,
+      "low": 1770,
+      "rsi": 45.45,
+      "rsi_status": "NEUTRAL",
+      "ma20": 1788,
+      "support": 1755,
+      "resistance": 1850,
+      "vol_ratio": 0.99,
+      "vol_status": "NEUTRAL",
+      "macd_status": "BUY",
+      "fibo_rsi_status": "NORMAL",
+      "signal": "NETRAL",
+      "plans": {
+        "scalping": {
+          "entry": 1775,
+          "tp": [
+            1802,
+            1828,
+            1864
+          ],
+          "cl": [
+            1757,
+            1748,
+            1740
+          ]
+        },
+        "swing": {
+          "entry": 1775,
+          "tp": [
+            1828,
+            1871,
+            1850
+          ],
+          "cl": [
+            1755,
+            1720,
+            1667
+          ]
+        },
+        "investasi": {
+          "entry": "1740 - 1775",
+          "tp": [
+            2041,
+            2308,
+            2662
+          ],
+          "cl": [
+            1615,
+            1544,
+            1439
+          ]
+        }
+      },
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
+    },
+    {
+      "ticker": "BBTN",
+      "category": "Perbankan",
+      "price": 1235,
+      "prev_close": 1240,
+      "open": 1230,
+      "high": 1250,
+      "low": 1230,
+      "rsi": 54.55,
+      "rsi_status": "NEUTRAL",
+      "ma20": 1224,
+      "support": 1190,
+      "resistance": 1270,
+      "vol_ratio": 0.57,
+      "vol_status": "SELL",
+      "macd_status": "BUY",
+      "fibo_rsi_status": "NORMAL",
+      "signal": "BUY",
+      "plans": {
+        "scalping": {
+          "entry": 1235,
+          "tp": [
+            1254,
+            1272,
+            1297
+          ],
+          "cl": [
+            1223,
+            1216,
+            1210
+          ]
+        },
+        "swing": {
+          "entry": 1235,
+          "tp": [
+            1280,
+            1316,
+            1270
+          ],
+          "cl": [
+            1190,
+            1166,
+            1130
+          ]
+        },
+        "investasi": {
+          "entry": "1210 - 1235",
+          "tp": [
+            1420,
+            1606,
+            1852
+          ],
+          "cl": [
+            1095,
+            1047,
+            976
+          ]
+        }
+      },
+      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
+      "image_source": "tupungato / Getty Images"
+    },
+    {
+      "ticker": "BDMN",
+      "category": "Perbankan",
+      "price": 4400,
+      "prev_close": 4460,
+      "open": 4430,
+      "high": 4470,
+      "low": 4370,
+      "rsi": 58.62,
+      "rsi_status": "NEUTRAL",
+      "ma20": 4300,
+      "support": 4150,
+      "resistance": 4490,
+      "vol_ratio": 0.4,
+      "vol_status": "SELL",
+      "macd_status": "BUY",
+      "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
@@ -2454,256 +2702,8 @@
         "swing": {
           "entry": 4400,
           "tp": [
-            4720,
-            4976,
-            4480
-          ],
-          "cl": [
-            4080,
-            3998,
-            3876
-          ]
-        },
-        "investasi": {
-          "entry": "4312 - 4400",
-          "tp": [
-            5060,
-            5720,
-            6600
-          ],
-          "cl": [
-            3754,
-            3590,
-            3346
-          ]
-        }
-      },
-      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
-      "image_source": "tupungato / Getty Images"
-    },
-    {
-      "ticker": "BBNI",
-      "category": "Perbankan",
-      "price": 3910,
-      "prev_close": 3940,
-      "open": 3900,
-      "high": 3930,
-      "low": 3880,
-      "rsi": 77.59,
-      "rsi_status": "SELL",
-      "ma20": 3723,
-      "support": 3550,
-      "resistance": 4000,
-      "vol_ratio": 0.49,
-      "vol_status": "SELL",
-      "macd_status": "BUY",
-      "fibo_rsi_status": "OVER BOUGHT",
-      "signal": "BUY",
-      "plans": {
-        "scalping": {
-          "entry": 3910,
-          "tp": [
-            3969,
-            4027,
-            4106
-          ],
-          "cl": [
-            3871,
-            3851,
-            3832
-          ]
-        },
-        "swing": {
-          "entry": 3910,
-          "tp": [
-            4270,
-            4558,
-            4000
-          ],
-          "cl": [
-            3550,
-            3479,
-            3372
-          ]
-        },
-        "investasi": {
-          "entry": "3832 - 3910",
-          "tp": [
-            4496,
-            5083,
-            5865
-          ],
-          "cl": [
-            3266,
-            3124,
-            2911
-          ]
-        }
-      },
-      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
-      "image_source": "tupungato / Getty Images"
-    },
-    {
-      "ticker": "BRIS",
-      "category": "Perbankan",
-      "price": 1770,
-      "prev_close": 1790,
-      "open": 1790,
-      "high": 1795,
-      "low": 1770,
-      "rsi": 44.12,
-      "rsi_status": "NEUTRAL",
-      "ma20": 1788,
-      "support": 1755,
-      "resistance": 1850,
-      "vol_ratio": 0.85,
-      "vol_status": "NEUTRAL",
-      "macd_status": "SELL",
-      "fibo_rsi_status": "NORMAL",
-      "signal": "NETRAL",
-      "plans": {
-        "scalping": {
-          "entry": 1770,
-          "tp": [
-            1797,
-            1823,
-            1858
-          ],
-          "cl": [
-            1752,
-            1743,
-            1735
-          ]
-        },
-        "swing": {
-          "entry": 1770,
-          "tp": [
-            1823,
-            1866,
-            1850
-          ],
-          "cl": [
-            1755,
-            1720,
-            1667
-          ]
-        },
-        "investasi": {
-          "entry": "1735 - 1770",
-          "tp": [
-            2035,
-            2301,
-            2655
-          ],
-          "cl": [
-            1615,
-            1544,
-            1439
-          ]
-        }
-      },
-      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
-      "image_source": "tupungato / Getty Images"
-    },
-    {
-      "ticker": "BBTN",
-      "category": "Perbankan",
-      "price": 1230,
-      "prev_close": 1240,
-      "open": 1230,
-      "high": 1250,
-      "low": 1230,
-      "rsi": 52.94,
-      "rsi_status": "NEUTRAL",
-      "ma20": 1224,
-      "support": 1190,
-      "resistance": 1270,
-      "vol_ratio": 0.49,
-      "vol_status": "SELL",
-      "macd_status": "BUY",
-      "fibo_rsi_status": "NORMAL",
-      "signal": "BUY",
-      "plans": {
-        "scalping": {
-          "entry": 1230,
-          "tp": [
-            1248,
-            1267,
-            1292
-          ],
-          "cl": [
-            1218,
-            1212,
-            1205
-          ]
-        },
-        "swing": {
-          "entry": 1230,
-          "tp": [
-            1270,
-            1302,
-            1270
-          ],
-          "cl": [
-            1190,
-            1166,
-            1130
-          ]
-        },
-        "investasi": {
-          "entry": "1205 - 1230",
-          "tp": [
-            1414,
-            1599,
-            1845
-          ],
-          "cl": [
-            1095,
-            1047,
-            976
-          ]
-        }
-      },
-      "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
-      "image_source": "tupungato / Getty Images"
-    },
-    {
-      "ticker": "BDMN",
-      "category": "Perbankan",
-      "price": 4420,
-      "prev_close": 4460,
-      "open": 4430,
-      "high": 4470,
-      "low": 4370,
-      "rsi": 60.71,
-      "rsi_status": "NEUTRAL",
-      "ma20": 4302,
-      "support": 4150,
-      "resistance": 4490,
-      "vol_ratio": 0.36,
-      "vol_status": "SELL",
-      "macd_status": "BUY",
-      "fibo_rsi_status": "NORMAL",
-      "signal": "BUY",
-      "plans": {
-        "scalping": {
-          "entry": 4420,
-          "tp": [
-            4486,
-            4553,
-            4641
-          ],
-          "cl": [
-            4376,
-            4354,
-            4332
-          ]
-        },
-        "swing": {
-          "entry": 4420,
-          "tp": [
-            4690,
-            4906,
+            4650,
+            4850,
             4490
           ],
           "cl": [
@@ -2713,11 +2713,11 @@
           ]
         },
         "investasi": {
-          "entry": "4332 - 4420",
+          "entry": "4312 - 4400",
           "tp": [
-            5083,
-            5746,
-            6630
+            5060,
+            5720,
+            6600
           ],
           "cl": [
             3818,
@@ -2742,7 +2742,7 @@
       "ma20": 1676,
       "support": 1635,
       "resistance": 1730,
-      "vol_ratio": 1.37,
+      "vol_ratio": 1.42,
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -2804,7 +2804,7 @@
       "ma20": 50,
       "support": 50,
       "resistance": 50,
-      "vol_ratio": 1.41,
+      "vol_ratio": 1.48,
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -2856,40 +2856,40 @@
     {
       "ticker": "EMTK",
       "category": "Teknologi",
-      "price": 515,
+      "price": 510,
       "prev_close": 515,
       "open": 500,
       "high": 515,
       "low": 500,
-      "rsi": 52.78,
+      "rsi": 51.35,
       "rsi_status": "NEUTRAL",
       "ma20": 519,
       "support": 492,
       "resistance": 565,
-      "vol_ratio": 0.86,
+      "vol_ratio": 0.91,
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 515,
+          "entry": 510,
           "tp": [
-            523,
-            530,
-            541
+            518,
+            525,
+            536
           ],
           "cl": [
-            510,
-            507,
-            505
+            505,
+            502,
+            500
           ]
         },
         "swing": {
-          "entry": 515,
+          "entry": 510,
           "tp": [
-            538,
-            556,
+            528,
+            542,
             565
           ],
           "cl": [
@@ -2899,11 +2899,11 @@
           ]
         },
         "investasi": {
-          "entry": "505 - 515",
+          "entry": "500 - 510",
           "tp": [
-            592,
-            670,
-            772
+            586,
+            663,
+            765
           ],
           "cl": [
             453,
@@ -2918,40 +2918,40 @@
     {
       "ticker": "SCMA",
       "category": "Media",
-      "price": 200,
+      "price": 202,
       "prev_close": 204,
       "open": 202,
       "high": 204,
       "low": 200,
-      "rsi": 46.43,
+      "rsi": 48.15,
       "rsi_status": "NEUTRAL",
       "ma20": 205,
       "support": 198,
       "resistance": 224,
-      "vol_ratio": 0.67,
+      "vol_ratio": 0.71,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 200,
+          "entry": 202,
           "tp": [
-            203,
-            206,
-            210
+            205,
+            208,
+            212
           ],
           "cl": [
-            198,
-            197,
-            196
+            200,
+            199,
+            198
           ]
         },
         "swing": {
-          "entry": 200,
+          "entry": 202,
           "tp": [
-            206,
-            211,
+            208,
+            213,
             224
           ],
           "cl": [
@@ -2961,11 +2961,11 @@
           ]
         },
         "investasi": {
-          "entry": "196 - 200",
+          "entry": "198 - 202",
           "tp": [
-            230,
-            260,
-            300
+            232,
+            263,
+            303
           ],
           "cl": [
             182,
@@ -2980,40 +2980,40 @@
     {
       "ticker": "BUKA",
       "category": "Teknologi",
-      "price": 114,
+      "price": 113,
       "prev_close": 115,
       "open": 115,
       "high": 116,
       "low": 113,
-      "rsi": 48.15,
+      "rsi": 46.43,
       "rsi_status": "NEUTRAL",
       "ma20": 113,
       "support": 104,
       "resistance": 120,
-      "vol_ratio": 0.19,
+      "vol_ratio": 0.27,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY",
+      "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 114,
+          "entry": 113,
           "tp": [
+            115,
             116,
-            117,
-            120
+            119
           ],
           "cl": [
-            113,
             112,
-            112
+            111,
+            111
           ]
         },
         "swing": {
-          "entry": 114,
+          "entry": 113,
           "tp": [
-            124,
-            132,
+            122,
+            129,
             120
           ],
           "cl": [
@@ -3023,11 +3023,11 @@
           ]
         },
         "investasi": {
-          "entry": "112 - 114",
+          "entry": "111 - 113",
           "tp": [
-            131,
-            148,
-            171
+            130,
+            147,
+            170
           ],
           "cl": [
             96,
@@ -3052,7 +3052,7 @@
       "ma20": 2604,
       "support": 2550,
       "resistance": 2730,
-      "vol_ratio": 0.33,
+      "vol_ratio": 0.4,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -3104,40 +3104,40 @@
     {
       "ticker": "ISAT",
       "category": "Industri",
-      "price": 2340,
+      "price": 2350,
       "prev_close": 2390,
       "open": 2440,
       "high": 2440,
       "low": 2320,
-      "rsi": 35.87,
+      "rsi": 36.26,
       "rsi_status": "BUY",
       "ma20": 2490,
       "support": 2100,
       "resistance": 2850,
-      "vol_ratio": 0.46,
+      "vol_ratio": 0.55,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 2340,
+          "entry": 2350,
           "tp": [
-            2375,
-            2410,
-            2457
+            2385,
+            2420,
+            2468
           ],
           "cl": [
-            2317,
-            2305,
-            2293
+            2326,
+            2315,
+            2303
           ]
         },
         "swing": {
-          "entry": 2340,
+          "entry": 2350,
           "tp": [
-            2580,
-            2772,
+            2600,
+            2800,
             2850
           ],
           "cl": [
@@ -3147,11 +3147,11 @@
           ]
         },
         "investasi": {
-          "entry": "2293 - 2340",
+          "entry": "2303 - 2350",
           "tp": [
-            2691,
-            3042,
-            3510
+            2702,
+            3055,
+            3525
           ],
           "cl": [
             1932,
@@ -3166,40 +3166,40 @@
     {
       "ticker": "EXCL",
       "category": "Industri",
-      "price": 2700,
+      "price": 2720,
       "prev_close": 2710,
       "open": 2720,
       "high": 2750,
       "low": 2700,
-      "rsi": 42.19,
+      "rsi": 43.75,
       "rsi_status": "NEUTRAL",
-      "ma20": 2714,
+      "ma20": 2715,
       "support": 2410,
       "resistance": 2930,
-      "vol_ratio": 0.16,
+      "vol_ratio": 0.19,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 2700,
+          "entry": 2720,
           "tp": [
-            2740,
-            2781,
-            2835
+            2761,
+            2802,
+            2856
           ],
           "cl": [
-            2673,
-            2660,
-            2646
+            2693,
+            2679,
+            2666
           ]
         },
         "swing": {
-          "entry": 2700,
+          "entry": 2720,
           "tp": [
-            2990,
-            3222,
+            3030,
+            3278,
             2930
           ],
           "cl": [
@@ -3209,11 +3209,11 @@
           ]
         },
         "investasi": {
-          "entry": "2646 - 2700",
+          "entry": "2666 - 2720",
           "tp": [
-            3105,
-            3510,
-            4050
+            3128,
+            3536,
+            4080
           ],
           "cl": [
             2217,
@@ -3231,14 +3231,14 @@
       "price": 2960,
       "prev_close": 2990,
       "open": 2910,
-      "high": 2960,
+      "high": 2970,
       "low": 2910,
       "rsi": 73.47,
       "rsi_status": "SELL",
       "ma20": 2834,
       "support": 2710,
       "resistance": 3050,
-      "vol_ratio": 0.51,
+      "vol_ratio": 0.54,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
@@ -3290,40 +3290,40 @@
     {
       "ticker": "INET",
       "category": "Teknologi",
-      "price": 360,
+      "price": 356,
       "prev_close": 366,
       "open": 366,
       "high": 368,
       "low": 352,
-      "rsi": 77.88,
+      "rsi": 76.52,
       "rsi_status": "SELL",
-      "ma20": 302,
+      "ma20": 301,
       "support": 212,
       "resistance": 376,
-      "vol_ratio": 0.56,
+      "vol_ratio": 0.63,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 360,
+          "entry": 356,
           "tp": [
-            365,
-            371,
-            378
+            361,
+            367,
+            374
           ],
           "cl": [
-            356,
-            355,
-            353
+            352,
+            351,
+            349
           ]
         },
         "swing": {
-          "entry": 360,
+          "entry": 356,
           "tp": [
-            508,
-            626,
+            500,
+            615,
             376
           ],
           "cl": [
@@ -3333,11 +3333,11 @@
           ]
         },
         "investasi": {
-          "entry": "353 - 360",
+          "entry": "349 - 356",
           "tp": [
-            414,
-            468,
-            540
+            409,
+            463,
+            534
           ],
           "cl": [
             195,
@@ -3352,40 +3352,40 @@
     {
       "ticker": "WIFI",
       "category": "Teknologi",
-      "price": 2100,
+      "price": 2090,
       "prev_close": 2090,
       "open": 2090,
       "high": 2130,
       "low": 2060,
-      "rsi": 61.38,
+      "rsi": 60.84,
       "rsi_status": "NEUTRAL",
       "ma20": 2039,
       "support": 1885,
       "resistance": 2250,
-      "vol_ratio": 0.28,
+      "vol_ratio": 0.32,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 2100,
+          "entry": 2090,
           "tp": [
-            2132,
-            2163,
-            2205
+            2121,
+            2153,
+            2194
           ],
           "cl": [
-            2079,
-            2068,
-            2058
+            2069,
+            2059,
+            2048
           ]
         },
         "swing": {
-          "entry": 2100,
+          "entry": 2090,
           "tp": [
-            2315,
-            2487,
+            2295,
+            2459,
             2250
           ],
           "cl": [
@@ -3395,11 +3395,11 @@
           ]
         },
         "investasi": {
-          "entry": "2058 - 2100",
+          "entry": "2048 - 2090",
           "tp": [
-            2415,
-            2730,
-            3150
+            2404,
+            2717,
+            3135
           ],
           "cl": [
             1734,
@@ -3424,7 +3424,7 @@
       "ma20": 485,
       "support": 444,
       "resistance": 615,
-      "vol_ratio": 0.19,
+      "vol_ratio": 0.2,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -3476,40 +3476,40 @@
     {
       "ticker": "MDIA",
       "category": "Media",
-      "price": 220,
+      "price": 248,
       "prev_close": 216,
       "open": 206,
-      "high": 234,
+      "high": 248,
       "low": 192,
-      "rsi": 34.04,
-      "rsi_status": "BUY",
-      "ma20": 260,
+      "rsi": 42.59,
+      "rsi_status": "NEUTRAL",
+      "ma20": 261,
       "support": 192,
       "resistance": 304,
-      "vol_ratio": 3.28,
+      "vol_ratio": 4.18,
       "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "BUY",
+      "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 220,
+          "entry": 248,
           "tp": [
-            223,
-            227,
-            231
+            252,
+            255,
+            260
           ],
           "cl": [
-            218,
-            217,
-            216
+            246,
+            244,
+            243
           ]
         },
         "swing": {
-          "entry": 220,
+          "entry": 248,
           "tp": [
-            248,
-            270,
+            304,
+            349,
             304
           ],
           "cl": [
@@ -3519,11 +3519,11 @@
           ]
         },
         "investasi": {
-          "entry": "216 - 220",
+          "entry": "243 - 248",
           "tp": [
-            253,
-            286,
-            330
+            285,
+            322,
+            372
           ],
           "cl": [
             177,
@@ -3548,7 +3548,7 @@
       "ma20": 1885,
       "support": 1785,
       "resistance": 1990,
-      "vol_ratio": 2.08,
+      "vol_ratio": 2.24,
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -3610,7 +3610,7 @@
       "ma20": 510,
       "support": 500,
       "resistance": 525,
-      "vol_ratio": 1.53,
+      "vol_ratio": 1.75,
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -3662,40 +3662,40 @@
     {
       "ticker": "ICBP",
       "category": "Konsumer",
-      "price": 7300,
+      "price": 7275,
       "prev_close": 7275,
       "open": 7675,
       "high": 7675,
-      "low": 7275,
-      "rsi": 37.5,
+      "low": 7250,
+      "rsi": 36.17,
       "rsi_status": "BUY",
-      "ma20": 7602,
+      "ma20": 7601,
       "support": 7250,
       "resistance": 8000,
-      "vol_ratio": 0.72,
-      "vol_status": "SELL",
+      "vol_ratio": 1.22,
+      "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
-      "signal": "SELL",
+      "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 7300,
+          "entry": 7275,
           "tp": [
-            7409,
-            7519,
-            7665
+            7384,
+            7493,
+            7639
           ],
           "cl": [
-            7227,
-            7190,
-            7154
+            7202,
+            7166,
+            7130
           ]
         },
         "swing": {
-          "entry": 7300,
+          "entry": 7275,
           "tp": [
-            7519,
-            7694,
+            7493,
+            7668,
             8000
           ],
           "cl": [
@@ -3705,11 +3705,11 @@
           ]
         },
         "investasi": {
-          "entry": "7154 - 7300",
+          "entry": "7130 - 7275",
           "tp": [
-            8395,
-            9490,
-            10950
+            8366,
+            9458,
+            10912
           ],
           "cl": [
             6670,
@@ -3724,40 +3724,40 @@
     {
       "ticker": "UNVR",
       "category": "Konsumer",
-      "price": 1680,
+      "price": 1670,
       "prev_close": 1685,
       "open": 1675,
       "high": 1690,
       "low": 1670,
-      "rsi": 26.92,
+      "rsi": 25.93,
       "rsi_status": "BUY",
-      "ma20": 1757,
+      "ma20": 1756,
       "support": 1615,
       "resistance": 1840,
-      "vol_ratio": 0.45,
+      "vol_ratio": 0.59,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "OVER SOLD",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 1680,
+          "entry": 1670,
           "tp": [
-            1705,
-            1730,
-            1764
+            1695,
+            1720,
+            1754
           ],
           "cl": [
-            1663,
-            1655,
-            1646
+            1653,
+            1645,
+            1637
           ]
         },
         "swing": {
-          "entry": 1680,
+          "entry": 1670,
           "tp": [
-            1745,
-            1797,
+            1725,
+            1769,
             1840
           ],
           "cl": [
@@ -3767,11 +3767,11 @@
           ]
         },
         "investasi": {
-          "entry": "1646 - 1680",
+          "entry": "1637 - 1670",
           "tp": [
-            1932,
-            2184,
-            2520
+            1920,
+            2171,
+            2505
           ],
           "cl": [
             1486,
@@ -3786,40 +3786,40 @@
     {
       "ticker": "MYOR",
       "category": "Konsumer",
-      "price": 1535,
+      "price": 1540,
       "prev_close": 1560,
       "open": 1560,
       "high": 1570,
       "low": 1530,
-      "rsi": 25.0,
+      "rsi": 25.45,
       "rsi_status": "BUY",
-      "ma20": 1622,
+      "ma20": 1623,
       "support": 1530,
       "resistance": 1730,
-      "vol_ratio": 1.19,
-      "vol_status": "NEUTRAL",
+      "vol_ratio": 1.49,
+      "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "OVER SOLD",
-      "signal": "NETRAL",
+      "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 1535,
+          "entry": 1540,
           "tp": [
-            1558,
-            1581,
-            1612
+            1563,
+            1586,
+            1617
           ],
           "cl": [
-            1520,
-            1512,
-            1504
+            1525,
+            1517,
+            1509
           ]
         },
         "swing": {
-          "entry": 1535,
+          "entry": 1540,
           "tp": [
-            1581,
-            1618,
+            1586,
+            1623,
             1730
           ],
           "cl": [
@@ -3829,11 +3829,11 @@
           ]
         },
         "investasi": {
-          "entry": "1504 - 1535",
+          "entry": "1509 - 1540",
           "tp": [
-            1765,
-            1996,
-            2302
+            1771,
+            2002,
+            2310
           ],
           "cl": [
             1408,
@@ -3848,40 +3848,40 @@
     {
       "ticker": "AMRT",
       "category": "Konsumer",
-      "price": 1320,
+      "price": 1315,
       "prev_close": 1310,
       "open": 1320,
       "high": 1325,
       "low": 1310,
-      "rsi": 42.86,
+      "rsi": 42.03,
       "rsi_status": "NEUTRAL",
       "ma20": 1366,
       "support": 1305,
       "resistance": 1455,
-      "vol_ratio": 0.37,
+      "vol_ratio": 0.51,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 1320,
+          "entry": 1315,
           "tp": [
-            1340,
-            1360,
-            1386
+            1335,
+            1354,
+            1381
           ],
           "cl": [
-            1307,
-            1300,
-            1294
+            1302,
+            1295,
+            1289
           ]
         },
         "swing": {
-          "entry": 1320,
+          "entry": 1315,
           "tp": [
-            1360,
-            1391,
+            1354,
+            1386,
             1455
           ],
           "cl": [
@@ -3891,11 +3891,11 @@
           ]
         },
         "investasi": {
-          "entry": "1294 - 1320",
+          "entry": "1289 - 1315",
           "tp": [
-            1518,
-            1716,
-            1980
+            1512,
+            1710,
+            1972
           ],
           "cl": [
             1201,
@@ -3920,7 +3920,7 @@
       "ma20": 357,
       "support": 348,
       "resistance": 368,
-      "vol_ratio": 0.65,
+      "vol_ratio": 0.69,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -4034,40 +4034,40 @@
     {
       "ticker": "MUTU",
       "category": "Konsumer",
-      "price": 122,
+      "price": 121,
       "prev_close": 122,
       "open": 122,
       "high": 124,
       "low": 120,
-      "rsi": 63.89,
+      "rsi": 62.16,
       "rsi_status": "SELL",
       "ma20": 120,
       "support": 109,
       "resistance": 146,
-      "vol_ratio": 0.16,
+      "vol_ratio": 0.18,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "STRONG SELL",
       "plans": {
         "scalping": {
-          "entry": 122,
+          "entry": 121,
           "tp": [
-            124,
-            126,
-            128
+            123,
+            125,
+            127
           ],
           "cl": [
-            121,
             120,
-            120
+            119,
+            119
           ]
         },
         "swing": {
-          "entry": 122,
+          "entry": 121,
           "tp": [
-            135,
-            145,
+            133,
+            143,
             146
           ],
           "cl": [
@@ -4077,11 +4077,11 @@
           ]
         },
         "investasi": {
-          "entry": "120 - 122",
+          "entry": "119 - 121",
           "tp": [
-            140,
-            159,
-            183
+            139,
+            157,
+            182
           ],
           "cl": [
             100,
@@ -4096,40 +4096,40 @@
     {
       "ticker": "NIKL",
       "category": "Industri",
-      "price": 224,
+      "price": 226,
       "prev_close": 230,
       "open": 228,
       "high": 234,
       "low": 220,
-      "rsi": 73.91,
+      "rsi": 76.12,
       "rsi_status": "SELL",
       "ma20": 201,
       "support": 187,
       "resistance": 248,
-      "vol_ratio": 2.02,
+      "vol_ratio": 2.32,
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 224,
+          "entry": 226,
           "tp": [
-            227,
-            231,
-            235
+            229,
+            233,
+            237
           ],
           "cl": [
-            222,
-            221,
-            220
+            224,
+            223,
+            221
           ]
         },
         "swing": {
-          "entry": 224,
+          "entry": 226,
           "tp": [
-            261,
-            291,
+            265,
+            296,
             248
           ],
           "cl": [
@@ -4139,11 +4139,11 @@
           ]
         },
         "investasi": {
-          "entry": "220 - 224",
+          "entry": "221 - 226",
           "tp": [
-            258,
-            291,
-            336
+            260,
+            294,
+            339
           ],
           "cl": [
             172,
@@ -4158,40 +4158,40 @@
     {
       "ticker": "KLBF",
       "category": "Konsumer",
-      "price": 790,
+      "price": 785,
       "prev_close": 775,
       "open": 790,
       "high": 825,
       "low": 780,
-      "rsi": 47.22,
+      "rsi": 45.71,
       "rsi_status": "NEUTRAL",
       "ma20": 794,
       "support": 750,
       "resistance": 835,
-      "vol_ratio": 2.2,
+      "vol_ratio": 2.56,
       "vol_status": "BUY",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 790,
+          "entry": 785,
           "tp": [
-            802,
-            814,
-            830
+            797,
+            809,
+            824
           ],
           "cl": [
-            782,
-            778,
-            774
+            777,
+            773,
+            769
           ]
         },
         "swing": {
-          "entry": 790,
+          "entry": 785,
           "tp": [
-            830,
-            862,
+            820,
+            848,
             835
           ],
           "cl": [
@@ -4201,11 +4201,11 @@
           ]
         },
         "investasi": {
-          "entry": "774 - 790",
+          "entry": "769 - 785",
           "tp": [
-            908,
-            1027,
-            1185
+            903,
+            1020,
+            1178
           ],
           "cl": [
             690,
@@ -4220,40 +4220,40 @@
     {
       "ticker": "BSDE",
       "category": "Properti",
-      "price": 665,
+      "price": 660,
       "prev_close": 670,
       "open": 670,
       "high": 675,
       "low": 650,
-      "rsi": 75.0,
+      "rsi": 72.41,
       "rsi_status": "SELL",
       "ma20": 630,
       "support": 580,
       "resistance": 705,
-      "vol_ratio": 0.61,
+      "vol_ratio": 0.75,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "OVER BOUGHT",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 665,
+          "entry": 660,
           "tp": [
-            675,
-            685,
-            698
+            670,
+            680,
+            693
           ],
           "cl": [
-            658,
-            655,
-            652
+            653,
+            650,
+            647
           ]
         },
         "swing": {
-          "entry": 665,
+          "entry": 660,
           "tp": [
-            750,
-            818,
+            740,
+            804,
             705
           ],
           "cl": [
@@ -4263,11 +4263,11 @@
           ]
         },
         "investasi": {
-          "entry": "652 - 665",
+          "entry": "647 - 660",
           "tp": [
-            765,
-            864,
-            998
+            759,
+            858,
+            990
           ],
           "cl": [
             534,
@@ -4292,7 +4292,7 @@
       "ma20": 622,
       "support": 590,
       "resistance": 655,
-      "vol_ratio": 0.35,
+      "vol_ratio": 0.4,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
@@ -4354,7 +4354,7 @@
       "ma20": 267,
       "support": 252,
       "resistance": 284,
-      "vol_ratio": 0.39,
+      "vol_ratio": 0.45,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -4406,40 +4406,40 @@
     {
       "ticker": "KOTA",
       "category": "Properti",
-      "price": 210,
+      "price": 218,
       "prev_close": 212,
       "open": 210,
       "high": 218,
       "low": 204,
-      "rsi": 59.02,
+      "rsi": 60.96,
       "rsi_status": "NEUTRAL",
       "ma20": 183,
       "support": 140,
       "resistance": 252,
-      "vol_ratio": 0.33,
+      "vol_ratio": 0.44,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 210,
+          "entry": 218,
           "tp": [
-            213,
-            216,
-            220
+            221,
+            225,
+            229
           ],
           "cl": [
-            208,
-            207,
-            206
+            216,
+            215,
+            214
           ]
         },
         "swing": {
-          "entry": 210,
+          "entry": 218,
           "tp": [
-            280,
-            336,
+            296,
+            358,
             252
           ],
           "cl": [
@@ -4449,11 +4449,11 @@
           ]
         },
         "investasi": {
-          "entry": "206 - 210",
+          "entry": "214 - 218",
           "tp": [
-            241,
-            273,
-            315
+            251,
+            283,
+            327
           ],
           "cl": [
             129,
@@ -4468,40 +4468,40 @@
     {
       "ticker": "JGLE",
       "category": "Properti",
-      "price": 84,
+      "price": 83,
       "prev_close": 84,
       "open": 84,
       "high": 86,
       "low": 82,
-      "rsi": 45.1,
+      "rsi": 44.23,
       "rsi_status": "NEUTRAL",
       "ma20": 88,
       "support": 75,
       "resistance": 107,
-      "vol_ratio": 0.26,
+      "vol_ratio": 0.28,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 84,
+          "entry": 83,
           "tp": [
+            84,
             85,
-            87,
-            88
+            87
           ],
           "cl": [
-            83,
-            83,
-            82
+            82,
+            82,
+            81
           ]
         },
         "swing": {
-          "entry": 84,
+          "entry": 83,
           "tp": [
-            93,
-            100,
+            91,
+            97,
             107
           ],
           "cl": [
@@ -4511,11 +4511,11 @@
           ]
         },
         "investasi": {
-          "entry": "82 - 84",
+          "entry": "81 - 83",
           "tp": [
-            97,
-            109,
-            126
+            95,
+            108,
+            124
           ],
           "cl": [
             69,
@@ -4530,40 +4530,40 @@
     {
       "ticker": "BAPA",
       "category": "Properti",
-      "price": 137,
+      "price": 139,
       "prev_close": 137,
       "open": 137,
       "high": 139,
       "low": 136,
-      "rsi": 48.28,
+      "rsi": 49.44,
       "rsi_status": "NEUTRAL",
-      "ma20": 148,
+      "ma20": 149,
       "support": 135,
       "resistance": 179,
-      "vol_ratio": 0.27,
+      "vol_ratio": 0.32,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "NETRAL",
       "plans": {
         "scalping": {
-          "entry": 137,
+          "entry": 139,
           "tp": [
-            139,
             141,
-            144
+            143,
+            146
           ],
           "cl": [
-            136,
-            135,
-            134
+            138,
+            137,
+            136
           ]
         },
         "swing": {
-          "entry": 137,
+          "entry": 139,
           "tp": [
-            141,
-            144,
+            143,
+            147,
             179
           ],
           "cl": [
@@ -4573,11 +4573,11 @@
           ]
         },
         "investasi": {
-          "entry": "134 - 137",
+          "entry": "136 - 139",
           "tp": [
-            158,
-            178,
-            206
+            160,
+            181,
+            208
           ],
           "cl": [
             124,
@@ -4592,40 +4592,40 @@
     {
       "ticker": "KOKA",
       "category": "Properti",
-      "price": 178,
+      "price": 181,
       "prev_close": 181,
       "open": 180,
-      "high": 181,
+      "high": 183,
       "low": 178,
-      "rsi": 46.27,
+      "rsi": 48.44,
       "rsi_status": "NEUTRAL",
       "ma20": 184,
       "support": 168,
       "resistance": 224,
-      "vol_ratio": 0.15,
+      "vol_ratio": 0.22,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 178,
+          "entry": 181,
           "tp": [
-            181,
-            183,
-            187
+            184,
+            186,
+            190
           ],
           "cl": [
-            176,
-            175,
-            174
+            179,
+            178,
+            177
           ]
         },
         "swing": {
-          "entry": 178,
+          "entry": 181,
           "tp": [
-            188,
-            196,
+            194,
+            204,
             224
           ],
           "cl": [
@@ -4635,11 +4635,11 @@
           ]
         },
         "investasi": {
-          "entry": "174 - 178",
+          "entry": "177 - 181",
           "tp": [
-            205,
-            231,
-            267
+            208,
+            235,
+            272
           ],
           "cl": [
             155,
@@ -4664,7 +4664,7 @@
       "ma20": 694,
       "support": 640,
       "resistance": 750,
-      "vol_ratio": 1.68,
+      "vol_ratio": 1.86,
       "vol_status": "BUY",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
@@ -4716,40 +4716,40 @@
     {
       "ticker": "ROCK",
       "category": "Properti",
-      "price": 2060,
+      "price": 2120,
       "prev_close": 2120,
       "open": 2170,
-      "high": 2170,
+      "high": 2250,
       "low": 1995,
-      "rsi": 43.94,
+      "rsi": 48.33,
       "rsi_status": "NEUTRAL",
-      "ma20": 2095,
+      "ma20": 2098,
       "support": 1850,
       "resistance": 2490,
-      "vol_ratio": 0.54,
+      "vol_ratio": 0.71,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 2060,
+          "entry": 2120,
           "tp": [
-            2091,
-            2122,
-            2163
+            2152,
+            2184,
+            2226
           ],
           "cl": [
-            2039,
-            2029,
-            2019
+            2099,
+            2088,
+            2078
           ]
         },
         "swing": {
-          "entry": 2060,
+          "entry": 2120,
           "tp": [
-            2270,
-            2438,
+            2390,
+            2606,
             2490
           ],
           "cl": [
@@ -4759,11 +4759,11 @@
           ]
         },
         "investasi": {
-          "entry": "2019 - 2060",
+          "entry": "2078 - 2120",
           "tp": [
-            2369,
-            2678,
-            3090
+            2438,
+            2756,
+            3180
           ],
           "cl": [
             1702,
@@ -4778,40 +4778,40 @@
     {
       "ticker": "WBSA",
       "category": "Properti",
-      "price": 690,
+      "price": 700,
       "prev_close": 695,
       "open": 695,
       "high": 700,
       "low": 675,
-      "rsi": 58.93,
+      "rsi": 60.71,
       "rsi_status": "NEUTRAL",
       "ma20": 677,
       "support": 630,
       "resistance": 755,
-      "vol_ratio": 0.62,
+      "vol_ratio": 0.7,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 690,
+          "entry": 700,
           "tp": [
-            700,
-            711,
-            724
+            710,
+            721,
+            735
           ],
           "cl": [
-            683,
-            680,
-            676
+            693,
+            690,
+            686
           ]
         },
         "swing": {
-          "entry": 690,
+          "entry": 700,
           "tp": [
-            750,
-            798,
+            770,
+            826,
             755
           ],
           "cl": [
@@ -4821,11 +4821,11 @@
           ]
         },
         "investasi": {
-          "entry": "676 - 690",
+          "entry": "686 - 700",
           "tp": [
-            793,
-            897,
-            1035
+            805,
+            910,
+            1050
           ],
           "cl": [
             580,
@@ -4840,40 +4840,40 @@
     {
       "ticker": "SMRA",
       "category": "Properti",
-      "price": 334,
+      "price": 336,
       "prev_close": 332,
       "open": 332,
       "high": 336,
       "low": 332,
-      "rsi": 50.0,
+      "rsi": 51.85,
       "rsi_status": "NEUTRAL",
       "ma20": 325,
       "support": 306,
       "resistance": 348,
-      "vol_ratio": 0.86,
+      "vol_ratio": 0.95,
       "vol_status": "NEUTRAL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 334,
+          "entry": 336,
           "tp": [
-            339,
-            344,
-            351
+            341,
+            346,
+            353
           ],
           "cl": [
+            333,
             331,
-            329,
-            327
+            329
           ]
         },
         "swing": {
-          "entry": 334,
+          "entry": 336,
           "tp": [
-            362,
-            384,
+            366,
+            390,
             348
           ],
           "cl": [
@@ -4883,11 +4883,11 @@
           ]
         },
         "investasi": {
-          "entry": "327 - 334",
+          "entry": "329 - 336",
           "tp": [
-            384,
-            434,
-            501
+            386,
+            437,
+            504
           ],
           "cl": [
             282,
@@ -4902,40 +4902,40 @@
     {
       "ticker": "ASII",
       "category": "Industri",
-      "price": 4880,
+      "price": 4910,
       "prev_close": 4900,
       "open": 4770,
-      "high": 4900,
+      "high": 4910,
       "low": 4770,
-      "rsi": 56.0,
+      "rsi": 58.11,
       "rsi_status": "NEUTRAL",
-      "ma20": 4837,
+      "ma20": 4838,
       "support": 4720,
       "resistance": 5100,
-      "vol_ratio": 0.65,
+      "vol_ratio": 0.76,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 4880,
+          "entry": 4910,
           "tp": [
-            4953,
-            5026,
-            5124
+            4984,
+            5057,
+            5156
           ],
           "cl": [
-            4831,
-            4807,
-            4782
+            4861,
+            4836,
+            4812
           ]
         },
         "swing": {
-          "entry": 4880,
+          "entry": 4910,
           "tp": [
-            5040,
-            5168,
+            5100,
+            5252,
             5100
           ],
           "cl": [
@@ -4945,11 +4945,11 @@
           ]
         },
         "investasi": {
-          "entry": "4782 - 4880",
+          "entry": "4812 - 4910",
           "tp": [
-            5612,
-            6344,
-            7320
+            5646,
+            6383,
+            7365
           ],
           "cl": [
             4342,
@@ -4964,40 +4964,40 @@
     {
       "ticker": "UNTR",
       "category": "Industri",
-      "price": 25450,
+      "price": 25375,
       "prev_close": 24950,
       "open": 25175,
       "high": 25850,
       "low": 25100,
-      "rsi": 69.77,
+      "rsi": 69.34,
       "rsi_status": "SELL",
-      "ma20": 24152,
+      "ma20": 24149,
       "support": 23075,
       "resistance": 26000,
-      "vol_ratio": 0.5,
+      "vol_ratio": 0.55,
       "vol_status": "SELL",
       "macd_status": "BUY",
       "fibo_rsi_status": "NORMAL",
       "signal": "BUY",
       "plans": {
         "scalping": {
-          "entry": 25450,
+          "entry": 25375,
           "tp": [
-            25832,
-            26214,
-            26722
+            25756,
+            26136,
+            26644
           ],
           "cl": [
-            25196,
-            25068,
-            24941
+            25121,
+            24994,
+            24868
           ]
         },
         "swing": {
-          "entry": 25450,
+          "entry": 25375,
           "tp": [
-            27825,
-            29725,
+            27675,
+            29515,
             26000
           ],
           "cl": [
@@ -5007,11 +5007,11 @@
           ]
         },
         "investasi": {
-          "entry": "24941 - 25450",
+          "entry": "24868 - 25375",
           "tp": [
-            29267,
-            33085,
-            38175
+            29181,
+            32988,
+            38062
           ],
           "cl": [
             21229,
@@ -5026,40 +5026,40 @@
     {
       "ticker": "BNBR",
       "category": "Industri",
-      "price": 100,
+      "price": 101,
       "prev_close": 100,
       "open": 100,
       "high": 102,
       "low": 99,
-      "rsi": 48.15,
+      "rsi": 50.0,
       "rsi_status": "NEUTRAL",
       "ma20": 100,
       "support": 92,
       "resistance": 111,
-      "vol_ratio": 0.45,
+      "vol_ratio": 0.48,
       "vol_status": "SELL",
       "macd_status": "SELL",
       "fibo_rsi_status": "NORMAL",
       "signal": "SELL",
       "plans": {
         "scalping": {
-          "entry": 100,
+          "entry": 101,
           "tp": [
-            101,
             103,
-            105
+            104,
+            106
           ],
           "cl": [
+            100,
             99,
-            98,
-            98
+            99
           ]
         },
         "swing": {
-          "entry": 100,
+          "entry": 101,
           "tp": [
-            108,
-            114,
+            110,
+            117,
             111
           ],
           "cl": [
@@ -5069,11 +5069,11 @@
           ]
         },
         "investasi": {
-          "entry": "98 - 100",
+          "entry": "99 - 101",
           "tp": [
-            115,
-            130,
-            150
+            116,
+            131,
+            152
           ],
           "cl": [
             85,
