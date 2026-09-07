@@ -4,88 +4,46 @@ import pandas as pd
 import yfinance as yf
 from datetime import datetime
 
-# ==========================================
-# 1. DAFTAR EMITEN & PEMETAAN SEKTOR
-# ==========================================
 RAW_STOCKS = [
-    # Indeks Utama
-    "^JKSE",
-    
-    # Perbankan & Keuangan
-    "BBCA.JK", "BBRI.JK", "BMRI.JK", "BBNI.JK", "BRIS.JK", "ARTO.JK", "BBTN.JK", "BDMN.JK", "BNGA.JK",
-    
-    # Energi, Tambang & Komoditas
-    "TPIA.JK", "CUAN.JK", "SRSN.JK", "LABA.JK", "PACK.JK", "AMMN.JK", "ENRG.JK", 
-    "INCO.JK", "INDY.JK", "PTRO.JK", "BREN.JK", "BUVA.JK", "INDF.JK", "ADRO.JK", 
-    "KBLV.JK", "PTBA.JK", "ITMG.JK", "HRUM.JK", "AKRA.JK", "MEDC.JK", "PGAS.JK", 
-    "ANTM.JK", "MDKA.JK", "MBMA.JK", "NCKL.JK", "TINS.JK", "BRMS.JK", "DEWA.JK", 
-    "AADI.JK", "BYAN.JK", "BULL.JK", "HUMI.JK", "DSSA.JK", "CBRE.JK", "DOOH.JK",
-    
-    # Teknologi, Infrastruktur & Media
-    "GOTO.JK", "EMTK.JK", "SCMA.JK", "BUKA.JK", "TLKM.JK", "ISAT.JK", "EXCL.JK", 
-    "JSMR.JK", "INET.JK", "WIFI.JK", "BACH.JK", "MDIA.JK", "DATA.JK", "MTDL.JK",
-    
-    # Konsumer & Ritel
-    "ICBP.JK", "UNVR.JK", "MYOR.JK", "AMRT.JK", "ACES.JK", "AGAR.JK", "MUTU.JK", "NIKL.JK",
-    
-    # KESEHATAN (HEALTHCARE) — DITAMBAHKAN
-    "KLBF.JK", "MIKA.JK", "HEAL.JK", "SILO.JK", "SAME.JK", "PRDA.JK", "KAEF.JK", 
-    "INAF.JK", "SIDO.JK", "TSPC.JK", "DVLA.JK", "PEHA.JK", "IRRA.JK",
-    
-    # Properti & Pariwisata
-    "BSDE.JK", "CTRA.JK", "PWON.JK", "KOTA.JK", "JGLE.JK", "BAPA.JK", "KOKA.JK", 
-    "CDIA.JK", "ROCK.JK", "MWOP.JK", "DL.JK", "WBSA.JK", "SMRA.JK",
-    
-    # Industri & Konglomerasi
-    "ASII.JK", "UNTR.JK", "BNBR.JK"
+    "^JKSE", "TPIA.JK", "CUAN.JK", "SRSN.JK", "LABA.JK", "PACK.JK", "AMMN.JK", "ENRG.JK", 
+    "INCO.JK", "INDY.JK", "PTRO.JK", "BREN.JK", "BUVA.JK", "ARTO.JK", "INDF.JK", 
+    "ADRO.JK", "KBLV.JK", "PTBA.JK", "ITMG.JK", "HRUM.JK", "AKRA.JK", "MEDC.JK", 
+    "PGAS.JK", "ANTM.JK", "MDKA.JK", "MBMA.JK", "NCKL.JK", "TINS.JK", "BRMS.JK", 
+    "DEWA.JK", "AADI.JK", "BYAN.JK", "BULL.JK", "HUMI.JK", "DSSA.JK", "CBRE.JK", 
+    "DOOH.JK", "BBCA.JK", "BBRI.JK", "BMRI.JK", "BBNI.JK", "BRIS.JK", "BBTN.JK", 
+    "BDMN.JK", "BNGA.JK", "GOTO.JK", "EMTK.JK", "SCMA.JK", "BUKA.JK", "TLKM.JK", 
+    "ISAT.JK", "EXCL.JK", "JSMR.JK", "INET.JK", "WIFI.JK", "BACH.JK", "MDIA.JK", 
+    "DATA.JK", "MTDL.JK", "ICBP.JK", "UNVR.JK", "MYOR.JK", "AMRT.JK", "ACES.JK", 
+    "AGAR.JK", "MUTU.JK", "NIKL.JK", "KLBF.JK", "BSDE.JK", "CTRA.JK", "PWON.JK", 
+    "KOTA.JK", "JGLE.JK", "BAPA.JK", "KOKA.JK", "CDIA.JK", "ROCK.JK", "MWOP.JK", 
+    "DL.JK", "WBSA.JK", "SMRA.JK", "ASII.JK", "UNTR.JK", "BNBR.JK"
 ]
 
-# Menghilangkan duplikat
 STOCKS = list(dict.fromkeys(RAW_STOCKS))
 
 SECTOR_MAP = {
-    # Perbankan & Keuangan
     "BBCA": "Perbankan", "BBRI": "Perbankan", "BMRI": "Perbankan", "BBNI": "Perbankan", 
     "BRIS": "Perbankan", "ARTO": "Perbankan", "BBTN": "Perbankan", "BDMN": "Perbankan", "BNGA": "Perbankan",
-    
-    # Energi & Tambang
     "ADRO": "Energi", "PTBA": "Energi", "ITMG": "Energi", "HRUM": "Energi", 
     "AKRA": "Energi", "MEDC": "Energi", "PGAS": "Energi", "ENRG": "Energi", "BYAN": "Energi",
     "INDY": "Energi", "CUAN": "Energi", "BREN": "Energi", "AMMN": "Tambang",
     "ANTM": "Tambang", "INCO": "Tambang", "MDKA": "Tambang", "MBMA": "Tambang", 
     "NCKL": "Tambang", "TINS": "Tambang", "BRMS": "Tambang", "DEWA": "Tambang", "AADI": "Tambang",
     "DSSA": "Energi", "BULL": "Energi", "HUMI": "Energi", "CBRE": "Energi", "PTRO": "Energi",
-    
-    # Teknologi & Media
     "GOTO": "Teknologi", "EMTK": "Teknologi", "BUKA": "Teknologi", "INET": "Teknologi",
     "WIFI": "Teknologi", "DATA": "Teknologi", "MTDL": "Teknologi", "KBLV": "Teknologi",
     "SCMA": "Media", "MDIA": "Media", "DOOH": "Media", "BACH": "Media", "LABA": "Teknologi",
-    
-    # Telekomunikasi & Industri
     "TLKM": "Industri", "ISAT": "Industri", "EXCL": "Industri", "JSMR": "Industri",
     "ASII": "Industri", "UNTR": "Industri", "BNBR": "Industri", "NIKL": "Industri",
     "TPIA": "Industri", "SRSN": "Industri", "PACK": "Industri",
-    
-    # Konsumer
     "ICBP": "Konsumer", "INDF": "Konsumer", "UNVR": "Konsumer", "MYOR": "Konsumer", 
-    "AMRT": "Konsumer", "ACES": "Konsumer", "AGAR": "Konsumer", "MUTU": "Konsumer",
-    
-    # KESEHATAN — DITAMBAHKAN
-    "KLBF": "Kesehatan", "MIKA": "Kesehatan", "HEAL": "Kesehatan", "SILO": "Kesehatan", 
-    "SAME": "Kesehatan", "PRDA": "Kesehatan", "KAEF": "Kesehatan", "INAF": "Kesehatan", 
-    "SIDO": "Kesehatan", "TSPC": "Kesehatan", "DVLA": "Kesehatan", "PEHA": "Kesehatan", 
-    "IRRA": "Kesehatan",
-    
-    # Properti & Pariwisata
+    "AMRT": "Konsumer", "ACES": "Konsumer", "AGAR": "Konsumer", "MUTU": "Konsumer", "KLBF": "Konsumer",
     "BSDE": "Properti", "CTRA": "Properti", "PWON": "Properti", "KOTA": "Properti",
     "JGLE": "Properti", "BAPA": "Properti", "KOKA": "Properti", "CDIA": "Properti",
     "ROCK": "Properti", "BUVA": "Properti", "MWOP": "Properti", "DL": "Properti", 
     "WBSA": "Properti", "SMRA": "Properti"
 }
 
-# ==========================================
-# 2. HELPER FUNCTIONS
-# ==========================================
 def clean_val(val, default=0):
     if isinstance(val, (pd.Series, np.ndarray)):
         val = val.item() if val.size == 1 else val[-1]
@@ -98,8 +56,7 @@ def calculate_rsi(series, period=14):
     gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
     loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
     rs = gain / loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
+    return 100 - (100 / (1 + rs))
 
 def calculate_macd(series):
     exp1 = series.ewm(span=12, adjust=False).mean()
@@ -108,35 +65,57 @@ def calculate_macd(series):
     signal = macd.ewm(span=9, adjust=False).mean()
     return macd, signal
 
-# ==========================================
-# 3. PROSES UTAMA SCREENING
-# ==========================================
+def generate_trading_plan(price, support, resistance, vol_ratio, macd_status, rsi_val):
+    # 1. SCALPING (Ketat & Cepat: Risk 1-1.5%)
+    sc_entry = price
+    sc_tp1 = round(price * 1.015)
+    sc_tp2 = round(price * 1.03)
+    sc_tp3 = round(price * 1.05)
+    sc_cl1 = round(price * 0.99)
+    sc_cl2 = round(price * 0.985)
+    sc_cl3 = round(price * 0.98)
+
+    # 2. SWING (Target Resisten & Support MA20: Risk 3-5%)
+    sw_entry = price
+    risk_sw = max(price - support, price * 0.03)
+    sw_tp1 = round(price + (risk_sw * 1.0))
+    sw_tp2 = round(price + (risk_sw * 1.8))
+    sw_tp3 = round(resistance if resistance > price else price * 1.10)
+    sw_cl1 = round(support)
+    sw_cl2 = round(support * 0.98)
+    sw_cl3 = round(support * 0.95)
+
+    # 3. INVESTASI / LONG TERM (Nilai Wajar & Area Diskon: Risk 7-12%)
+    inv_entry = f"{round(price * 0.98)} - {price}"
+    inv_tp1 = round(price * 1.15)
+    inv_tp2 = round(price * 1.30)
+    inv_tp3 = round(price * 1.50)
+    inv_cl1 = round(support * 0.92)
+    inv_cl2 = round(support * 0.88)
+    inv_cl3 = round(support * 0.82)
+
+    return {
+        "scalping": {"entry": sc_entry, "tp": [sc_tp1, sc_tp2, sc_tp3], "cl": [sc_cl1, sc_cl2, sc_cl3]},
+        "swing": {"entry": sw_entry, "tp": [sw_tp1, sw_tp2, sw_tp3], "cl": [sw_cl1, sw_cl2, sw_cl3]},
+        "investasi": {"entry": inv_entry, "tp": [inv_tp1, inv_tp2, inv_tp3], "cl": [inv_cl1, inv_cl2, inv_cl3]}
+    }
+
 def run_screener():
     print(f"Memulai unduh batch data untuk {len(STOCKS)} emiten...")
-    
     data = yf.download(STOCKS, period="100d", interval="1d", group_by='ticker', progress=False)
-    
     results = []
 
     for ticker_symbol in STOCKS:
         try:
             clean_name = "IHSG" if ticker_symbol == "^JKSE" else ticker_symbol.replace(".JK", "")
-            
-            if len(STOCKS) > 1:
-                df = data[ticker_symbol].copy()
-            else:
-                df = data.copy()
-
+            df = data[ticker_symbol].copy() if len(STOCKS) > 1 else data.copy()
             df.dropna(how='all', inplace=True)
 
             if df.empty or len(df) < 5:
-                print(f"Data {clean_name} kurang / tidak tersedia. Dilewati.")
                 continue
 
-            close_prices = df['Close']
-            open_prices = df['Open']
-            high_prices = df['High']
-            low_prices = df['Low']
+            close_prices, open_prices = df['Close'], df['Open']
+            high_prices, low_prices = df['High'], df['Low']
             volumes = df['Volume']
 
             last_close = round(clean_val(close_prices.iloc[-1]))
@@ -149,43 +128,21 @@ def run_screener():
             support = round(clean_val(low_prices.rolling(window=min(20, len(low_prices))).min().iloc[-1]))
             resistance = round(clean_val(high_prices.rolling(window=min(20, len(high_prices))).max().iloc[-1]))
 
-            # RSI
             rsi_series = calculate_rsi(close_prices, 14)
             rsi_val = clean_val(rsi_series.iloc[-1], default=50)
-            
-            rsi_status = "NEUTRAL"
-            if rsi_val <= 38:
-                rsi_status = "BUY"
-            elif rsi_val >= 62:
-                rsi_status = "SELL"
+            rsi_status = "BUY" if rsi_val <= 38 else ("SELL" if rsi_val >= 62 else "NEUTRAL")
 
-            # MACD
             macd, macd_sig = calculate_macd(close_prices)
-            macd_val = clean_val(macd.iloc[-1])
-            macd_sig_val = clean_val(macd_sig.iloc[-1])
-            macd_status = "BUY" if macd_val > macd_sig_val else "SELL"
+            macd_status = "BUY" if clean_val(macd.iloc[-1]) > clean_val(macd_sig.iloc[-1]) else "SELL"
 
-            # Volume Ratio
             vol_ma20 = clean_val(volumes.rolling(window=min(20, len(volumes))).mean().iloc[-1], default=1)
-            last_vol = clean_val(volumes.iloc[-1])
-            vol_ratio = round(last_vol / vol_ma20, 2) if vol_ma20 > 0 else 1.0
+            vol_ratio = round(clean_val(volumes.iloc[-1]) / vol_ma20, 2) if vol_ma20 > 0 else 1.0
             vol_status = "BUY" if vol_ratio >= 1.2 else ("SELL" if vol_ratio <= 0.8 else "NEUTRAL")
 
-            # FIBO RSI
-            fibo_rsi_status = "NORMAL"
-            if rsi_val <= 30:
-                fibo_rsi_status = "OVER SOLD"
-            elif rsi_val >= 70:
-                fibo_rsi_status = "OVER BOUGHT"
+            fibo_rsi_status = "OVER SOLD" if rsi_val <= 30 else ("OVER BOUGHT" if rsi_val >= 70 else "NORMAL")
 
-            # Sinyal Utama
-            buy_score = (1 if rsi_status == "BUY" else 0) + \
-                        (1 if macd_status == "BUY" else 0) + \
-                        (1 if vol_status == "BUY" else 0)
-
-            sell_score = (1 if rsi_status == "SELL" else 0) + \
-                         (1 if macd_status == "SELL" else 0) + \
-                         (1 if vol_status == "SELL" else 0)
+            buy_score = (1 if rsi_status == "BUY" else 0) + (1 if macd_status == "BUY" else 0) + (1 if vol_status == "BUY" else 0)
+            sell_score = (1 if rsi_status == "SELL" else 0) + (1 if macd_status == "SELL" else 0) + (1 if vol_status == "SELL" else 0)
 
             signal = "NETRAL"
             if (last_close >= resistance and vol_ratio > 1.2) or buy_score == 3:
@@ -197,20 +154,9 @@ def run_screener():
             elif sell_score >= 2 or (last_close < support):
                 signal = "SELL"
 
-            # Entry, Cut Loss, Take Profit Logic
-            if signal in ["STRONG BUY", "BUY"]:
-                entry_price = last_close
-                cut_loss = round(support * 0.98)
-                risk = entry_price - cut_loss
-                if risk <= 0:
-                    risk = entry_price * 0.02
-                take_profit = round(entry_price + (risk * 2))
-            else:
-                entry_price = "Wait"
-                cut_loss = "Wait"
-                take_profit = "Wait"
+            plans = generate_trading_plan(last_close, support, resistance, vol_ratio, macd_status, rsi_val)
 
-            stock_data = {
+            results.append({
                 "ticker": clean_name,
                 "category": "Indeks Utama" if clean_name == "IHSG" else SECTOR_MAP.get(clean_name, "Lainnya"),
                 "price": last_close,
@@ -228,27 +174,16 @@ def run_screener():
                 "macd_status": macd_status,
                 "fibo_rsi_status": fibo_rsi_status,
                 "signal": signal,
-                "entry_price": entry_price,
-                "cut_loss": cut_loss,
-                "take_profit": take_profit,
+                "plans": plans,
                 "visual_indicator_info": "Indikator Visual Sinyal Transaksi Saham.",
                 "image_source": "tupungato / Getty Images"
-            }
-
-            results.append(stock_data)
-
+            })
         except Exception as e:
             print(f"Gagal memproses {ticker_symbol}: {str(e)}")
 
-    output_json = {
-        "updated_at": datetime.now().isoformat(),
-        "stocks": results
-    }
-
     with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(output_json, f, indent=2, ensure_ascii=False)
-
-    print(f"\nProses screening selesai! Berhasil memproses {len(results)} emiten ke 'data.json'.")
+        json.dump({"updated_at": datetime.now().isoformat(), "stocks": results}, f, indent=2, ensure_ascii=False)
+    print("Selesai! Hasil disimpan ke data.json.")
 
 if __name__ == "__main__":
     run_screener()
