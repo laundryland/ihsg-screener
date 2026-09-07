@@ -3,155 +3,215 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IHSG SH4NDY'S SCREENER</title>
-  
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0f172a">
-  <link rel="icon" type="image/png" sizes="192x192" href="./laundry1-512x512.png">
-  <link rel="apple-touch-icon" href="./laundry1-512x512.png">
-  
+  <title>Dashboard Emiten Saham</title>
   <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-      user-select: none; 
-      text-transform: uppercase; 
-      font-weight: bold; 
-    }
-
-    body { 
-      background-color: #0f172a; 
-      color: #f8fafc; 
-      padding: 16px; 
-      padding-top: 100px; 
-      padding-bottom: 40px; 
-    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 1000px; margin: 0 auto; }
     
-    header { 
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      background-color: #0f172a;
-      border-bottom: 1px solid #334155;
-      padding: 10px 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-
-    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-    .header-left { display: flex; align-items: center; gap: 10px; }
-    
-    .app-logo { 
-      width: 38px; 
-      height: 38px; 
-      border-radius: 50%; 
-      object-fit: cover; 
-      flex-shrink: 0; 
-      border: 2px solid #38bdf8; 
-    }
-
-    .header-text { display: flex; flex-direction: column; }
-    h1 { font-size: 0.95rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
-    .update-time { font-size: 0.6rem; color: #94a3b8; margin-top: 2px; }
-
-    /* TRADER MODE SWITCHER BUTTONS IN HEADER */
-    .trader-mode-container {
-      display: flex;
-      background: #1e293b;
-      border: 1px solid #334155;
+    /* Header & Control Panel */
+    .controls {
+      background: white;
+      padding: 20px;
       border-radius: 8px;
-      padding: 2px;
-      gap: 2px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    select {
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      outline: none;
+      min-width: 250px;
+    }
+    
+    /* Grid Layar Utama */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+    }
+    
+    /* Kartu Emiten */
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+      position: relative;
+      border-left: 5px solid #007bff;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    .card.kesehatan { border-left-color: #28a745; }
+    .card.perbankan { border-left-color: #007bff; }
+    .card.konsumsi { border-left-color: #ffc107; }
+    .card.telekomunikasi { border-left-color: #17a2b8; }
+    .card.energi { border-left-color: #dc3545; }
+
+    .card h3 { margin: 0 0 5px 0; font-size: 18px; color: #111; }
+    .card p { margin: 0 0 10px 0; font-size: 13px; color: #666; }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 11px;
+      background: #e9ecef;
+      border-radius: 4px;
+      font-weight: 600;
     }
 
-    .mode-btn {
+    /* Tombol X (Sembunyikan) */
+    .btn-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
       background: transparent;
       border: none;
-      color: #94a3b8;
-      padding: 5px 8px;
-      font-size: 0.65rem;
-      border-radius: 6px;
+      color: #aaa;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .mode-btn.active-scalp { background: #d97706; color: #fff; box-shadow: 0 0 6px rgba(217, 119, 6, 0.5); }
-    .mode-btn.active-swing { background: #0284c7; color: #fff; box-shadow: 0 0 6px rgba(2, 132, 199, 0.5); }
-    .mode-btn.active-long { background: #166534; color: #fff; box-shadow: 0 0 6px rgba(22, 101, 52, 0.5); }
-
-    .header-actions { display: flex; gap: 6px; align-items: center; }
-
-    .btn-header {
-      background: #0284c7;
-      color: #fff;
-      border: 1px solid #38bdf8;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 0.65rem;
-      cursor: pointer;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 4px;
-      transition: background 0.2s;
-      flex-shrink: 0;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
     }
-    .btn-header:hover { background: #0369a1; }
-    .btn-reload-header { background: #334155; border-color: #475569; }
-    .btn-reload-header:hover { background: #475569; }
-
-    .control-box { 
-      position: sticky; 
-      top: 85px; 
-      z-index: 90; 
-      background: #1e293b; 
-      padding: 10px 12px; 
-      border-radius: 10px; 
-      border: 1px solid #334155; 
-      margin-bottom: 12px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
-    }
-    .control-header { display: flex; justify-content: space-between; align-items: center; }
-    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
+    .btn-close:hover { background: #fee2e2; color: #dc3545; }
     
-    .form-row { 
-      margin-top: 8px; 
-      display: grid; 
-      grid-template-columns: repeat(2, 1fr); 
-      gap: 8px; 
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      background: white;
+      border-radius: 8px;
     }
-    .form-row.hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Dashboard Emiten Saham</h2>
     
-    select, input[type="text"] { 
-      width: 100%; 
-      padding: 8px 10px; 
-      border-radius: 6px; 
-      border: 1px solid #475569; 
-      background: #0f172a; 
-      color: #fff; 
-      font-size: 0.75rem; 
-      outline: none;
-    }
-    input[type="text"]:focus, select:focus { border-color: #38bdf8; }
+    <div class="controls">
+      <label for="selectEmiten"><strong>Tambah/Tampilkan Emiten:</strong></label>
+      <select id="selectEmiten" onchange="tampilkanEmiten(this.value)">
+        <option value="">-- Pilih Emiten --</option>
+      </select>
+    </div>
 
-    /* BARISAN KATEGORI STICKY */
-    .group-tabs { 
-      position: sticky;
-      top: 145px;
-      z-index: 85;
-      background: #0f172a;
-      padding: 6px 0;
-      margin-bottom: 12px; 
-      display: flex; 
-      gap: 6px; 
-      overflow-x: auto; 
-      scrollbar-width: none; 
-      border-bottom: 1px solid #1e293b;
-    }
-    .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
-    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
+    <!-- Container Utama Kartu -->
+    <div id="emitenGrid" class="grid-container"></div>
+  </div>
 
-    .tab.tab-buy-worthy {
-      background: #064
+  <script>
+    // Data Emiten Saham Lengkap dengan Kategori Kesehatan & Sektor Lainnya
+    const daftarEmiten = [
+      // KESEHATAN
+      { kode: "MIKA", nama: "Mitra Keluarga", sektor: "kesehatan", kategori: "Rumah Sakit", visible: true },
+      { kode: "HEAL", nama: "Medikaloka Hermina", sektor: "kesehatan", kategori: "Rumah Sakit", visible: false },
+      { kode: "SILO", nama: "Siloam International", sektor: "kesehatan", kategori: "Rumah Sakit", visible: false },
+      { kode: "KLBF", nama: "Kalbe Farma", sektor: "kesehatan", kategori: "Farmasi", visible: true },
+      { kode: "TSPC", nama: "Tempo Scan Pacific", sektor: "kesehatan", kategori: "Farmasi", visible: false },
+      { kode: "KAEF", nama: "Kimia Farma", sektor: "kesehatan", kategori: "Farmasi", visible: false },
+      { kode: "SAME", nama: "Sarana Meditama", sektor: "kesehatan", kategori: "Rumah Sakit", visible: false },
+
+      // PERBANKAN
+      { kode: "BBCA", nama: "Bank Central Asia", sektor: "perbankan", kategori: "Bank Swasta", visible: true },
+      { kode: "BBRI", nama: "Bank Rakyat Indonesia", sektor: "perbankan", kategori: "Bank BUMN", visible: true },
+      { kode: "BMRI", nama: "Bank Mandiri", sektor: "perbankan", kategori: "Bank BUMN", visible: false },
+      { kode: "BBNI", nama: "Bank Negara Indonesia", sektor: "perbankan", kategori: "Bank BUMN", visible: false },
+
+      // KONSUMSI
+      { kode: "ICBP", nama: "Indofood CBP", sektor: "konsumsi", kategori: "Makanan & Minuman", visible: true },
+      { kode: "UNVR", nama: "Unilever Indonesia", sektor: "konsumsi", kategori: "Barang Konsumsi", visible: false },
+      { kode: "MYOR", nama: "Mayora Indah", sektor: "konsumsi", kategori: "Makanan & Minuman", visible: false },
+
+      // TELEKOMUNIKASI
+      { kode: "TLKM", nama: "Telkom Indonesia", sektor: "telekomunikasi", kategori: "Infrastruktur", visible: true },
+      { kode: "ISAT", nama: "Indosat Ooredoo", sektor: "telekomunikasi", kategori: "Operator", visible: false },
+
+      // ENERGI
+      { kode: "ADRO", nama: "Adaro Energy", sektor: "energi", kategori: "Batubara", visible: false },
+      { kode: "PGAS", nama: "Perusahaan Gas Negara", sektor: "energi", kategori: "Minyak & Gas", visible: false }
+    ];
+
+    // 1. Render Kartu di Layar Utama (Hanya yang status visible = true)
+    function renderLayarUtama() {
+      const grid = document.getElementById("emitenGrid");
+      grid.innerHTML = "";
+
+      const emitenTampil = daftarEmiten.filter(item => item.visible);
+
+      if (emitenTampil.length === 0) {
+        grid.innerHTML = `<div class="empty-state">Tidak ada emiten di layar utama. Pilih dari menu di atas untuk menampilkan.</div>`;
+        return;
+      }
+
+      emitenTampil.forEach(item => {
+        const card = document.createElement("div");
+        card.className = `card ${item.sektor}`;
+        card.innerHTML = `
+          <button class="btn-close" onclick="sembunyikanEmiten('${item.kode}')" title="Sembunyikan dari layar utama">&times;</button>
+          <h3>${item.kode}</h3>
+          <p>${item.nama}</p>
+          <span class="badge">${item.kategori}</span>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // 2. Render Dropdown Pilihan (Hanya emiten yang tersembunyi / visible = false)
+    function renderDropdown() {
+      const select = document.getElementById("selectEmiten");
+      select.innerHTML = `<option value="">-- Pilih Emiten untuk Ditambahkan --</option>`;
+
+      const emitenHidden = daftarEmiten.filter(item => !item.visible);
+
+      emitenHidden.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item.kode;
+        option.textContent = `[${item.sektor.toUpperCase()}] ${item.kode} - ${item.nama}`;
+        select.appendChild(option);
+      });
+    }
+
+    // 3. Fungsi Tombol X: Sembunyikan dari Layar Utama -> Otomatis Kembali ke Dropdown
+    function sembunyikanEmiten(kode) {
+      const target = daftarEmiten.find(item => item.kode === kode);
+      if (target) {
+        target.visible = false;
+        refreshUI();
+      }
+    }
+
+    // 4. Fungsi Pilih dari Dropdown: Tampilkan ke Layar Utama -> Hapus dari Dropdown
+    function tampilkanEmiten(kode) {
+      if (!kode) return;
+      const target = daftarEmiten.find(item => item.kode === kode);
+      if (target) {
+        target.visible = true;
+        refreshUI();
+      }
+    }
+
+    // Utility untuk memperbarui seluruh tampilan layar
+    function refreshUI() {
+      renderLayarUtama();
+      renderDropdown();
+    }
+
+    // Jalankan pertama kali saat halaman dimuat
+    refreshUI();
+  </script>
+
+</body>
+</html>
