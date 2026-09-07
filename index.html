@@ -41,12 +41,12 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
 
-    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .header-left { display: flex; align-items: center; gap: 10px; }
     
     .app-logo { 
-      width: 44px; 
-      height: 44px; 
+      width: 40px; 
+      height: 40px; 
       border-radius: 50%; 
       object-fit: cover; 
       flex-shrink: 0; 
@@ -54,28 +54,32 @@
     }
 
     .header-text { display: flex; flex-direction: column; }
-    h1 { font-size: 1.1rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
-    .update-time { font-size: 0.7rem; color: #94a3b8; margin-top: 2px; }
+    h1 { font-size: 1rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
+    .update-time { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
 
-    .btn-refresh-all {
+    .header-actions { display: flex; gap: 6px; align-items: center; }
+
+    .btn-header {
       background: #0284c7;
       color: #fff;
       border: 1px solid #38bdf8;
       padding: 6px 10px;
       border-radius: 8px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       transition: background 0.2s;
       flex-shrink: 0;
     }
-    .btn-refresh-all:hover { background: #0369a1; }
+    .btn-header:hover { background: #0369a1; }
+    .btn-reload-header { background: #334155; border-color: #475569; }
+    .btn-reload-header:hover { background: #475569; }
 
     .control-box { 
       position: sticky; 
-      top: 80px; 
+      top: 75px; 
       z-index: 90; 
       background: #1e293b; 
       padding: 10px 12px; 
@@ -86,7 +90,14 @@
     }
     .control-header { display: flex; justify-content: space-between; align-items: center; }
     .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
-    .form-row { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    
+    /* PENCARIAN DIBUAT 2 KOLOM SEJAJAR */
+    .form-row { 
+      margin-top: 8px; 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 8px; 
+    }
     .form-row.hidden { display: none; }
     
     select, input[type="text"] { 
@@ -96,10 +107,10 @@
       border: 1px solid #475569; 
       background: #0f172a; 
       color: #fff; 
-      font-size: 0.8rem; 
+      font-size: 0.75rem; 
       outline: none;
     }
-    input[type="text"]:focus { border-color: #38bdf8; }
+    input[type="text"]:focus, select:focus { border-color: #38bdf8; }
 
     .group-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; scrollbar-width: none; }
     .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
@@ -112,22 +123,46 @@
     .card.dragging { opacity: 0.4; transform: scale(0.96); border-style: dashed; }
     .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
 
+    /* KOLOM EMITEN, HARGA, PETIR DALAM 1 STRUKTUR */
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .ticker-price-group { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-    .ticker { font-size: 1.15rem; color: #fff; }
+    .header-ticker-col {
+      background: #0f172a;
+      border: 1px solid #334155;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-grow: 1;
+      margin-right: 8px;
+    }
+    .ticker { font-size: 1.1rem; color: #fff; }
     
-    .price-inline { font-size: 1.1rem; }
+    .price-inline { font-size: 1rem; }
     .price-up { color: #22c55e; }
     .price-down { color: #ef4444; }
     .price-flat { color: #ffffff; }
 
-    .card-actions-top { display: flex; align-items: center; gap: 6px; }
-    .action-btn { background: transparent; border: none; font-size: 0.9rem; cursor: pointer; padding: 2px; line-height: 1; transition: transform 0.2s; }
-    .action-btn:hover { transform: scale(1.2); }
-    .refresh-card-btn { color: #38bdf8; }
-    .close-btn { color: #ef4444; font-size: 1rem; }
+    /* TOMBOL X & REFRESH DENGAN UKURAN SAMA DIBUAT KOTAK */
+    .card-actions-top { display: flex; align-items: center; gap: 4px; }
+    .action-btn { 
+      width: 28px; 
+      height: 28px; 
+      border-radius: 6px; 
+      border: 1px solid #334155; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      cursor: pointer; 
+      font-size: 0.8rem; 
+      transition: all 0.2s; 
+    }
+    .refresh-card-btn { background: #0f172a; color: #38bdf8; border-color: #0284c7; }
+    .refresh-card-btn:hover { background: #0284c7; color: #fff; }
+    .close-btn { background: #7f1d1d; color: #fca5a5; border-color: #ef4444; font-size: 0.85rem; }
+    .close-btn:hover { background: #dc2626; color: #fff; }
 
-    .lightning-box { font-size: 0.75rem; letter-spacing: -1px; }
+    .lightning-box { font-size: 0.75rem; letter-spacing: -1px; margin-left: auto; }
     .lightning-green { color: #22c55e; }
     .lightning-red { color: #ef4444; }
     .lightning-white { color: #ffffff; }
@@ -161,8 +196,8 @@
 
     .open-percent-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; display: inline-block; }
 
-    /* KOLOM INDIKATOR (MODEL GRID DENGAN UKURAN BULATAN LEBIH BESAR) */
-    .indicator-column-box {
+    /* MODEL GRID INDIKATOR UNTUK SEMUA SEKSI */
+    .indicator-column-box, .ohlc-grid-box, .trend-vol-row {
       background: #0f172a;
       border: 1px solid #334155;
       border-radius: 6px;
@@ -173,9 +208,17 @@
       gap: 4px;
       font-size: 0.65rem;
     }
-    .indicator-item { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 4px 6px; border-radius: 4px; }
+    
+    .indicator-item, .ohlc-item { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: #1e293b; 
+      padding: 5px 6px; 
+      border-radius: 4px; 
+      height: 26px;
+    }
 
-    /* BULATAN INDIKATOR LEBIH BESAR DENGAN ANIMASI BERKEDIP */
     @keyframes dot-blink {
       0% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.3; transform: scale(0.85); }
@@ -194,30 +237,9 @@
     .dot-neutral { background-color: #64748b; }
     .dot-sideways { background-color: #ffffff; box-shadow: 0 0 4px #ffffff; }
 
-    /* KOLOM PREV, OPEN, HIGH, LOW BERBENTUK INDIKATOR */
-    .ohlc-grid-box {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 6px;
-      margin: 6px 0;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
-      font-size: 0.65rem;
-    }
-    .ohlc-item { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 4px 6px; border-radius: 4px; color: #cbd5e1; }
     .ohlc-val { color: #fff; }
 
-    /* KOLOM TREND & VOL RATIO BERDAMPINGAN */
-    .trend-vol-row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
-      margin: 6px 0;
-    }
-
-    /* KOLOM WARNING KHUSUS DI BAWAH VOLUME */
+    /* WARNING BOX */
     .warning-box-col {
       background: #0f172a;
       border: 1px solid #334155;
@@ -260,7 +282,6 @@
     .sr-res { color: #f87171; }
     .sr-sup { color: #4ade80; }
 
-    /* Separator Pivot Point */
     .sr-pivot-separator {
       background-color: #0f172a;
       border: 1px solid #ffffff;
@@ -273,7 +294,6 @@
     .pivot-price-green { color: #4ade80; }
     .pivot-price-yellow { color: #eab308; }
 
-    /* BULATAN DYNAMICS MAKSIMAL 5 PADA PIVOT */
     .pivot-dots-container {
       display: inline-flex;
       gap: 2px;
@@ -314,25 +334,31 @@
       <div class="header-left">
         <img src="laundry1-512x512.png" alt="LOGO" class="app-logo">
         <div class="header-text">
-          <h1>IHSG SH4NDY'S SCREENER</h1>
+          <h1>IHSG SCREENER</h1>
           <p class="update-time" id="updateTime">MEMUAT DATA...</p>
         </div>
       </div>
-      <button class="btn-refresh-all" onclick="refreshAllData(this)">
-        <span class="refresh-icon">🔄</span> REFRESH ALL
-      </button>
+      <div class="header-actions">
+        <button class="btn-header" onclick="refreshAllData(this)">
+          <span class="refresh-icon">🔄</span> REFRESH
+        </button>
+        <button class="btn-header btn-reload-header" onclick="reloadPage()">
+          <span>⚡</span> RELOAD
+        </button>
+      </div>
     </div>
   </header>
 
   <div class="control-box">
     <div class="control-header">
-      <span style="font-size: 0.8rem; color: #94a3b8;">MENU PILIH EMITEN</span>
+      <span style="font-size: 0.75rem; color: #94a3b8;">MENU EMITEN</span>
       <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ SEMBUNYIKAN MENU</button>
     </div>
+    <!-- SEJAJAR 2 KOLOM -->
     <div class="form-row" id="dropdownRow">
-      <input type="text" id="searchInput" placeholder="🔍 CARI KODE EMITEN (CTH: BBCA)..." onkeyup="handleSearchKey(event)">
+      <input type="text" id="searchInput" placeholder="🔍 CARI EMITEN..." onkeyup="handleSearchKey(event)">
       <select id="selectTickerOption" onchange="autoAddStock(this)">
-        <option value="">-- PILIH EMITEN LANGSUNG TAMPIL --</option>
+        <option value="">-- PILIH EMITEN --</option>
       </select>
     </div>
   </div>
@@ -374,11 +400,21 @@
       return Number(val).toLocaleString('id-ID');
     }
 
+    function reloadPage() {
+      window.location.reload();
+    }
+
+    // AMBIL DATA TERBARU LANGSUNG DARI SUMBER JSON DENGAN ANTI-CACHE
+    async function fetchLatestData() {
+      const timestamp = new Date().getTime();
+      const res = await fetch(`./data.json?t=${timestamp}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error("Gagal mengambil data");
+      return await res.json();
+    }
+
     async function loadData() {
       try {
-        const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
-        const data = await res.json();
-        
+        const data = await fetchLatestData();
         document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
         rawData = data.stocks || [];
 
@@ -402,9 +438,7 @@
     async function refreshSingleCard(ticker, btnEl) {
       btnEl.classList.add('spinning');
       try {
-        const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
-        const data = await res.json();
-        
+        const data = await fetchLatestData();
         document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
         rawData = data.stocks || [];
 
@@ -445,7 +479,7 @@
 
     function populateDropdownOptions() {
       const selectEl = document.getElementById('selectTickerOption');
-      selectEl.innerHTML = '<option value="">-- PILIH EMITEN LANGSUNG TAMPIL --</option>';
+      selectEl.innerHTML = '<option value="">-- PILIH EMITEN --</option>';
       
       let sortedStocks = [...rawData].filter(s => s.ticker !== 'IHSG').sort((a, b) => a.ticker.localeCompare(b.ticker));
 
@@ -563,19 +597,18 @@
       let rawTrend = (stock.trend_status || '').toUpperCase();
       let trendStatus = 'SIDEWAYS';
       let trendDot = 'dot-sideways';
-      let trendTextHtml = 'SIDEWAYS';
 
       if (rawTrend.includes('BULL') || rawTrend === 'BUY') {
-        score += 1; trendDot = 'dot-buy'; trendStatus = 'BULLISH'; trendTextHtml = '<span class="blink-green">BULLISH</span>';
+        score += 1; trendDot = 'dot-buy'; trendStatus = 'BULLISH';
       } else if (rawTrend.includes('BEAR') || rawTrend === 'SELL') {
-        score -= 1; trendDot = 'dot-sell'; trendStatus = 'BEARISH'; trendTextHtml = '<span class="blink-red">BEARISH</span>';
+        score -= 1; trendDot = 'dot-sell'; trendStatus = 'BEARISH';
       } else {
         if (closePrice > prevClose) {
-          trendDot = 'dot-buy'; trendStatus = 'BULLISH'; trendTextHtml = '<span class="blink-green">BULLISH</span>';
+          trendDot = 'dot-buy'; trendStatus = 'BULLISH';
         } else if (closePrice < prevClose) {
-          trendDot = 'dot-sell'; trendStatus = 'BEARISH'; trendTextHtml = '<span class="blink-red">BEARISH</span>';
+          trendDot = 'dot-sell'; trendStatus = 'BEARISH';
         } else {
-          trendDot = 'dot-sideways'; trendStatus = 'SIDEWAYS'; trendTextHtml = 'SIDEWAYS';
+          trendDot = 'dot-sideways'; trendStatus = 'SIDEWAYS';
         }
       }
 
@@ -618,7 +651,6 @@
         }
       }
 
-      // WARNING DIBUAT DENGAN TAMPILAN KOLOM
       let warningHtml = '';
       const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || trendStatus === 'BEARISH' || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
       const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || trendStatus === 'BULLISH' || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
@@ -634,9 +666,10 @@
       const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
       const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
 
-      const entryVal = isReadyToBuy ? `RP ${formatNum(stock.entry_price || closePrice)}` : 'WAIT';
-      const tpVal = isReadyToBuy ? `RP ${formatNum(stock.take_profit || stock.resistance || stock.resistance_1)}` : 'WAIT';
-      const clVal = isReadyToBuy ? `RP ${formatNum(stock.cut_loss || stock.support || stock.support_1)}` : 'WAIT';
+      /* TANPA ATAU DIHILANGKAN RP */
+      const entryVal = isReadyToBuy ? `${formatNum(stock.entry_price || closePrice)}` : 'WAIT';
+      const tpVal = isReadyToBuy ? `${formatNum(stock.take_profit || stock.resistance || stock.resistance_1)}` : 'WAIT';
+      const clVal = isReadyToBuy ? `${formatNum(stock.cut_loss || stock.support || stock.support_1)}` : 'WAIT';
 
       let fiboBoxClass = 'fibo-normal';
       let fiboText = 'FIBO-RSI: NORMAL';
@@ -655,7 +688,6 @@
 
       const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
 
-      // CUKUP 1 PANAH DAN TAMBAHKAN BULATAN DINAMIS MAKSIMAL 5 BULATAN
       let pivotPriceClass = 'pivot-price-yellow';
       let pivotArrowIcon = '';
       let dotColorClass = 'dot-green';
@@ -665,7 +697,6 @@
         diffRatio = Math.abs(closePrice - pivotPoint) / pivotPoint;
       }
       
-      // MENGHITUNG DARI 1 HINGGA MAKSIMAL 5 BULATAN
       let dotCount = 1;
       if (diffRatio >= 0.04) dotCount = 5;
       else if (diffRatio >= 0.03) dotCount = 4;
@@ -705,16 +736,17 @@
         card.draggable = true;
       }
 
+      /* DIGABUNG DALAM 1 KOLOM HEADER UNTUK EMITEN, HARGA, PETIR + TOMBOL AKSI DENGAN UKURAN KOTAK SAMA */
       card.innerHTML = `
         <div class="card-header">
-          <div class="ticker-price-group">
-            <span class="ticker">${stock.ticker} ${isIHSG ? '📌' : ''}</span>
-            <span class="price-inline ${priceColorClass}">RP ${formatNum(closePrice)}</span>
+          <div class="header-ticker-col">
+            <span class="ticker">${stock.ticker}</span>
+            <span class="price-inline ${priceColorClass}">${formatNum(closePrice)}</span>
             ${lightningHtml}
           </div>
           <div class="card-actions-top">
-            <button class="action-btn refresh-card-btn" title="REFRESH KARTU" onclick="refreshSingleCard('${stock.ticker}', this)">🔄</button>
-            ${!isIHSG ? `<button class="action-btn close-btn" title="HAPUS KARTU" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
+            <button class="action-btn refresh-card-btn" title="REFRESH DATA" onclick="refreshSingleCard('${stock.ticker}', this)">🔄</button>
+            ${!isIHSG ? `<button class="action-btn close-btn" title="HAPUS EMITEN" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
           </div>
         </div>
 
@@ -729,7 +761,7 @@
           </div>
         </div>
 
-        <!-- KOLOM INDIKATOR DENGAN BULATAN BERKEDIP -->
+        <!-- KOLOM INDIKATOR -->
         <div class="indicator-column-box">
           <div class="indicator-item"><span>RSI</span><span class="dot-indicator ${rsiDot}"></span></div>
           <div class="indicator-item"><span>MACD</span><span class="dot-indicator ${macdDot}"></span></div>
@@ -737,7 +769,7 @@
           <div class="indicator-item"><span>EMA</span><span class="dot-indicator ${emaDot}"></span></div>
         </div>
 
-        <!-- KOLOM TULISAN PREV, OPEN, HIGH, LOW BERBENTUK INDIKATOR -->
+        <!-- KOLOM PREV, OPEN, HIGH, LOW (TANPA RP) -->
         <div class="ohlc-grid-box">
           <div class="ohlc-item"><span>PREV</span><span class="ohlc-val">${formatNum(prevClose)}</span></div>
           <div class="ohlc-item"><span>OPEN</span><span class="ohlc-val">${formatNum(openPrice)}</span></div>
@@ -745,7 +777,7 @@
           <div class="ohlc-item"><span>LOW</span><span class="ohlc-val">${formatNum(lowPrice)}</span></div>
         </div>
 
-        <!-- KOLOM TREND & VOLUME RATIO DENGAN POSISI TEPAT (BULATAN VOL RATIO DIHAPUS) -->
+        <!-- KOLOM TREND & VOL RATIO DIBUAT DENGAN UKURAN DUA KOLOM SEJAJAR SAMA KIPAS DENGAN INDIKATOR -->
         <div class="trend-vol-row">
           <div class="indicator-item">
             <span>TREND</span>
@@ -757,23 +789,23 @@
           </div>
         </div>
 
-        <!-- KOLOM WARNING DI BAWAH VOLUME -->
+        <!-- KOLOM WARNING -->
         ${warningHtml}
 
         <div class="sr-stat-box">
-          <div class="sr-row"><span>RESISTAN 3 (R3):</span> <span class="${r3Class}">RP ${formatNum(r3)}</span></div>
-          <div class="sr-row"><span>RESISTAN 2 (R2):</span> <span class="${r2Class}">RP ${formatNum(r2)}</span></div>
-          <div class="sr-row"><span>RESISTAN 1 (R1):</span> <span class="${r1Class}">RP ${formatNum(r1)}</span></div>
+          <div class="sr-row"><span>RESISTAN 3 (R3):</span> <span class="${r3Class}">${formatNum(r3)}</span></div>
+          <div class="sr-row"><span>RESISTAN 2 (R2):</span> <span class="${r2Class}">${formatNum(r2)}</span></div>
+          <div class="sr-row"><span>RESISTAN 1 (R1):</span> <span class="${r1Class}">${formatNum(r1)}</span></div>
           
           <div class="sr-row sr-pivot-separator">
             <span class="pivot-label-yellow">PIVOT POINT (P):</span>
             ${pivotDotsHtml}
-            <span class="${pivotPriceClass}">RP ${formatNum(pivotPoint)}</span>
+            <span class="${pivotPriceClass}">${formatNum(pivotPoint)}</span>
           </div>
 
-          <div class="sr-row"><span>SUPPORT 1 (S1):</span> <span class="${s1Class}">RP ${formatNum(s1)}</span></div>
-          <div class="sr-row"><span>SUPPORT 2 (S2):</span> <span class="${s2Class}">RP ${formatNum(s2)}</span></div>
-          <div class="sr-row"><span>SUPPORT 3 (S3):</span> <span class="${s3Class}">RP ${formatNum(s3)}</span></div>
+          <div class="sr-row"><span>SUPPORT 1 (S1):</span> <span class="${s1Class}">${formatNum(s1)}</span></div>
+          <div class="sr-row"><span>SUPPORT 2 (S2):</span> <span class="${s2Class}">${formatNum(s2)}</span></div>
+          <div class="sr-row"><span>SUPPORT 3 (S3):</span> <span class="${s3Class}">${formatNum(s3)}</span></div>
         </div>
 
         <div class="signal-badge-container">
