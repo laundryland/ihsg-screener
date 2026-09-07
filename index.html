@@ -128,7 +128,20 @@
     .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    /* STYLING 3 KOLOM INFO BURSA KANAN KATEGORI */
+    /* TAB KHUSUS LAYAK BELI */
+    .tab.tab-buy-worthy {
+      background: #064e3b;
+      color: #4ade80;
+      border-color: #22c55e;
+    }
+    .tab.tab-buy-worthy.active {
+      background: #166534;
+      color: #ffffff;
+      border-color: #4ade80;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+    }
+
+    /* STYLING INFO BURSA */
     .market-info-tab {
       padding: 6px 10px;
       border-radius: 16px;
@@ -149,7 +162,7 @@
       border-color: #27272a !important; 
     }
 
-    /* STATE WARNA TEKS DOKUMEN BURSA & JAM (TERANG TANPA EFEK NEON/MENYALA) */
+    /* STATE WARNA TEKS DOKUMEN BURSA & JAM */
     .status-text-open { color: #4ade80 !important; }
     .status-text-break { color: #a1a1aa !important; }
     .status-text-closed { color: #f4f4f5 !important; }
@@ -392,8 +405,8 @@
       margin-right: auto;
     }
 
-    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; margin-right: 2spasi; }
-    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; margin-right: 2spasi; }
+    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; }
+    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; }
 
     .pivot-price-wrapper {
       display: inline-flex;
@@ -459,6 +472,8 @@
 
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">SEMUA</div>
+    <!-- TAB BARU: LAYAK BELI -->
+    <div class="tab tab-buy-worthy" onclick="filterGroup('LAYAK_BELI', this)">🔥 LAYAK BELI</div>
     <div class="tab" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
     <div class="tab" onclick="filterGroup('ENERGI', this)">ENERGI</div>
     <div class="tab" onclick="filterGroup('TAMBANG', this)">TAMBANG</div>
@@ -474,7 +489,6 @@
     <div class="market-info-tab info-tab-2" id="holidayWarningCol">
       📅 <span id="holidayWarningText">BURSA BUKA (SENIN-JUMAT)</span>
     </div>
-    <!-- KOLOM JAM (HITAM DOFF) -->
     <div class="market-info-tab info-tab-3" id="clockWibCol">
       🕒 <span id="clockWibText">00:00:00 WIB</span>
     </div>
@@ -712,7 +726,33 @@
       }, 100);
     }
 
-    /* FUNGSI PETIR DENGAN WARNA MERAH (BANDAR DISTRIBUSI) & HIJAU (AKUMULASI) SESUAI VOLUME */
+    /* LOGIKA CEK DOKUMEN LAYAK BELI BERDASARKAN AKUMULASI INDIKATOR HARI INI */
+    function isBuyWorthyStock(stock) {
+      const signalText = (stock.signal || '').toUpperCase();
+      const isBuySignal = signalText.includes('BUY') || signalText.includes('STRONG BUY');
+      if (!isBuySignal) return false;
+
+      let score = 0;
+      const closePrice = stock.price ?? 0;
+      const highPrice = stock.high ?? closePrice;
+      const lowPrice = stock.low ?? closePrice;
+      const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+
+      // Volume & Vol Ratio
+      if ((stock.vol_status || '').toUpperCase() === 'BUY' || (parseFloat(stock.vol_ratio) || 0) >= 1.2) score++;
+      // MACD
+      if ((stock.macd_status || '').toUpperCase() === 'BUY') score++;
+      // EMA / MA20
+      if ((stock.ema_status || '').toUpperCase() === 'BUY' || closePrice >= (stock.ma20 || closePrice)) score++;
+      // RSI
+      if ((stock.rsi_status || '').toUpperCase() === 'BUY' || (stock.fibo_rsi_status || '').toUpperCase() === 'OVER SOLD') score++;
+      // Pivot
+      if (closePrice >= pivotPoint) score++;
+
+      // Kriteria: Berstatus BUY/STRONG BUY dan minimal 3 indikator teknis positif
+      return score >= 3;
+    }
+
     function renderLightningBoxes(stock) {
       const isSuspended = stock.is_suspended || stock.status === 'SUSPEND' || stock.volume === 0;
       const vRatio = parseFloat(stock.vol_ratio) || 0;
@@ -732,7 +772,6 @@
         else activeCount = 0;
       }
 
-      // Deteksi Distribusi vs Akumulasi
       const isDistribution = (volStatus === 'SELL') || (closePrice < prevClose) || signalText.includes('SELL');
       let activeClass = isDistribution ? 'active-red' : 'active-green';
 
@@ -1094,7 +1133,13 @@
 
       displayList.forEach(stock => {
         const group = (stock.category || 'LAINNYA').toUpperCase();
-        if (activeFilter !== 'ALL' && group !== activeFilter) return;
+
+        // PENYARINGAN KATEGORI "LAYAK BELI" vs KATEGORI BIASA
+        if (activeFilter === 'LAYAK_BELI') {
+          if (!isBuyWorthyStock(stock)) return;
+        } else if (activeFilter !== 'ALL' && group !== activeFilter) {
+          return;
+        }
 
         grid.appendChild(createCardElement(stock, false));
       });
