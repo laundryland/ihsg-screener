@@ -7,30 +7,66 @@
   
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0f172a">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
-  <link rel="apple-touch-icon" href="./icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./laundry1-512x512.png">
+  <link rel="apple-touch-icon" href="./laundry1-512x512.png">
   
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
-    body { background-color: #0f172a; color: #f8fafc; padding: 16px; padding-bottom: 40px; }
-    
-    header { margin-bottom: 16px; }
-    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-    .header-left { display: flex; align-items: center; gap: 14px; }
-    .app-logo { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid #334155; }
-    .header-text { display: flex; flex-direction: column; }
-    h1 { font-size: 1.35rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
-    .update-time { font-size: 0.78rem; color: #94a3b8; margin-top: 3px; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      user-select: none; 
+      text-transform: uppercase; /* SEMUA HURUF JADI KAPITAL */
+      font-weight: bold; /* SEMUA HURUF JADI BOLD */
+    }
 
-    /* Tombol Refresh Global di Header */
+    body { 
+      background-color: #0f172a; 
+      color: #f8fafc; 
+      padding: 16px; 
+      padding-top: 90px; /* Jarak untuk header fixed */
+      padding-bottom: 40px; 
+    }
+    
+    /* Header Fixed/Sticky di Atas */
+    header { 
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background-color: #0f172a;
+      border-bottom: 1px solid #334155;
+      padding: 12px 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    
+    /* Logo Header Baru dari Kartu */
+    .app-logo { 
+      width: 44px; 
+      height: 44px; 
+      border-radius: 50%; 
+      object-fit: cover; 
+      flex-shrink: 0; 
+      border: 2px solid #38bdf8; 
+    }
+
+    .header-text { display: flex; flex-direction: column; }
+    h1 { font-size: 1.1rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
+    .update-time { font-size: 0.7rem; color: #94a3b8; margin-top: 2px; }
+
+    /* Tombol Refresh Global */
     .btn-refresh-all {
       background: #0284c7;
       color: #fff;
       border: 1px solid #38bdf8;
-      padding: 8px 12px;
+      padding: 6px 10px;
       border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: bold;
+      font-size: 0.75rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -43,220 +79,246 @@
     /* Sticky Control Box */
     .control-box { 
       position: sticky; 
-      top: 10px; 
-      z-index: 100; 
+      top: 80px; 
+      z-index: 90; 
       background: #1e293b; 
-      padding: 12px; 
-      border-radius: 12px; 
+      padding: 10px 12px; 
+      border-radius: 10px; 
       border: 1px solid #334155; 
-      margin-bottom: 16px; 
+      margin-bottom: 14px; 
       box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
     }
     .control-header { display: flex; justify-content: space-between; align-items: center; }
-    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-    .form-row { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
+    .form-row { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
     .form-row.hidden { display: none; }
     
     select, input[type="text"] { 
       width: 100%; 
-      padding: 8px 12px; 
-      border-radius: 8px; 
+      padding: 8px 10px; 
+      border-radius: 6px; 
       border: 1px solid #475569; 
       background: #0f172a; 
       color: #fff; 
-      font-size: 0.85rem; 
+      font-size: 0.8rem; 
       outline: none;
     }
     input[type="text"]:focus { border-color: #38bdf8; }
 
-    .group-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
-    .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
-    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
+    .group-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; scrollbar-width: none; }
+    .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
+    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
     /* Grid Kartu Responsif */
-    .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+    .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
     
-    .card { background: #1e293b; padding: 14px; border-radius: 12px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
+    /* Kartu Emiten (Semua Logo Kartu Dihapus) */
+    .card { background: #1e293b; padding: 12px; border-radius: 10px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
     .card:active { cursor: grabbing; }
     .card.dragging { opacity: 0.4; transform: scale(0.96); border-style: dashed; }
     .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
 
-    /* Logo Bulat Atas Kartu */
-    .card-top-logo { display: flex; justify-content: center; align-items: center; margin-bottom: 8px; }
-    .card-top-logo img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #38bdf8; background: #0f172a; }
-
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .ticker-box { display: flex; align-items: center; gap: 6px; }
-    .ticker { font-weight: bold; font-size: 1.15rem; color: #fff; }
+    /* Posisi Header Kartu: Ticker & Harga di Kiri, Aksi di Kanan Atas */
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .ticker-price-group { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .ticker { font-size: 1.15rem; color: #fff; }
     
-    .card-actions { display: flex; align-items: center; gap: 6px; }
-    .action-btn { background: transparent; border: none; font-size: 0.95rem; cursor: pointer; padding: 2px; line-height: 1; transition: transform 0.2s; }
-    .action-btn:hover { transform: scale(1.2); }
-    .refresh-card-btn { color: #38bdf8; }
-    .close-btn { color: #ef4444; font-weight: bold; font-size: 1.1rem; }
-
-    /* Petir Volume */
-    .lightning-box { font-size: 0.8rem; letter-spacing: -1px; }
-    .lightning-green { color: #22c55e; }
-    .lightning-red { color: #ef4444; }
-    .lightning-white { color: #ffffff; }
-
-    /* Tata Letak Persentase Open & Harga Utama */
-    .price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
-    .open-percent { font-size: 0.82rem; font-weight: bold; padding: 2px 5px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; }
-    .price { font-size: 1.2rem; font-weight: bold; }
+    /* Harga Emiten di Samping Emiten */
+    .price-inline { font-size: 1.1rem; }
     .price-up { color: #22c55e; }
     .price-down { color: #ef4444; }
     .price-flat { color: #ffffff; }
 
-    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+    /* Tombol Refresh dan X di Pojok Kanan Atas Kartu */
+    .card-actions-top { display: flex; align-items: center; gap: 6px; }
+    .action-btn { background: transparent; border: none; font-size: 0.9rem; cursor: pointer; padding: 2px; line-height: 1; transition: transform 0.2s; }
+    .action-btn:hover { transform: scale(1.2); }
+    .refresh-card-btn { color: #38bdf8; }
+    .close-btn { color: #ef4444; font-size: 1rem; }
+
+    /* Petir Volume */
+    .lightning-box { font-size: 0.75rem; letter-spacing: -1px; }
+    .lightning-green { color: #22c55e; }
+    .lightning-red { color: #ef4444; }
+    .lightning-white { color: #ffffff; }
+
+    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .group-tag { font-size: 0.65rem; color: #38bdf8; background: #0c4a6e; padding: 2px 5px; border-radius: 4px; display: inline-block; }
     
+    /* 5 KOTAK PROSENTASE NEON TERKONTROL (1 KOTAK = 20%) */
     .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
-    .box-container { display: flex; gap: 2px; }
-    .signal-box { width: 7px; height: 10px; border-radius: 1px; background-color: #475569; }
+    .box-container { display: flex; gap: 3px; }
+    .signal-box { 
+      width: 8px; 
+      height: 12px; 
+      border-radius: 2px; 
+      background-color: #334155; 
+      transition: all 0.3s ease;
+    }
     
-    .box-buy { background-color: #22c55e; }
-    .box-sell { background-color: #ef4444; }
-    .box-off { background-color: #334155; }
+    /* Warna Neon Terkontrol (Fokus & Tidak Terlalu Menyebar) */
+    .box-neon-green { 
+      background-color: #22c55e; 
+      box-shadow: 0 0 4px #22c55e; 
+      border: 1px solid #4ade80;
+    }
+    .box-neon-red { 
+      background-color: #ef4444; 
+      box-shadow: 0 0 4px #ef4444; 
+      border: 1px solid #f87171;
+    }
+    .box-off { background-color: #1e293b; border: 1px solid #334155; }
 
-    .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
+    .signal-percent { font-size: 0.7rem; color: #cbd5e1; }
 
-    .prev-close-row { text-align: right; font-size: 0.68rem; color: #94a3b8; margin-bottom: 6px; }
+    .open-percent-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; display: inline-block; }
 
-    /* Indicator Bulat */
-    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
-    .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
-    .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
+    .prev-close-row { text-align: right; font-size: 0.65rem; color: #94a3b8; margin-bottom: 6px; }
 
-    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 2px; margin-right: 6px; vertical-align: middle; }
-    .dot-buy { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
+    /* Kolom Indikator Tambahan */
+    .indicator-column-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 6px;
+      margin: 6px 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      font-size: 0.65rem;
+    }
+    .indicator-item { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 3px 5px; border-radius: 4px; }
+
+    /* Indicator Bulat Status */
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
+    .dot-red { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
+    .dot-green { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
+
+    .dot-indicator { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-left: 2px; margin-right: 4px; vertical-align: middle; }
+    .dot-buy { background-color: #22c55e; box-shadow: 0 0 3px #22c55e; }
     .dot-neutral { background-color: #64748b; }
-    .dot-sell { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
-    .dot-sideways { background-color: #ffffff; box-shadow: 0 0 4px #ffffff; }
+    .dot-sell { background-color: #ef4444; box-shadow: 0 0 3px #ef4444; }
+    .dot-sideways { background-color: #ffffff; box-shadow: 0 0 3px #ffffff; }
 
-    .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; flex-wrap: wrap; }
+    .stat { font-size: 0.68rem; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; flex-wrap: wrap; }
     
-    /* Animation Blink untuk Text */
+    /* Animation Blink */
     @keyframes blink-animation {
       0% { opacity: 1; }
       50% { opacity: 0.2; }
       100% { opacity: 1; }
     }
-    .blink-red { color: #ef4444; font-weight: bold; animation: blink-animation 1s infinite; }
-    .blink-green { color: #22c55e; font-weight: bold; animation: blink-animation 1s infinite; }
+    .blink-red { color: #ef4444; animation: blink-animation 1s infinite; }
+    .blink-green { color: #22c55e; animation: blink-animation 1s infinite; }
 
-    /* Animation Kedip/Highlight untuk Kartu yang Ditemukan */
+    /* Highlight Kartu */
     @keyframes card-highlight {
       0% { box-shadow: 0 0 0px #eab308; border-color: #334155; transform: scale(1); }
-      50% { box-shadow: 0 0 25px #eab308; border-color: #eab308; transform: scale(1.03); }
+      50% { box-shadow: 0 0 20px #eab308; border-color: #eab308; transform: scale(1.02); }
       100% { box-shadow: 0 0 0px #eab308; border-color: #334155; transform: scale(1); }
     }
-    .highlight-card {
-      animation: card-highlight 0.7s ease-in-out 3;
-      z-index: 10;
-    }
+    .highlight-card { animation: card-highlight 0.7s ease-in-out 3; z-index: 10; }
 
-    /* Animation Putar untuk Tombol Refresh saat Memuat Data */
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
     .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
 
-    /* Box OHL & Prev Close */
-    .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 5px; line-height: 1.4; position: relative; }
+    /* Box OHL */
+    .ohl-stat { font-size: 0.68rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 4px; line-height: 1.3; position: relative; }
     .ohl-row { display: flex; justify-content: space-between; }
-    .warning-text { text-align: center; font-size: 0.72rem; font-weight: 800; margin: 3px 0; letter-spacing: 0.5px; }
+    .warning-text { text-align: center; font-size: 0.68rem; margin: 2px 0; letter-spacing: 0.5px; }
 
     /* Support & Resistance Box */
-    .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; color: #cbd5e1; }
+    .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; color: #cbd5e1; }
     .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; align-items: center; }
     .sr-row:last-child { margin-bottom: 0; }
-    .sr-res { color: #f87171; font-weight: bold; }
-    .sr-sup { color: #4ade80; font-weight: bold; }
+    .sr-res { color: #f87171; }
+    .sr-sup { color: #4ade80; }
 
-    /* Kolom Pemisah Pivot Point */
+    /* Separator Pivot Point */
     .sr-pivot-separator {
       background-color: #0f172a;
       border: 1px solid #ffffff;
-      padding: 3px 6px;
-      margin: 4px -6px;
+      padding: 3px 5px;
+      margin: 4px -5px;
       border-radius: 4px;
     }
-    .pivot-label-yellow { color: #eab308; font-weight: bold; }
-    .pivot-price-blue { color: #0618a9; font-weight: bold; }
-    .pivot-price-green { color: #4ade80; font-weight: bold; }
-    .pivot-price-yellow { color: #eab308; font-weight: bold; }
+    .pivot-label-yellow { color: #eab308; }
+    .pivot-price-blue { color: #0618a9; }
+    .pivot-price-green { color: #4ade80; }
+    .pivot-price-yellow { color: #eab308; }
 
-    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; font-weight: bold; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
-    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; font-weight: bold; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
+    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
+    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
 
-    /* Badge Sinyal Utama */
-    .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
-    .badge { display: block; width: 100%; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; text-align: center; letter-spacing: 0.5px; }
+    /* Badge Sinyal */
+    .signal-badge-container { margin: 6px 0 4px 0; text-align: center; }
+    .badge { display: block; width: 100%; padding: 5px 6px; border-radius: 5px; font-size: 0.7rem; text-align: center; letter-spacing: 0.5px; }
     .strong-buy { background: #047857; color: #34d399; border: 1px solid #10b981; }
     .buy { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
     .neutral { background: #334155; color: #cbd5e1; border: 1px solid #475569; }
     .sell { background: #991b1b; color: #fca5a5; border: 1px solid #ef4444; }
     .strong-sell { background: #881337; color: #fda4af; border: 1px solid #f43f5e; }
 
-    .fibo-stat-box { margin-top: 4px; padding: 4px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; text-align: center; font-weight: bold; }
+    .fibo-stat-box { margin-top: 4px; padding: 3px 5px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; text-align: center; }
     .fibo-oversold { color: #22c55e; border-color: #22c55e; }
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
 
     /* Trading Plan Box */
-    .trading-plan-box { margin-top: 8px; padding: 8px 10px; background: #0f172a; border-radius: 8px; border: 1px dashed #475569; font-size: 0.72rem; }
-    .plan-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .trading-plan-box { margin-top: 6px; padding: 6px 8px; background: #0f172a; border-radius: 6px; border: 1px dashed #475569; font-size: 0.68rem; }
+    .plan-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
     .plan-row:last-child { margin-bottom: 0; }
-    .plan-label { display: flex; align-items: center; color: #94a3b8; font-weight: 500; }
-    .plan-value { font-weight: bold; }
+    .plan-label { display: flex; align-items: center; color: #94a3b8; }
+    .plan-value { color: #fff; }
     .val-wait { color: #f59e0b; }
     .val-active { color: #f8fafc; }
   </style>
 </head>
 <body>
 
+  <!-- Header Tetap (Fixed) Tidak Ikut Scroll -->
   <header>
     <div class="header-container">
       <div class="header-left">
-        <img src="./icon-192x192.png" alt="Logo" class="app-logo">
+        <!-- Logo di Header Diganti Menggunakan Logo Kartu -->
+        <img src="laundry1-512x512.png" alt="LOGO" class="app-logo">
         <div class="header-text">
-          <h1>IHSG SH4NDY's SCREENER</h1>
-          <p class="update-time" id="updateTime">Memuat data...</p>
+          <h1>IHSG SH4NDY'S SCREENER</h1>
+          <p class="update-time" id="updateTime">MEMUAT DATA...</p>
         </div>
       </div>
-      <!-- Tombol Refresh Halaman/Global di Header -->
       <button class="btn-refresh-all" onclick="refreshAllData(this)">
-        <span class="refresh-icon">🔄</span> Refresh All
+        <span class="refresh-icon">🔄</span> REFRESH ALL
       </button>
     </div>
   </header>
 
   <div class="control-box">
     <div class="control-header">
-      <span style="font-size: 0.85rem; color: #94a3b8;">Menu Pilih Emiten</span>
-      <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ Sembunyikan Menu</button>
+      <span style="font-size: 0.8rem; color: #94a3b8;">MENU PILIH EMITEN</span>
+      <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ SEMBUNYIKAN MENU</button>
     </div>
     <div class="form-row" id="dropdownRow">
-      <input type="text" id="searchInput" placeholder="🔍 Cari Kode Emiten (Cth: BBCA)..." onkeyup="handleSearchKey(event)">
+      <input type="text" id="searchInput" placeholder="🔍 CARI KODE EMITEN (CTH: BBCA)..." onkeyup="handleSearchKey(event)">
       <select id="selectTickerOption" onchange="autoAddStock(this)">
-        <option value="">-- Pilih Emiten Langsung Tampil --</option>
+        <option value="">-- PILIH EMITEN LANGSUNG TAMPIL --</option>
       </select>
     </div>
   </div>
 
   <div class="group-tabs" id="groupTabs">
-    <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
-    <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
-    <div class="tab" onclick="filterGroup('Energi', this)">Energi</div>
-    <div class="tab" onclick="filterGroup('Tambang', this)">Tambang</div>
-    <div class="tab" onclick="filterGroup('Teknologi', this)">Teknologi</div>
-    <div class="tab" onclick="filterGroup('Media', this)">Media</div>
-    <div class="tab" onclick="filterGroup('Konsumer', this)">Konsumer</div>
-    <div class="tab" onclick="filterGroup('Properti', this)">Properti</div>
-    <div class="tab" onclick="filterGroup('Industri', this)">Industri</div>
+    <div class="tab active" onclick="filterGroup('ALL', this)">SEMUA</div>
+    <div class="tab" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
+    <div class="tab" onclick="filterGroup('ENERGI', this)">ENERGI</div>
+    <div class="tab" onclick="filterGroup('TAMBANG', this)">TAMBANG</div>
+    <div class="tab" onclick="filterGroup('TEKNOLOGI', this)">TEKNOLOGI</div>
+    <div class="tab" onclick="filterGroup('MEDIA', this)">MEDIA</div>
+    <div class="tab" onclick="filterGroup('KONSUMER', this)">KONSUMER</div>
+    <div class="tab" onclick="filterGroup('PROPERTI', this)">PROPERTI</div>
+    <div class="tab" onclick="filterGroup('INDUSTRI', this)">INDUSTRI</div>
   </div>
 
   <div class="card-grid" id="stockGrid"></div>
@@ -289,18 +351,17 @@
         const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
         const data = await res.json();
         
-        document.getElementById('updateTime').innerText = "Diperbarui: " + formatWIB(data.updated_at);
+        document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
         rawData = data.stocks || [];
 
         initMenuState();
         populateDropdownOptions();
         render();
       } catch (e) {
-        document.getElementById('updateTime').innerText = "Gagal memuat data.json";
+        document.getElementById('updateTime').innerText = "GAGAL MEMUAT DATA.JSON";
       }
     }
 
-    /* Fitur Refresh Seluruh Halaman / Global */
     async function refreshAllData(btnEl) {
       const icon = btnEl.querySelector('.refresh-icon');
       if (icon) icon.classList.add('spinning');
@@ -310,17 +371,15 @@
       }, 500);
     }
 
-    /* Fitur Refresh Per Kartu Emiten */
     async function refreshSingleCard(ticker, btnEl) {
       btnEl.classList.add('spinning');
       try {
         const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
         const data = await res.json();
         
-        document.getElementById('updateTime').innerText = "Diperbarui: " + formatWIB(data.updated_at);
+        document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
         rawData = data.stocks || [];
 
-        // Dapatkan data spesifik emiten & buat kartu baru
         const targetStock = rawData.find(s => s.ticker === ticker);
         if (targetStock) {
           const oldCard = document.querySelector(`.card[data-ticker="${ticker}"]`);
@@ -328,11 +387,11 @@
             const isIHSG = (ticker === 'IHSG');
             const newCard = createCardElement(targetStock, isIHSG);
             oldCard.replaceWith(newCard);
-            highlightStockCard(ticker); // Memberikan animasi kedip konfirmasi
+            highlightStockCard(ticker);
           }
         }
       } catch (e) {
-        alert(`Gagal memperbarui data ${ticker}`);
+        alert(`GAGAL MEMPERBARUI DATA ${ticker}`);
       } finally {
         btnEl.classList.remove('spinning');
       }
@@ -343,10 +402,10 @@
       const btn = document.getElementById('toggleBtn');
       if (isMenuVisible) {
         row.classList.remove('hidden');
-        btn.innerText = "👁️ Sembunyikan Menu";
+        btn.innerText = "👁️ SEMBUNYIKAN MENU";
       } else {
         row.classList.add('hidden');
-        btn.innerText = "👁️ Tampilkan Menu";
+        btn.innerText = "👁️ TAMPILKAN MENU";
       }
     }
 
@@ -358,14 +417,14 @@
 
     function populateDropdownOptions() {
       const selectEl = document.getElementById('selectTickerOption');
-      selectEl.innerHTML = '<option value="">-- Pilih Emiten Langsung Tampil --</option>';
+      selectEl.innerHTML = '<option value="">-- PILIH EMITEN LANGSUNG TAMPIL --</option>';
       
       let sortedStocks = [...rawData].filter(s => s.ticker !== 'IHSG').sort((a, b) => a.ticker.localeCompare(b.ticker));
 
       sortedStocks.forEach(stock => {
         const option = document.createElement('option');
         option.value = stock.ticker;
-        option.textContent = `${stock.ticker} (${stock.category || 'Lainnya'})`;
+        option.textContent = `${stock.ticker} (${stock.category || 'LAINNYA'})`;
         selectEl.appendChild(option);
       });
     }
@@ -383,7 +442,6 @@
       selectEl.value = '';
     }
 
-    /* Fitur Pencarian Emiten dengan Scroll & Efek Kedip Highlight */
     function handleSearchKey(event) {
       searchStock(event.target.value);
     }
@@ -392,12 +450,10 @@
       const cleanQuery = query.trim().toUpperCase();
       if (!cleanQuery) return;
 
-      // Cek apakah kartu sudah dirender di halaman
       const targetCard = document.querySelector(`.card[data-ticker="${cleanQuery}"]`);
       if (targetCard) {
         highlightStockCard(cleanQuery);
       } else {
-        // Jika belum tampil tapi ada di data, tambahkan otomatis ke antrean
         const foundData = rawData.find(s => s.ticker === cleanQuery);
         if (foundData) {
           if (!stockOrder.includes(cleanQuery)) {
@@ -416,7 +472,7 @@
         if (cardEl) {
           cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
           cardEl.classList.remove('highlight-card');
-          void cardEl.offsetWidth; // Reflow reset animasi
+          void cardEl.offsetWidth;
           cardEl.classList.add('highlight-card');
         }
       }, 100);
@@ -431,7 +487,7 @@
     }
 
     function createCardElement(stock, isIHSG = false) {
-      const group = isIHSG ? 'Indeks Utama' : (stock.category || 'Lainnya');
+      const group = isIHSG ? 'INDEKS UTAMA' : (stock.category || 'LAINNYA');
 
       const openPrice = stock.open ?? stock.price;
       const closePrice = stock.price ?? 0;
@@ -446,10 +502,6 @@
       const openPercentSign = openPercentVal > 0 ? '+' : '';
       const openPercentStr = `${openPercentSign}${openPercentVal.toFixed(2)}%`;
       
-      let openPercentColorClass = 'price-flat';
-      if (openPercentVal > 0) openPercentColorClass = 'price-up';
-      else if (openPercentVal < 0) openPercentColorClass = 'price-down';
-
       let priceColorClass = 'price-flat';
       if (closePrice > prevClose) priceColorClass = 'price-up';
       else if (closePrice < prevClose) priceColorClass = 'price-down';
@@ -507,32 +559,36 @@
         lightningClass = 'lightning-red';
       }
 
+      // Sinyal Utama
       let signalText = 'NETRAL';
       let badgeClass = 'neutral';
-      let percentage = '50%';
-      let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
+      
+      // LOGIKA 5 KOTAK NEON (1 KOTAK = 20%)
+      let percentageNum = 50;
+      let isBullishMode = score >= 0;
 
-      if (score >= 4) {
-        signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; percentage = '100%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
-      } else if (score >= 1) {
-        signalText = 'BUY'; badgeClass = 'buy'; percentage = '75%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-off'];
-      } else if (score <= -4) {
-        signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; percentage = '100%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell'];
-      } else if (score <= -1) {
-        signalText = 'SELL'; badgeClass = 'sell'; percentage = '75%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-off'];
-      } else {
-        signalText = 'NETRAL'; badgeClass = 'neutral'; percentage = '50%'; boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off'];
-      }
+      if (score >= 4) percentageNum = 100;
+      else if (score >= 2) percentageNum = 80;
+      else if (score >= 0) percentageNum = 60;
+      else if (score >= -2) percentageNum = 40;
+      else percentageNum = 20;
 
       if (stock.signal) {
-        if (stock.signal === 'STRONG BUY' || stock.signal === 'SBR') {
-          signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; percentage = '100%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
-        } else if (stock.signal === 'BUY' || stock.signal === 'Break R') {
-          signalText = 'BUY'; badgeClass = 'buy'; percentage = '75%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-off'];
-        } else if (stock.signal === 'STRONG SELL' || stock.signal === 'SBS') {
-          signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; percentage = '100%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell'];
-        } else if (stock.signal === 'SELL' || stock.signal === 'Break S') {
-          signalText = 'SELL'; badgeClass = 'sell'; percentage = '75%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-off'];
+        if (stock.signal.includes('STRONG BUY')) { percentageNum = 100; signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
+        else if (stock.signal.includes('BUY')) { percentageNum = 80; signalText = 'BUY'; badgeClass = 'buy'; }
+        else if (stock.signal.includes('STRONG SELL')) { percentageNum = 100; isBullishMode = false; signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
+        else if (stock.signal.includes('SELL')) { percentageNum = 80; isBullishMode = false; signalText = 'SELL'; badgeClass = 'sell'; }
+      }
+
+      const activeBoxes = Math.round(percentageNum / 20); // 1 sampai 5 Kotak
+      let neonBoxClass = isBullishMode ? 'box-neon-green' : 'box-neon-red';
+      
+      let boxesHtml = '';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= activeBoxes) {
+          boxesHtml += `<div class="signal-box ${neonBoxClass}"></div>`;
+        } else {
+          boxesHtml += `<div class="signal-box box-off"></div>`;
         }
       }
 
@@ -541,17 +597,17 @@
       const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || trendStatus === 'BULLISH' || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
 
       if (trendStatus === 'BEARISH' || isReversalDown) {
-        warningHtml = '<div class="warning-text blink-red">⚠️ WARNING! Trend TURUN!</div>';
+        warningHtml = '<div class="warning-text blink-red">⚠️ WARNING! TREND TURUN!</div>';
       } else if (trendStatus === 'BULLISH' || isReversalUp) {
-        warningHtml = '<div class="warning-text blink-green">⚠️ WARNING! Trend NAIK!</div>';
+        warningHtml = '<div class="warning-text blink-green">⚠️ WARNING! TREND NAIK!</div>';
       }
 
       const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
       const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
 
-      const entryVal = isReadyToBuy ? `Rp ${formatNum(stock.entry_price || closePrice)}` : 'Wait';
-      const tpVal = isReadyToBuy ? `Rp ${formatNum(stock.take_profit || stock.resistance || stock.resistance_1)}` : 'Wait';
-      const clVal = isReadyToBuy ? `Rp ${formatNum(stock.cut_loss || stock.support || stock.support_1)}` : 'Wait';
+      const entryVal = isReadyToBuy ? `RP ${formatNum(stock.entry_price || closePrice)}` : 'WAIT';
+      const tpVal = isReadyToBuy ? `RP ${formatNum(stock.take_profit || stock.resistance || stock.resistance_1)}` : 'WAIT';
+      const clVal = isReadyToBuy ? `RP ${formatNum(stock.cut_loss || stock.support || stock.support_1)}` : 'WAIT';
 
       let fiboBoxClass = 'fibo-normal';
       let fiboText = 'FIBO-RSI: NORMAL';
@@ -599,74 +655,69 @@
       }
 
       card.innerHTML = `
-        <div class="card-top-logo">
-          <img src="laundry1-512x512.png" alt="Logo">
-        </div>
-
         <div class="card-header">
-          <div class="ticker-box">
+          <div class="ticker-price-group">
             <span class="ticker">${stock.ticker} ${isIHSG ? '📌' : ''}</span>
+            <!-- HARGA EMITEN DIPINDAHKAN DI SAMPLING EMITEN SISI SEBELAH KANAN -->
+            <span class="price-inline ${priceColorClass}">RP ${formatNum(closePrice)}</span>
             ${lightningHtml}
           </div>
-          <div class="card-actions">
-            <!-- Tombol Refresh Spesifik Kartu -->
-            <button class="action-btn refresh-card-btn" title="Refresh kartu ini" onclick="refreshSingleCard('${stock.ticker}', this)">🔄</button>
-            ${!isIHSG ? `<button class="action-btn close-btn" title="Hapus kartu" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
+          <!-- TOMBOL REFRESH DAN X DI POJOK KANAN ATAS KARTU -->
+          <div class="card-actions-top">
+            <button class="action-btn refresh-card-btn" title="REFRESH KARTU" onclick="refreshSingleCard('${stock.ticker}', this)">🔄</button>
+            ${!isIHSG ? `<button class="action-btn close-btn" title="HAPUS KARTU" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
           </div>
         </div>
 
         <div class="sub-header">
           <span class="group-tag">${group}</span>
+          <span class="open-percent-badge ${priceColorClass}">${openPercentStr}</span>
+          <!-- 5 KOTAK PROSENTASE NEON TERKONTROL -->
           <div class="signal-indicator-box">
             <div class="box-container">
-              <div class="signal-box ${boxClasses[0]}"></div>
-              <div class="signal-box ${boxClasses[1]}"></div>
-              <div class="signal-box ${boxClasses[2]}"></div>
-              <div class="signal-box ${boxClasses[3]}"></div>
+              ${boxesHtml}
             </div>
-            <span class="signal-percent">${percentage}</span>
+            <span class="signal-percent">${percentageNum}%</span>
           </div>
         </div>
 
         <div class="prev-close-row">
-          Penutupan Kemarin: <strong style="color:#cbd5e1;">Rp ${formatNum(prevClose)}</strong>
+          PENUTUPAN KEMARIN: <strong style="color:#cbd5e1;">RP ${formatNum(prevClose)}</strong>
         </div>
 
-        <div class="price-row">
-          <span class="open-percent ${openPercentColorClass}">${openPercentStr}</span>
-          <div class="price ${priceColorClass}">Rp ${formatNum(closePrice)}</div>
+        <!-- KOLOM INDIKATOR TAMBAHAN -->
+        <div class="indicator-column-box">
+          <div class="indicator-item"><span>RSI</span><span class="dot-indicator ${rsiDot}"></span></div>
+          <div class="indicator-item"><span>MACD</span><span class="dot-indicator ${macdDot}"></span></div>
+          <div class="indicator-item"><span>VOL</span><span class="dot-indicator ${volDot}"></span></div>
+          <div class="indicator-item"><span>EMA</span><span class="dot-indicator ${emaDot}"></span></div>
         </div>
-        
+
         <div class="ohl-stat">
-          <div class="ohl-row"><span>Prev: ${formatNum(prevClose)}</span> <span>O: ${formatNum(openPrice)}</span></div>
+          <div class="ohl-row"><span>PREV: ${formatNum(prevClose)}</span> <span>O: ${formatNum(openPrice)}</span></div>
           ${warningHtml}
           <div class="ohl-row"><span>H: ${formatNum(highPrice)}</span> <span>L: ${formatNum(lowPrice)}</span></div>
         </div>
 
         <div class="stat">
-          RSI<span class="dot-indicator ${rsiDot}"></span>
-          MACD<span class="dot-indicator ${macdDot}"></span>
-          VOL<span class="dot-indicator ${volDot}"></span>
-          EMA<span class="dot-indicator ${emaDot}"></span>
-          TREND<span class="dot-indicator ${trendDot}"></span>
+          TREND:<span class="dot-indicator ${trendDot}"></span> ${trendTextHtml}
         </div>
-        
-        <div class="stat">Vol: ${stock.vol_ratio || 1.0}x Rerata | Trend: ${trendTextHtml}</div>
+        <div class="stat">VOL RATIO: ${stock.vol_ratio || 1.0}X RERATA</div>
 
         <div class="sr-stat-box">
-          <div class="sr-row"><span>Resistan 3 (R3):</span> <span class="${r3Class}">Rp ${formatNum(r3)}</span></div>
-          <div class="sr-row"><span>Resistan 2 (R2):</span> <span class="${r2Class}">Rp ${formatNum(r2)}</span></div>
-          <div class="sr-row"><span>Resistan 1 (R1):</span> <span class="${r1Class}">Rp ${formatNum(r1)}</span></div>
+          <div class="sr-row"><span>RESISTAN 3 (R3):</span> <span class="${r3Class}">RP ${formatNum(r3)}</span></div>
+          <div class="sr-row"><span>RESISTAN 2 (R2):</span> <span class="${r2Class}">RP ${formatNum(r2)}</span></div>
+          <div class="sr-row"><span>RESISTAN 1 (R1):</span> <span class="${r1Class}">RP ${formatNum(r1)}</span></div>
           
           <div class="sr-row sr-pivot-separator">
-            <span class="pivot-label-yellow">Pivot Point (P):</span>
+            <span class="pivot-label-yellow">PIVOT POINT (P):</span>
             ${pivotArrowHtml}
-            <span class="${pivotPriceClass}">Rp ${formatNum(pivotPoint)}</span>
+            <span class="${pivotPriceClass}">RP ${formatNum(pivotPoint)}</span>
           </div>
 
-          <div class="sr-row"><span>Support 1 (S1):</span> <span class="${s1Class}">Rp ${formatNum(s1)}</span></div>
-          <div class="sr-row"><span>Support 2 (S2):</span> <span class="${s2Class}">Rp ${formatNum(s2)}</span></div>
-          <div class="sr-row"><span>Support 3 (S3):</span> <span class="${s3Class}">Rp ${formatNum(s3)}</span></div>
+          <div class="sr-row"><span>SUPPORT 1 (S1):</span> <span class="${s1Class}">RP ${formatNum(s1)}</span></div>
+          <div class="sr-row"><span>SUPPORT 2 (S2):</span> <span class="${s2Class}">RP ${formatNum(s2)}</span></div>
+          <div class="sr-row"><span>SUPPORT 3 (S3):</span> <span class="${s3Class}">RP ${formatNum(s3)}</span></div>
         </div>
 
         <div class="signal-badge-container">
@@ -767,7 +818,7 @@
       });
 
       displayList.forEach(stock => {
-        const group = stock.category || 'Lainnya';
+        const group = (stock.category || 'LAINNYA').toUpperCase();
         if (activeFilter !== 'ALL' && group !== activeFilter) return;
 
         grid.appendChild(createCardElement(stock, false));
