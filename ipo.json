@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "nama": "PT Elephant Oil Tbk",
+    "ticker": "ELEE",
+    "tgl_ipo": "15 September 2026",
+    "status": "Book Building"
+  },
+  {
+    "id": 2,
+    "nama": "PT Digital Nusantara Tbk",
+    "ticker": "NUSA",
+    "tgl_ipo": "22 September 2026",
+    "status": "Offering"
+  },
+  {
+    "id": 3,
+    "nama": "PT Energi Hijau Tbk",
+    "ticker": "GREEN",
+    "tgl_ipo": "01 Oktober 2026",
+    "status": "Upcoming"
+  }
+]
