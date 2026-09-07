@@ -128,7 +128,7 @@
     .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    /* STYLING 3 KOLOM INFO BURSA */
+    /* STYLING 3 KOLOM INFO BURSA KANAN KATEGORI */
     .market-info-tab {
       padding: 6px 10px;
       border-radius: 16px;
@@ -142,18 +142,18 @@
     }
     .info-tab-1 { background: #111827; border-color: #374151; }
     .info-tab-2 { background: #312e81; border-color: #4338ca; color: #c7d2fe; }
-    
-    /* KOLOM JAM (KOLOM 3): BACKGROUND HITAM DOFF MATTE */
+
+    /* KOLOM JAM HITAM DOFF */
     .info-tab-3 { 
-      background: #18181b; 
-      border-color: #27272a; 
+      background: #121212 !important; 
+      border-color: #27272a !important; 
     }
 
-    /* STATE WARNA TEKS DOKUMEN BURSA & JAM */
+    /* STATE WARNA TEKS DOKUMEN BURSA & JAM (TERANG TANPA EFEK NEON/MENYALA) */
     .status-text-open { color: #4ade80 !important; }
-    .status-text-break { color: #9ca3af !important; }
-    .status-text-closed { color: #ffffff !important; }
-    .status-clock-open { color: #22c55e !important; text-shadow: 0 0 6px #22c55e; }
+    .status-text-break { color: #a1a1aa !important; }
+    .status-text-closed { color: #f4f4f5 !important; }
+    .status-clock-open { color: #4ade80 !important; font-weight: 800; text-shadow: none !important; }
 
     .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
     
@@ -246,18 +246,18 @@
       transition: all 0.2s ease;
     }
 
+    /* PETIR AKUMULASI (HIJAU SESUAI VOLUME) */
     .lightning-box-slot.active-green {
       background: #064e3b;
       border-color: #22c55e;
       color: #4ade80;
-      box-shadow: 0 0 5px rgba(34, 197, 94, 0.4);
     }
 
+    /* PETIR BANDAR DISTRIBUSI (MERAH SESUAI VOLUME) */
     .lightning-box-slot.active-red {
-      background: #4c0519;
-      border-color: #f43f5e;
-      color: #fda4af;
-      box-shadow: 0 0 5px rgba(244, 63, 94, 0.4);
+      background: #7f1d1d;
+      border-color: #ef4444;
+      color: #fca5a5;
     }
 
     .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -468,14 +468,13 @@
     <div class="tab" onclick="filterGroup('PROPERTI', this)">PROPERTI</div>
     <div class="tab" onclick="filterGroup('INDUSTRI', this)">INDUSTRI</div>
 
-    <!-- 3 KOLOM INFO PASAR TAMBAHAN -->
     <div class="market-info-tab info-tab-1" id="marketSessionCol">
       🏛️ <span id="marketSessionText">SESI 1: 09:00-12:00</span>
     </div>
     <div class="market-info-tab info-tab-2" id="holidayWarningCol">
       📅 <span id="holidayWarningText">BURSA BUKA (SENIN-JUMAT)</span>
     </div>
-    <!-- KOLOM JAM WIB BERWARNA HITAM DOFF (#18181b) -->
+    <!-- KOLOM JAM (HITAM DOFF) -->
     <div class="market-info-tab info-tab-3" id="clockWibCol">
       🕒 <span id="clockWibText">00:00:00 WIB</span>
     </div>
@@ -541,12 +540,12 @@
         if (holidayEl) holidayEl.innerText = "BURSA BUKA (HARI KERJA)";
       }
 
-      const s1Start = 9 * 60;
-      const s1End = 12 * 60;
-      const s2StartNormal = 13 * 60 + 30;
-      const s2StartFriday = 14 * 60;
+      const s1Start = 9 * 60; 
+      const s1End = 12 * 60;  
+      const s2StartNormal = 13 * 60 + 30; 
+      const s2StartFriday = 14 * 60;      
       const s2Start = isFriday ? s2StartFriday : s2StartNormal;
-      const s2End = 16 * 60;
+      const s2End = 16 * 60;  
 
       if (totalMinutes >= s1Start && totalMinutes < s1End) {
         if (sessionEl) {
@@ -713,12 +712,16 @@
       }, 100);
     }
 
+    /* FUNGSI PETIR DENGAN WARNA MERAH (BANDAR DISTRIBUSI) & HIJAU (AKUMULASI) SESUAI VOLUME */
     function renderLightningBoxes(stock) {
       const isSuspended = stock.is_suspended || stock.status === 'SUSPEND' || stock.volume === 0;
       const vRatio = parseFloat(stock.vol_ratio) || 0;
-      
+      const closePrice = stock.price ?? 0;
+      const prevClose = stock.prev_close ?? closePrice;
+      const volStatus = (stock.vol_status || '').toUpperCase();
+      const signalText = (stock.signal || '').toUpperCase();
+
       let activeCount = 0;
-      let activeClass = 'active-green';
 
       if (!isSuspended) {
         if (vRatio >= 2.5) activeCount = 5;
@@ -727,11 +730,11 @@
         else if (vRatio >= 1.2) activeCount = 2;
         else if (vRatio >= 1.0) activeCount = 1;
         else activeCount = 0;
-
-        if (stock.vol_status === 'SELL' || (stock.price < stock.prev_close && vRatio >= 1.2)) {
-          activeClass = 'active-red';
-        }
       }
+
+      // Deteksi Distribusi vs Akumulasi
+      const isDistribution = (volStatus === 'SELL') || (closePrice < prevClose) || signalText.includes('SELL');
+      let activeClass = isDistribution ? 'active-red' : 'active-green';
 
       let html = '<div class="lightning-grid-container">';
       for (let i = 1; i <= 5; i++) {
