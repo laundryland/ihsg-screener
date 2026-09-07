@@ -25,7 +25,7 @@
       background-color: #0f172a; 
       color: #f8fafc; 
       padding: 16px; 
-      padding-top: 90px; 
+      padding-top: 100px; 
       padding-bottom: 40px; 
     }
     
@@ -37,16 +37,16 @@
       z-index: 1000;
       background-color: #0f172a;
       border-bottom: 1px solid #334155;
-      padding: 12px 16px;
+      padding: 10px 16px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
 
-    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
     .header-left { display: flex; align-items: center; gap: 10px; }
     
     .app-logo { 
-      width: 40px; 
-      height: 40px; 
+      width: 38px; 
+      height: 38px; 
       border-radius: 50%; 
       object-fit: cover; 
       flex-shrink: 0; 
@@ -54,8 +54,33 @@
     }
 
     .header-text { display: flex; flex-direction: column; }
-    h1 { font-size: 1rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
-    .update-time { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
+    h1 { font-size: 0.95rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
+    .update-time { font-size: 0.6rem; color: #94a3b8; margin-top: 2px; }
+
+    /* TRADER MODE SWITCHER BUTTONS IN HEADER */
+    .trader-mode-container {
+      display: flex;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 5px 8px;
+      font-size: 0.65rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active-scalp { background: #d97706; color: #fff; box-shadow: 0 0 6px rgba(217, 119, 6, 0.5); }
+    .mode-btn.active-swing { background: #0284c7; color: #fff; box-shadow: 0 0 6px rgba(2, 132, 199, 0.5); }
+    .mode-btn.active-long { background: #166534; color: #fff; box-shadow: 0 0 6px rgba(22, 101, 52, 0.5); }
 
     .header-actions { display: flex; gap: 6px; align-items: center; }
 
@@ -65,7 +90,7 @@
       border: 1px solid #38bdf8;
       padding: 6px 10px;
       border-radius: 8px;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -79,7 +104,7 @@
 
     .control-box { 
       position: sticky; 
-      top: 75px; 
+      top: 85px; 
       z-index: 90; 
       background: #1e293b; 
       padding: 10px 12px; 
@@ -114,7 +139,7 @@
     /* BARISAN KATEGORI STICKY */
     .group-tabs { 
       position: sticky;
-      top: 135px;
+      top: 145px;
       z-index: 85;
       background: #0f172a;
       padding: 6px 0;
@@ -259,14 +284,12 @@
       transition: all 0.2s ease;
     }
 
-    /* PETIR AKUMULASI (HIJAU SESUAI VOLUME) */
     .lightning-box-slot.active-green {
       background: #064e3b;
       border-color: #22c55e;
       color: #4ade80;
     }
 
-    /* PETIR BANDAR DISTRIBUSI (MERAH SESUAI VOLUME) */
     .lightning-box-slot.active-red {
       background: #7f1d1d;
       border-color: #ef4444;
@@ -354,7 +377,7 @@
       font-size: 0.68rem;
     }
 
-    .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
     .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; animation: dot-blink 1s infinite; }
     .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; animation: dot-blink 1s infinite; }
 
@@ -426,13 +449,15 @@
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
 
-    .trading-plan-box { margin-top: 6px; padding: 6px 8px; background: #0f172a; border-radius: 6px; border: 1px dashed #475569; font-size: 0.68rem; }
+    /* TRADING PLAN BERTINGKAT UI */
+    .trading-plan-box { margin-top: 6px; padding: 6px 8px; background: #0f172a; border-radius: 6px; border: 1px dashed #475569; font-size: 0.65rem; }
     .plan-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
     .plan-row:last-child { margin-bottom: 0; }
     .plan-label { display: flex; align-items: center; color: #94a3b8; }
-    .plan-value { color: #fff; }
+    .plan-value { color: #fff; font-weight: bold; }
     .val-wait { color: #f59e0b; }
     .val-active { color: #f8fafc; }
+    .plan-divider { border: 0; border-top: 1px dashed #334155; margin: 4px 0; }
   </style>
 </head>
 <body>
@@ -446,6 +471,14 @@
           <p class="update-time" id="updateTime">MEMUAT DATA...</p>
         </div>
       </div>
+
+      <!-- TRADER MODE SWITCHER BUTTONS -->
+      <div class="trader-mode-container">
+        <button class="mode-btn active-scalp" id="btnModeScalp" onclick="setTraderMode('SCALPING')">⚡ SCALPING</button>
+        <button class="mode-btn" id="btnModeSwing" onclick="setTraderMode('SWING')">🌊 SWING</button>
+        <button class="mode-btn" id="btnModeLong" onclick="setTraderMode('LONGTERM')">🏦 LONGTERM</button>
+      </div>
+
       <div class="header-actions">
         <button class="btn-header" onclick="refreshAllData(this)">
           <span class="refresh-icon">🔄</span> REFRESH
@@ -472,7 +505,6 @@
 
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">SEMUA</div>
-    <!-- TAB BARU: LAYAK BELI -->
     <div class="tab tab-buy-worthy" onclick="filterGroup('LAYAK_BELI', this)">🔥 LAYAK BELI</div>
     <div class="tab" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
     <div class="tab" onclick="filterGroup('ENERGI', this)">ENERGI</div>
@@ -501,6 +533,7 @@
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
     let activeFilter = 'ALL';
+    let currentTraderMode = localStorage.getItem('trader_mode') || 'SCALPING'; // DEFAULT MODE
     let draggedTicker = null;
 
     function formatWIB(timeStr) {
@@ -521,6 +554,31 @@
 
     function reloadPage() {
       window.location.reload();
+    }
+
+    function setTraderMode(mode) {
+      currentTraderMode = mode;
+      localStorage.setItem('trader_mode', mode);
+      updateTraderModeButtons();
+      render();
+    }
+
+    function updateTraderModeButtons() {
+      const btnScalp = document.getElementById('btnModeScalp');
+      const btnSwing = document.getElementById('btnModeSwing');
+      const btnLong = document.getElementById('btnModeLong');
+
+      btnScalp.className = 'mode-btn';
+      btnSwing.className = 'mode-btn';
+      btnLong.className = 'mode-btn';
+
+      if (currentTraderMode === 'SCALPING') {
+        btnScalp.classList.add('active-scalp');
+      } else if (currentTraderMode === 'SWING') {
+        btnSwing.classList.add('active-swing');
+      } else if (currentTraderMode === 'LONGTERM') {
+        btnLong.classList.add('active-long');
+      }
     }
 
     function updateMarketClock() {
@@ -604,6 +662,7 @@
         rawData = data.stocks || [];
 
         initMenuState();
+        updateTraderModeButtons();
         populateDropdownOptions();
         render();
         updateMarketClock();
@@ -726,31 +785,37 @@
       }, 100);
     }
 
-    /* LOGIKA CEK DOKUMEN LAYAK BELI BERDASARKAN AKUMULASI INDIKATOR HARI INI */
+    /* AKUMULASI DENGAN BOBOT TERINTEGRASI UNTUK MASING-MASING TRADER MODE */
     function isBuyWorthyStock(stock) {
       const signalText = (stock.signal || '').toUpperCase();
       const isBuySignal = signalText.includes('BUY') || signalText.includes('STRONG BUY');
-      if (!isBuySignal) return false;
-
+      
       let score = 0;
       const closePrice = stock.price ?? 0;
       const highPrice = stock.high ?? closePrice;
       const lowPrice = stock.low ?? closePrice;
       const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
 
-      // Volume & Vol Ratio
-      if ((stock.vol_status || '').toUpperCase() === 'BUY' || (parseFloat(stock.vol_ratio) || 0) >= 1.2) score++;
-      // MACD
-      if ((stock.macd_status || '').toUpperCase() === 'BUY') score++;
-      // EMA / MA20
-      if ((stock.ema_status || '').toUpperCase() === 'BUY' || closePrice >= (stock.ma20 || closePrice)) score++;
-      // RSI
-      if ((stock.rsi_status || '').toUpperCase() === 'BUY' || (stock.fibo_rsi_status || '').toUpperCase() === 'OVER SOLD') score++;
-      // Pivot
-      if (closePrice >= pivotPoint) score++;
-
-      // Kriteria: Berstatus BUY/STRONG BUY dan minimal 3 indikator teknis positif
-      return score >= 3;
+      if (currentTraderMode === 'SCALPING') {
+        // Scalping sangat mengutamakan lonjakan volume & posisi Pivot
+        if ((stock.vol_status || '').toUpperCase() === 'BUY' || (parseFloat(stock.vol_ratio) || 0) >= 1.2) score += 2;
+        if (closePrice >= pivotPoint) score += 1;
+        if ((stock.rsi_status || '').toUpperCase() === 'BUY') score += 1;
+        return isBuySignal && score >= 3;
+      } else if (currentTraderMode === 'SWING') {
+        // Swing mengutamakan tren MACD, EMA & RSI
+        if ((stock.macd_status || '').toUpperCase() === 'BUY') score += 1;
+        if ((stock.ema_status || '').toUpperCase() === 'BUY' || closePrice >= (stock.ma20 || closePrice)) score += 1;
+        if ((stock.rsi_status || '').toUpperCase() === 'BUY') score += 1;
+        if ((stock.vol_status || '').toUpperCase() === 'BUY') score += 1;
+        return isBuySignal && score >= 3;
+      } else {
+        // Longterm mengutamakan konfirmasi Trend Utama & EMA
+        if ((stock.ema_status || '').toUpperCase() === 'BUY') score += 2;
+        if ((stock.macd_status || '').toUpperCase() === 'BUY') score += 1;
+        if (closePrice >= pivotPoint) score += 1;
+        return isBuySignal && score >= 3;
+      }
     }
 
     function renderLightningBoxes(stock) {
@@ -896,9 +961,31 @@
       const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
       const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
 
-      const entryVal = isReadyToBuy ? `${formatNum(stock.entry_price || closePrice)}` : 'WAIT';
-      const tpVal = isReadyToBuy ? `${formatNum(stock.take_profit || stock.resistance || stock.resistance_1)}` : 'WAIT';
-      const clVal = isReadyToBuy ? `${formatNum(stock.cut_loss || stock.support || stock.support_1)}` : 'WAIT';
+      const entryPriceVal = stock.entry_price || closePrice;
+      
+      /* DINAMISASI ALGORITMA TP & CL BERDASARKAN MODE TRADER DIPILIH */
+      let tp1Val = 0, tp2Val = 0, cl1Val = 0, cl2Val = 0;
+      let modeTitle = '';
+
+      if (currentTraderMode === 'SCALPING') {
+        modeTitle = '⚡ FAST TRADING (SCALPING)';
+        tp1Val = Math.round(entryPriceVal * 1.018); // TP1 +1.8%
+        tp2Val = stock.resistance_1 || Math.round(entryPriceVal * 1.035); // TP2 +3.5%
+        cl1Val = Math.round(entryPriceVal * 0.985); // CL -1.5%
+        cl2Val = stock.support_1 || Math.round(entryPriceVal * 0.97); // CL -3%
+      } else if (currentTraderMode === 'SWING') {
+        modeTitle = '🌊 MID-TERM TRADING (SWING)';
+        tp1Val = stock.resistance_1 || Math.round(entryPriceVal * 1.05); // TP1 +5%
+        tp2Val = stock.resistance_2 || Math.round(entryPriceVal * 1.10); // TP2 +10%
+        cl1Val = stock.support_1 || Math.round(entryPriceVal * 0.96); // CL -4%
+        cl2Val = stock.support_2 || Math.round(entryPriceVal * 0.93); // CL -7%
+      } else {
+        modeTitle = '🏦 LONG-TERM (INVESTASI)';
+        tp1Val = stock.resistance_2 || Math.round(entryPriceVal * 1.15); // TP1 +15%
+        tp2Val = stock.resistance_3 || Math.round(entryPriceVal * 1.30); // TP2 +30%
+        cl1Val = stock.support_2 || Math.round(entryPriceVal * 0.92); // CL -8%
+        cl2Val = stock.support_3 || Math.round(entryPriceVal * 0.88); // CL -12%
+      }
 
       let fiboBoxClass = 'fibo-normal';
       let fiboText = 'FIBO-RSI: NORMAL';
@@ -1044,17 +1131,30 @@
 
         ${!isIHSG ? `
           <div class="trading-plan-box">
+            <div style="text-align:center; font-size: 0.6rem; color: #e2e8f0; margin-bottom: 4px; border-bottom: 1px solid #334155; padding-bottom: 2px;">
+              ${modeTitle}
+            </div>
             <div class="plan-row">
               <span class="plan-label">${statusDotHtml} ENTRY:</span>
-              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${entryVal}</span>
+              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${isReadyToBuy ? formatNum(entryPriceVal) : 'WAIT'}</span>
+            </div>
+            <hr class="plan-divider">
+            <div class="plan-row">
+              <span class="plan-label" style="color: #38bdf8;">🎯 TAKE PROFIT 1:</span>
+              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${isReadyToBuy ? formatNum(tp1Val) : 'WAIT'}</span>
             </div>
             <div class="plan-row">
-              <span class="plan-label">${statusDotHtml} TAKE PROFIT:</span>
-              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${tpVal}</span>
+              <span class="plan-label" style="color: #4ade80;">🚀 TAKE PROFIT 2:</span>
+              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${isReadyToBuy ? formatNum(tp2Val) : 'WAIT'}</span>
+            </div>
+            <hr class="plan-divider">
+            <div class="plan-row">
+              <span class="plan-label" style="color: #f87171;">🛡️ CUT LOSS 1:</span>
+              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${isReadyToBuy ? formatNum(cl1Val) : 'WAIT'}</span>
             </div>
             <div class="plan-row">
-              <span class="plan-label">${statusDotHtml} CUT LOSS:</span>
-              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${clVal}</span>
+              <span class="plan-label" style="color: #ef4444;">🚨 CUT LOSS 2 (MAX):</span>
+              <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${isReadyToBuy ? formatNum(cl2Val) : 'WAIT'}</span>
             </div>
           </div>
         ` : ''}
@@ -1134,7 +1234,6 @@
       displayList.forEach(stock => {
         const group = (stock.category || 'LAINNYA').toUpperCase();
 
-        // PENYARINGAN KATEGORI "LAYAK BELI" vs KATEGORI BIASA
         if (activeFilter === 'LAYAK_BELI') {
           if (!isBuyWorthyStock(stock)) return;
         } else if (activeFilter !== 'ALL' && group !== activeFilter) {
