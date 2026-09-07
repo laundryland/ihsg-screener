@@ -112,7 +112,6 @@
     select option { background: #0f172a; color: #fff; }
     input[type="text"]:focus, select:focus { border-color: #38bdf8; }
 
-    /* BARISAN KATEGORI STICKY */
     .group-tabs { 
       position: sticky;
       top: 135px;
@@ -129,7 +128,6 @@
     .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    /* TAB KHUSUS LAYAK BELI */
     .tab.tab-buy-worthy {
       background: #064e3b;
       color: #4ade80;
@@ -142,7 +140,6 @@
       box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
     }
 
-    /* STYLING INFO BURSA */
     .market-info-tab {
       padding: 6px 10px;
       border-radius: 16px;
@@ -157,13 +154,11 @@
     .info-tab-1 { background: #111827; border-color: #374151; }
     .info-tab-2 { background: #312e81; border-color: #4338ca; color: #c7d2fe; }
 
-    /* KOLOM JAM HITAM DOFF */
     .info-tab-3 { 
       background: #121212 !important; 
       border-color: #27272a !important; 
     }
 
-    /* STATE WARNA TEKS DOKUMEN BURSA & JAM */
     .status-text-open { color: #4ade80 !important; }
     .status-text-break { color: #a1a1aa !important; }
     .status-text-closed { color: #f4f4f5 !important; }
@@ -220,9 +215,10 @@
 
     .ticker-price-row {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
       padding-right: 50px;
+      gap: 6px;
     }
 
     .ticker-large { 
@@ -231,13 +227,33 @@
       letter-spacing: 0.5px;
     }
 
+    .price-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* HARGA EMITEN DIBUAT LEBIH BESAR */
     .price-large { 
-      font-size: 1.25rem; 
+      font-size: 1.45rem; 
+      font-weight: 800;
     }
     
     .price-up { color: #22c55e; }
     .price-down { color: #ef4444; }
     .price-flat { color: #ffffff; }
+
+    /* PERSENTASE DIBUAT LEBIH BESAR DAN DIPINDAHKAN KE KANAN */
+    .open-percent-badge { 
+      font-size: 0.85rem; 
+      padding: 3px 8px; 
+      border-radius: 5px; 
+      background: #0f172a; 
+      border: 1px solid #334155; 
+      display: inline-block;
+      white-space: nowrap;
+      font-weight: 800;
+    }
 
     .lightning-grid-container {
       display: flex;
@@ -260,14 +276,12 @@
       transition: all 0.2s ease;
     }
 
-    /* PETIR AKUMULASI (HIJAU SESUAI VOLUME) */
     .lightning-box-slot.active-green {
       background: #064e3b;
       border-color: #22c55e;
       color: #4ade80;
     }
 
-    /* PETIR BANDAR DISTRIBUSI (MERAH SESUAI VOLUME) */
     .lightning-box-slot.active-red {
       background: #7f1d1d;
       border-color: #ef4444;
@@ -278,32 +292,47 @@
     .group-tag { font-size: 0.65rem; color: #38bdf8; background: #0c4a6e; padding: 2px 5px; border-radius: 4px; display: inline-block; }
     
     .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
-    .box-container { display: flex; gap: 3px; }
-    .signal-box { 
-      width: 8px; 
-      height: 12px; 
-      border-radius: 2px; 
-      background-color: #334155; 
-      transition: all 0.3s ease;
-    }
     
-    .box-neon-green { 
-      background-color: #22c55e; 
-      box-shadow: 0 0 4px #22c55e; 
-      border: 1px solid #4ade80;
+    .ten-boxes-container { display: flex; gap: 2px; align-items: center; }
+    .box-ten {
+      width: 7px;
+      height: 9px;
+      border-radius: 1px;
+      background-color: #334155;
+      border: 1px solid #475569;
     }
-    .box-neon-red { 
-      background-color: #ef4444; 
-      box-shadow: 0 0 4px #ef4444; 
-      border: 1px solid #f87171;
+    .box-ten.box-green-active { background-color: #22c55e; border-color: #4ade80; box-shadow: 0 0 2px #22c55e; }
+    .box-ten.box-red-active { background-color: #ef4444; border-color: #fca5a5; box-shadow: 0 0 2px #ef4444; }
+    .box-ten.box-gray-active { background-color: #64748b; border-color: #94a3b8; }
+
+    @keyframes box-blink-animation {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
     }
-    .box-off { background-color: #1e293b; border: 1px solid #334155; }
+    .box-blink {
+      animation: box-blink-animation 0.8s infinite;
+    }
+
+    .indicator-dots-row {
+      display: flex;
+      gap: 1.5px;
+      align-items: center;
+    }
+    .ind-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: #334155;
+    }
+    .ind-dot.active-green { background-color: #22c55e; box-shadow: 0 0 2px #22c55e; }
+    .ind-dot.active-red { background-color: #ef4444; box-shadow: 0 0 2px #ef4444; }
+    .ind-dot.active-gray { background-color: #64748b; }
 
     .signal-percent { font-size: 0.7rem; color: #cbd5e1; }
 
-    .open-percent-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; display: inline-block; }
-
-    .indicator-column-box, .ohlc-grid-box, .trend-vol-row {
+    /* KOLOM INDIKATOR TERMASUK TREND DAN VOLUME DI BAWAH */
+    .indicator-column-box, .ohlc-grid-box {
       background: #0f172a;
       border: 1px solid #334155;
       border-radius: 6px;
@@ -350,7 +379,7 @@
       border: 1px solid #334155;
       border-radius: 6px;
       padding: 6px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       text-align: center;
       font-size: 0.68rem;
     }
@@ -386,6 +415,25 @@
     .sr-res { color: #f87171; }
     .sr-sup { color: #4ade80; }
 
+    .sr-label-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 14px;
+    }
+    .sr-check-badge {
+      color: #22c55e;
+      font-weight: 800;
+      font-size: 0.65rem;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      padding: 1px 4px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
     .sr-pivot-separator {
       background-color: #0f172a;
       border: 1px solid #ffffff;
@@ -404,6 +452,29 @@
       align-items: center;
       margin-left: 4px;
       margin-right: auto;
+    }
+
+    .pivot-dot-small {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: #334155;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .pivot-dot-small.active-red {
+      background-color: #ef4444;
+      box-shadow: 0 0 3px #ef4444;
+    }
+    .pivot-dot-small.active-green {
+      background-color: #22c55e;
+      box-shadow: 0 0 3px #22c55e;
+    }
+    .pivot-dot-small.active-gray {
+      background-color: #64748b;
+    }
+    .pivot-dot-small.dot-blink {
+      animation: dot-blink 0.8s infinite;
     }
 
     .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; }
@@ -427,7 +498,6 @@
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
 
-    /* MULTI-COLUMN TRADING PLAN STYLING */
     .trading-plan-wrapper { 
       margin-top: 8px; 
       padding: 8px; 
@@ -527,26 +597,26 @@
   </div>
 
   <div class="group-tabs" id="groupTabs">
-    <div class="tab active" onclick="filterGroup('ALL', this)">SEMUA</div>
-    <!-- TAB BARU: LAYAK BELI -->
-    <div class="tab tab-buy-worthy" onclick="filterGroup('LAYAK_BELI', this)">🔥 LAYAK BELI</div>
-    <div class="tab" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
-    <div class="tab" onclick="filterGroup('ENERGI', this)">ENERGI</div>
-    <div class="tab" onclick="filterGroup('TAMBANG', this)">TAMBANG</div>
-    <div class="tab" onclick="filterGroup('TEKNOLOGI', this)">TEKNOLOGI</div>
-    <div class="tab" onclick="filterGroup('MEDIA', this)">MEDIA</div>
-    <div class="tab" onclick="filterGroup('KONSUMER', this)">KONSUMER</div>
-    <div class="tab" onclick="filterGroup('PROPERTI', this)">PROPERTI</div>
-    <div class="tab" onclick="filterGroup('INDUSTRI', this)">INDUSTRI</div>
+    <div class="tab" id="tab-ALL" onclick="filterGroup('ALL', this)">SEMUA</div>
+    <div class="tab tab-buy-worthy active" id="tab-LAYAK_BELI" onclick="filterGroup('LAYAK_BELI', this)">🔥 LAYAK BELI</div>
+    <div class="tab" id="tab-PERBANKAN" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
+    <div class="tab" id="tab-ENERGI" onclick="filterGroup('ENERGI', this)">ENERGI</div>
+    <div class="tab" id="tab-TAMBANG" onclick="filterGroup('TAMBANG', this)">TAMBANG</div>
+    <div class="tab" id="tab-TEKNOLOGI" onclick="filterGroup('TEKNOLOGI', this)">TEKNOLOGI</div>
+    <div class="tab" id="tab-MEDIA" onclick="filterGroup('MEDIA', this)">MEDIA</div>
+    <div class="tab" id="tab-KONSUMER" onclick="filterGroup('KONSUMER', this)">KONSUMER</div>
+    <div class="tab" id="tab-PROPERTI" onclick="filterGroup('PROPERTI', this)">PROPERTI</div>
+    <div class="tab" id="tab-INDUSTRI" onclick="filterGroup('INDUSTRI', this)">INDUSTRI</div>
+    <div class="tab" id="tab-KESEHATAN" onclick="filterGroup('KESEHATAN', this)">KESEHATAN</div>
 
+    <div class="market-info-tab info-tab-3" id="clockWibCol">
+      🕒 <span id="clockWibText">00:00:00 WIB</span>
+    </div>
     <div class="market-info-tab info-tab-1" id="marketSessionCol">
       🏛️ <span id="marketSessionText">SESI 1: 09:00-12:00</span>
     </div>
     <div class="market-info-tab info-tab-2" id="holidayWarningCol">
       📅 <span id="holidayWarningText">BURSA BUKA (SENIN-JUMAT)</span>
-    </div>
-    <div class="market-info-tab info-tab-3" id="clockWibCol">
-      🕒 <span id="clockWibText">00:00:00 WIB</span>
     </div>
   </div>
 
@@ -557,7 +627,8 @@
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
     let selectedTradingStyle = localStorage.getItem('trading_style') || 'SWING';
-    let activeFilter = 'ALL';
+    
+    let activeFilter = 'LAYAK_BELI';
     let draggedTicker = null;
 
     function formatWIB(timeStr) {
@@ -793,7 +864,6 @@
       }, 100);
     }
 
-    /* LOGIKA CEK DOKUMEN LAYAK BELI BERDASARKAN AKUMULASI INDIKATOR HARI INI */
     function isBuyWorthyStock(stock) {
       const signalText = (stock.signal || '').toUpperCase();
       const isBuySignal = signalText.includes('BUY') || signalText.includes('STRONG BUY');
@@ -805,22 +875,15 @@
       const lowPrice = stock.low ?? closePrice;
       const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
 
-      // Volume & Vol Ratio
       if ((stock.vol_status || '').toUpperCase() === 'BUY' || (parseFloat(stock.vol_ratio) || 0) >= 1.2) score++;
-      // MACD
       if ((stock.macd_status || '').toUpperCase() === 'BUY') score++;
-      // EMA / MA20
       if ((stock.ema_status || '').toUpperCase() === 'BUY' || closePrice >= (stock.ma20 || closePrice)) score++;
-      // RSI
       if ((stock.rsi_status || '').toUpperCase() === 'BUY' || (stock.fibo_rsi_status || '').toUpperCase() === 'OVER SOLD') score++;
-      // Pivot
       if (closePrice >= pivotPoint) score++;
 
-      // Kriteria: Berstatus BUY/STRONG BUY dan minimal 3 indikator teknis positif
       return score >= 3;
     }
 
-    /* LOGIKA 3 KOLOM TRADING PLAN (SCALPING, SWING, INVESTASI) */
     function calculateMultiTradingPlans(stock, isReadyToBuy) {
       if (!isReadyToBuy) {
         return {
@@ -843,16 +906,14 @@
       const s2 = stock.support_2 || Math.round(s1 * 0.98);
       const s3 = stock.support_3 || Math.round(s2 * 0.98);
 
-      // 1. SCALPING / SHORTTERM
       const scEntry = stock.entry_price || closePrice;
-      const scTp1 = Math.round(scEntry * 1.015); // +1.5%
-      const scTp2 = stock.take_profit || Math.round(scEntry * 1.03); // +3%
-      const scTp3 = Math.round(scEntry * 1.05); // +5%
-      const scCl1 = Math.round(scEntry * 0.99); // -1%
-      const scCl2 = stock.cut_loss || Math.round(scEntry * 0.985); // -1.5%
-      const scCl3 = Math.round(scEntry * 0.98); // -2%
+      const scTp1 = Math.round(scEntry * 1.015);
+      const scTp2 = stock.take_profit || Math.round(scEntry * 1.03);
+      const scTp3 = Math.round(scEntry * 1.05);
+      const scCl1 = Math.round(scEntry * 0.99);
+      const scCl2 = stock.cut_loss || Math.round(scEntry * 0.985);
+      const scCl3 = Math.round(scEntry * 0.98);
 
-      // 2. SWING / MIDDLETERM
       const swEntry = Math.min(closePrice, pivot);
       const swTp1 = r1;
       const swTp2 = r2;
@@ -861,14 +922,13 @@
       const swCl2 = s2;
       const swCl3 = s3;
 
-      // 3. INVESTASI / LONGTERM
       const invEntry = Math.min(s1, pivot);
       const invTp1 = r2;
       const invTp2 = r3;
-      const invTp3 = Math.round(invEntry * 1.15); // Target ATH / +15%
+      const invTp3 = Math.round(invEntry * 1.15);
       const invCl1 = s3;
-      const invCl2 = Math.round(invEntry * 0.90); // -10%
-      const invCl3 = Math.round(invEntry * 0.85); // -15%
+      const invCl2 = Math.round(invEntry * 0.90);
+      const invCl3 = Math.round(invEntry * 0.85);
 
       return {
         scalping: {
@@ -923,6 +983,97 @@
       return html;
     }
 
+    function renderIndicator10Dots(status, customStrength = null) {
+      let st = (status || '').toUpperCase();
+      let isBullish = st === 'BUY' || st === 'BULLISH' || st === 'OVER SOLD';
+      let isBearish = st === 'SELL' || st === 'BEARISH' || st === 'OVER BOUGHT';
+      
+      let strength = customStrength;
+      if (strength === null) {
+        strength = (isBullish || isBearish) ? 8 : 5; 
+      }
+
+      let activeClass = isBullish ? 'active-green' : (isBearish ? 'active-red' : 'active-gray');
+
+      let html = '<div class="indicator-dots-row">';
+      for (let i = 1; i <= 10; i++) {
+        if (i <= strength) {
+          html += `<span class="ind-dot ${activeClass}"></span>`;
+        } else {
+          html += `<span class="ind-dot"></span>`;
+        }
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderPivot10Dots(closePrice, pivotPoint) {
+      if (!pivotPoint || pivotPoint <= 0) {
+        let html = '<div class="pivot-dots-container">';
+        for (let i = 0; i < 10; i++) html += '<span class="pivot-dot-small"></span>';
+        return html + '</div>';
+      }
+
+      let diffRatio = (closePrice - pivotPoint) / pivotPoint;
+      let absDiff = Math.abs(diffRatio);
+
+      let activeCount = 0;
+      if (absDiff > 0) {
+        if (absDiff >= 0.050) activeCount = 10;
+        else if (absDiff >= 0.045) activeCount = 9;
+        else if (absDiff >= 0.040) activeCount = 8;
+        else if (absDiff >= 0.035) activeCount = 7;
+        else if (absDiff >= 0.030) activeCount = 6;
+        else if (absDiff >= 0.025) activeCount = 5;
+        else if (absDiff >= 0.020) activeCount = 4;
+        else if (absDiff >= 0.015) activeCount = 3;
+        else if (absDiff >= 0.010) activeCount = 2;
+        else activeCount = 1;
+      }
+
+      let isDown = closePrice < pivotPoint;
+      let isUp = closePrice > pivotPoint;
+      let isBlink = activeCount >= 7;
+
+      let colorClass = '';
+      if (isDown) colorClass = 'active-red';
+      else if (isUp) colorClass = 'active-green';
+      else colorClass = 'active-gray';
+
+      let blinkClass = (isBlink && (isDown || isUp)) ? 'dot-blink' : '';
+
+      let html = '<div class="pivot-dots-container">';
+      for (let i = 1; i <= 10; i++) {
+        if (i <= activeCount) {
+          html += `<span class="pivot-dot-small ${colorClass} ${blinkClass}"></span>`;
+        } else {
+          html += `<span class="pivot-dot-small"></span>`;
+        }
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderTouchCheckBadge(stock, targetLevel) {
+      if (!targetLevel || targetLevel <= 0) return '';
+
+      let hitCount = 0;
+      if (stock.hits && stock.hits[targetLevel]) {
+        hitCount = stock.hits[targetLevel];
+      } else {
+        const high = stock.high ?? stock.price ?? 0;
+        const low = stock.low ?? stock.price ?? 0;
+        if (low <= targetLevel && high >= targetLevel) {
+          hitCount = stock.touch_count || 1;
+        }
+      }
+
+      if (hitCount > 0) {
+        return `<span class="sr-check-badge">✓ x${hitCount}</span>`;
+      }
+      return '';
+    }
+
     function createCardElement(stock, isIHSG = false) {
       const group = isIHSG ? 'INDEKS UTAMA' : (stock.category || 'LAINNYA');
 
@@ -943,79 +1094,64 @@
       if (closePrice > prevClose) priceColorClass = 'price-up';
       else if (closePrice < prevClose) priceColorClass = 'price-down';
 
-      let score = 0;
-
       let rsiStatus = stock.rsi_status || 'NEUTRAL';
-      let rsiDot = 'dot-neutral';
-      if (rsiStatus === 'BUY') { score += 1; rsiDot = 'dot-buy'; }
-      else if (rsiStatus === 'SELL') { score -= 1; rsiDot = 'dot-sell'; }
+      let rsiVal = (rsiStatus === 'BUY') ? 8 : ((rsiStatus === 'SELL') ? 2 : 5);
 
       let macdStatus = stock.macd_status || 'NEUTRAL';
-      let macdDot = 'dot-neutral';
-      if (macdStatus === 'BUY') { score += 1; macdDot = 'dot-buy'; }
-      else if (macdStatus === 'SELL') { score -= 1; macdDot = 'dot-sell'; }
+      let macdVal = (macdStatus === 'BUY') ? 8 : ((macdStatus === 'SELL') ? 2 : 5);
 
       let volStatus = stock.vol_status || 'NEUTRAL';
-      let volDot = 'dot-neutral';
-      if (volStatus === 'BUY') { score += 1; volDot = 'dot-buy'; }
-      else if (volStatus === 'SELL') { score -= 1; volDot = 'dot-sell'; }
+      let volVal = (volStatus === 'BUY') ? 8 : ((volStatus === 'SELL') ? 2 : 5);
 
       let emaStatus = stock.ema_status || (closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL');
-      let emaDot = 'dot-neutral';
-      if (emaStatus === 'BUY') { score += 1; emaDot = 'dot-buy'; }
-      else if (emaStatus === 'SELL') { score -= 1; emaDot = 'dot-sell'; }
-
-      let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
-      if (fiboStatus === 'OVER SOLD') score += 1;
-      else if (fiboStatus === 'OVER BOUGHT') score -= 1;
+      let emaVal = (emaStatus === 'BUY') ? 8 : ((emaStatus === 'SELL') ? 2 : 5);
 
       let rawTrend = (stock.trend_status || '').toUpperCase();
       let trendStatus = 'SIDEWAYS';
-      let trendDot = 'dot-sideways';
-
-      if (rawTrend.includes('BULL') || rawTrend === 'BUY') {
-        score += 1; trendDot = 'dot-buy'; trendStatus = 'BULLISH';
-      } else if (rawTrend.includes('BEAR') || rawTrend === 'SELL') {
-        score -= 1; trendDot = 'dot-sell'; trendStatus = 'BEARISH';
-      } else {
-        if (closePrice > prevClose) {
-          trendDot = 'dot-buy'; trendStatus = 'BULLISH';
-        } else if (closePrice < prevClose) {
-          trendDot = 'dot-sell'; trendStatus = 'BEARISH';
-        } else {
-          trendDot = 'dot-sideways'; trendStatus = 'SIDEWAYS';
-        }
+      if (rawTrend.includes('BULL') || rawTrend === 'BUY') trendStatus = 'BULLISH';
+      else if (rawTrend.includes('BEAR') || rawTrend === 'SELL') trendStatus = 'BEARISH';
+      else {
+        if (closePrice > prevClose) trendStatus = 'BULLISH';
+        else if (closePrice < prevClose) trendStatus = 'BEARISH';
       }
+      let trendVal = (trendStatus === 'BULLISH') ? 8 : ((trendStatus === 'BEARISH') ? 2 : 5);
+
+      let totalVal = rsiVal + macdVal + volVal + emaVal + trendVal;
+      let avgStrengthPercent = Math.round((totalVal / 50) * 100);
 
       let signalText = 'NETRAL';
       let badgeClass = 'neutral';
-      let percentageNum = 50;
-      let isBullishMode = score >= 0;
-
-      if (score >= 4) percentageNum = 100;
-      else if (score >= 2) percentageNum = 80;
-      else if (score >= 0) percentageNum = 60;
-      else if (score >= -2) percentageNum = 40;
-      else percentageNum = 20;
 
       if (stock.signal) {
-        if (stock.signal.includes('STRONG BUY')) { percentageNum = 100; signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
-        else if (stock.signal.includes('BUY')) { percentageNum = 80; signalText = 'BUY'; badgeClass = 'buy'; }
-        else if (stock.signal.includes('STRONG SELL')) { percentageNum = 100; isBullishMode = false; signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
-        else if (stock.signal.includes('SELL')) { percentageNum = 80; isBullishMode = false; signalText = 'SELL'; badgeClass = 'sell'; }
+        if (stock.signal.includes('STRONG BUY')) { avgStrengthPercent = 100; signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
+        else if (stock.signal.includes('BUY')) { avgStrengthPercent = 80; signalText = 'BUY'; badgeClass = 'buy'; }
+        else if (stock.signal.includes('STRONG SELL')) { avgStrengthPercent = 100; signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
+        else if (stock.signal.includes('SELL')) { avgStrengthPercent = 80; signalText = 'SELL'; badgeClass = 'sell'; }
       }
 
-      const activeBoxes = Math.round(percentageNum / 20);
-      let neonBoxClass = isBullishMode ? 'box-neon-green' : 'box-neon-red';
-      
-      let boxesHtml = '';
-      for (let i = 1; i <= 5; i++) {
-        if (i <= activeBoxes) {
-          boxesHtml += `<div class="signal-box ${neonBoxClass}"></div>`;
+      let isBullishMode = signalText.includes('BUY') || trendStatus === 'BULLISH';
+      let isBearishMode = signalText.includes('SELL') || trendStatus === 'BEARISH';
+      let isStrongState = signalText === 'STRONG BUY' || signalText === 'STRONG SELL';
+
+      let avgBoxesCount = Math.round(avgStrengthPercent / 10);
+      let activeBoxColor = 'box-gray-active';
+
+      if (isBullishMode) {
+        activeBoxColor = 'box-green-active';
+      } else if (isBearishMode) {
+        activeBoxColor = 'box-red-active';
+      }
+
+      let blinkClass = isStrongState ? 'box-blink' : '';
+      let topBoxesHtml = `<div class="ten-boxes-container ${blinkClass}">`;
+      for (let d = 1; d <= 10; d++) {
+        if (d <= avgBoxesCount) {
+          topBoxesHtml += `<span class="box-ten ${activeBoxColor}"></span>`;
         } else {
-          boxesHtml += `<div class="signal-box box-off"></div>`;
+          topBoxesHtml += `<span class="box-ten"></span>`;
         }
       }
+      topBoxesHtml += '</div>';
 
       let warningHtml = '';
       const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || trendStatus === 'BEARISH' || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
@@ -1034,6 +1170,7 @@
 
       const plans = calculateMultiTradingPlans(stock, isReadyToBuy);
 
+      let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
       let fiboBoxClass = 'fibo-normal';
       let fiboText = 'FIBO-RSI: NORMAL';
       if (fiboStatus === 'OVER SOLD') {
@@ -1053,34 +1190,16 @@
 
       let pivotPriceClass = 'pivot-price-yellow';
       let pivotArrowIcon = '';
-      let dotColorClass = 'dot-green';
-      
-      let diffRatio = 0;
-      if (pivotPoint > 0) {
-        diffRatio = Math.abs(closePrice - pivotPoint) / pivotPoint;
-      }
-      
-      let dotCount = 1;
-      if (diffRatio >= 0.04) dotCount = 5;
-      else if (diffRatio >= 0.03) dotCount = 4;
-      else if (diffRatio >= 0.02) dotCount = 3;
-      else if (diffRatio >= 0.01) dotCount = 2;
 
       if (closePrice < pivotPoint) {
         pivotPriceClass = 'pivot-price-blue';
         pivotArrowIcon = '<span class="pivot-arrow-down">▼&nbsp;&nbsp;</span>';
-        dotColorClass = 'dot-red';
       } else if (closePrice > pivotPoint) {
         pivotPriceClass = 'pivot-price-green';
         pivotArrowIcon = '<span class="pivot-arrow-up">▲&nbsp;&nbsp;</span>';
-        dotColorClass = 'dot-green';
       }
 
-      let pivotDotsHtml = '<div class="pivot-dots-container">';
-      for (let d = 0; d < dotCount; d++) {
-        pivotDotsHtml += `<span class="dot-indicator ${dotColorClass}"></span>`;
-      }
-      pivotDotsHtml += '</div>';
+      const pivotDotsHtml = renderPivot10Dots(closePrice, pivotPoint);
 
       const r3Class = (highPrice >= r3 || closePrice >= r3) ? 'blink-red' : 'sr-res';
       const r2Class = (highPrice >= r2 || closePrice >= r2) ? 'blink-red' : 'sr-res';
@@ -1103,30 +1222,35 @@
           ${!isIHSG ? `<button class="compact-btn close-compact" title="HAPUS EMITEN" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
         </div>
 
+        ${warningHtml}
+
         <div class="card-header-full">
           <div class="ticker-price-row">
             <span class="ticker-large">${stock.ticker}</span>
-            <span class="price-large ${priceColorClass}">${formatNum(closePrice)}</span>
+            <div class="price-group">
+              <span class="price-large ${priceColorClass}">${formatNum(closePrice)}</span>
+              <span class="open-percent-badge ${priceColorClass}">${openPercentStr}</span>
+            </div>
           </div>
           ${renderLightningBoxes(stock)}
         </div>
 
         <div class="sub-header">
           <span class="group-tag">${group}</span>
-          <span class="open-percent-badge ${priceColorClass}">${openPercentStr}</span>
           <div class="signal-indicator-box">
-            <div class="box-container">
-              ${boxesHtml}
-            </div>
-            <span class="signal-percent">${percentageNum}%</span>
+            ${topBoxesHtml}
+            <span class="signal-percent">${avgStrengthPercent}%</span>
           </div>
         </div>
 
+        <!-- KOLOM INDIKATOR DENGAN TREND & VOLUME DITAMBAHKAN DI BAGIAN PALING BAWAH -->
         <div class="indicator-column-box">
-          <div class="indicator-item"><span>RSI</span><span class="dot-indicator ${rsiDot}"></span></div>
-          <div class="indicator-item"><span>MACD</span><span class="dot-indicator ${macdDot}"></span></div>
-          <div class="indicator-item"><span>VOL</span><span class="dot-indicator ${volDot}"></span></div>
-          <div class="indicator-item"><span>EMA</span><span class="dot-indicator ${emaDot}"></span></div>
+          <div class="indicator-item"><span>RSI</span>${renderIndicator10Dots(rsiStatus, rsiVal)}</div>
+          <div class="indicator-item"><span>MACD</span>${renderIndicator10Dots(macdStatus, macdVal)}</div>
+          <div class="indicator-item"><span>EMA</span>${renderIndicator10Dots(emaStatus, emaVal)}</div>
+          <div class="indicator-item"><span>FIBO</span>${renderIndicator10Dots(fiboStatus)}</div>
+          <div class="indicator-item"><span>TREND</span>${renderIndicator10Dots(trendStatus, trendVal)}</div>
+          <div class="indicator-item"><span>VOLUME</span>${renderIndicator10Dots(volStatus, volVal)}</div>
         </div>
 
         <div class="ohlc-grid-box">
@@ -1136,26 +1260,36 @@
           <div class="ohlc-item"><span>LOW</span><span class="ohlc-val">${formatNum(lowPrice)}</span></div>
         </div>
 
-        <div class="trend-vol-row">
-          <div class="indicator-item">
-            <span>TREND</span>
-            <span class="dot-indicator ${trendDot}"></span>
-          </div>
-          <div class="indicator-item">
-            <span>VOL RATIO</span>
-            <span style="color:#fff;">${stock.vol_ratio || 1.0}X</span>
-          </div>
-        </div>
-
-        ${warningHtml}
-
         <div class="sr-stat-box">
-          <div class="sr-row"><span>RESISTAN 3 (R3):</span> <span class="${r3Class}">${formatNum(r3)}</span></div>
-          <div class="sr-row"><span>RESISTAN 2 (R2):</span> <span class="${r2Class}">${formatNum(r2)}</span></div>
-          <div class="sr-row"><span>RESISTAN 1 (R1):</span> <span class="${r1Class}">${formatNum(r1)}</span></div>
+          <div class="sr-row">
+            <div class="sr-label-container">
+              <span>RESISTAN 3 (R3):</span>
+              ${renderTouchCheckBadge(stock, r3)}
+            </div>
+            <span class="${r3Class}">${formatNum(r3)}</span>
+          </div>
+
+          <div class="sr-row">
+            <div class="sr-label-container">
+              <span>RESISTAN 2 (R2):</span>
+              ${renderTouchCheckBadge(stock, r2)}
+            </div>
+            <span class="${r2Class}">${formatNum(r2)}</span>
+          </div>
+
+          <div class="sr-row">
+            <div class="sr-label-container">
+              <span>RESISTAN 1 (R1):</span>
+              ${renderTouchCheckBadge(stock, r1)}
+            </div>
+            <span class="${r1Class}">${formatNum(r1)}</span>
+          </div>
           
           <div class="sr-row sr-pivot-separator">
-            <span class="pivot-label-yellow">PIVOT POINT (P):</span>
+            <div class="sr-label-container">
+              <span class="pivot-label-yellow">PIVOT POINT (P):</span>
+              ${renderTouchCheckBadge(stock, pivotPoint)}
+            </div>
             ${pivotDotsHtml}
             <div class="pivot-price-wrapper">
               ${pivotArrowIcon}
@@ -1163,9 +1297,29 @@
             </div>
           </div>
 
-          <div class="sr-row"><span>SUPPORT 1 (S1):</span> <span class="${s1Class}">${formatNum(s1)}</span></div>
-          <div class="sr-row"><span>SUPPORT 2 (S2):</span> <span class="${s2Class}">${formatNum(s2)}</span></div>
-          <div class="sr-row"><span>SUPPORT 3 (S3):</span> <span class="${s3Class}">${formatNum(s3)}</span></div>
+          <div class="sr-row">
+            <div class="sr-label-container">
+              <span>SUPPORT 1 (S1):</span>
+              ${renderTouchCheckBadge(stock, s1)}
+            </div>
+            <span class="${s1Class}">${formatNum(s1)}</span>
+          </div>
+
+          <div class="sr-row">
+            <div class="sr-label-container">
+              <span>SUPPORT 2 (S2):</span>
+              ${renderTouchCheckBadge(stock, s2)}
+            </div>
+            <span class="${s2Class}">${formatNum(s2)}</span>
+          </div>
+
+          <div class="sr-row">
+            <div class="sr-label-container">
+              <span>SUPPORT 3 (S3):</span>
+              ${renderTouchCheckBadge(stock, s3)}
+            </div>
+            <span class="${s3Class}">${formatNum(s3)}</span>
+          </div>
         </div>
 
         <div class="signal-badge-container">
@@ -1183,7 +1337,6 @@
             </div>
             
             <div class="trading-plan-grid">
-              <!-- KOLOM 1: SCALPING -->
               <div class="plan-col ${selectedTradingStyle === 'SCALPING' ? 'active-style' : ''}">
                 <div class="plan-col-title">⚡ SCALPING</div>
                 
@@ -1219,7 +1372,6 @@
                 </div>
               </div>
 
-              <!-- KOLOM 2: SWING -->
               <div class="plan-col ${selectedTradingStyle === 'SWING' ? 'active-style' : ''}">
                 <div class="plan-col-title">📈 SWING</div>
 
@@ -1255,7 +1407,6 @@
                 </div>
               </div>
 
-              <!-- KOLOM 3: INVESTASI -->
               <div class="plan-col ${selectedTradingStyle === 'INVESTMENT' ? 'active-style' : ''}">
                 <div class="plan-col-title">💎 INVESTASI</div>
 
@@ -1339,6 +1490,12 @@
     }
 
     function render() {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      const activeTabEl = document.getElementById(`tab-${activeFilter}`);
+      if (activeTabEl) {
+        activeTabEl.classList.add('active');
+      }
+
       const grid = document.getElementById('stockGrid');
       grid.innerHTML = '';
 
@@ -1369,7 +1526,6 @@
       displayList.forEach(stock => {
         const group = (stock.category || 'LAINNYA').toUpperCase();
 
-        // PENYARINGAN KATEGORI "LAYAK BELI" vs KATEGORI BIASA
         if (activeFilter === 'LAYAK_BELI') {
           if (!isBuyWorthyStock(stock)) return;
         } else if (activeFilter !== 'ALL' && group !== activeFilter) {
@@ -1389,7 +1545,7 @@
     function filterGroup(group, el) {
       activeFilter = group;
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      el.classList.add('active');
+      if (el) el.classList.add('active');
       render();
     }
 
