@@ -111,7 +111,7 @@
     }
     input[type="text"]:focus, select:focus { border-color: #38bdf8; }
 
-    /* BARISAN KATEGORI MADE STICKY SAAT SCROLL */
+    /* BARISAN KATEGORI STICKY */
     .group-tabs { 
       position: sticky;
       top: 135px;
@@ -128,7 +128,7 @@
     .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    /* STYLING 3 KOLOM INFO BURSA KANAN KATEGORI */
+    /* STYLING 3 KOLOM INFO BURSA */
     .market-info-tab {
       padding: 6px 10px;
       border-radius: 16px;
@@ -142,9 +142,14 @@
     }
     .info-tab-1 { background: #111827; border-color: #374151; }
     .info-tab-2 { background: #312e81; border-color: #4338ca; color: #c7d2fe; }
-    .info-tab-3 { background: #064e3b; border-color: #059669; }
+    
+    /* KOLOM JAM (KOLOM 3): BACKGROUND HITAM DOFF MATTE */
+    .info-tab-3 { 
+      background: #18181b; 
+      border-color: #27272a; 
+    }
 
-    /* STATE WARNA TEKS DOKUMEN BURSA */
+    /* STATE WARNA TEKS DOKUMEN BURSA & JAM */
     .status-text-open { color: #4ade80 !important; }
     .status-text-break { color: #9ca3af !important; }
     .status-text-closed { color: #ffffff !important; }
@@ -387,7 +392,6 @@
       margin-right: auto;
     }
 
-    /* POSISI PANAH PIVOT DI SEBELAH KIRI HARGA DENGAN JARAK 2 SPASI */
     .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; margin-right: 2spasi; }
     .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; margin-right: 2spasi; }
 
@@ -453,7 +457,6 @@
     </div>
   </div>
 
-  <!-- BARISAN TABS KATEGORI KINI FIX STICKY -->
   <div class="group-tabs" id="groupTabs">
     <div class="tab active" onclick="filterGroup('ALL', this)">SEMUA</div>
     <div class="tab" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
@@ -465,13 +468,14 @@
     <div class="tab" onclick="filterGroup('PROPERTI', this)">PROPERTI</div>
     <div class="tab" onclick="filterGroup('INDUSTRI', this)">INDUSTRI</div>
 
-    <!-- 3 KOLOM INFO PASAR TAMBAHAN DI SEBELAH KANAN KATEGORI -->
+    <!-- 3 KOLOM INFO PASAR TAMBAHAN -->
     <div class="market-info-tab info-tab-1" id="marketSessionCol">
       🏛️ <span id="marketSessionText">SESI 1: 09:00-12:00</span>
     </div>
     <div class="market-info-tab info-tab-2" id="holidayWarningCol">
       📅 <span id="holidayWarningText">BURSA BUKA (SENIN-JUMAT)</span>
     </div>
+    <!-- KOLOM JAM WIB BERWARNA HITAM DOFF (#18181b) -->
     <div class="market-info-tab info-tab-3" id="clockWibCol">
       🕒 <span id="clockWibText">00:00:00 WIB</span>
     </div>
@@ -506,13 +510,12 @@
       window.location.reload();
     }
 
-    /* FUNGSI JAM WIB REALTIME & LOGIKA OPERASIONAL BURSA */
     function updateMarketClock() {
       const now = new Date();
       const options = { timeZone: 'Asia/Jakarta', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
       const timeString = now.toLocaleTimeString('id-ID', options);
       
-      const day = now.getDay(); // 0 = Minggu, 6 = Sabtu, 5 = Jumat
+      const day = now.getDay();
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const totalMinutes = hours * 60 + minutes;
@@ -538,13 +541,12 @@
         if (holidayEl) holidayEl.innerText = "BURSA BUKA (HARI KERJA)";
       }
 
-      // Jadwal WIB BEI/IHSG
-      const s1Start = 9 * 60; // 09:00
-      const s1End = 12 * 60;  // 12:00
-      const s2StartNormal = 13 * 60 + 30; // 13:30
-      const s2StartFriday = 14 * 60;      // 14:00 (Jumat)
+      const s1Start = 9 * 60;
+      const s1End = 12 * 60;
+      const s2StartNormal = 13 * 60 + 30;
+      const s2StartFriday = 14 * 60;
       const s2Start = isFriday ? s2StartFriday : s2StartNormal;
-      const s2End = 16 * 60;  // 16:00
+      const s2End = 16 * 60;
 
       if (totalMinutes >= s1Start && totalMinutes < s1End) {
         if (sessionEl) {
@@ -888,7 +890,6 @@
       else if (diffRatio >= 0.02) dotCount = 3;
       else if (diffRatio >= 0.01) dotCount = 2;
 
-      /* REPOSISI PANAH DI KIRI HARGA PIVOT DENGAN 2 SPASI */
       if (closePrice < pivotPoint) {
         pivotPriceClass = 'pivot-price-blue';
         pivotArrowIcon = '<span class="pivot-arrow-down">▼&nbsp;&nbsp;</span>';
