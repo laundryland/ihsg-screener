@@ -11,44 +11,50 @@
   <link rel="apple-touch-icon" href="./icon-192x192.png">
   
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; text-transform: uppercase; font-weight: bold; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; user-select: none; }
     body { background-color: #0f172a; color: #f8fafc; padding: 16px; padding-bottom: 40px; }
     
-    /* Header & Navbar Sticky */
-    .sticky-top-section {
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      background-color: #0f172a;
-      padding-top: 8px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #334155;
-      margin-bottom: 12px;
-    }
-
-    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+    header { margin-bottom: 16px; }
+    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
     .header-left { display: flex; align-items: center; gap: 14px; }
-    .app-logo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #38bdf8; }
+    .app-logo { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid #334155; }
     .header-text { display: flex; flex-direction: column; }
-    h1 { font-size: 1.25rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
-    .update-time { font-size: 0.75rem; color: #94a3b8; margin-top: 3px; font-weight: normal; text-transform: none; }
+    h1 { font-size: 1.35rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
+    .update-time { font-size: 0.78rem; color: #94a3b8; margin-top: 3px; }
 
-    /* Timeframe Container Kolom */
-    .timeframe-container { display: flex; gap: 6px; background: #161c24; padding: 4px; border-radius: 8px; border: 1px solid #334155; }
-    .tf-btn { background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
-    .tf-btn.active { background: #0284c7; color: #fff; border: 1px solid #38bdf8; }
+    /* Tombol Refresh Global di Header */
+    .btn-refresh-all {
+      background: #0284c7;
+      color: #fff;
+      border: 1px solid #38bdf8;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .btn-refresh-all:hover { background: #0369a1; }
 
-    /* Control Box */
+    /* Sticky Control Box */
     .control-box { 
+      position: sticky; 
+      top: 10px; 
+      z-index: 100; 
       background: #1e293b; 
-      padding: 10px 12px; 
-      border-radius: 10px; 
+      padding: 12px; 
+      border-radius: 12px; 
       border: 1px solid #334155; 
-      margin-bottom: 10px; 
+      margin-bottom: 16px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
     }
     .control-header { display: flex; justify-content: space-between; align-items: center; }
-    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
-    .form-row { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+    .form-row { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
     .form-row.hidden { display: none; }
     
     select, input[type="text"] { 
@@ -61,110 +67,33 @@
       font-size: 0.85rem; 
       outline: none;
     }
+    input[type="text"]:focus { border-color: #38bdf8; }
 
-    /* Kategori Tabs Fixed */
-    .group-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-    .tab { padding: 6px 12px; background: #161c24; border-radius: 8px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
-    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
+    .group-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
+    .tab { padding: 6px 14px; background: #1e293b; border-radius: 20px; font-size: 0.8rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; }
+    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; font-weight: bold; }
 
-    /* Grid Kartu */
-    .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+    /* Grid Kartu Responsif */
+    .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
     
-    .card { background: #1e293b; padding: 12px; border-radius: 12px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
+    .card { background: #1e293b; padding: 14px; border-radius: 12px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
     .card:active { cursor: grabbing; }
     .card.dragging { opacity: 0.4; transform: scale(0.96); border-style: dashed; }
-    
     .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
 
-    /* Sub Header Layout */
-    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 6px; }
-    .sub-header-right { display: flex; align-items: center; gap: 6px; }
+    /* Logo Bulat Atas Kartu */
+    .card-top-logo { display: flex; justify-content: center; align-items: center; margin-bottom: 8px; }
+    .card-top-logo img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #38bdf8; background: #0f172a; }
+
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .ticker-box { display: flex; align-items: center; gap: 6px; }
+    .ticker { font-weight: bold; font-size: 1.15rem; color: #fff; }
     
-    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 3px 6px; border-radius: 4px; border: 1px solid #0284c7; }
-
-    /* Status Sinyal */
-    .signal-status-tag {
-      font-size: 0.68rem;
-      padding: 3px 8px;
-      border-radius: 4px;
-      border: 1px solid transparent;
-      color: #ffffff;
-      text-align: center;
-    }
-    .tag-strong-buy { background: #15803d; border-color: #22c55e; color: #4ade80; }
-    .tag-buy { background: #166534; border-color: #16a34a; color: #86efac; }
-    .tag-netral { background: #334155; border-color: #475569; color: #cbd5e1; }
-    .tag-sell { background: #991b1b; border-color: #dc2626; color: #fca5a5; }
-    .tag-strong-sell { background: #b91c1c; border-color: #ef4444; color: #f87171; }
-
-    /* Tombol X Dalam Kolom Hitam Sejajar */
-    .close-btn-box {
-      background: #161c24;
-      border: 1px solid #334155;
-      color: #ef4444;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: background-color 0.2s, color 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .close-btn-box:hover {
-      background-color: #475569;
-      color: #ffffff;
-    }
-
-    /* Warning Trend Box */
-    .warning-box-top {
-      background-color: #161c24;
-      border: 1px solid #ef4444;
-      padding: 5px;
-      margin-bottom: 8px;
-      border-radius: 6px;
-      text-align: center;
-    }
-    .warning-box-top.green-border { border-color: #22c55e; }
-    .warning-text { font-size: 0.7rem; letter-spacing: 0.5px; }
-
-    /* Kolom Breakout Berkedip */
-    .breakout-box {
-      background-color: #161c24;
-      padding: 5px;
-      margin-bottom: 8px;
-      border-radius: 6px;
-      text-align: center;
-      border: 1px solid transparent;
-    }
-    .breakout-up { border-color: #22c55e; color: #22c55e; }
-    .breakout-down { border-color: #ef4444; color: #ef4444; }
-
-    /* Kolom Nama Emiten & Harga */
-    .ticker-price-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #161c24;
-      border: 1px solid #2d3748;
-      padding: 8px 10px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-    .ticker-title { font-size: 1.1rem; color: #ffffff; display: flex; align-items: center; gap: 6px; }
-    .price-display { font-size: 1.1rem; color: #ffffff; }
-
-    .bg-bullish { background-color: #052e16 !important; border: 1px solid #22c55e !important; }
-    .bg-bullish .ticker-title, .bg-bullish .price-display { color: #22c55e !important; }
-    .bg-bearish { background-color: #450a0a !important; border: 1px solid #ef4444 !important; }
-    .bg-bearish .ticker-title, .bg-bearish .price-display { color: #ef4444 !important; }
-
-    @keyframes blink-animation {
-      0% { opacity: 1; }
-      50% { opacity: 0.2; }
-      100% { opacity: 1; }
-    }
-    .blink-mode { animation: blink-animation 0.8s infinite; }
+    .card-actions { display: flex; align-items: center; gap: 6px; }
+    .action-btn { background: transparent; border: none; font-size: 0.95rem; cursor: pointer; padding: 2px; line-height: 1; transition: transform 0.2s; }
+    .action-btn:hover { transform: scale(1.2); }
+    .refresh-card-btn { color: #38bdf8; }
+    .close-btn { color: #ef4444; font-weight: bold; font-size: 1.1rem; }
 
     /* Petir Volume */
     .lightning-box { font-size: 0.8rem; letter-spacing: -1px; }
@@ -172,117 +101,107 @@
     .lightning-red { color: #ef4444; }
     .lightning-white { color: #ffffff; }
 
-    /* Persentase & Timeframe Kolom */
-    .percent-middle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 6px; }
-    .open-percent-badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; background: #161c24; border: 1px solid #334155; }
-    .timeframe-tag-box { font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; background: #161c24; border: 1px solid #334155; color: #94a3b8; }
-    .percent-green { color: #22c55e; }
-    .percent-red { color: #ef4444; }
-    .percent-white { color: #ffffff; }
+    /* Tata Letak Persentase Open & Harga Utama */
+    .price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .open-percent { font-size: 0.82rem; font-weight: bold; padding: 2px 5px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; }
+    .price { font-size: 1.2rem; font-weight: bold; }
+    .price-up { color: #22c55e; }
+    .price-down { color: #ef4444; }
+    .price-flat { color: #ffffff; }
 
-    /* Penutupan Kemarin */
-    .prev-close-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      background: #161c24;
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-      font-size: 0.72rem;
-      margin-bottom: 8px;
+    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .group-tag { font-size: 0.68rem; color: #38bdf8; background: #0c4a6e; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+    
+    .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
+    .box-container { display: flex; gap: 2px; }
+    .signal-box { width: 7px; height: 10px; border-radius: 1px; background-color: #475569; }
+    
+    .box-buy { background-color: #22c55e; }
+    .box-sell { background-color: #ef4444; }
+    .box-off { background-color: #334155; }
+
+    .signal-percent { font-size: 0.7rem; font-weight: bold; color: #cbd5e1; }
+
+    .prev-close-row { text-align: right; font-size: 0.68rem; color: #94a3b8; margin-bottom: 6px; }
+
+    /* Indicator Bulat */
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
+    .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
+    .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
+
+    .dot-indicator { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-left: 2px; margin-right: 6px; vertical-align: middle; }
+    .dot-buy { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
+    .dot-neutral { background-color: #64748b; }
+    .dot-sell { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
+    .dot-sideways { background-color: #ffffff; box-shadow: 0 0 4px #ffffff; }
+
+    .stat { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; flex-wrap: wrap; }
+    
+    /* Animation Blink untuk Text */
+    @keyframes blink-animation {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
     }
-    .prev-label { color: #94a3b8; }
-    .prev-val { color: #ffffff; font-size: 0.8rem; }
+    .blink-red { color: #ef4444; font-weight: bold; animation: blink-animation 1s infinite; }
+    .blink-green { color: #22c55e; font-weight: bold; animation: blink-animation 1s infinite; }
 
-    /* Kolom Hitam Doff OHL Terpisah */
-    .ohl-grid-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-bottom: 8px;
+    /* Animation Kedip/Highlight untuk Kartu yang Ditemukan */
+    @keyframes card-highlight {
+      0% { box-shadow: 0 0 0px #eab308; border-color: #334155; transform: scale(1); }
+      50% { box-shadow: 0 0 25px #eab308; border-color: #eab308; transform: scale(1.03); }
+      100% { box-shadow: 0 0 0px #eab308; border-color: #334155; transform: scale(1); }
     }
-    .ohl-item-box {
-      background-color: #161c24;
-      border: 1px solid #2d3748;
-      padding: 5px 8px;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.7rem;
-    }
-    .ohl-item-label { color: #94a3b8; }
-    .ohl-item-val { color: #ffffff; }
-
-    /* Kolom Hitam Doff Indikator & Volume */
-    .doff-box {
-      background-color: #161c24;
-      border: 1px solid #2d3748;
-      padding: 8px;
-      border-radius: 8px;
-      margin-bottom: 6px;
+    .highlight-card {
+      animation: card-highlight 0.7s ease-in-out 3;
+      z-index: 10;
     }
 
-    .ind-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; margin-bottom: 4px; }
-    .ind-row:last-child { margin-bottom: 0; }
-    .ind-name { color: #94a3b8; }
-    .ind-val-green { color: #22c55e; }
-    .ind-val-red { color: #ef4444; }
-    .ind-val-white { color: #ffffff; }
+    /* Animation Putar untuk Tombol Refresh saat Memuat Data */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
 
-    /* Kotak Persentase Menyala */
-    .multi-box-bar { display: flex; align-items: center; justify-content: space-between; gap: 3px; margin-top: 8px; padding-top: 6px; border-top: 1px solid #2d3748; }
-    .boxes-grid { display: flex; gap: 2px; flex-grow: 1; }
-    .box-step { height: 10px; flex: 1; border-radius: 2px; background-color: #334155; }
-    .box-step.active-green { background-color: #00ff66; box-shadow: 0 0 6px #00ff66; }
-    .box-step.active-red { background-color: #ff0055; box-shadow: 0 0 6px #ff0055; }
-    .bar-percent-text { font-size: 0.7rem; color: #ffffff; margin-left: 6px; min-width: 32px; text-align: right; }
+    /* Box OHL & Prev Close */
+    .ohl-stat { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 5px; line-height: 1.4; position: relative; }
+    .ohl-row { display: flex; justify-content: space-between; }
+    .warning-text { text-align: center; font-size: 0.72rem; font-weight: 800; margin: 3px 0; letter-spacing: 0.5px; }
 
     /* Support & Resistance Box */
     .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; color: #cbd5e1; }
     .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; align-items: center; }
     .sr-row:last-child { margin-bottom: 0; }
-    .sr-res { color: #ef4444; }
-    .sr-sup { color: #22c55e; }
+    .sr-res { color: #f87171; font-weight: bold; }
+    .sr-sup { color: #4ade80; font-weight: bold; }
 
+    /* Kolom Pemisah Pivot Point */
     .sr-pivot-separator {
       background-color: #0f172a;
       border: 1px solid #ffffff;
-      padding: 4px 6px;
+      padding: 3px 6px;
       margin: 4px -6px;
       border-radius: 4px;
     }
-    .pivot-label-yellow { color: #eab308; }
-    .pivot-price-blue { color: #38bdf8; }
-    .pivot-price-green { color: #22c55e; }
-    .pivot-price-yellow { color: #eab308; }
+    .pivot-label-yellow { color: #eab308; font-weight: bold; }
+    .pivot-price-blue { color: #0618a9; font-weight: bold; }
+    .pivot-price-green { color: #4ade80; font-weight: bold; }
+    .pivot-price-yellow { color: #eab308; font-weight: bold; }
 
-    /* Ikon Panah/Kotak Pivot Berkedip */
-    .pivot-icon-box {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid transparent;
-      margin: 0 auto 0 4px;
-      font-size: 0.75rem;
-    }
-    .pivot-icon-box.down { background: #450a0a; border-color: #ef4444; color: #ef4444; }
-    .pivot-icon-box.up { background: #052e16; border-color: #22c55e; color: #22c55e; }
-    .pivot-icon-box.equal { background: #1e293b; border-color: #94a3b8; color: #ffffff; }
+    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; font-weight: bold; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
+    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; font-weight: bold; animation: blink-animation 1s infinite; margin-left: 4px; margin-right: auto; }
 
-    .signal-badge-container { margin: 8px 0 4px 0; }
-    .badge-bar { display: block; width: 100%; height: 12px; border-radius: 4px; }
-    .bg-signal-strong-buy { background: #22c55e; }
-    .bg-signal-buy { background: #15803d; }
-    .bg-signal-neutral { background: #475569; }
-    .bg-signal-sell { background: #b91c1c; }
-    .bg-signal-strong-sell { background: #ef4444; }
+    /* Badge Sinyal Utama */
+    .signal-badge-container { margin: 8px 0 4px 0; text-align: center; }
+    .badge { display: block; width: 100%; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; text-align: center; letter-spacing: 0.5px; }
+    .strong-buy { background: #047857; color: #34d399; border: 1px solid #10b981; }
+    .buy { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
+    .neutral { background: #334155; color: #cbd5e1; border: 1px solid #475569; }
+    .sell { background: #991b1b; color: #fca5a5; border: 1px solid #ef4444; }
+    .strong-sell { background: #881337; color: #fda4af; border: 1px solid #f43f5e; }
 
-    .fibo-stat-box { margin-top: 4px; padding: 4px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; text-align: center; }
+    .fibo-stat-box { margin-top: 4px; padding: 4px 6px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.68rem; text-align: center; font-weight: bold; }
     .fibo-oversold { color: #22c55e; border-color: #22c55e; }
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
@@ -291,70 +210,53 @@
     .trading-plan-box { margin-top: 8px; padding: 8px 10px; background: #0f172a; border-radius: 8px; border: 1px dashed #475569; font-size: 0.72rem; }
     .plan-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
     .plan-row:last-child { margin-bottom: 0; }
-    .plan-label { color: #94a3b8; }
+    .plan-label { display: flex; align-items: center; color: #94a3b8; font-weight: 500; }
+    .plan-value { font-weight: bold; }
     .val-wait { color: #f59e0b; }
     .val-active { color: #f8fafc; }
-
-    /* Kolom Ringkasan Berita */
-    .news-summary-box {
-      margin-top: 8px;
-      padding: 8px;
-      background: #161c24;
-      border: 1px solid #0284c7;
-      border-radius: 6px;
-      font-size: 0.7rem;
-      text-transform: none;
-      font-weight: normal;
-    }
-    .news-header { color: #38bdf8; font-weight: bold; font-size: 0.72rem; text-transform: uppercase; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .news-content { color: #cbd5e1; line-height: 1.3; }
   </style>
 </head>
 <body>
 
-  <!-- Sticky Header & Navigasi Menu -->
-  <div class="sticky-top-section">
-    <header>
-      <div class="header-container">
-        <div class="header-left">
-          <img src="laundry1-512x512.png" alt="Logo" class="app-logo">
-          <div class="header-text">
-            <h1>IHSG SH4NDY's SCREENER</h1>
-            <p class="update-time" id="updateTime">Memuat data...</p>
-          </div>
-        </div>
-        <div class="timeframe-container">
-          <button class="tf-btn active" onclick="setTimeframe('HARIAN', this)">HARIAN</button>
-          <button class="tf-btn" onclick="setTimeframe('MINGGUAN', this)">MINGGUAN</button>
-          <button class="tf-btn" onclick="setTimeframe('BULANAN', this)">BULANAN</button>
+  <header>
+    <div class="header-container">
+      <div class="header-left">
+        <img src="./icon-192x192.png" alt="Logo" class="app-logo">
+        <div class="header-text">
+          <h1>IHSG SH4NDY's SCREENER</h1>
+          <p class="update-time" id="updateTime">Memuat data...</p>
         </div>
       </div>
-    </header>
-
-    <div class="control-box">
-      <div class="control-header">
-        <span style="font-size: 0.8rem; color: #94a3b8;">MENU PILIH EMITEN</span>
-        <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ SEMBUNYIKAN MENU</button>
-      </div>
-      <div class="form-row" id="dropdownRow">
-        <input type="text" id="searchInput" placeholder="🔍 CARI KODE EMITEN (CTH: BBCA)..." oninput="searchStock(this.value)">
-        <select id="selectTickerOption" onchange="autoAddStock(this)">
-          <option value="">-- PILIH EMITEN LANGSUNG TAMPIL --</option>
-        </select>
-      </div>
+      <!-- Tombol Refresh Halaman/Global di Header -->
+      <button class="btn-refresh-all" onclick="refreshAllData(this)">
+        <span class="refresh-icon">🔄</span> Refresh All
+      </button>
     </div>
+  </header>
 
-    <div class="group-tabs" id="groupTabs">
-      <div class="tab active" onclick="filterGroup('ALL', this)">SEMUA</div>
-      <div class="tab" onclick="filterGroup('Perbankan', this)">PERBANKAN</div>
-      <div class="tab" onclick="filterGroup('Energi', this)">ENERGI</div>
-      <div class="tab" onclick="filterGroup('Tambang', this)">TAMBANG</div>
-      <div class="tab" onclick="filterGroup('Teknologi', this)">TEKNOLOGI</div>
-      <div class="tab" onclick="filterGroup('Media', this)">MEDIA</div>
-      <div class="tab" onclick="filterGroup('Konsumer', this)">KONSUMER</div>
-      <div class="tab" onclick="filterGroup('Properti', this)">PROPERTI</div>
-      <div class="tab" onclick="filterGroup('Industri', this)">INDUSTRI</div>
+  <div class="control-box">
+    <div class="control-header">
+      <span style="font-size: 0.85rem; color: #94a3b8;">Menu Pilih Emiten</span>
+      <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ Sembunyikan Menu</button>
     </div>
+    <div class="form-row" id="dropdownRow">
+      <input type="text" id="searchInput" placeholder="🔍 Cari Kode Emiten (Cth: BBCA)..." onkeyup="handleSearchKey(event)">
+      <select id="selectTickerOption" onchange="autoAddStock(this)">
+        <option value="">-- Pilih Emiten Langsung Tampil --</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="group-tabs" id="groupTabs">
+    <div class="tab active" onclick="filterGroup('ALL', this)">Semua</div>
+    <div class="tab" onclick="filterGroup('Perbankan', this)">Perbankan</div>
+    <div class="tab" onclick="filterGroup('Energi', this)">Energi</div>
+    <div class="tab" onclick="filterGroup('Tambang', this)">Tambang</div>
+    <div class="tab" onclick="filterGroup('Teknologi', this)">Teknologi</div>
+    <div class="tab" onclick="filterGroup('Media', this)">Media</div>
+    <div class="tab" onclick="filterGroup('Konsumer', this)">Konsumer</div>
+    <div class="tab" onclick="filterGroup('Properti', this)">Properti</div>
+    <div class="tab" onclick="filterGroup('Industri', this)">Industri</div>
   </div>
 
   <div class="card-grid" id="stockGrid"></div>
@@ -364,8 +266,6 @@
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
     let activeFilter = 'ALL';
-    let currentTimeframe = 'HARIAN';
-    let selectedNewsTicker = 'BBCA';
     let draggedTicker = null;
 
     function formatWIB(timeStr) {
@@ -400,15 +300,53 @@
       }
     }
 
+    /* Fitur Refresh Seluruh Halaman / Global */
+    async function refreshAllData(btnEl) {
+      const icon = btnEl.querySelector('.refresh-icon');
+      if (icon) icon.classList.add('spinning');
+      await loadData();
+      setTimeout(() => {
+        if (icon) icon.classList.remove('spinning');
+      }, 500);
+    }
+
+    /* Fitur Refresh Per Kartu Emiten */
+    async function refreshSingleCard(ticker, btnEl) {
+      btnEl.classList.add('spinning');
+      try {
+        const res = await fetch('./data.json?v=' + Date.now(), { cache: 'no-store' });
+        const data = await res.json();
+        
+        document.getElementById('updateTime').innerText = "Diperbarui: " + formatWIB(data.updated_at);
+        rawData = data.stocks || [];
+
+        // Dapatkan data spesifik emiten & buat kartu baru
+        const targetStock = rawData.find(s => s.ticker === ticker);
+        if (targetStock) {
+          const oldCard = document.querySelector(`.card[data-ticker="${ticker}"]`);
+          if (oldCard) {
+            const isIHSG = (ticker === 'IHSG');
+            const newCard = createCardElement(targetStock, isIHSG);
+            oldCard.replaceWith(newCard);
+            highlightStockCard(ticker); // Memberikan animasi kedip konfirmasi
+          }
+        }
+      } catch (e) {
+        alert(`Gagal memperbarui data ${ticker}`);
+      } finally {
+        btnEl.classList.remove('spinning');
+      }
+    }
+
     function initMenuState() {
       const row = document.getElementById('dropdownRow');
       const btn = document.getElementById('toggleBtn');
       if (isMenuVisible) {
         row.classList.remove('hidden');
-        btn.innerText = "👁️ SEMBUNYIKAN MENU";
+        btn.innerText = "👁️ Sembunyikan Menu";
       } else {
         row.classList.add('hidden');
-        btn.innerText = "👁️ TAMPILKAN MENU";
+        btn.innerText = "👁️ Tampilkan Menu";
       }
     }
 
@@ -418,23 +356,16 @@
       initMenuState();
     }
 
-    function setTimeframe(tf, el) {
-      currentTimeframe = tf;
-      document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
-      el.classList.add('active');
-      render();
-    }
-
     function populateDropdownOptions() {
       const selectEl = document.getElementById('selectTickerOption');
-      selectEl.innerHTML = '<option value="">-- PILIH EMITEN LANGSUNG TAMPIL --</option>';
+      selectEl.innerHTML = '<option value="">-- Pilih Emiten Langsung Tampil --</option>';
       
       let sortedStocks = [...rawData].filter(s => s.ticker !== 'IHSG').sort((a, b) => a.ticker.localeCompare(b.ticker));
 
       sortedStocks.forEach(stock => {
         const option = document.createElement('option');
         option.value = stock.ticker;
-        option.textContent = `${stock.ticker} (${stock.category || 'LAINNYA'})`;
+        option.textContent = `${stock.ticker} (${stock.category || 'Lainnya'})`;
         selectEl.appendChild(option);
       });
     }
@@ -446,37 +377,47 @@
       if (!stockOrder.includes(ticker)) {
         stockOrder.push(ticker);
         saveState();
+        render();
       }
-      selectStockForNews(ticker);
+      highlightStockCard(ticker);
       selectEl.value = '';
+    }
+
+    /* Fitur Pencarian Emiten dengan Scroll & Efek Kedip Highlight */
+    function handleSearchKey(event) {
+      searchStock(event.target.value);
     }
 
     function searchStock(query) {
       const cleanQuery = query.trim().toUpperCase();
       if (!cleanQuery) return;
 
+      // Cek apakah kartu sudah dirender di halaman
       const targetCard = document.querySelector(`.card[data-ticker="${cleanQuery}"]`);
       if (targetCard) {
-        selectStockForNews(cleanQuery);
+        highlightStockCard(cleanQuery);
       } else {
+        // Jika belum tampil tapi ada di data, tambahkan otomatis ke antrean
         const foundData = rawData.find(s => s.ticker === cleanQuery);
         if (foundData) {
           if (!stockOrder.includes(cleanQuery)) {
             stockOrder.push(cleanQuery);
             saveState();
+            render();
           }
-          selectStockForNews(cleanQuery);
+          highlightStockCard(cleanQuery);
         }
       }
     }
 
-    function selectStockForNews(ticker) {
-      selectedNewsTicker = ticker;
-      render();
+    function highlightStockCard(ticker) {
       setTimeout(() => {
         const cardEl = document.querySelector(`.card[data-ticker="${ticker}"]`);
         if (cardEl) {
           cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          cardEl.classList.remove('highlight-card');
+          void cardEl.offsetWidth; // Reflow reset animasi
+          cardEl.classList.add('highlight-card');
         }
       }, 100);
     }
@@ -489,38 +430,15 @@
       return '⚡';
     }
 
-    function getTimeframeData(stock, tf) {
-      if (!stock.timeframes || !stock.timeframes[tf]) {
-        return {
-          open: stock.open ?? stock.price,
-          high: stock.high ?? stock.price,
-          low: stock.low ?? stock.price,
-          prev_close: stock.prev_close ?? stock.price,
-          rsi_status: stock.rsi_status || 'NEUTRAL',
-          macd_status: stock.macd_status || 'NEUTRAL',
-          vol_status: stock.vol_status || 'NEUTRAL',
-          ema_status: stock.ema_status || 'NEUTRAL',
-          trend_status: stock.trend_status || 'SIDEWAYS',
-          vol_ratio: stock.vol_ratio || 1.0,
-          resistance_1: stock.resistance_1 || Math.round(stock.price * 1.02),
-          support_1: stock.support_1 || Math.round(stock.price * 0.98),
-          pivot: stock.pivot || Math.round(( (stock.high ?? stock.price) + (stock.low ?? stock.price) + stock.price ) / 3)
-        };
-      }
-      return stock.timeframes[tf];
-    }
-
     function createCardElement(stock, isIHSG = false) {
-      const group = isIHSG ? 'INDEKS UTAMA' : (stock.category || 'LAINNYA');
-      const tfData = isIHSG ? stock : getTimeframeData(stock, currentTimeframe);
+      const group = isIHSG ? 'Indeks Utama' : (stock.category || 'Lainnya');
 
-      const openPrice = tfData.open ?? stock.price;
+      const openPrice = stock.open ?? stock.price;
       const closePrice = stock.price ?? 0;
-      const prevClose = tfData.prev_close ?? openPrice;
-      const highPrice = tfData.high ?? closePrice;
-      const lowPrice = tfData.low ?? closePrice;
+      const prevClose = stock.prev_close ?? openPrice;
+      const highPrice = stock.high ?? closePrice;
+      const lowPrice = stock.low ?? closePrice;
 
-      // Hitung % Selisih
       let openPercentVal = 0;
       if (openPrice > 0) {
         openPercentVal = ((closePrice - openPrice) / openPrice) * 100;
@@ -528,303 +446,249 @@
       const openPercentSign = openPercentVal > 0 ? '+' : '';
       const openPercentStr = `${openPercentSign}${openPercentVal.toFixed(2)}%`;
       
-      let percentClass = 'percent-white';
-      if (openPercentVal > 0) percentClass = 'percent-green';
-      else if (openPercentVal < 0) percentClass = 'percent-red';
+      let openPercentColorClass = 'price-flat';
+      if (openPercentVal > 0) openPercentColorClass = 'price-up';
+      else if (openPercentVal < 0) openPercentColorClass = 'price-down';
 
-      // Evaluasi Indikator Sesuai Timeframe
+      let priceColorClass = 'price-flat';
+      if (closePrice > prevClose) priceColorClass = 'price-up';
+      else if (closePrice < prevClose) priceColorClass = 'price-down';
+
       let score = 0;
-      let totalMaxScore = 5;
 
-      let rsiStatus = tfData.rsi_status || 'NEUTRAL';
-      if (rsiStatus === 'BUY') score += 1; else if (rsiStatus === 'SELL') score -= 1;
+      let rsiStatus = stock.rsi_status || 'NEUTRAL';
+      let rsiDot = 'dot-neutral';
+      if (rsiStatus === 'BUY') { score += 1; rsiDot = 'dot-buy'; }
+      else if (rsiStatus === 'SELL') { score -= 1; rsiDot = 'dot-sell'; }
 
-      let macdStatus = tfData.macd_status || 'NEUTRAL';
-      if (macdStatus === 'BUY') score += 1; else if (macdStatus === 'SELL') score -= 1;
+      let macdStatus = stock.macd_status || 'NEUTRAL';
+      let macdDot = 'dot-neutral';
+      if (macdStatus === 'BUY') { score += 1; macdDot = 'dot-buy'; }
+      else if (macdStatus === 'SELL') { score -= 1; macdDot = 'dot-sell'; }
 
-      let volStatus = tfData.vol_status || 'NEUTRAL';
-      if (volStatus === 'BUY') score += 1; else if (volStatus === 'SELL') score -= 1;
+      let volStatus = stock.vol_status || 'NEUTRAL';
+      let volDot = 'dot-neutral';
+      if (volStatus === 'BUY') { score += 1; volDot = 'dot-buy'; }
+      else if (volStatus === 'SELL') { score -= 1; volDot = 'dot-sell'; }
 
-      let emaStatus = tfData.ema_status || (closePrice >= (tfData.ma20 || closePrice) ? 'BUY' : 'SELL');
-      if (emaStatus === 'BUY') score += 1; else if (emaStatus === 'SELL') score -= 1;
-
-      let rawTrend = (tfData.trend_status || '').toUpperCase();
-      let trendStatus = 'SIDEWAYS';
-      if (rawTrend.includes('BULL') || rawTrend === 'BUY') { score += 1; trendStatus = 'BULLISH'; }
-      else if (rawTrend.includes('BEAR') || rawTrend === 'SELL') { score -= 1; trendStatus = 'BEARISH'; }
-
-      // Hitung Persentase Kekuatan Sinyal
-      let absScore = Math.abs(score);
-      let calcPercent = Math.min(100, Math.max(10, Math.round((absScore / totalMaxScore) * 100)));
-      if (absScore === 0) calcPercent = 50;
-
-      // Status Sinyal Teks
-      let signalTagText = 'NETRAL';
-      let signalTagClass = 'tag-netral';
-      let isStrongBuy = false;
-
-      if (score >= 4) { signalTagText = 'STRONG BUY'; signalTagClass = 'tag-strong-buy'; isStrongBuy = true; }
-      else if (score >= 1) { signalTagText = 'BUY'; signalTagClass = 'tag-buy'; }
-      else if (score <= -4) { signalTagText = 'STRONG SELL'; signalTagClass = 'tag-strong-sell'; }
-      else if (score <= -1) { signalTagText = 'SELL'; signalTagClass = 'tag-sell'; }
-
-      // Gaya Kolom Emiten
-      let rowColorClass = '';
-      if (score >= 4) rowColorClass = 'bg-bullish blink-mode';
-      else if (score >= 1) rowColorClass = 'bg-bullish';
-      else if (score <= -4) rowColorClass = 'bg-bearish blink-mode';
-      else if (score <= -1) rowColorClass = 'bg-bearish';
-
-      // 10 Kotak Daya Beli/Jual
-      let boxesHtml = '';
-      let boxCount = Math.round(calcPercent / 10);
-      let activeBoxClass = score >= 0 ? 'active-green' : 'active-red';
-
-      for (let i = 1; i <= 10; i++) {
-        if (i <= boxCount) {
-          boxesHtml += `<div class="box-step ${activeBoxClass}"></div>`;
-        } else {
-          boxesHtml += `<div class="box-step"></div>`;
-        }
-      }
-
-      // Petir Berkedip Jika Strong Buy
-      const vRatio = parseFloat(tfData.vol_ratio) || 1.0;
-      let lightningClass = 'lightning-white';
-      if (vRatio >= 1.2 || volStatus === 'BUY') lightningClass = 'lightning-green';
-      else if (vRatio <= 0.8 || volStatus === 'SELL') lightningClass = 'lightning-red';
-
-      const lightningBlinkClass = isStrongBuy ? 'blink-mode' : '';
-      const lightningHtml = `<span class="lightning-box ${lightningClass} ${lightningBlinkClass}">${getLightningIcons(vRatio)}</span>`;
-
-      // Indikator Volume Berkedip jika Volume Besar
-      const isHighVol = vRatio >= 1.2 || volStatus === 'BUY' || volStatus === 'SELL';
-      const volBlinkClass = isHighVol ? 'blink-mode' : '';
-      const volColorClass = vRatio >= 1.2 || volStatus === 'BUY' ? 'ind-val-green' : vRatio <= 0.8 || volStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white';
-
-      // Warning Box Di Atas Kolom Emiten
-      let warningHtml = '';
-      const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || trendStatus === 'BEARISH';
-      const isReversalUp = (closePrice > openPrice && trendStatus === 'BEARISH') || trendStatus === 'BULLISH';
-
-      if (!isIHSG) {
-        if (trendStatus === 'BEARISH' || isReversalDown) {
-          warningHtml = '<div class="warning-box-top"><div class="warning-text percent-red blink-mode">⚠️ WARNING! TREND TURUN!</div></div>';
-        } else if (trendStatus === 'BULLISH' || isReversalUp) {
-          warningHtml = '<div class="warning-box-top green-border"><div class="warning-text percent-green blink-mode">⚠️ WARNING! TREND NAIK!</div></div>';
-        }
-      }
-
-      // Support & Resistance & Breakout Status
-      const r1 = tfData.resistance_1 || Math.round(closePrice * 1.02);
-      const r2 = tfData.resistance_2 || Math.round(r1 * 1.02);
-      const r3 = tfData.resistance_3 || Math.round(r2 * 1.02);
-      const s1 = tfData.support_1 || Math.round(closePrice * 0.98);
-      const s2 = tfData.support_2 || Math.round(s1 * 0.98);
-      const s3 = tfData.support_3 || Math.round(s2 * 0.98);
-
-      // Hitung atau Ambil Pivot Point secara Presisi
-      const calculatedPivot = Math.round((highPrice + lowPrice + closePrice) / 3);
-      const pivotPoint = tfData.pivot || calculatedPivot;
-
-      // Deteksi Breakout
-      let breakoutHtml = '';
-      if (!isIHSG) {
-        if (closePrice > r1) {
-          breakoutHtml = '<div class="breakout-box breakout-up blink-mode">🚀 BREAKOUT! UP</div>';
-        } else if (closePrice < s1) {
-          breakoutHtml = '<div class="breakout-box breakout-down blink-mode">⚠️ BREAKOUT! DOWN</div>';
-        }
-      }
-
-      // Evaluasi Ikon Panah & Warna Pivot Point
-      let pivotPriceClass = 'pivot-price-yellow';
-      let pivotIconHtml = '<span class="pivot-icon-box equal blink-mode">■</span>';
-
-      if (closePrice > pivotPoint) {
-        pivotPriceClass = 'pivot-price-green';
-        pivotIconHtml = '<span class="pivot-icon-box up blink-mode">▲</span>';
-      } else if (closePrice < pivotPoint) {
-        pivotPriceClass = 'pivot-price-blue';
-        pivotIconHtml = '<span class="pivot-icon-box down blink-mode">▼</span>';
-      } else {
-        // Jika closePrice persis sama dengan pivotPoint, bandingkan dengan penutupan sebelumnya (prevClose)
-        if (closePrice >= prevClose) {
-          pivotPriceClass = 'pivot-price-green';
-          pivotIconHtml = '<span class="pivot-icon-box up blink-mode">▲</span>';
-        } else {
-          pivotPriceClass = 'pivot-price-blue';
-          pivotIconHtml = '<span class="pivot-icon-box down blink-mode">▼</span>';
-        }
-      }
-
-      // Sinyal Warna Bar Utama
-      let signalBadgeBg = 'bg-signal-neutral';
-      if (score >= 4) signalBadgeBg = 'bg-signal-strong-buy';
-      else if (score >= 1) signalBadgeBg = 'bg-signal-buy';
-      else if (score <= -4) signalBadgeBg = 'bg-signal-strong-sell';
-      else if (score <= -1) signalBadgeBg = 'bg-signal-sell';
-
-      const isReadyToBuy = score >= 1;
-      const entryVal = isReadyToBuy ? `RP ${formatNum(stock.entry_price || closePrice)}` : 'WAIT';
-      const tpVal = isReadyToBuy ? `RP ${formatNum(stock.take_profit || r1)}` : 'WAIT';
-      const clVal = isReadyToBuy ? `RP ${formatNum(stock.cut_loss || s1)}` : 'WAIT';
+      let emaStatus = stock.ema_status || (closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL');
+      let emaDot = 'dot-neutral';
+      if (emaStatus === 'BUY') { score += 1; emaDot = 'dot-buy'; }
+      else if (emaStatus === 'SELL') { score -= 1; emaDot = 'dot-sell'; }
 
       let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
+      if (fiboStatus === 'OVER SOLD') score += 1;
+      else if (fiboStatus === 'OVER BOUGHT') score -= 1;
+
+      let rawTrend = (stock.trend_status || '').toUpperCase();
+      let trendStatus = 'SIDEWAYS';
+      let trendDot = 'dot-sideways';
+      let trendTextHtml = 'SIDEWAYS';
+
+      if (rawTrend.includes('BULL') || rawTrend === 'BUY') {
+        score += 1; trendDot = 'dot-buy'; trendStatus = 'BULLISH'; trendTextHtml = '<span class="blink-green">BULLISH</span>';
+      } else if (rawTrend.includes('BEAR') || rawTrend === 'SELL') {
+        score -= 1; trendDot = 'dot-sell'; trendStatus = 'BEARISH'; trendTextHtml = '<span class="blink-red">BEARISH</span>';
+      } else {
+        if (closePrice > prevClose) {
+          trendDot = 'dot-buy'; trendStatus = 'BULLISH'; trendTextHtml = '<span class="blink-green">BULLISH</span>';
+        } else if (closePrice < prevClose) {
+          trendDot = 'dot-sell'; trendStatus = 'BEARISH'; trendTextHtml = '<span class="blink-red">BEARISH</span>';
+        } else {
+          trendDot = 'dot-sideways'; trendStatus = 'SIDEWAYS'; trendTextHtml = 'SIDEWAYS';
+        }
+      }
+
+      const vRatio = parseFloat(stock.vol_ratio) || 1.0;
+      let lightningClass = 'lightning-white';
+      if (vRatio >= 1.2 || volStatus === 'BUY') {
+        lightningClass = 'lightning-green';
+      } else if (vRatio <= 0.8 || volStatus === 'SELL') {
+        lightningClass = 'lightning-red';
+      }
+
+      let signalText = 'NETRAL';
+      let badgeClass = 'neutral';
+      let percentage = '50%';
+      let boxClasses = ['box-off', 'box-off', 'box-off', 'box-off'];
+
+      if (score >= 4) {
+        signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; percentage = '100%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
+      } else if (score >= 1) {
+        signalText = 'BUY'; badgeClass = 'buy'; percentage = '75%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-off'];
+      } else if (score <= -4) {
+        signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; percentage = '100%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell'];
+      } else if (score <= -1) {
+        signalText = 'SELL'; badgeClass = 'sell'; percentage = '75%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-off'];
+      } else {
+        signalText = 'NETRAL'; badgeClass = 'neutral'; percentage = '50%'; boxClasses = ['box-buy', 'box-buy', 'box-off', 'box-off'];
+      }
+
+      if (stock.signal) {
+        if (stock.signal === 'STRONG BUY' || stock.signal === 'SBR') {
+          signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; percentage = '100%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-buy'];
+        } else if (stock.signal === 'BUY' || stock.signal === 'Break R') {
+          signalText = 'BUY'; badgeClass = 'buy'; percentage = '75%'; boxClasses = ['box-buy', 'box-buy', 'box-buy', 'box-off'];
+        } else if (stock.signal === 'STRONG SELL' || stock.signal === 'SBS') {
+          signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; percentage = '100%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-sell'];
+        } else if (stock.signal === 'SELL' || stock.signal === 'Break S') {
+          signalText = 'SELL'; badgeClass = 'sell'; percentage = '75%'; boxClasses = ['box-sell', 'box-sell', 'box-sell', 'box-off'];
+        }
+      }
+
+      let warningHtml = '';
+      const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || trendStatus === 'BEARISH' || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
+      const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || trendStatus === 'BULLISH' || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
+
+      if (trendStatus === 'BEARISH' || isReversalDown) {
+        warningHtml = '<div class="warning-text blink-red">⚠️ WARNING! Trend TURUN!</div>';
+      } else if (trendStatus === 'BULLISH' || isReversalUp) {
+        warningHtml = '<div class="warning-text blink-green">⚠️ WARNING! Trend NAIK!</div>';
+      }
+
+      const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
+      const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
+
+      const entryVal = isReadyToBuy ? `Rp ${formatNum(stock.entry_price || closePrice)}` : 'Wait';
+      const tpVal = isReadyToBuy ? `Rp ${formatNum(stock.take_profit || stock.resistance || stock.resistance_1)}` : 'Wait';
+      const clVal = isReadyToBuy ? `Rp ${formatNum(stock.cut_loss || stock.support || stock.support_1)}` : 'Wait';
+
       let fiboBoxClass = 'fibo-normal';
       let fiboText = 'FIBO-RSI: NORMAL';
-      if (fiboStatus === 'OVER SOLD') { fiboBoxClass = 'fibo-oversold'; fiboText = 'OVER SOLD'; }
-      else if (fiboStatus === 'OVER BOUGHT') { fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT'; }
+      if (fiboStatus === 'OVER SOLD') {
+        fiboBoxClass = 'fibo-oversold'; fiboText = 'OVER SOLD';
+      } else if (fiboStatus === 'OVER BOUGHT') {
+        fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT';
+      }
 
-      // Status Kondisi IHSG
-      let ihsgStatusTagText = closePrice > prevClose ? 'NAIK' : closePrice < prevClose ? 'TURUN' : 'FLAT';
-      let ihsgStatusTagClass = closePrice > prevClose ? 'tag-buy' : closePrice < prevClose ? 'tag-sell' : 'tag-netral';
+      const r1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
+      const r2 = stock.resistance_2 || Math.round(r1 * 1.02);
+      const r3 = stock.resistance_3 || Math.round(r2 * 1.02);
+      const s1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
+      const s2 = stock.support_2 || Math.round(s1 * 0.98);
+      const s3 = stock.support_3 || Math.round(s2 * 0.98);
 
-      // Mengambil Berita Terkait Emiten yang Dikit/Dipilih
-      let newsStockObj = rawData.find(s => s.ticker === selectedNewsTicker) || stock;
-      let newsText = newsStockObj.news || `Belum ada berita baru untuk emiten ${selectedNewsTicker}. Perhatikan pergerakan harga dan indikator teknikal.`;
+      const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+
+      let pivotPriceClass = 'pivot-price-yellow';
+      let pivotArrowHtml = '';
+
+      if (closePrice < pivotPoint) {
+        pivotPriceClass = 'pivot-price-blue';
+        pivotArrowHtml = '<span class="pivot-arrow-down">▼▼</span>';
+      } else if (closePrice > pivotPoint) {
+        pivotPriceClass = 'pivot-price-green';
+        pivotArrowHtml = '<span class="pivot-arrow-up">▲▲</span>';
+      }
+
+      const r3Class = (highPrice >= r3 || closePrice >= r3) ? 'blink-red' : 'sr-res';
+      const r2Class = (highPrice >= r2 || closePrice >= r2) ? 'blink-red' : 'sr-res';
+      const r1Class = (highPrice >= r1 || closePrice >= r1) ? 'blink-red' : 'sr-res';
+      
+      const s1Class = (lowPrice <= s1 || closePrice <= s1) ? 'blink-green' : 'sr-sup';
+      const s2Class = (lowPrice <= s2 || closePrice <= s2) ? 'blink-green' : 'sr-sup';
+      const s3Class = (lowPrice <= s3 || closePrice <= s3) ? 'blink-green' : 'sr-sup';
+
+      const lightningHtml = `<span class="lightning-box ${lightningClass}">${getLightningIcons(stock.vol_ratio || 1.0)}</span>`;
 
       const card = document.createElement('div');
       card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
       card.dataset.ticker = stock.ticker;
-      card.onclick = () => { if (!isIHSG) selectStockForNews(stock.ticker); };
-      if (!isIHSG) card.draggable = true;
+      if (!isIHSG) {
+        card.draggable = true;
+      }
 
       card.innerHTML = `
+        <div class="card-top-logo">
+          <img src="laundry1-512x512.png" alt="Logo">
+        </div>
+
+        <div class="card-header">
+          <div class="ticker-box">
+            <span class="ticker">${stock.ticker} ${isIHSG ? '📌' : ''}</span>
+            ${lightningHtml}
+          </div>
+          <div class="card-actions">
+            <!-- Tombol Refresh Spesifik Kartu -->
+            <button class="action-btn refresh-card-btn" title="Refresh kartu ini" onclick="refreshSingleCard('${stock.ticker}', this)">🔄</button>
+            ${!isIHSG ? `<button class="action-btn close-btn" title="Hapus kartu" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
+          </div>
+        </div>
+
         <div class="sub-header">
           <span class="group-tag">${group}</span>
-          <div class="sub-header-right">
-            <span class="signal-status-tag ${isIHSG ? ihsgStatusTagClass : signalTagClass}">${isIHSG ? ihsgStatusTagText : signalTagText}</span>
-            ${!isIHSG ? `<button class="close-btn-box" onclick="event.stopPropagation(); removeStock('${stock.ticker}')">✕</button>` : ''}
-          </div>
-        </div>
-
-        <!-- Warning Box Di Atas Kolom Emiten -->
-        ${warningHtml}
-
-        <!-- Breakout Box jika Mengindikasikan Pola Breakout -->
-        ${breakoutHtml}
-
-        <!-- Kolom Nama Emiten Sisi Kanan Harga -->
-        <div class="ticker-price-row ${rowColorClass}">
-          <div class="ticker-title">
-            ${stock.ticker} ${isIHSG ? '📌' : ''} ${!isIHSG ? lightningHtml : ''}
-          </div>
-          <div class="price-display">RP ${formatNum(closePrice)}</div>
-        </div>
-
-        <!-- Persentase & Timeframe dalam Kolom-Kolom -->
-        <div class="percent-middle-row">
-          <span class="open-percent-badge ${percentClass}">${openPercentStr}</span>
-          <span class="timeframe-tag-box">TIMEFRAME: ${currentTimeframe}</span>
-        </div>
-
-        <!-- Penutupan Kemarin Kolom Hitam Doff -->
-        <div class="prev-close-container">
-          <span class="prev-label">PENUTUPAN KEMARIN</span>
-          <span class="prev-val">RP ${formatNum(prevClose)}</span>
-        </div>
-
-        <!-- Kolom-Kolom Hitam Doff Terpisah PREV, OPEN, HIGH, LOW -->
-        <div class="ohl-grid-container">
-          <div class="ohl-item-box">
-            <span class="ohl-item-label">PREV</span>
-            <span class="ohl-item-val">${formatNum(prevClose)}</span>
-          </div>
-          <div class="ohl-item-box">
-            <span class="ohl-item-label">OPEN</span>
-            <span class="ohl-item-val">${formatNum(openPrice)}</span>
-          </div>
-          <div class="ohl-item-box">
-            <span class="ohl-item-label">HIGH</span>
-            <span class="ohl-item-val">${formatNum(highPrice)}</span>
-          </div>
-          <div class="ohl-item-box">
-            <span class="ohl-item-label">LOW</span>
-            <span class="ohl-item-val">${formatNum(lowPrice)}</span>
-          </div>
-        </div>
-
-        ${isIHSG ? `
-          <!-- Kolom Kotak Persentase Khusus Kartu IHSG -->
-          <div class="doff-box">
-            <div class="multi-box-bar" style="margin-top:0; padding-top:0; border-top:none;">
-              <div class="boxes-grid">
-                ${boxesHtml}
-              </div>
-              <span class="bar-percent-text">${calcPercent}%</span>
+          <div class="signal-indicator-box">
+            <div class="box-container">
+              <div class="signal-box ${boxClasses[0]}"></div>
+              <div class="signal-box ${boxClasses[1]}"></div>
+              <div class="signal-box ${boxClasses[2]}"></div>
+              <div class="signal-box ${boxClasses[3]}"></div>
             </div>
+            <span class="signal-percent">${percentage}</span>
+          </div>
+        </div>
+
+        <div class="prev-close-row">
+          Penutupan Kemarin: <strong style="color:#cbd5e1;">Rp ${formatNum(prevClose)}</strong>
+        </div>
+
+        <div class="price-row">
+          <span class="open-percent ${openPercentColorClass}">${openPercentStr}</span>
+          <div class="price ${priceColorClass}">Rp ${formatNum(closePrice)}</div>
+        </div>
+        
+        <div class="ohl-stat">
+          <div class="ohl-row"><span>Prev: ${formatNum(prevClose)}</span> <span>O: ${formatNum(openPrice)}</span></div>
+          ${warningHtml}
+          <div class="ohl-row"><span>H: ${formatNum(highPrice)}</span> <span>L: ${formatNum(lowPrice)}</span></div>
+        </div>
+
+        <div class="stat">
+          RSI<span class="dot-indicator ${rsiDot}"></span>
+          MACD<span class="dot-indicator ${macdDot}"></span>
+          VOL<span class="dot-indicator ${volDot}"></span>
+          EMA<span class="dot-indicator ${emaDot}"></span>
+          TREND<span class="dot-indicator ${trendDot}"></span>
+        </div>
+        
+        <div class="stat">Vol: ${stock.vol_ratio || 1.0}x Rerata | Trend: ${trendTextHtml}</div>
+
+        <div class="sr-stat-box">
+          <div class="sr-row"><span>Resistan 3 (R3):</span> <span class="${r3Class}">Rp ${formatNum(r3)}</span></div>
+          <div class="sr-row"><span>Resistan 2 (R2):</span> <span class="${r2Class}">Rp ${formatNum(r2)}</span></div>
+          <div class="sr-row"><span>Resistan 1 (R1):</span> <span class="${r1Class}">Rp ${formatNum(r1)}</span></div>
+          
+          <div class="sr-row sr-pivot-separator">
+            <span class="pivot-label-yellow">Pivot Point (P):</span>
+            ${pivotArrowHtml}
+            <span class="${pivotPriceClass}">Rp ${formatNum(pivotPoint)}</span>
           </div>
 
-          <!-- Kolom Ringkasan Berita Penting Emiten Terkait (Di Bawah Kotak IHSG) -->
-          <div class="news-summary-box">
-            <div class="news-header">
-              <span>📰 BERITA EMITEN: ${selectedNewsTicker}</span>
-            </div>
-            <div class="news-content">${newsText}</div>
-          </div>
-        ` : ''}
+          <div class="sr-row"><span>Support 1 (S1):</span> <span class="${s1Class}">Rp ${formatNum(s1)}</span></div>
+          <div class="sr-row"><span>Support 2 (S2):</span> <span class="${s2Class}">Rp ${formatNum(s2)}</span></div>
+          <div class="sr-row"><span>Support 3 (S3):</span> <span class="${s3Class}">Rp ${formatNum(s3)}</span></div>
+        </div>
+
+        <div class="signal-badge-container">
+          <span class="badge ${badgeClass}">${signalText}</span>
+        </div>
+
+        <div class="fibo-stat-box ${fiboBoxClass}">
+          ${fiboText}
+        </div>
 
         ${!isIHSG ? `
-          <!-- Kolom Hitam Doff Indikator -->
-          <div class="doff-box">
-            <div class="ind-row"><span class="ind-name">RSI</span><span class="${rsiStatus === 'BUY' ? 'ind-val-green' : rsiStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white'}">${rsiStatus}</span></div>
-            <div class="ind-row"><span class="ind-name">MACD</span><span class="${macdStatus === 'BUY' ? 'ind-val-green' : macdStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white'}">${macdStatus}</span></div>
-            <div class="ind-row"><span class="ind-name">VOL</span><span class="${volStatus === 'BUY' ? 'ind-val-green' : volStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white'}">${volStatus}</span></div>
-            <div class="ind-row"><span class="ind-name">EMA</span><span class="${emaStatus === 'BUY' ? 'ind-val-green' : emaStatus === 'SELL' ? 'ind-val-red' : 'ind-val-white'}">${emaStatus}</span></div>
-            <div class="ind-row"><span class="ind-name">TREND</span><span class="${trendStatus === 'BULLISH' ? 'ind-val-green' : trendStatus === 'BEARISH' ? 'ind-val-red' : 'ind-val-white'}">${trendStatus}</span></div>
-            
-            <!-- Baris Kotak Menyala -->
-            <div class="multi-box-bar">
-              <div class="boxes-grid">
-                ${boxesHtml}
-              </div>
-              <span class="bar-percent-text">${calcPercent}%</span>
-            </div>
-          </div>
-
-          <!-- Volume Box Berkedip Jika Besar -->
-          <div class="doff-box" style="font-size:0.72rem; text-align:center;">
-            VOLUME: <span class="${volColorClass} ${volBlinkClass}">${vRatio}X RERATA</span>
-          </div>
-
-          <div class="sr-stat-box">
-            <div class="sr-row"><span>RESISTAN 3 (R3):</span> <span class="sr-res">RP ${formatNum(r3)}</span></div>
-            <div class="sr-row"><span>RESISTAN 2 (R2):</span> <span class="sr-res">RP ${formatNum(r2)}</span></div>
-            <div class="sr-row"><span>RESISTAN 1 (R1):</span> <span class="sr-res">RP ${formatNum(r1)}</span></div>
-            
-            <!-- Pivot Point: HANYA ikon panah (▲/▼) dan kotaknya yang berkedip -->
-            <div class="sr-row sr-pivot-separator">
-              <span class="pivot-label-yellow">PIVOT POINT (P):</span>
-              ${pivotIconHtml}
-              <span class="${pivotPriceClass}">RP ${formatNum(pivotPoint)}</span>
-            </div>
-
-            <div class="sr-row"><span>SUPPORT 1 (S1):</span> <span class="sr-sup">RP ${formatNum(s1)}</span></div>
-            <div class="sr-row"><span>SUPPORT 2 (S2):</span> <span class="sr-sup">RP ${formatNum(s2)}</span></div>
-            <div class="sr-row"><span>SUPPORT 3 (S3):</span> <span class="sr-sup">RP ${formatNum(s3)}</span></div>
-          </div>
-
-          <!-- Bar Sinyal Utama -->
-          <div class="signal-badge-container">
-            <div class="badge-bar ${signalBadgeBg}"></div>
-          </div>
-
-          <div class="fibo-stat-box ${fiboBoxClass}">
-            ${fiboText}
-          </div>
-
           <div class="trading-plan-box">
             <div class="plan-row">
-              <span class="plan-label">ENTRY:</span>
+              <span class="plan-label">${statusDotHtml} ENTRY:</span>
               <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${entryVal}</span>
             </div>
             <div class="plan-row">
-              <span class="plan-label">TAKE PROFIT:</span>
+              <span class="plan-label">${statusDotHtml} TAKE PROFIT:</span>
               <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${tpVal}</span>
             </div>
             <div class="plan-row">
-              <span class="plan-label">CUT LOSS:</span>
+              <span class="plan-label">${statusDotHtml} CUT LOSS:</span>
               <span class="plan-value ${isReadyToBuy ? 'val-active' : 'val-wait'}">${clVal}</span>
             </div>
           </div>
@@ -879,7 +743,7 @@
       grid.innerHTML = '';
 
       let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
-        ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0
+        ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NETRAL'
       };
       grid.appendChild(createCardElement(ihsgData, true));
 
@@ -903,7 +767,7 @@
       });
 
       displayList.forEach(stock => {
-        const group = stock.category || 'LAINNYA';
+        const group = stock.category || 'Lainnya';
         if (activeFilter !== 'ALL' && group !== activeFilter) return;
 
         grid.appendChild(createCardElement(stock, false));
