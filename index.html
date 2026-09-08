@@ -1,803 +1,431 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IHSG SCREENER - TRADING MONITOR</title>
-  
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0f172a">
-  <link rel="icon" type="image/png" sizes="192x192" href="./laundry1-512x512.png">
-  <link rel="apple-touch-icon" href="./laundry1-512x512.png">
-  
-  <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-      user-select: none; 
-      text-transform: uppercase; 
-      font-weight: bold; 
-    }
-
-    body { 
-      background-color: #0f172a; 
-      color: #f8fafc; 
-      padding: 12px; 
-      padding-top: 85px; 
-      padding-bottom: 40px; 
-    }
-    
-    header { 
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      background-color: #0f172a;
-      border-bottom: 1px solid #334155;
-      padding: 10px 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-
-    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .header-left { display: flex; align-items: center; gap: 8px; }
-    
-    .app-logo { 
-      width: 36px; 
-      height: 36px; 
-      border-radius: 50%; 
-      object-fit: cover; 
-      flex-shrink: 0; 
-      border: 2px solid #38bdf8; 
-    }
-
-    .header-text { display: flex; flex-direction: column; }
-    h1 { font-size: 0.95rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
-    .update-time { font-size: 0.6rem; color: #94a3b8; margin-top: 2px; }
-
-    .header-actions { display: flex; gap: 4px; align-items: center; }
-
-    .btn-header {
-      background: #0284c7;
-      color: #fff;
-      border: 1px solid #38bdf8;
-      padding: 6px 8px;
-      border-radius: 6px;
-      font-size: 0.65rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.2s;
-      flex-shrink: 0;
-    }
-    .btn-header:hover { background: #0369a1; }
-    .btn-reload-header { background: #334155; border-color: #475569; }
-    .btn-reload-header:hover { background: #475569; }
-
-    .control-box { 
-      position: sticky; 
-      top: 65px; 
-      z-index: 90; 
-      background: #1e293b; 
-      padding: 10px; 
-      border-radius: 10px; 
-      border: 1px solid #334155; 
-      margin-bottom: 10px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
-    }
-    .control-header { display: flex; justify-content: space-between; align-items: center; }
-    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; }
-    
-    /* Responsive Grid Layout */
-    .form-row { 
-      margin-top: 8px; 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
-      gap: 6px; 
-    }
-    .form-row.hidden { display: none; }
-    
-    select, input[type="text"], input[type="number"] { 
-      width: 100%; 
-      padding: 7px 8px; 
-      border-radius: 6px; 
-      border: 1px solid #475569; 
-      background: #0f172a; 
-      color: #fff; 
-      font-size: 0.7rem; 
-      outline: none;
-    }
-    select option { background: #0f172a; color: #fff; }
-    input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: #38bdf8; }
-
-    .group-tabs { 
-      position: sticky;
-      top: 120px;
-      z-index: 85;
-      background: #0f172a;
-      padding: 4px 0;
-      margin-bottom: 10px; 
-      display: flex; 
-      gap: 6px; 
-      overflow-x: auto; 
-      scrollbar-width: none; 
-      border-bottom: 1px solid #1e293b;
-    }
-    .group-tabs::-webkit-scrollbar { display: none; }
-    
-    .tab { padding: 6px 10px; background: #1e293b; border-radius: 14px; font-size: 0.7rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
-    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
-
-    .tab.tab-buy-worthy {
-      background: #064e3b;
-      color: #4ade80;
-      border-color: #22c55e;
-    }
-    .tab.tab-buy-worthy.active {
-      background: #166534;
-      color: #ffffff;
-      border-color: #4ade80;
-      box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
-    }
-
-    .market-info-tab {
-      padding: 5px 8px;
-      border-radius: 14px;
-      font-size: 0.65rem;
-      white-space: nowrap;
-      border: 1px solid #334155;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-    .info-tab-1 { background: #111827; border-color: #374151; }
-    .info-tab-2 { background: #312e81; border-color: #4338ca; color: #c7d2fe; }
-
-    .info-tab-3 { 
-      background: #121212 !important; 
-      border-color: #27272a !important; 
-    }
-
-    .status-text-open { color: #4ade80 !important; }
-    .status-text-break { color: #a1a1aa !important; }
-    .status-text-closed { color: #f4f4f5 !important; }
-    .status-clock-open { color: #4ade80 !important; font-weight: 800; }
-
-    .card-grid { 
-      display: grid; 
-      gap: 12px; 
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-    }
-    
-    .card { 
-      background: #1e293b; 
-      padding: 10px; 
-      border-radius: 10px; 
-      border: 1px solid #334155; 
-      position: relative; 
-      transition: transform 0.15s, opacity 0.15s; 
-      overflow: hidden;
-    }
-    .card-ihsg { border: 2px solid #0284c7; background: #0f172a; }
-
-    .compact-actions-top {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      display: flex;
-      align-items: center;
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      overflow: hidden;
-      z-index: 10;
-    }
-
-    .compact-btn {
-      width: 22px;
-      height: 22px;
-      border: none;
-      background: transparent;
-      color: #38bdf8;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-    }
-    .compact-btn:hover { background: #334155; }
-    .compact-btn.close-compact { color: #fca5a5; border-left: 1px solid #334155; }
-
-    .card-header-full {
-      background: #0f172a;
-      border: 1px solid #334155;
-      padding: 8px 10px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      width: 100%;
-    }
-
-    .ticker-price-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-right: 48px;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-
-    .ticker-large { 
-      font-size: 1.15rem; 
-      color: #fff; 
-      letter-spacing: 0.5px;
-    }
-
-    .price-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .price-large { 
-      font-size: 1.25rem; 
-      font-weight: 800;
-    }
-    
-    .price-up { color: #22c55e; }
-    .price-down { color: #ef4444; }
-    .price-flat { color: #ffffff; }
-
-    .open-percent-badge { 
-      font-size: 0.75rem; 
-      padding: 2px 5px; 
-      border-radius: 4px; 
-      background: #0f172a; 
-      border: 1px solid #334155; 
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      white-space: nowrap;
-      font-weight: 800;
-    }
-
-    .lightning-grid-container {
-      display: flex;
-      gap: 3px;
-      width: 100%;
-      height: 16px;
-      margin-top: 2px;
-    }
-
-    .lightning-box-slot {
-      flex: 1;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.65rem;
-      color: #475569;
-    }
-
-    .lightning-box-slot.active-green { background: #064e3b; border-color: #22c55e; color: #4ade80; }
-    .lightning-box-slot.active-red { background: #7f1d1d; border-color: #ef4444; color: #fca5a5; }
-    .lightning-box-slot.active-gray { background: #334155; border-color: #64748b; color: #cbd5e1; }
-
-    @keyframes lightning-blink-animation {
-      0% { opacity: 1; box-shadow: 0 0 4px #22c55e; }
-      50% { opacity: 0.2; box-shadow: none; }
-      100% { opacity: 1; box-shadow: 0 0 4px #22c55e; }
-    }
-    .lightning-box-slot.lightning-blink { animation: lightning-blink-animation 0.8s infinite; }
-
-    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .group-tag { font-size: 0.6rem; color: #38bdf8; background: #0c4a6e; padding: 2px 5px; border-radius: 4px; }
-    
-    .signal-indicator-box { display: flex; align-items: center; gap: 4px; }
-    .middle-signal-icon { font-size: 0.75rem; margin: 0 2px; }
-    
-    .ten-boxes-container { display: flex; gap: 2px; align-items: center; }
-    .box-ten {
-      width: 6px;
-      height: 8px;
-      border-radius: 1px;
-      background-color: #334155;
-      border: 1px solid #475569;
-    }
-    .box-ten.box-green-active { background-color: #22c55e; border-color: #4ade80; box-shadow: 0 0 2px #22c55e; }
-    .box-ten.box-red-active { background-color: #ef4444; border-color: #fca5a5; box-shadow: 0 0 2px #ef4444; }
-    .box-ten.box-gray-active { background-color: #64748b; border-color: #94a3b8; }
-
-    @keyframes box-blink-animation {
-      0% { opacity: 1; }
-      50% { opacity: 0.2; }
-      100% { opacity: 1; }
-    }
-    .box-blink { animation: box-blink-animation 0.8s infinite; }
-
-    .indicator-dots-row { display: flex; gap: 1.5px; align-items: center; }
-    .ind-dot { width: 4px; height: 4px; border-radius: 50%; background-color: #334155; }
-    .ind-dot.active-green { background-color: #22c55e; box-shadow: 0 0 2px #22c55e; }
-    .ind-dot.active-red { background-color: #ef4444; box-shadow: 0 0 2px #ef4444; }
-    .ind-dot.active-gray { background-color: #64748b; }
-
-    .signal-percent { font-size: 0.65rem; color: #cbd5e1; }
-
-    .indicator-column-box, .ohlc-grid-box {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 5px;
-      margin: 5px 0;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
-      font-size: 0.62rem;
-    }
-    
-    .indicator-item, .ohlc-item { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: #1e293b; 
-      padding: 4px 5px; 
-      border-radius: 4px; 
-      height: 24px;
-    }
-
-    .indicator-name { display: flex; align-items: center; gap: 2px; }
-    .ohlc-val { color: #fff; }
-
-    .warning-box-col {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 4px;
-      margin-bottom: 6px;
-      text-align: center;
-      font-size: 0.65rem;
-    }
-
-    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
-    .dot-red { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
-    .dot-green { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
-
-    @keyframes blink-animation { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-    .blink-red { color: #ef4444; animation: blink-animation 1s infinite; }
-    .blink-green { color: #22c55e; animation: blink-animation 1s infinite; }
-
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
-
-    .collapse-toggle-btn {
-      width: 100%;
-      background: #1e293b;
-      border: 1px solid #38bdf8;
-      color: #38bdf8;
-      padding: 6px;
-      border-radius: 6px;
-      font-size: 0.65rem;
-      cursor: pointer;
-      margin-top: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .collapsible-content { display: none; margin-top: 6px; }
-    .collapsible-content.show { display: block; }
-
-    /* Perbaikan responsif S/R Box agar tidak kepotong di HP */
-    .sr-stat-box { 
-      padding: 6px; 
-      border-radius: 6px; 
-      background: #0f172a; 
-      border: 1px solid #334155; 
-      font-size: 0.62rem; 
-      color: #cbd5e1; 
-      overflow-x: auto;
-    }
-    .sr-row { display: flex; justify-content: space-between; margin-bottom: 3px; align-items: center; gap: 4px; min-width: 220px; }
-    .sr-res { color: #f87171; }
-    .sr-sup { color: #4ade80; }
-
-    .sr-label-container {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
-
-    .arrow-blink-red { color: #ef4444; font-weight: 900; font-size: 0.75rem; margin-right: 2px; }
-    .arrow-blink-green-up { color: #22c55e; font-weight: 900; font-size: 0.75rem; margin-right: 2px; }
-
-    .sr-value-container { display: flex; align-items: center; justify-content: flex-end; white-space: nowrap; }
-
-    .sr-check-badge {
-      color: #22c55e;
-      font-weight: 800;
-      font-size: 0.6rem;
-      background: rgba(34, 197, 94, 0.15);
-      border: 1px solid rgba(34, 197, 94, 0.4);
-      padding: 1px 3px;
-      border-radius: 3px;
-    }
-
-    .sr-pivot-separator {
-      background-color: #0f172a;
-      border: 1px solid #ffffff;
-      padding: 3px 4px;
-      margin: 4px 0;
-      border-radius: 4px;
-    }
-    .pivot-label-yellow { color: #eab308; }
-    .pivot-price-blue { color: #38bdf8; }
-    .pivot-price-green { color: #4ade80; }
-    .pivot-price-yellow { color: #eab308; }
-
-    .pivot-dots-container { display: inline-flex; gap: 2px; align-items: center; }
-    .pivot-dot-small { width: 3px; height: 3px; border-radius: 50%; background-color: #334155; }
-    .pivot-dot-small.active-red { background-color: #ef4444; }
-    .pivot-dot-small.active-green { background-color: #22c55e; }
-    .pivot-dot-small.active-gray { background-color: #64748b; }
-
-    .signal-badge-container { margin: 6px 0 4px 0; text-align: center; }
-    .badge { display: block; width: 100%; padding: 4px; border-radius: 5px; font-size: 0.65rem; text-align: center; }
-    .strong-buy { background: #047857; color: #34d399; border: 1px solid #10b981; }
-    .buy { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
-    .neutral { background: #334155; color: #cbd5e1; border: 1px solid #475569; }
-    .sell { background: #991b1b; color: #fca5a5; border: 1px solid #ef4444; }
-    .strong-sell { background: #881337; color: #fda4af; border: 1px solid #f43f5e; }
-
-    .fibo-stat-box { margin-top: 4px; padding: 3px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.6rem; text-align: center; }
-    .fibo-oversold { color: #22c55e; border-color: #22c55e; }
-    .fibo-overbought { color: #ef4444; border-color: #ef4444; }
-    .fibo-normal { color: #64748b; }
-
-    .trading-plan-wrapper { margin-top: 6px; padding: 6px; background: #0f172a; border-radius: 6px; border: 1px dashed #475569; }
-    .trading-plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 4px; }
-    .plan-col { background: #1e293b; border: 1px solid #334155; border-radius: 4px; padding: 4px 2px; font-size: 0.58rem; text-align: center; display: flex; flex-direction: column; gap: 3px; }
-    .plan-col.active-style { border-color: #38bdf8; background: #0f2744; }
-    .plan-col-title { font-size: 0.6rem; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 2px; }
-    .plan-row-item { display: flex; flex-direction: column; align-items: center; background: #0f172a; padding: 2px; border-radius: 3px; }
-    .plan-item-label { color: #94a3b8; font-size: 0.5rem; }
-    .plan-item-val { color: #fff; font-size: 0.58rem; }
-    .val-tp { color: #4ade80; }
-    .val-cl { color: #f87171; }
-    .val-entry { color: #38bdf8; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Stock Screener - Advanced Analytics</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.95); }
+        }
+        .lightning-blink {
+            animation: pulse-fast 0.8s infinite ease-in-out;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
 
-  <header>
-    <div class="header-container">
-      <div class="header-left">
-        <img src="laundry1-512x512.png" alt="LOGO" class="app-logo">
-        <div class="header-text">
-          <h1>IHSG SCREENER</h1>
-          <p class="update-time" id="updateTime">MEMUAT DATA...</p>
-        </div>
-      </div>
-      <div class="header-actions">
-        <button class="btn-header" onclick="refreshAllData(this)">
-          <span class="refresh-icon">🔄</span> REFRESH
-        </button>
-        <button class="btn-header btn-reload-header" onclick="reloadPage()">
-          <span>⚡</span> RELOAD
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <div class="control-box">
-    <div class="control-header">
-      <span style="font-size: 0.7rem; color: #94a3b8;">MENU CARI & PILIH EMITEN</span>
-      <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ SEMBUNYIKAN MENU</button>
-    </div>
-    <div class="form-row" id="dropdownRow">
-      <input type="text" id="searchInput" placeholder="🔍 CARI EMITEN..." onkeyup="handleSearchKey(event)">
-      
-      <select id="selectTickerOption" onchange="autoAddStock(this)">
-        <option value="">-- PILIH EMITEN --</option>
-      </select>
-
-      <select id="selectTradingStyle" onchange="changeTradingStyle(this)">
-        <option value="SWING">📈 SWING (TF 1D)</option>
-        <option value="SCALPING">⚡ SCALPING (TF 15M)</option>
-        <option value="INVESTMENT">💎 INVESTASI (TF 1W)</option>
-      </select>
-
-      <input type="number" id="minTurnoverInput" placeholder="VALUE (IDR)" value="2000000000" onchange="updateMinTurnover(this)">
-    </div>
-  </div>
-
-  <div class="group-tabs" id="groupTabs">
-    <div class="tab" id="tab-ALL" onclick="filterGroup('ALL', this)">SEMUA</div>
-    <div class="tab tab-buy-worthy active" id="tab-LAYAK_BELI" onclick="filterGroup('LAYAK_BELI', this)">🔥 LAYAK BELI</div>
-    <div class="tab" id="tab-PERBANKAN" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
-    <div class="tab" id="tab-ENERGI" onclick="filterGroup('ENERGI', this)">ENERGI</div>
-    <div class="tab" id="tab-TAMBANG" onclick="filterGroup('TAMBANG', this)">TAMBANG</div>
-    <div class="tab" id="tab-TEKNOLOGI" onclick="filterGroup('TEKNOLOGI', this)">TEKNOLOGI</div>
-    <div class="tab" id="tab-MEDIA" onclick="filterGroup('MEDIA', this)">MEDIA</div>
-    <div class="tab" id="tab-KONSUMER" onclick="filterGroup('KONSUMER', this)">KONSUMER</div>
-    <div class="tab" id="tab-PROPERTI" onclick="filterGroup('PROPERTI', this)">PROPERTI</div>
-    <div class="tab" id="tab-INDUSTRI" onclick="filterGroup('INDUSTRI', this)">INDUSTRI</div>
-    <div class="tab" id="tab-KESEHATAN" onclick="filterGroup('KESEHATAN', this)">KESEHATAN</div>
-
-    <div class="market-info-tab info-tab-3" id="clockWibCol">🕒 <span id="clockWibText">00:00:00 WIB</span></div>
-    <div class="market-info-tab info-tab-1" id="marketSessionCol">🏛️ <span id="marketSessionText">SESI 1</span></div>
-    <div class="market-info-tab info-tab-2" id="holidayWarningCol">📅 <span id="holidayWarningText">BURSA BUKA</span></div>
-  </div>
-
-  <div class="card-grid" id="stockGrid"></div>
-
-  <script>
-    let rawData = [];
-    let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
-    let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
-    let selectedTradingStyle = localStorage.getItem('trading_style') || 'SWING';
-    let minTurnover = parseFloat(localStorage.getItem('min_turnover')) || 2000000000;
-    let activeFilter = 'LAYAK_BELI';
-
-    function formatWIB(timeStr) {
-      if (!timeStr) return "-";
-      try {
-        const date = new Date(timeStr);
-        if (isNaN(date.getTime())) return timeStr;
-        return date.toLocaleString('id-ID', {
-          timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-        }) + " WIB";
-      } catch (e) { return timeStr; }
-    }
-
-    function formatNum(val) {
-      if (val === undefined || val === null || isNaN(val)) return '0';
-      return Number(val).toLocaleString('id-ID');
-    }
-
-    function reloadPage() { window.location.reload(); }
-
-    async function fetchLatestData() {
-      const timestamp = new Date().getTime();
-      const res = await fetch(`./data.json?t=${timestamp}`, { cache: 'no-store' });
-      if (!res.ok) throw new Error("Gagal mengambil data");
-      return await res.json();
-    }
-
-    async function loadData() {
-      try {
-        const data = await fetchLatestData();
-        document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
-        rawData = data.stocks || [];
-
-        initMenuState();
-        initTradingStyleSelect();
-        initTurnoverInput();
-        populateDropdownOptions();
-        render();
-      } catch (e) {
-        document.getElementById('updateTime').innerText = "GAGAL MEMUAT DATA.JSON";
-      }
-    }
-
-    async function refreshAllData(btnEl) {
-      const icon = btnEl.querySelector('.refresh-icon');
-      if (icon) icon.classList.add('spinning');
-      await loadData();
-      setTimeout(() => { if (icon) icon.classList.remove('spinning'); }, 500);
-    }
-
-    function initMenuState() {
-      const row = document.getElementById('dropdownRow');
-      const btn = document.getElementById('toggleBtn');
-      if (isMenuVisible) { row.classList.remove('hidden'); btn.innerText = "👁️ SEMBUNYIKAN MENU"; }
-      else { row.classList.add('hidden'); btn.innerText = "👁️ TAMPILKAN MENU"; }
-    }
-
-    function initTradingStyleSelect() {
-      const selectStyle = document.getElementById('selectTradingStyle');
-      if (selectStyle) selectStyle.value = selectedTradingStyle;
-    }
-
-    function initTurnoverInput() {
-      const inputEl = document.getElementById('minTurnoverInput');
-      if (inputEl) inputEl.value = minTurnover;
-    }
-
-    function updateMinTurnover(inputEl) {
-      minTurnover = parseFloat(inputEl.value) || 2000000000;
-      localStorage.setItem('min_turnover', minTurnover);
-      render();
-    }
-
-    function changeTradingStyle(selectEl) {
-      selectedTradingStyle = selectEl.value;
-      localStorage.setItem('trading_style', selectedTradingStyle);
-      render();
-    }
-
-    function toggleDropdownMenu() {
-      isMenuVisible = !isMenuVisible;
-      localStorage.setItem('menu_visible', JSON.stringify(isMenuVisible));
-      initMenuState();
-    }
-
-    function toggleCardDetails(ticker) {
-      const contentEl = document.getElementById(`collapse-content-${ticker}`);
-      const btnEl = document.getElementById(`collapse-btn-${ticker}`);
-      if (!contentEl || !btnEl) return;
-
-      if (contentEl.classList.contains('show')) {
-        contentEl.classList.remove('show');
-        btnEl.innerHTML = `▼ TAMPILKAN PIVOT, S/R & STRATEGI PLAN`;
-      } else {
-        contentEl.classList.add('show');
-        btnEl.innerHTML = `▲ SEMBUNYIKAN PIVOT, S/R & STRATEGI PLAN`;
-      }
-    }
-
-    function populateDropdownOptions() {
-      const selectEl = document.getElementById('selectTickerOption');
-      selectEl.innerHTML = '<option value="">-- PILIH EMITEN --</option>';
-      
-      let sortedStocks = [...rawData].filter(s => s.ticker !== 'IHSG').sort((a, b) => a.ticker.localeCompare(b.ticker));
-
-      sortedStocks.forEach(stock => {
-        const option = document.createElement('option');
-        option.value = stock.ticker;
-        option.textContent = `${stock.ticker} (${stock.category || 'LAINNYA'})`;
-        selectEl.appendChild(option);
-      });
-    }
-
-    function autoAddStock(selectEl) {
-      const ticker = selectEl.value;
-      if (!ticker) return;
-      if (!stockOrder.includes(ticker)) {
-        stockOrder.push(ticker);
-        saveState();
-        render();
-      }
-      selectEl.value = '';
-    }
-
-    function handleSearchKey(event) {
-      const cleanQuery = event.target.value.trim().toUpperCase();
-      if (!cleanQuery) return;
-      if (rawData.find(s => s.ticker === cleanQuery) && !stockOrder.includes(cleanQuery)) {
-        stockOrder.push(cleanQuery);
-        saveState();
-        render();
-      }
-    }
-
-    function isBuyWorthyStock(stock) {
-      const turnover = stock.turnover || stock.value || 0;
-      const signal = (stock.signal || '').toUpperCase();
-      return (signal.includes('BUY') && turnover >= minTurnover);
-    }
-
-    function createCardElement(stock, isIHSG = false) {
-      const group = isIHSG ? 'INDEKS UTAMA' : (stock.category || 'LAINNYA');
-      const closePrice = stock.price ?? 0;
-      const prevClose = stock.prev_close ?? closePrice;
-      const openPrice = stock.open ?? closePrice;
-      
-      let openPercentVal = openPrice > 0 ? ((closePrice - openPrice) / openPrice) * 100 : 0;
-      const openPercentSign = openPercentVal > 0 ? '+' : '';
-      const openPercentStr = `${openPercentSign}${openPercentVal.toFixed(2)}%`;
-
-      let priceColorClass = closePrice > prevClose ? 'price-up' : (closePrice < prevClose ? 'price-down' : 'price-flat');
-
-      const card = document.createElement('div');
-      card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
-      card.dataset.ticker = stock.ticker;
-
-      card.innerHTML = `
-        <div class="compact-actions-top">
-          <button class="compact-btn" title="REFRESH DATA" onclick="loadData()">🔄</button>
-          ${!isIHSG ? `<button class="compact-btn close-compact" title="HAPUS" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
-        </div>
-
-        <div class="card-header-full">
-          <div class="ticker-price-row">
-            <span class="ticker-large">${stock.ticker}</span>
-            <div class="price-group">
-              <span class="price-large ${priceColorClass}">${formatNum(closePrice)}</span>
-              <span class="open-percent-badge ${priceColorClass}">${openPercentStr}</span>
+    <!-- HEADER / NAVBAR -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-white">PRO STOCK SCREENER</h1>
+                    <p class="text-xs text-slate-400">Algorithmic Market Analytics & Signals</p>
+                </div>
             </div>
-          </div>
-        </div>
 
-        <div class="sub-header">
-          <span class="group-tag">${group}</span>
-          <span class="signal-percent">RSI: ${stock.rsi || '-'}</span>
-        </div>
+            <!-- CONTROLS & FILTERS -->
+            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <!-- Timeframe Selection (DEFAULT: SWING / 1D) -->
+                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i data-lucide="clock" class="w-4 h-4 text-indigo-400"></i>
+                    <label for="tfSelect" class="text-xs font-medium text-slate-300">Strategy / TF:</label>
+                    <select id="tfSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
+                        <option value="scalping">SCALPING (15M)</option>
+                        <option value="swing" selected>SWING (1D)</option>
+                        <option value="investment">INVESTMENT (1W)</option>
+                    </select>
+                </div>
 
-        <div class="ohlc-grid-box">
-          <div class="ohlc-item"><span>HIGH</span><span class="ohlc-val">${formatNum(stock.high)}</span></div>
-          <div class="ohlc-item"><span>LOW</span><span class="ohlc-val">${formatNum(stock.low)}</span></div>
-        </div>
+                <!-- Min Turnover Filter -->
+                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                    <label for="turnoverSelect" class="text-xs font-medium text-slate-300">Min Turnover:</label>
+                    <select id="turnoverSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
+                        <option value="1">≥ 1 Miliar</option>
+                        <option value="5" selected>≥ 5 Miliar</option>
+                        <option value="10">≥ 10 Miliar</option>
+                        <option value="50">≥ 50 Miliar</option>
+                    </select>
+                </div>
 
-        <div class="signal-badge-container">
-          <span class="badge ${stock.signal?.includes('BUY') ? 'buy' : 'neutral'}">${stock.signal || 'NETRAL'}</span>
-        </div>
-
-        <button class="collapse-toggle-btn" id="collapse-btn-${stock.ticker}" onclick="toggleCardDetails('${stock.ticker}')">
-          ▼ TAMPILKAN PIVOT, S/R & STRATEGI PLAN
-        </button>
-
-        <div class="collapsible-content" id="collapse-content-${stock.ticker}">
-          <div class="sr-stat-box">
-            <div class="sr-row">
-              <div class="sr-label-container"><span>RESISTAN 1:</span></div>
-              <span class="sr-res">${formatNum(stock.resistance_1 || Math.round(closePrice * 1.02))}</span>
+                <!-- Refresh Data Button -->
+                <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-indigo-600/20 w-full sm:w-auto">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
+                    <span>Refresh</span>
+                </button>
             </div>
-            <div class="sr-row sr-pivot-separator">
-              <div class="sr-label-container"><span class="pivot-label-yellow">PIVOT:</span></div>
-              <span class="pivot-price-blue">${formatNum(stock.pivot || Math.round(closePrice))}</span>
-            </div>
-            <div class="sr-row">
-              <div class="sr-label-container"><span>SUPPORT 1:</span></div>
-              <span class="sr-sup">${formatNum(stock.support_1 || Math.round(closePrice * 0.98))}</span>
-            </div>
-          </div>
         </div>
-      `;
-      return card;
-    }
+    </header>
 
-    function render() {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      const activeTabEl = document.getElementById(`tab-${activeFilter}`);
-      if (activeTabEl) activeTabEl.classList.add('active');
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full flex flex-col gap-6">
 
-      const grid = document.getElementById('stockGrid');
-      grid.innerHTML = '';
+        <!-- STRATEGY INFO BANNER -->
+        <div id="strategyBanner" class="p-4 rounded-xl border bg-slate-900/60 backdrop-blur flex items-start gap-3 border-indigo-500/30">
+            <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 mt-0.5 shrink-0">
+                <i data-lucide="info" class="w-5 h-5"></i>
+            </div>
+            <div class="flex-1">
+                <h2 id="bannerTitle" class="font-semibold text-sm text-indigo-300">SWING TRADING STRATEGY (1D)</h2>
+                <p id="bannerDesc" class="text-xs text-slate-400 mt-0.5">
+                    Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.
+                </p>
+            </div>
+        </div>
 
-      let ihsgData = rawData.find(s => s.ticker === 'IHSG') || { ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0 };
-      grid.appendChild(createCardElement(ihsgData, true));
+        <!-- NAVIGATION TABS -->
+        <div class="border-b border-slate-800 flex space-x-4">
+            <button id="tabLayakBeli" onclick="switchTab('layakBeli')" class="pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2">
+                <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i>
+                <span>🔥 LAYAK BELI</span>
+                <span id="badgeLayakBeli" class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+            <button id="tabAll" onclick="switchTab('all')" class="pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
+                <i data-lucide="list" class="w-4 h-4"></i>
+                <span>SEMUA SAHAM</span>
+                <span id="badgeAll" class="bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+        </div>
 
-      let nonIhsgStocks = rawData.filter(s => s.ticker !== 'IHSG');
-      
-      if (stockOrder.length === 0) stockOrder = nonIhsgStocks.map(s => s.ticker);
+        <!-- DATA CONTAINER: CARD GRID FOR MOBILE / TABLE FOR DESKTOP -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+            
+            <!-- MOBILE CARD VIEW (< 768px) -->
+            <div id="stockCardGrid" class="block md:hidden p-3 space-y-3">
+                <!-- Dynamic Mobile Cards -->
+            </div>
 
-      stockOrder.forEach(ticker => {
-        let stock = nonIhsgStocks.find(s => s.ticker === ticker);
-        if (!stock) return;
+            <!-- DESKTOP TABLE VIEW (>= 768px) -->
+            <div class="hidden md:block overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-semibold">
+                        <tr>
+                            <th class="py-3.5 px-4">Emiten</th>
+                            <th class="py-3.5 px-3 text-right">Harga</th>
+                            <th class="py-3.5 px-3 text-right">Change (%)</th>
+                            <th class="py-3.5 px-3 text-right">Turnover</th>
+                            <th class="py-3.5 px-4 text-center">Indikator Skor / Signal</th>
+                            <th class="py-3.5 px-3 text-center">Volume & Bandar</th>
+                            <th class="py-3.5 px-4 text-center">Trading Plan (Entry / R1 / CL)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-300">
+                        <!-- Dynamic Desktop Rows -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- EMPTY STATE -->
+            <div id="emptyState" class="hidden py-12 text-center">
+                <i data-lucide="filter-x" class="w-12 h-12 text-slate-600 mx-auto mb-3"></i>
+                <p class="text-sm font-semibold text-slate-400">Tidak ada saham yang memenuhi kriteria filter saat ini.</p>
+                <p class="text-xs text-slate-500 mt-1">Coba turunkan ambang batas Min. Turnover atau ganti Timeframe Strategy.</p>
+            </div>
+        </div>
+    </main>
 
-        const group = (stock.category || 'LAINNYA').toUpperCase();
-        if (activeFilter === 'LAYAK_BELI' && !isBuyWorthyStock(stock)) return;
-        if (activeFilter !== 'ALL' && activeFilter !== 'LAYAK_BELI' && group !== activeFilter) return;
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-4 mt-auto text-center text-xs text-slate-500">
+        <p>© 2026 Pro Stock Screener. Analytics strictly for educational & decision support purpose.</p>
+    </footer>
 
-        grid.appendChild(createCardElement(stock, false));
-      });
-    }
+    <!-- JAVASCRIPT LOGIC & ENGINE -->
+    <script>
+        let rawStockData = [];
+        let activeTab = "layakBeli";
 
-    function removeStock(ticker) {
-      stockOrder = stockOrder.filter(t => t !== ticker);
-      saveState();
-      render();
-    }
+        // INITIALIZATION
+        document.addEventListener("DOMContentLoaded", () => {
+            loadData();
+        });
 
-    function filterGroup(group, el) {
-      activeFilter = group;
-      render();
-    }
+        // FETCH DATA FROM DATA.JSON & PROCESS
+        async function loadData() {
+            const refreshIcon = document.getElementById("refreshIcon");
+            if (refreshIcon) refreshIcon.classList.add("animate-spin");
 
-    function saveState() {
-      localStorage.setItem('stock_order', JSON.stringify(stockOrder));
-    }
+            try {
+                const response = await fetch(`./data.json?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error("Gagal mengambil berkas data.json");
+                
+                const data = await response.json();
+                rawStockData = data.stocks || data || [];
+                
+                processAndRender();
+            } catch (error) {
+                console.error("Error loading stock data:", error);
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove("animate-spin");
+            }
+        }
 
-    loadData();
-  </script>
+        function processAndRender() {
+            const timeframe = document.getElementById("tfSelect").value;
+            const minTurnover = parseFloat(document.getElementById("turnoverSelect").value);
+
+            updateBannerInfo(timeframe);
+
+            // Filter & Process Stocks
+            const processedStocks = rawStockData.map(stock => {
+                let evaluation;
+                if (timeframe === "swing") {
+                    evaluation = evaluateSwingIndicators(stock, minTurnover);
+                } else {
+                    const activeBoxes = stock.signal === "STRONG BUY" ? 10 : (stock.signal === "BUY" ? 7 : 3);
+                    evaluation = {
+                        score: activeBoxes * 10,
+                        activeBoxes: activeBoxes,
+                        label: stock.signal,
+                        isStrongBuy: stock.signal === "STRONG BUY"
+                    };
+                }
+                const isBuyWorthy = isBuyWorthyStock(stock, evaluation, minTurnover);
+
+                return { ...stock, eval: evaluation, isBuyWorthy: isBuyWorthy };
+            });
+
+            // Filter by Turnover Global
+            const validStocks = processedStocks.filter(s => s.turnover >= minTurnover);
+
+            // Filter by Tab
+            const displayStocks = activeTab === "layakBeli" 
+                ? validStocks.filter(s => s.isBuyWorthy)
+                : validStocks;
+
+            // Update Badges
+            const countLayakBeli = validStocks.filter(s => s.isBuyWorthy).length;
+            document.getElementById("badgeLayakBeli").innerText = countLayakBeli;
+            document.getElementById("badgeAll").innerText = validStocks.length;
+
+            renderViews(displayStocks);
+        }
+
+        // SWING INDICATORS EVALUATION ENGINE (TF 1D)
+        function evaluateSwingIndicators(stock, minTurnover) {
+            let score = 0;
+
+            if (stock.ema20 > stock.ema50 && stock.price >= stock.ema20) score += 20;
+            if (stock.rsi >= 50 && stock.rsi <= 70) score += 20;
+            if (stock.volRatio >= 2.5) score += 20;
+            if (stock.turnover >= minTurnover) score += 20;
+
+            const diffHigh = ((stock.high52 - stock.price) / stock.high52) * 100;
+            if (diffHigh <= 10) score += 20;
+
+            const activeBoxes = Math.round(score / 10);
+            let label = "NEUTRAL";
+            if (score >= 90) label = "🚀🚀🚀 STRONG BUY";
+            else if (score >= 60) label = "BUY";
+            else if (score <= 30) label = "SELL";
+
+            return {
+                score: score,
+                activeBoxes: activeBoxes,
+                label: label,
+                isStrongBuy: score >= 90
+            };
+        }
+
+        // LAYAK BELI EVALUATION
+        function isBuyWorthyStock(stock, evaluation, minTurnover) {
+            return stock.turnover >= minTurnover && evaluation.score >= 60 && evaluation.activeBoxes >= 6;
+        }
+
+        // RENDER VIEWS (BOTH DESKTOP TABLE & MOBILE CARDS)
+        function renderViews(stocks) {
+            const tbody = document.getElementById("stockTableBody");
+            const cardGrid = document.getElementById("stockCardGrid");
+            const emptyState = document.getElementById("emptyState");
+
+            tbody.innerHTML = "";
+            cardGrid.innerHTML = "";
+
+            if (stocks.length === 0) {
+                emptyState.classList.remove("hidden");
+                return;
+            } else {
+                emptyState.classList.add("hidden");
+            }
+
+            stocks.forEach(stock => {
+                const isPos = stock.change >= 0;
+                const changeClass = isPos ? "text-emerald-400" : "text-rose-400";
+                const changeSign = isPos ? "+" : "";
+
+                // 1. RENDER DESKTOP TABLE ROW
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors border-b border-slate-800/50";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-bold text-white">
+                        <div class="text-sm">${stock.ticker}</div>
+                        <div class="text-[10px] text-slate-400 font-normal truncate max-w-[140px]">${stock.name}</div>
+                    </td>
+                    <td class="py-3.5 px-3 text-right font-semibold text-slate-100">${stock.price.toLocaleString('id-ID')}</td>
+                    <td class="py-3.5 px-3 text-right font-bold ${changeClass}">${changeSign}${stock.change.toFixed(2)}%</td>
+                    <td class="py-3.5 px-3 text-right font-medium text-slate-300">Rp ${stock.turnover.toFixed(1)} M</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="flex flex-col items-center gap-1">
+                            ${renderBoxes(stock.eval.activeBoxes)}
+                            <span class="text-[10px] font-extrabold ${stock.eval.isStrongBuy ? 'text-emerald-400 animate-pulse' : 'text-slate-300'}">
+                                ${stock.eval.label}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-3 text-center">
+                        ${renderLightningBoxes(stock)}
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="text-[11px] font-medium text-slate-300">
+                            <span class="text-emerald-400">EP: ${stock.entry}</span> | 
+                            <span class="text-indigo-400">R1: ${stock.r1}</span> | 
+                            <span class="text-rose-400">CL: ${stock.cl1}</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                // 2. RENDER MOBILE CARD
+                const card = document.createElement("div");
+                card.className = "bg-slate-950 border border-slate-800/80 rounded-xl p-3.5 flex flex-col gap-3 shadow-md";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-800/60 pb-2">
+                        <div>
+                            <span class="text-base font-bold text-white tracking-wide">${stock.ticker}</span>
+                            <span class="text-[10px] text-slate-400 block font-normal truncate max-w-[180px]">${stock.name}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-extrabold text-slate-100">${stock.price.toLocaleString('id-ID')}</div>
+                            <div class="text-xs font-bold ${changeClass}">${changeSign}${stock.change.toFixed(2)}%</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/40 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block">Turnover</span>
+                            <span class="font-semibold text-slate-200">Rp ${stock.turnover.toFixed(1)} M</span>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] text-slate-400 block">Bandarmology</span>
+                            ${renderLightningBoxes(stock)}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/40 p-2 rounded-lg border border-slate-800/30">
+                        ${renderBoxes(stock.eval.activeBoxes)}
+                        <span class="text-[11px] font-extrabold ${stock.eval.isStrongBuy ? 'text-emerald-400 animate-pulse' : 'text-slate-300'}">
+                            ${stock.eval.label}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/40 font-semibold">
+                        <span class="text-emerald-400">EP: ${stock.entry}</span>
+                        <span class="text-indigo-400">R1: ${stock.r1}</span>
+                        <span class="text-rose-400">CL: ${stock.cl1}</span>
+                    </div>
+                `;
+                cardGrid.appendChild(card);
+            });
+
+            // Re-initialize Lucide Icons
+            lucide.createIcons();
+        }
+
+        // RENDER 10 BOXES INDICATOR
+        function renderBoxes(activeCount) {
+            let boxesHTML = '<div class="flex items-center gap-0.5 justify-center">';
+            for (let i = 1; i <= 10; i++) {
+                if (i <= activeCount) {
+                    boxesHTML += `<div class="w-2 h-3.5 bg-emerald-500 rounded-sm"></div>`;
+                } else {
+                    boxesHTML += `<div class="w-2 h-3.5 bg-slate-800 rounded-sm"></div>`;
+                }
+            }
+            boxesHTML += '</div>';
+            return boxesHTML;
+        }
+
+        // RENDER HYBRID LIGHTNING ICON
+        function renderLightningBoxes(stock) {
+            const isAkumulasi = stock.bandarmology === "AKUMULASI";
+            const isBlink = stock.isBuyWorthy;
+            
+            let colorClass = "text-slate-700";
+            if (isAkumulasi) {
+                colorClass = isBlink ? "text-emerald-400 lightning-blink" : "text-emerald-500";
+            } else if (stock.bandarmology === "DISTRIBUSI") {
+                colorClass = "text-rose-500";
+            }
+
+            return `
+                <div class="flex items-center gap-1">
+                    <i data-lucide="zap" class="w-4 h-4 ${colorClass} fill-current"></i>
+                    <span class="text-[10px] font-bold text-slate-300">${stock.bandarmology}</span>
+                </div>
+            `;
+        }
+
+        // TAB SWITCHING
+        function switchTab(tab) {
+            activeTab = tab;
+            const btnLayak = document.getElementById("tabLayakBeli");
+            const btnAll = document.getElementById("tabAll");
+
+            if (tab === "layakBeli") {
+                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
+                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
+            } else {
+                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
+                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
+            }
+            processAndRender();
+        }
+
+        // FILTER EVENT HANDLER
+        function handleFilterChange() {
+            processAndRender();
+        }
+
+        // STRATEGY BANNER UPDATER
+        function updateBannerInfo(tf) {
+            const title = document.getElementById("bannerTitle");
+            const desc = document.getElementById("bannerDesc");
+
+            if (tf === "swing") {
+                title.innerText = "SWING TRADING STRATEGY (1D)";
+                desc.innerText = "Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.";
+            } else if (tf === "scalping") {
+                title.innerText = "SCALPING FAST STRATEGY (15M)";
+                desc.innerText = "Fokus pada momentum intraday cepat. Mengutamakan lompatan Volume Ratio mendadak, break resistance terdekat, dan aliran arus kas cepat.";
+            } else if (tf === "investment") {
+                title.innerText = "LONG TERM INVESTMENT STRATEGY (1W)";
+                desc.innerText = "Fokus pada akumulasi jangka panjang (Weekly). Memfilter emiten dengan fundamental likuiditas tinggi dan tren akumulasi besar konsisten.";
+            }
+        }
+    </script>
 </body>
 </html>
