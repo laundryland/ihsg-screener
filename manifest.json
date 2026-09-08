@@ -1,39 +1,21 @@
 {
-  "name": "SHANDY™ Stock Screener",
-  "short_name": "SHANDY™",
-  "description": "Aplikasi Screener Saham IHSG dengan Indikator Technical, RSI, & Volume Bandarmology",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
-  "lang": "id",
-  "categories": ["finance", "utilities"],
+  "short_name": "SH4NDY",
+  "name": "IHSG SH4NDY Screener",
   "icons": [
     {
-      "src": "icon-192x192.png",
-      "sizes": "192x192",
+      "src": "laundry1-512x512.png",
       "type": "image/png",
-      "purpose": "any"
+      "sizes": "192x192"
     },
     {
-      "src": "icon-192x192.png",
-      "sizes": "192x192",
+      "src": "laundry1-512x512.png",
       "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "./",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait"
 }
