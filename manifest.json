@@ -1,6 +1,6 @@
 {
-  "name": "IHSG Stock Screener",
-  "short_name": "Screener",
+  "name": "SHANDY™ Stock Screener",
+  "short_name": "SHANDY™",
   "description": "Aplikasi Screener Saham IHSG dengan Indikator Technical, RSI, & Volume Bandarmology",
   "start_url": "./index.html",
   "scope": "./",
