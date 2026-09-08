@@ -31,24 +31,30 @@ def get_screener_data():
             ticker = yf.Ticker(symbol)
             
             # ==========================================
-            # 1. SCALPING (15m) -> Utama: EMA 9/21, RSI
+            # 1. SCALPING (15m) -> EMA 9/21, RSI 14, Stoch RSI
             # ==========================================
             df_scalp = ticker.history(period="5d", interval="15m")
             if not df_scalp.empty and len(df_scalp) >= 30:
                 df_scalp['EMA9'] = df_scalp['Close'].ewm(span=9, adjust=False).mean()
                 df_scalp['EMA21'] = df_scalp['Close'].ewm(span=21, adjust=False).mean()
                 df_scalp['RSI'] = calculate_rsi(df_scalp['Close'], 14)
+                
+                # Indikator Baru: Stochastic RSI
+                rsi_min = df_scalp['RSI'].rolling(14).min()
+                rsi_max = df_scalp['RSI'].rolling(14).max()
+                df_scalp['Stoch_RSI'] = (df_scalp['RSI'] - rsi_min) / (rsi_max - rsi_min)
 
                 latest = df_scalp.iloc[-1]
                 close_p = round(latest['Close'], 2)
                 ema9 = round(latest['EMA9'], 2)
                 ema21 = round(latest['EMA21'], 2)
                 rsi = round(latest['RSI'], 2)
+                stoch_rsi = round(latest['Stoch_RSI'] * 100, 2) if not np.isnan(latest['Stoch_RSI']) else 50
 
-                # Evaluasi Kriteria Indikator Utama
-                cond_ema = (ema9 > ema21)
-                cond_rsi = (45 <= rsi <= 65)
-                is_layak = cond_ema and cond_rsi
+                cond_ema = bool(ema9 > ema21)
+                cond_rsi = bool(45 <= rsi <= 65)
+                cond_stoch = bool(stoch_rsi < 80) # Tidak overbought
+                is_layak = cond_ema and cond_rsi and cond_stoch
 
                 atr = (df_scalp['High'] - df_scalp['Low']).rolling(14).mean().iloc[-1]
                 atr = max(atr, close_p * 0.01)
@@ -58,11 +64,13 @@ def get_screener_data():
                     "price": close_p,
                     "status": "LAYAK BELI" if is_layak else "WAIT & SEE",
                     "indicators": {
-                        "ema_cross": {"val": f"EMA9({ema9}) > EMA21({ema21})", "active": cond_ema},
-                        "rsi": {"val": f"RSI 14 ({rsi})", "active": cond_rsi},
-                        "macd": {"val": "MACD N/A", "active": False},
-                        "vol_sma": {"val": "Volume N/A", "active": False},
-                        "sma50": {"val": "SMA50 N/A", "active": False}
+                        "ema_cross": {"name": "EMA Cross", "val": f"EMA9 ({ema9}) > EMA21 ({ema21})", "active": cond_ema},
+                        "rsi": {"name": "RSI Momentum", "val": f"RSI 14 ({rsi})", "active": cond_rsi},
+                        "stoch_rsi": {"name": "Stoch RSI", "val": f"Stoch RSI ({stoch_rsi}%)", "active": cond_stoch},
+                        "macd": {"name": "MACD Hist", "val": "N/A (Khusus Swing)", "active": False},
+                        "vol_sma": {"name": "Volume Spike", "val": "N/A (Khusus Swing)", "active": False},
+                        "bollinger": {"name": "Bollinger Band", "val": "N/A (Khusus Swing)", "active": False},
+                        "sma50": {"name": "Major Trend", "val": "N/A (Khusus Investasi)", "active": False}
                     },
                     "entry_levels": [close_p, round(close_p * 0.995, 2), round(close_p * 0.99, 2)],
                     "tp_levels": [round(close_p + (atr * 1.5), 2), round(close_p + (atr * 2.5), 2), round(close_p + (atr * 4.0), 2)],
@@ -70,7 +78,7 @@ def get_screener_data():
                 })
 
             # ==========================================
-            # 2. SWING (1D) -> Utama: EMA 20/50, MACD, Vol SMA20
+            # 2. SWING (1D) -> EMA 20/50, MACD, Volume, Bollinger
             # ==========================================
             df_swing = ticker.history(period="6m", interval="1d")
             if not df_swing.empty and len(df_swing) >= 50:
@@ -78,11 +86,17 @@ def get_screener_data():
                 df_swing['EMA50'] = df_swing['Close'].ewm(span=50, adjust=False).mean()
                 df_swing['Vol_SMA20'] = df_swing['Volume'].rolling(window=20).mean()
                 
+                # MACD
                 ema12 = df_swing['Close'].ewm(span=12, adjust=False).mean()
                 ema26 = df_swing['Close'].ewm(span=26, adjust=False).mean()
                 df_swing['MACD'] = ema12 - ema26
                 df_swing['Signal'] = df_swing['MACD'].ewm(span=9, adjust=False).mean()
                 df_swing['Hist'] = df_swing['MACD'] - df_swing['Signal']
+
+                # Indikator Baru: Bollinger Bands
+                df_swing['SMA20'] = df_swing['Close'].rolling(20).mean()
+                df_swing['STD20'] = df_swing['Close'].rolling(20).std()
+                df_swing['UpperBB'] = df_swing['SMA20'] + (df_swing['STD20'] * 2)
 
                 latest = df_swing.iloc[-1]
                 close_p = round(latest['Close'], 2)
@@ -91,22 +105,26 @@ def get_screener_data():
                 macdh = round(latest['Hist'], 2)
                 vol = latest['Volume']
                 vol_sma = latest['Vol_SMA20']
+                upper_bb = round(latest['UpperBB'], 2) if not np.isnan(latest['UpperBB']) else close_p * 1.1
 
-                cond_ema = (ema20 > ema50)
-                cond_macd = (macdh > 0)
-                cond_vol = (vol > vol_sma)
-                is_layak = cond_ema and cond_macd and cond_vol
+                cond_ema = bool(ema20 > ema50)
+                cond_macd = bool(macdh > 0)
+                cond_vol = bool(vol > vol_sma)
+                cond_bb = bool(close_p < upper_bb) # Belum jebol upper band
+                is_layak = cond_ema and cond_macd and cond_vol and cond_bb
 
                 output_data["swing"].append({
                     "ticker": display_ticker,
                     "price": close_p,
                     "status": "LAYAK BELI" if is_layak else "WAIT & SEE",
                     "indicators": {
-                        "ema_cross": {"val": f"EMA20({ema20}) > EMA50({ema50})", "active": cond_ema},
-                        "rsi": {"val": "RSI N/A", "active": False},
-                        "macd": {"val": f"MACD Hist ({macdh})", "active": cond_macd},
-                        "vol_sma": {"val": f"Vol > SMA20 ({round(vol/vol_sma, 1)}x)", "active": cond_vol},
-                        "sma50": {"val": "SMA50 N/A", "active": False}
+                        "ema_cross": {"name": "EMA Cross", "val": f"EMA20 ({ema20}) > EMA50 ({ema50})", "active": cond_ema},
+                        "rsi": {"name": "RSI Momentum", "val": "N/A (Khusus Scalp/Inv)", "active": False},
+                        "stoch_rsi": {"name": "Stoch RSI", "val": "N/A (Khusus Scalp)", "active": False},
+                        "macd": {"name": "MACD Hist", "val": f"MACD Hist ({macdh}) > 0", "active": cond_macd},
+                        "vol_sma": {"name": "Volume Spike", "val": f"Vol > SMA20 ({round(vol/vol_sma, 1) if vol_sma > 0 else 1}x)", "active": cond_vol},
+                        "bollinger": {"name": "Bollinger Band", "val": f"Price < UpperBB ({upper_bb})", "active": cond_bb},
+                        "sma50": {"name": "Major Trend", "val": "N/A (Khusus Investasi)", "active": False}
                     },
                     "entry_levels": [close_p, ema20, ema50],
                     "tp_levels": [round(close_p * 1.05, 2), round(close_p * 1.10, 2), round(close_p * 1.20, 2)],
@@ -114,7 +132,7 @@ def get_screener_data():
                 })
 
             # ==========================================
-            # 3. INVESTING (1W) -> Utama: SMA 50, RSI (Accumulation)
+            # 3. INVESTING (1W) -> SMA 50, RSI Accumulation
             # ==========================================
             df_inv = ticker.history(period="2y", interval="1wk")
             if not df_inv.empty and len(df_inv) >= 50:
@@ -126,8 +144,8 @@ def get_screener_data():
                 sma50 = round(latest['SMA50'], 2) if not np.isnan(latest['SMA50']) else close_p
                 rsi = round(latest['RSI'], 2)
 
-                cond_sma = (close_p >= sma50)
-                cond_rsi = (rsi < 50) # Diskon zone
+                cond_sma = bool(close_p >= sma50)
+                cond_rsi = bool(rsi < 50) # Diskon zone
                 is_layak = cond_sma and cond_rsi
 
                 output_data["investing"].append({
@@ -135,11 +153,13 @@ def get_screener_data():
                     "price": close_p,
                     "status": "LAYAK AKUMULASI" if is_layak else "HOLD / WAITING",
                     "indicators": {
-                        "ema_cross": {"val": "EMA N/A", "active": False},
-                        "rsi": {"val": f"RSI Diskon ({rsi})", "active": cond_rsi},
-                        "macd": {"val": "MACD N/A", "active": False},
-                        "vol_sma": {"val": "Volume N/A", "active": False},
-                        "sma50": {"val": f"Price >= SMA50({sma50})", "active": cond_sma}
+                        "ema_cross": {"name": "EMA Cross", "val": "N/A (Khusus Scalp/Swing)", "active": False},
+                        "rsi": {"name": "RSI Momentum", "val": f"RSI Diskon ({rsi}) < 50", "active": cond_rsi},
+                        "stoch_rsi": {"name": "Stoch RSI", "val": "N/A (Khusus Scalp)", "active": False},
+                        "macd": {"name": "MACD Hist", "val": "N/A (Khusus Swing)", "active": False},
+                        "vol_sma": {"name": "Volume Spike", "val": "N/A (Khusus Swing)", "active": False},
+                        "bollinger": {"name": "Bollinger Band", "val": "N/A (Khusus Swing)", "active": False},
+                        "sma50": {"name": "Major Trend", "val": f"Price >= SMA50 ({sma50})", "active": cond_sma}
                     },
                     "entry_levels": [close_p, round(close_p * 0.95, 2), round(close_p * 0.90, 2)],
                     "tp_levels": [round(close_p * 1.25, 2), round(close_p * 1.50, 2), round(close_p * 2.00, 2)],
