@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IHSG SH4NDY'S SCREENER - SWING TRADING MONITOR</title>
+  <title>IHSG SCREENER - TRADING MONITOR</title>
   
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0f172a">
@@ -255,6 +255,7 @@
       font-weight: 800;
     }
 
+    /* BAR PETIR VOLUME / BANDARMOLOGY */
     .lightning-grid-container {
       display: flex;
       gap: 3px;
@@ -286,6 +287,12 @@
       background: #7f1d1d;
       border-color: #ef4444;
       color: #fca5a5;
+    }
+
+    .lightning-box-slot.active-gray {
+      background: #334155;
+      border-color: #64748b;
+      color: #cbd5e1;
     }
 
     @keyframes lightning-blink-animation {
@@ -364,18 +371,6 @@
       height: 26px;
     }
 
-    @keyframes arrow-blink-green {
-      0% { opacity: 1; transform: translateX(0); }
-      50% { opacity: 0.2; transform: translateX(2px); }
-      100% { opacity: 1; transform: translateX(0); }
-    }
-    .arrow-active-blink {
-      display: inline-block;
-      color: #22c55e;
-      margin-right: 4px;
-      font-size: 0.75rem;
-      animation: arrow-blink-green 0.8s infinite;
-    }
     .indicator-name {
       display: flex;
       align-items: center;
@@ -947,7 +942,7 @@
       }, 100);
     }
 
-    // LOGIKA EVALUASI STRATEGI SESUAI TIMEFRAME
+    // LOGIKA EVALUASI TRADING KEKUATAN & TIMEFRAME
     function evaluateSwingIndicators(stock) {
       const closePrice = stock.price ?? 0;
       const ema20 = stock.ema20 || stock.ma20 || closePrice;
@@ -980,28 +975,42 @@
       };
     }
 
-    function isBuyWorthyStock(stock) {
+    function evaluateStockStrength(stock) {
+      let score = 50; 
+      let trendType = 'NEUTRAL'; 
+
       if (selectedTradingStyle === 'SWING') {
-        return evaluateSwingIndicators(stock).isBuyWorthy;
+        const res = evaluateSwingIndicators(stock);
+        score = res.totalScore;
+        trendType = score >= 60 ? 'BUY' : (score <= 40 ? 'SELL' : 'NEUTRAL');
+      } else {
+        const signalText = (stock.signal || '').toUpperCase();
+        if (signalText.includes('STRONG BUY')) { score = 100; trendType = 'BUY'; }
+        else if (signalText.includes('BUY')) { score = 80; trendType = 'BUY'; }
+        else if (signalText.includes('STRONG SELL')) { score = 100; trendType = 'SELL'; }
+        else if (signalText.includes('SELL')) { score = 80; trendType = 'SELL'; }
+        else { score = 50; trendType = 'NEUTRAL'; }
       }
-      
-      const signalText = (stock.signal || '').toUpperCase();
-      const isBuySignal = signalText.includes('BUY') || signalText.includes('STRONG BUY');
-      if (!isBuySignal) return false;
 
-      let score = 0;
-      const closePrice = stock.price ?? 0;
-      const highPrice = stock.high ?? closePrice;
-      const lowPrice = stock.low ?? closePrice;
-      const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+      let activeBoxes = Math.round(score / 10);
+      let signalLabel = 'NETRAL';
 
-      if ((stock.vol_status || '').toUpperCase() === 'BUY' || (parseFloat(stock.vol_ratio) || 0) >= 1.2) score++;
-      if ((stock.macd_status || '').toUpperCase() === 'BUY') score++;
-      if ((stock.ema_status || '').toUpperCase() === 'BUY' || closePrice >= (stock.ma20 || closePrice)) score++;
-      if ((stock.rsi_status || '').toUpperCase() === 'BUY' || (stock.fibo_rsi_status || '').toUpperCase() === 'OVER SOLD') score++;
-      if (closePrice >= pivotPoint) score++;
+      if (trendType === 'BUY') {
+        if (activeBoxes >= 6) signalLabel = 'STRONG BUY';
+        else if (activeBoxes >= 3) signalLabel = 'BUY';
+        else signalLabel = 'BUY LEMAH';
+      } else if (trendType === 'SELL') {
+        if (activeBoxes >= 6) signalLabel = 'STRONG SELL';
+        else if (activeBoxes >= 3) signalLabel = 'SELL';
+        else signalLabel = 'SELL LEMAH';
+      }
 
-      return score >= 3;
+      return { score, trendType, activeBoxes, signalLabel };
+    }
+
+    function isBuyWorthyStock(stock) {
+      const evalData = evaluateStockStrength(stock);
+      return (evalData.trendType === 'BUY' && evalData.activeBoxes >= 3);
     }
 
     function getTfAdjustedSR(stock) {
@@ -1093,36 +1102,43 @@
       };
     }
 
+    // LOGIKA KOLOM PETIR (BANDARMOLOGY / VOLUME)
     function renderLightningBoxes(stock) {
       const isSuspended = stock.is_suspended || stock.status === 'SUSPEND' || stock.volume === 0;
-      const closePrice = stock.price ?? 0;
-      const prevClose = stock.prev_close ?? closePrice;
-
-      let isReadyToBuy = false;
+      
+      let volRatio = parseFloat(stock.vol_ratio) || 1.0;
+      let bandarStatus = (stock.bandarmology || stock.vol_status || 'NEUTRAL').toUpperCase();
+      
       let activeCount = 0;
+      let colorType = 'NEUTRAL'; 
 
-      if (selectedTradingStyle === 'SWING') {
-        const swingRes = evaluateSwingIndicators(stock);
-        isReadyToBuy = swingRes.isBuyWorthy;
-        activeCount = Math.round(swingRes.totalScore / 20);
-      } else {
-        const signalText = (stock.signal || '').toUpperCase();
-        isReadyToBuy = signalText.includes('BUY');
-        let vRatio = parseFloat(stock.vol_ratio) || 0;
-        if (vRatio >= 2.5) activeCount = 5;
-        else if (vRatio >= 2.0) activeCount = 4;
-        else if (vRatio >= 1.5) activeCount = 3;
-        else if (vRatio >= 1.2) activeCount = 2;
-        else if (vRatio >= 1.0) activeCount = 1;
+      if (bandarStatus.includes('AKUMULASI') || bandarStatus.includes('BUY') || volRatio > 1.0) {
+        colorType = 'ACCUMULATION';
+        if (volRatio >= 3.0) activeCount = 5;
+        else if (volRatio >= 2.5) activeCount = 4;
+        else if (volRatio >= 2.0) activeCount = 3;
+        else if (volRatio >= 1.5) activeCount = 2;
+        else activeCount = 1;
+      } else if (bandarStatus.includes('DISTRUBUSI') || bandarStatus.includes('SELL') || volRatio < 0.8) {
+        colorType = 'DISTRIBUTION';
+        if (volRatio <= 0.2) activeCount = 5;
+        else if (volRatio <= 0.4) activeCount = 4;
+        else if (volRatio <= 0.6) activeCount = 3;
+        else if (volRatio <= 0.7) activeCount = 2;
+        else activeCount = 1;
       }
 
-      let activeClass = closePrice < prevClose ? 'active-red' : 'active-green';
-      let blinkClass = (activeClass === 'active-green' && isReadyToBuy) ? 'lightning-blink' : '';
+      let slotClass = 'active-gray';
+      if (colorType === 'ACCUMULATION') slotClass = 'active-green';
+      if (colorType === 'DISTRIBUTION') slotClass = 'active-red';
+
+      let isReadyToBuy = isBuyWorthyStock(stock);
+      let blinkClass = (slotClass === 'active-green' && isReadyToBuy) ? 'lightning-blink' : '';
 
       let html = '<div class="lightning-grid-container">';
       for (let i = 1; i <= 5; i++) {
         if (!isSuspended && i <= activeCount) {
-          html += `<div class="lightning-box-slot ${activeClass} ${blinkClass}">⚡</div>`;
+          html += `<div class="lightning-box-slot ${slotClass} ${blinkClass}">⚡</div>`;
         } else {
           html += `<div class="lightning-box-slot">⚡</div>`;
         }
@@ -1252,78 +1268,55 @@
       if (closePrice > prevClose) priceColorClass = 'price-up';
       else if (closePrice < prevClose) priceColorClass = 'price-down';
 
-      let avgStrengthPercent = 50;
-      let signalText = 'NETRAL';
+      // EVALUASI STRUKTUR SINYAL DAN 10 KOTAK
+      const evalData = evaluateStockStrength(stock);
+      let avgStrengthPercent = evalData.score;
+      let signalText = evalData.signalLabel;
+      let trendType = evalData.trendType;
+      let activeBoxesCount = evalData.activeBoxes;
+
       let badgeClass = 'neutral';
-      let swingRes = evaluateSwingIndicators(stock);
+      if (signalText.includes('STRONG BUY')) badgeClass = 'strong-buy';
+      else if (signalText.includes('BUY')) badgeClass = 'buy';
+      else if (signalText.includes('STRONG SELL')) badgeClass = 'strong-sell';
+      else if (signalText.includes('SELL')) badgeClass = 'sell';
 
-      if (selectedTradingStyle === 'SWING') {
-        avgStrengthPercent = swingRes.totalScore;
-        if (avgStrengthPercent >= 80) { signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
-        else if (avgStrengthPercent >= 60) { signalText = 'BUY'; badgeClass = 'buy'; }
-        else if (avgStrengthPercent <= 20) { signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
-        else if (avgStrengthPercent <= 40) { signalText = 'SELL'; badgeClass = 'sell'; }
-      } else {
-        if (stock.signal) {
-          if (stock.signal.includes('STRONG BUY')) { avgStrengthPercent = 100; signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
-          else if (stock.signal.includes('BUY')) { avgStrengthPercent = 80; signalText = 'BUY'; badgeClass = 'buy'; }
-          else if (stock.signal.includes('STRONG SELL')) { avgStrengthPercent = 100; signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
-          else if (stock.signal.includes('SELL')) { avgStrengthPercent = 80; signalText = 'SELL'; badgeClass = 'sell'; }
-        }
-      }
-
-      // --- LOGIKA ICON DISAMPING PERSENTASE HARGA (SISI KANAN) ---
       let isReadyToBuy = isBuyWorthyStock(stock);
-      let percentIcon = '🛑'; // Default Stop Sign jika belum layak open/buy
-      
-      if (signalText === 'NETRAL' || (avgStrengthPercent > 40 && avgStrengthPercent < 60)) {
-        percentIcon = '⏳'; // Hourglass jika power netral
+      let percentIcon = '🛑'; 
+      if (trendType === 'NEUTRAL') {
+        percentIcon = '⏳';
       } else if (isReadyToBuy) {
-        percentIcon = '✅'; // Green Checkmark jika signal open terbentuk
+        percentIcon = '✅';
       }
 
-      // --- LOGIKA ICON DI ANTARA LABEL EMITEN/KATEGORI DAN 10 BOX SIGNAL ---
-      let middleSignalIcon = '⚪'; // Bayangan abu2 jika netral
-      if (signalText === 'STRONG BUY') {
-        middleSignalIcon = '🚀🚀🚀';
-      } else if (signalText === 'BUY') {
-        middleSignalIcon = '🚀';
-      } else if (signalText === 'STRONG SELL') {
-        middleSignalIcon = '❌❌❌';
-      } else if (signalText === 'SELL') {
-        middleSignalIcon = '❌';
-      }
+      let middleSignalIcon = '⚪'; 
+      if (signalText === 'STRONG BUY') middleSignalIcon = '🚀🚀🚀';
+      else if (signalText === 'BUY') middleSignalIcon = '🚀';
+      else if (signalText === 'STRONG SELL') middleSignalIcon = '❌❌❌';
+      else if (signalText === 'SELL') middleSignalIcon = '❌';
 
-      // --- LOGIKA BADGE LABEL SIGNAL (MENGGANTI BADGE TEXT / TAMBAH ICON) ---
       let displayBadgeText = signalText;
-      if (signalText === 'STRONG BUY') {
-        displayBadgeText = '🚀🚀🚀 STRONG BUY';
-      } else if (signalText === 'BUY') {
-        displayBadgeText = '🚀 BUY';
-      } else if (signalText === 'STRONG SELL') {
-        displayBadgeText = '🔒🔒🔒 STRONG SELL';
-      } else if (signalText === 'SELL') {
-        displayBadgeText = '🔒 SELL';
-      }
+      if (signalText === 'STRONG BUY') displayBadgeText = '🚀🚀🚀 STRONG BUY';
+      else if (signalText === 'BUY') displayBadgeText = '🚀 BUY';
+      else if (signalText === 'BUY LEMAH') displayBadgeText = '📈 BUY LEMAH';
+      else if (signalText === 'STRONG SELL') displayBadgeText = '🔒🔒🔒 STRONG SELL';
+      else if (signalText === 'SELL') displayBadgeText = '🔒 SELL';
+      else if (signalText === 'SELL LEMAH') displayBadgeText = '📉 SELL LEMAH';
 
-      let isBullishMode = signalText.includes('BUY');
-      let isBearishMode = signalText.includes('SELL');
-      let isStrongState = signalText === 'STRONG BUY' || signalText === 'STRONG SELL';
-
-      let avgBoxesCount = Math.round(avgStrengthPercent / 10);
-      let activeBoxColor = isBullishMode ? 'box-green-active' : (isBearishMode ? 'box-red-active' : 'box-gray-active');
+      let activeBoxColor = trendType === 'BUY' ? 'box-green-active' : (trendType === 'SELL' ? 'box-red-active' : 'box-gray-active');
+      let isStrongState = signalText.includes('STRONG');
 
       let blinkClass = isStrongState ? 'box-blink' : '';
       let topBoxesHtml = `<div class="ten-boxes-container ${blinkClass}">`;
       for (let d = 1; d <= 10; d++) {
-        topBoxesHtml += `<span class="box-ten ${d <= avgBoxesCount ? activeBoxColor : ''}"></span>`;
+        topBoxesHtml += `<span class="box-ten ${d <= activeBoxesCount ? activeBoxColor : ''}"></span>`;
       }
       topBoxesHtml += '</div>';
 
       let warningHtml = '';
-      if (isBearishMode) {
+      if (trendType === 'SELL') {
         warningHtml = '<div class="warning-box-col blink-red">⚠️ WARNING! TREND TURUN!</div>';
-      } else if (isBullishMode) {
+      } else if (trendType === 'BUY') {
         warningHtml = '<div class="warning-box-col blink-green">⚠️ WARNING! TREND NAIK!</div>';
       } else {
         warningHtml = '<div class="warning-box-col" style="color:#64748b;">⚠️ WARNING! NETRAL</div>';
@@ -1358,6 +1351,7 @@
 
       let indicatorsHtml = '';
       if (selectedTradingStyle === 'SWING') {
+        const swingRes = evaluateSwingIndicators(stock);
         indicatorsHtml = `
           <div class="indicator-item"><span class="indicator-name">EMA 20 > EMA 50</span>${renderIndicator10Dots(swingRes.condEma)}</div>
           <div class="indicator-item"><span class="indicator-name">RSI 50-70</span>${renderIndicator10Dots(swingRes.condRsi)}</div>
