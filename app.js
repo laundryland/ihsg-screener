@@ -5,25 +5,32 @@ async function initScreener() {
   const container = document.getElementById("screenerContainer");
   try {
     const response = await fetch(`${DATA_URL}?t=${new Date().getTime()}`);
-    if (!response.ok) throw new Error("Gagal mengambil data JSON.");
+    if (!response.ok) throw new Error("File data.json tidak ditemukan.");
     
     const data = await response.json();
     
-    renderMarketWarning(data.market_status);
-    renderTable(data[currentStyle]);
+    // Render Peringatan Pasar
+    if (data.market_status) {
+      renderMarketWarning(data.market_status);
+    }
+    
+    // Render Tabel Utama
+    renderTable(data[currentStyle] || []);
+    
+    // Event Listener Tombol Header
     setupButtons(data);
 
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error loading screener:", error);
     if (container) {
-      container.innerHTML = `<p style="color:red; font-weight:bold;">Gagal memuat data. Pastikan file data.json tersedia.</p>`;
+      container.innerHTML = `<div style="color:red; padding:20px; font-weight:bold;">Gagal memuat data. Pastikan file data.json sudah digenerate oleh fetch_data.py.</div>`;
     }
   }
 }
 
 function renderMarketWarning(status) {
   const warningContainer = document.getElementById("marketWarning");
-  if (!warningContainer || !status) return;
+  if (!warningContainer || !status.warning) return;
 
   warningContainer.innerHTML = `
     <div style="background-color: #fff3cd; color: #856404; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; border: 1px solid #ffeeba;">
@@ -40,18 +47,18 @@ function setupButtons(allData) {
       e.target.classList.add('active');
       
       currentStyle = e.target.dataset.style;
-      renderTable(allData[currentStyle]);
+      renderTable(allData[currentStyle] || []);
     };
   });
 }
 
-// Fungsi Format Tanda Panah & Indikator
+// Format Indikator dengan Panah Hijau (▲) atau Garis Abu-abu (▬)
 function formatInd(ind) {
   if (!ind) return '';
   if (ind.active) {
-    return `<div class="ind-active">&#9650; ${ind.name}: <span style="color:#333; font-weight:normal;">${ind.val}</span></div>`;
+    return `<div style="color:#198754; font-weight:bold;">&#9650; ${ind.name}: <span style="color:#333; font-weight:normal;">${ind.val}</span></div>`;
   } else {
-    return `<div class="ind-inactive">&#9644; ${ind.name}: <span>${ind.val}</span></div>`;
+    return `<div style="color:#adb5bd;">&#9644; ${ind.name}: <span>${ind.val}</span></div>`;
   }
 }
 
@@ -60,7 +67,7 @@ function renderTable(stockList) {
   if (!container) return;
 
   if (!stockList || stockList.length === 0) {
-    container.innerHTML = `<p>Tidak ada data saham untuk kategori ini.</p>`;
+    container.innerHTML = `<div style="padding:20px; background:white; border-radius:8px;">Tidak ada data saham untuk kategori ini. Jalankan script Python terlebih dahulu.</div>`;
     return;
   }
 
@@ -69,13 +76,17 @@ function renderTable(stockList) {
     const bgBadge = isLayak ? '#198754' : '#6c757d';
     const inds = item.indicators || {};
 
+    const entry = item.entry_levels || [0, 0, 0];
+    const tp = item.tp_levels || [0, 0, 0];
+    const cl = item.cl_levels || [0, 0, 0];
+
     return `
       <tr>
         <td><strong>${item.ticker}</strong></td>
         <td>Rp${item.price ? item.price.toLocaleString("id-ID") : 0}</td>
         <td><span class="badge" style="background-color:${bgBadge};">${item.status}</span></td>
         
-        <!-- Deretan Indikator (Termasuk Indikator Baru + Panah) -->
+        <!-- Deretan Kolom Indikator (Termasuk Indikator Baru) -->
         <td style="font-size:12px; line-height:1.5;">
           ${formatInd(inds.ema_cross)}
           ${formatInd(inds.rsi)}
@@ -88,23 +99,23 @@ function renderTable(stockList) {
 
         <!-- Entry 3 Level -->
         <td style="font-size:12px;">
-          L1: Rp${item.entry_levels[0].toLocaleString("id-ID")}<br>
-          L2: Rp${item.entry_levels[1].toLocaleString("id-ID")}<br>
-          L3: Rp${item.entry_levels[2].toLocaleString("id-ID")}
+          L1: Rp${entry[0].toLocaleString("id-ID")}<br>
+          L2: Rp${entry[1].toLocaleString("id-ID")}<br>
+          L3: Rp${entry[2].toLocaleString("id-ID")}
         </td>
 
         <!-- Target TP 3 Level -->
         <td style="color:#198754; font-size:12px;">
-          TP1: Rp${item.tp_levels[0].toLocaleString("id-ID")}<br>
-          TP2: Rp${item.tp_levels[1].toLocaleString("id-ID")}<br>
-          TP3: Rp${item.tp_levels[2].toLocaleString("id-ID")}
+          TP1: Rp${tp[0].toLocaleString("id-ID")}<br>
+          TP2: Rp${tp[1].toLocaleString("id-ID")}<br>
+          TP3: Rp${tp[2].toLocaleString("id-ID")}
         </td>
 
         <!-- Cut Loss 3 Level -->
         <td style="color:#dc3545; font-size:12px;">
-          CL1: Rp${item.cl_levels[0].toLocaleString("id-ID")}<br>
-          CL2: Rp${item.cl_levels[1].toLocaleString("id-ID")}<br>
-          CL3: Rp${item.cl_levels[2].toLocaleString("id-ID")}
+          CL1: Rp${cl[0].toLocaleString("id-ID")}<br>
+          CL2: Rp${cl[1].toLocaleString("id-ID")}<br>
+          CL3: Rp${cl[2].toLocaleString("id-ID")}
         </td>
       </tr>
     `;
