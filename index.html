@@ -153,7 +153,11 @@
     }
     .info-tab-1 { background: #111827; border-color: #374151; }
     .info-tab-2 { background: #312e81; border-color: #4338ca; color: #c7d2fe; }
-    .info-tab-3 { background: #121212 !important; border-color: #27272a !important; }
+
+    .info-tab-3 { 
+      background: #121212 !important; 
+      border-color: #27272a !important; 
+    }
 
     .status-text-open { color: #4ade80 !important; }
     .status-text-break { color: #a1a1aa !important; }
@@ -217,11 +221,22 @@
       gap: 6px;
     }
 
-    .ticker-large { font-size: 1.3rem; color: #fff; letter-spacing: 0.5px; }
+    .ticker-large { 
+      font-size: 1.3rem; 
+      color: #fff; 
+      letter-spacing: 0.5px;
+    }
 
-    .price-group { display: flex; align-items: center; gap: 8px; }
+    .price-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    .price-large { font-size: 1.45rem; font-weight: 800; }
+    .price-large { 
+      font-size: 1.45rem; 
+      font-weight: 800;
+    }
     
     .price-up { color: #22c55e; }
     .price-down { color: #ef4444; }
@@ -303,10 +318,21 @@
       50% { opacity: 0.2; }
       100% { opacity: 1; }
     }
-    .box-blink { animation: box-blink-animation 0.8s infinite; }
+    .box-blink {
+      animation: box-blink-animation 0.8s infinite;
+    }
 
-    .indicator-dots-row { display: flex; gap: 1.5px; align-items: center; }
-    .ind-dot { width: 5px; height: 5px; border-radius: 50%; background-color: #334155; }
+    .indicator-dots-row {
+      display: flex;
+      gap: 1.5px;
+      align-items: center;
+    }
+    .ind-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: #334155;
+    }
     .ind-dot.active-green { background-color: #22c55e; box-shadow: 0 0 2px #22c55e; }
     .ind-dot.active-red { background-color: #ef4444; box-shadow: 0 0 2px #ef4444; }
     .ind-dot.active-gray { background-color: #64748b; }
@@ -347,18 +373,17 @@
       font-size: 0.75rem;
       animation: arrow-blink-green 0.8s infinite;
     }
-    .indicator-name { display: flex; align-items: center; gap: 2px; }
+    .indicator-name {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
 
     @keyframes dot-blink {
       0% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.3; transform: scale(0.85); }
       100% { opacity: 1; transform: scale(1); }
     }
-
-    .dot-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; animation: dot-blink 1s infinite; }
-    .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; animation: dot-blink 1s infinite; }
-    .dot-neutral { background-color: #64748b; }
 
     .ohlc-val { color: #fff; }
 
@@ -391,16 +416,52 @@
     }
     .highlight-card { animation: card-highlight 0.7s ease-in-out 3; z-index: 10; }
 
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
 
-    .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; color: #cbd5e1; }
+    /* TOMBOL DROPDOWN ACCORDION UNTUK MONITORING S/R */
+    .collapse-toggle-btn {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      cursor: pointer;
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    .collapse-toggle-btn:hover {
+      background: #0f2744;
+    }
+
+    .collapsible-content {
+      display: none;
+      margin-top: 6px;
+    }
+    .collapsible-content.show {
+      display: block;
+    }
+
+    .sr-stat-box { padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; color: #cbd5e1; }
     .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; align-items: center; }
     .sr-row:last-child { margin-bottom: 0; }
     .sr-res { color: #f87171; }
     .sr-sup { color: #4ade80; }
 
-    .sr-label-container { display: flex; align-items: center; gap: 6px; margin-right: 14px; }
+    .sr-label-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 14px;
+    }
     .sr-check-badge {
       color: #22c55e;
       font-weight: 800;
@@ -426,7 +487,13 @@
     .pivot-price-green { color: #4ade80; }
     .pivot-price-yellow { color: #eab308; }
 
-    .pivot-dots-container { display: inline-flex; gap: 2px; align-items: center; margin-left: 4px; margin-right: auto; }
+    .pivot-dots-container {
+      display: inline-flex;
+      gap: 2px;
+      align-items: center;
+      margin-left: 4px;
+      margin-right: auto;
+    }
 
     .pivot-dot-small {
       width: 4px;
@@ -436,15 +503,28 @@
       display: inline-block;
       flex-shrink: 0;
     }
-    .pivot-dot-small.active-red { background-color: #ef4444; box-shadow: 0 0 3px #ef4444; }
-    .pivot-dot-small.active-green { background-color: #22c55e; box-shadow: 0 0 3px #22c55e; }
-    .pivot-dot-small.active-gray { background-color: #64748b; }
-    .pivot-dot-small.dot-blink { animation: dot-blink 0.8s infinite; }
+    .pivot-dot-small.active-red {
+      background-color: #ef4444;
+      box-shadow: 0 0 3px #ef4444;
+    }
+    .pivot-dot-small.active-green {
+      background-color: #22c55e;
+      box-shadow: 0 0 3px #22c55e;
+    }
+    .pivot-dot-small.active-gray {
+      background-color: #64748b;
+    }
+    .pivot-dot-small.dot-blink {
+      animation: dot-blink 0.8s infinite;
+    }
 
     .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; }
     .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; }
 
-    .pivot-price-wrapper { display: inline-flex; align-items: center; }
+    .pivot-price-wrapper {
+      display: inline-flex;
+      align-items: center;
+    }
 
     .signal-badge-container { margin: 6px 0 4px 0; text-align: center; }
     .badge { display: block; width: 100%; padding: 5px 6px; border-radius: 5px; font-size: 0.7rem; text-align: center; letter-spacing: 0.5px; }
@@ -459,6 +539,15 @@
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
 
+    .tf-badge-fibo {
+      font-size: 0.58rem;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: #334155;
+      color: #38bdf8;
+      margin-left: 4px;
+    }
+
     .trading-plan-wrapper { 
       margin-top: 8px; 
       padding: 8px; 
@@ -466,7 +555,12 @@
       border-radius: 8px; 
       border: 1px dashed #475569; 
     }
-    .trading-plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+    .trading-plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 6px;
+    }
     .plan-col {
       background: #1e293b;
       border: 1px solid #334155;
@@ -545,9 +639,9 @@
       </select>
 
       <select id="selectTradingStyle" onchange="changeTradingStyle(this)">
-        <option value="SWING">📈 SWING</option>
-        <option value="SCALPING">⚡ SCALPING</option>
-        <option value="INVESTMENT">💎 INVESTASI</option>
+        <option value="SWING">📈 SWING (TF 1D)</option>
+        <option value="SCALPING">⚡ SCALPING (TF 15M)</option>
+        <option value="INVESTMENT">💎 INVESTASI (TF 1W)</option>
       </select>
     </div>
   </div>
@@ -762,6 +856,20 @@
       initMenuState();
     }
 
+    function toggleCardDetails(ticker) {
+      const contentEl = document.getElementById(`collapse-content-${ticker}`);
+      const btnEl = document.getElementById(`collapse-btn-${ticker}`);
+      if (!contentEl || !btnEl) return;
+
+      if (contentEl.classList.contains('show')) {
+        contentEl.classList.remove('show');
+        btnEl.innerHTML = `▼ TAMPILKAN PIVOT, S/R & STRATEGI PLAN`;
+      } else {
+        contentEl.classList.add('show');
+        btnEl.innerHTML = `▲ SEMBUNYIKAN PIVOT, S/R & STRATEGI PLAN`;
+      }
+    }
+
     function populateDropdownOptions() {
       const selectEl = document.getElementById('selectTickerOption');
       selectEl.innerHTML = '<option value="">-- PILIH EMITEN --</option>';
@@ -845,6 +953,52 @@
       return score >= 3;
     }
 
+    // HITUNG SUPPORT, RESISTANCE & PIVOT BERDASARKAN TIME FRAME STRATEGY
+    function getTfAdjustedSR(stock) {
+      const closePrice = stock.price ?? 0;
+      const highPrice = stock.high ?? closePrice;
+      const lowPrice = stock.low ?? closePrice;
+      
+      const stdPivot = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+      const stdR1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
+      const stdR2 = stock.resistance_2 || Math.round(stdR1 * 1.02);
+      const stdR3 = stock.resistance_3 || Math.round(stdR2 * 1.02);
+      const stdS1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
+      const stdS2 = stock.support_2 || Math.round(stdS1 * 0.98);
+      const stdS3 = stock.support_3 || Math.round(stdS2 * 0.98);
+
+      if (selectedTradingStyle === 'SCALPING') {
+        // SCALPING (TF 15M): Range S/R rapat agar tidak jauh dari running price (1%-3%)
+        return {
+          pivot: Math.round(closePrice),
+          r1: Math.round(closePrice * 1.01),
+          r2: Math.round(closePrice * 1.02),
+          r3: Math.round(closePrice * 1.03),
+          s1: Math.round(closePrice * 0.99),
+          s2: Math.round(closePrice * 0.98),
+          s3: Math.round(closePrice * 0.97)
+        };
+      } else if (selectedTradingStyle === 'INVESTMENT') {
+        // INVESTMENT (TF 1W): Range S/R lebar untuk rentang mingguan/bulanan (3%-8%)
+        return {
+          pivot: stdPivot,
+          r1: Math.round(closePrice * 1.03),
+          r2: Math.round(closePrice * 1.05),
+          r3: Math.round(closePrice * 1.08),
+          s1: Math.round(closePrice * 0.97),
+          s2: Math.round(closePrice * 0.95),
+          s3: Math.round(closePrice * 0.92)
+        };
+      } else {
+        // SWING (TF 1D): Menggunakan teknikal harian standar
+        return {
+          pivot: stdPivot,
+          r1: stdR1, r2: stdR2, r3: stdR3,
+          s1: stdS1, s2: stdS2, s3: stdS3
+        };
+      }
+    }
+
     function calculateMultiTradingPlans(stock, isReadyToBuy) {
       if (!isReadyToBuy) {
         return {
@@ -855,17 +1009,7 @@
       }
 
       const closePrice = stock.price ?? 0;
-      const highPrice = stock.high ?? closePrice;
-      const lowPrice = stock.low ?? closePrice;
-      const pivot = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
-
-      const r1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
-      const r2 = stock.resistance_2 || Math.round(r1 * 1.02);
-      const r3 = stock.resistance_3 || Math.round(r2 * 1.02);
-
-      const s1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
-      const s2 = stock.support_2 || Math.round(s1 * 0.98);
-      const s3 = stock.support_3 || Math.round(s2 * 0.98);
+      const sr = getTfAdjustedSR(stock);
 
       const scEntry = stock.entry_price || closePrice;
       const scTp1 = Math.round(scEntry * 1.015);
@@ -875,19 +1019,19 @@
       const scCl2 = stock.cut_loss || Math.round(scEntry * 0.985);
       const scCl3 = Math.round(scEntry * 0.98);
 
-      const swEntry = Math.min(closePrice, pivot);
-      const swTp1 = r1;
-      const swTp2 = r2;
-      const swTp3 = r3;
-      const swCl1 = s1;
-      const swCl2 = s2;
-      const swCl3 = s3;
+      const swEntry = Math.min(closePrice, sr.pivot);
+      const swTp1 = sr.r1;
+      const swTp2 = sr.r2;
+      const swTp3 = sr.r3;
+      const swCl1 = sr.s1;
+      const swCl2 = sr.s2;
+      const swCl3 = sr.s3;
 
-      const invEntry = Math.min(s1, pivot);
-      const invTp1 = r2;
-      const invTp2 = r3;
+      const invEntry = Math.min(sr.s1, sr.pivot);
+      const invTp1 = sr.r2;
+      const invTp2 = sr.r3;
       const invTp3 = Math.round(invEntry * 1.15);
-      const invCl1 = s3;
+      const invCl1 = sr.s3;
       const invCl2 = Math.round(invEntry * 0.90);
       const invCl3 = Math.round(invEntry * 0.85);
 
@@ -922,7 +1066,7 @@
         tfStatus = (stock.macd_status || '').toUpperCase();
       } else if (selectedTradingStyle === 'INVESTMENT') {
         tfStatus = (stock.rsi_status || '').toUpperCase();
-      } else {
+      } else { 
         tfStatus = (stock.ema_status || '').toUpperCase();
         if (tfStatus === 'NEUTRAL') {
           tfStatus = closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL';
@@ -1151,23 +1295,24 @@
 
       const plans = calculateMultiTradingPlans(stock, isReadyToBuy);
 
+      // FITUR FIBO + RSI DENGAN TANDAI STRATEGI TIME FRAME
+      let currentTfTag = selectedTradingStyle === 'SCALPING' ? 'TF 15M' : (selectedTradingStyle === 'INVESTMENT' ? 'TF 1W' : 'TF 1D');
       let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
       let fiboBoxClass = 'fibo-normal';
-      let fiboText = 'FIBO-RSI: NORMAL';
+      let fiboText = `FIBO-RSI (${currentTfTag}): NORMAL`;
       if (fiboStatus === 'OVER SOLD') {
-        fiboBoxClass = 'fibo-oversold'; fiboText = 'OVER SOLD';
+        fiboBoxClass = 'fibo-oversold'; 
+        fiboText = `OVER SOLD <span class="tf-badge-fibo">${currentTfTag}</span>`;
       } else if (fiboStatus === 'OVER BOUGHT') {
-        fiboBoxClass = 'fibo-overbought'; fiboText = 'OVER BOUGHT';
+        fiboBoxClass = 'fibo-overbought'; 
+        fiboText = `OVER BOUGHT <span class="tf-badge-fibo">${currentTfTag}</span>`;
       }
 
-      const r1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
-      const r2 = stock.resistance_2 || Math.round(r1 * 1.02);
-      const r3 = stock.resistance_3 || Math.round(r2 * 1.02);
-      const s1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
-      const s2 = stock.support_2 || Math.round(s1 * 0.98);
-      const s3 = stock.support_3 || Math.round(s2 * 0.98);
-
-      const pivotPoint = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
+      // INTEGRASI SUPPORT & RESISTANCE DENGAN STRATEGI TIME FRAME
+      const sr = getTfAdjustedSR(stock);
+      const r1 = sr.r1; const r2 = sr.r2; const r3 = sr.r3;
+      const s1 = sr.s1; const s2 = sr.s2; const s3 = sr.s3;
+      const pivotPoint = sr.pivot;
 
       let pivotPriceClass = 'pivot-price-yellow';
       let pivotArrowIcon = '';
@@ -1229,7 +1374,7 @@
         </div>
 
         <div class="indicator-column-box">
-          <div class="indicator-item"><span class="indicator-name">PIVOT</span>${renderIndicator10Dots('BUY', 8)}</div>
+          <div class="indicator-item"><span class="indicator-name">PIVOT (${currentTfTag})</span>${renderIndicator10Dots('BUY', 8)}</div>
           <div class="indicator-item"><span class="indicator-name">TREND</span>${renderIndicator10Dots(trendStatus, trendVal)}</div>
           <div class="indicator-item"><span class="indicator-name">VOLUME</span>${renderIndicator10Dots(volStatus, volVal)}</div>
           <div class="indicator-item"><span class="indicator-name">${arrowSwing}EMA (1D)</span>${renderIndicator10Dots(emaStatus, emaVal)}</div>
@@ -1244,68 +1389,6 @@
           <div class="ohlc-item"><span>LOW</span><span class="ohlc-val">${formatNum(lowPrice)}</span></div>
         </div>
 
-        <div class="sr-stat-box">
-          <div class="sr-row">
-            <div class="sr-label-container">
-              <span>RESISTAN 3 (R3):</span>
-              ${renderTouchCheckBadge(stock, r3)}
-            </div>
-            <span class="${r3Class}">${formatNum(r3)}</span>
-          </div>
-
-          <div class="sr-row">
-            <div class="sr-label-container">
-              <span>RESISTAN 2 (R2):</span>
-              ${renderTouchCheckBadge(stock, r2)}
-            </div>
-            <span class="${r2Class}">${formatNum(r2)}</span>
-          </div>
-
-          <div class="sr-row">
-            <div class="sr-label-container">
-              <span>RESISTAN 1 (R1):</span>
-              ${renderTouchCheckBadge(stock, r1)}
-            </div>
-            <span class="${r1Class}">${formatNum(r1)}</span>
-          </div>
-          
-          <div class="sr-row sr-pivot-separator">
-            <div class="sr-label-container">
-              <span class="pivot-label-yellow">PIVOT POINT (P):</span>
-              ${renderTouchCheckBadge(stock, pivotPoint)}
-            </div>
-            ${pivotDotsHtml}
-            <div class="pivot-price-wrapper">
-              ${pivotArrowIcon}
-              <span class="${pivotPriceClass}">${formatNum(pivotPoint)}</span>
-            </div>
-          </div>
-
-          <div class="sr-row">
-            <div class="sr-label-container">
-              <span>SUPPORT 1 (S1):</span>
-              ${renderTouchCheckBadge(stock, s1)}
-            </div>
-            <span class="${s1Class}">${formatNum(s1)}</span>
-          </div>
-
-          <div class="sr-row">
-            <div class="sr-label-container">
-              <span>SUPPORT 2 (S2):</span>
-              ${renderTouchCheckBadge(stock, s2)}
-            </div>
-            <span class="${s2Class}">${formatNum(s2)}</span>
-          </div>
-
-          <div class="sr-row">
-            <div class="sr-label-container">
-              <span>SUPPORT 3 (S3):</span>
-              ${renderTouchCheckBadge(stock, s3)}
-            </div>
-            <span class="${s3Class}">${formatNum(s3)}</span>
-          </div>
-        </div>
-
         <div class="signal-badge-container">
           <span class="badge ${badgeClass}">${signalText}</span>
         </div>
@@ -1314,120 +1397,189 @@
           ${fiboText}
         </div>
 
-        ${!isIHSG ? `
-          <div class="trading-plan-wrapper">
-            <div style="text-align:center; font-size:0.65rem; color:#cbd5e1; margin-bottom:4px;">
-              ${statusDotHtml} 🎯 STRATEGI TRADING PLAN (ENTRY, TP 1-3, CL 1-3)
+        <!-- TOMBOL COLLAPSIBLE DARI RESISTAN KEBAWAH AGAR UNTUK MONITOR RINGAN -->
+        <button class="collapse-toggle-btn" id="collapse-btn-${stock.ticker}" onclick="toggleCardDetails('${stock.ticker}')">
+          ▼ TAMPILKAN PIVOT, S/R & STRATEGI PLAN
+        </button>
+
+        <div class="collapsible-content" id="collapse-content-${stock.ticker}">
+          <div class="sr-stat-box">
+            <div class="sr-row">
+              <div class="sr-label-container">
+                <span>RESISTAN 3 (R3):</span>
+                ${renderTouchCheckBadge(stock, r3)}
+              </div>
+              <span class="${r3Class}">${formatNum(r3)}</span>
+            </div>
+
+            <div class="sr-row">
+              <div class="sr-label-container">
+                <span>RESISTAN 2 (R2):</span>
+                ${renderTouchCheckBadge(stock, r2)}
+              </div>
+              <span class="${r2Class}">${formatNum(r2)}</span>
+            </div>
+
+            <div class="sr-row">
+              <div class="sr-label-container">
+                <span>RESISTAN 1 (R1):</span>
+                ${renderTouchCheckBadge(stock, r1)}
+              </div>
+              <span class="${r1Class}">${formatNum(r1)}</span>
             </div>
             
-            <div class="trading-plan-grid">
-              <div class="plan-col ${selectedTradingStyle === 'SCALPING' ? 'active-style' : ''}">
-                <div class="plan-col-title">⚡ SCALPING</div>
-                
-                <div class="plan-row-item">
-                  <span class="plan-item-label">ENTRY</span>
-                  <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.entry}</span>
-                </div>
-
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 1</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp1}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 2</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp2}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 3</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp3}</span>
-                </div>
-
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 1</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl1}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 2</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl2}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 3</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl3}</span>
-                </div>
+            <div class="sr-row sr-pivot-separator">
+              <div class="sr-label-container">
+                <span class="pivot-label-yellow">PIVOT POINT (${currentTfTag}):</span>
+                ${renderTouchCheckBadge(stock, pivotPoint)}
               </div>
-
-              <div class="plan-col ${selectedTradingStyle === 'SWING' ? 'active-style' : ''}">
-                <div class="plan-col-title">📈 SWING</div>
-
-                <div class="plan-row-item">
-                  <span class="plan-item-label">ENTRY</span>
-                  <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.entry}</span>
-                </div>
-
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 1</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp1}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 2</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp2}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 3</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp3}</span>
-                </div>
-
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 1</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl1}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 2</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl2}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 3</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl3}</span>
-                </div>
+              ${pivotDotsHtml}
+              <div class="pivot-price-wrapper">
+                ${pivotArrowIcon}
+                <span class="${pivotPriceClass}">${formatNum(pivotPoint)}</span>
               </div>
+            </div>
 
-              <div class="plan-col ${selectedTradingStyle === 'INVESTMENT' ? 'active-style' : ''}">
-                <div class="plan-col-title">💎 INVESTASI</div>
+            <div class="sr-row">
+              <div class="sr-label-container">
+                <span>SUPPORT 1 (S1):</span>
+                ${renderTouchCheckBadge(stock, s1)}
+              </div>
+              <span class="${s1Class}">${formatNum(s1)}</span>
+            </div>
 
-                <div class="plan-row-item">
-                  <span class="plan-item-label">ENTRY</span>
-                  <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.entry}</span>
+            <div class="sr-row">
+              <div class="sr-label-container">
+                <span>SUPPORT 2 (S2):</span>
+                ${renderTouchCheckBadge(stock, s2)}
+              </div>
+              <span class="${s2Class}">${formatNum(s2)}</span>
+            </div>
+
+            <div class="sr-row">
+              <div class="sr-label-container">
+                <span>SUPPORT 3 (S3):</span>
+                ${renderTouchCheckBadge(stock, s3)}
+              </div>
+              <span class="${s3Class}">${formatNum(s3)}</span>
+            </div>
+          </div>
+
+          ${!isIHSG ? `
+            <div class="trading-plan-wrapper">
+              <div style="text-align:center; font-size:0.65rem; color:#cbd5e1; margin-bottom:4px;">
+                ${statusDotHtml} 🎯 STRATEGI TRADING PLAN (ENTRY, TP 1-3, CL 1-3)
+              </div>
+              
+              <div class="trading-plan-grid">
+                <div class="plan-col ${selectedTradingStyle === 'SCALPING' ? 'active-style' : ''}">
+                  <div class="plan-col-title">⚡ SCALPING</div>
+                  
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">ENTRY</span>
+                    <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.entry}</span>
+                  </div>
+
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 1</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp1}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 2</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp2}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 3</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp3}</span>
+                  </div>
+
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 1</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl1}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 2</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl2}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 3</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl3}</span>
+                  </div>
                 </div>
 
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 1</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp1}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 2</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp2}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">TP 3</span>
-                  <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp3}</span>
+                <div class="plan-col ${selectedTradingStyle === 'SWING' ? 'active-style' : ''}">
+                  <div class="plan-col-title">📈 SWING</div>
+
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">ENTRY</span>
+                    <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.entry}</span>
+                  </div>
+
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 1</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp1}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 2</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp2}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 3</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp3}</span>
+                  </div>
+
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 1</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl1}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 2</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl2}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 3</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl3}</span>
+                  </div>
                 </div>
 
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 1</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl1}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 2</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl2}</span>
-                </div>
-                <div class="plan-row-item">
-                  <span class="plan-item-label">CL 3</span>
-                  <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl3}</span>
+                <div class="plan-col ${selectedTradingStyle === 'INVESTMENT' ? 'active-style' : ''}">
+                  <div class="plan-col-title">💎 INVESTASI</div>
+
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">ENTRY</span>
+                    <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.entry}</span>
+                  </div>
+
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 1</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp1}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 2</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp2}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">TP 3</span>
+                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp3}</span>
+                  </div>
+
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 1</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl1}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 2</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl2}</span>
+                  </div>
+                  <div class="plan-row-item">
+                    <span class="plan-item-label">CL 3</span>
+                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl3}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ` : ''}
+          ` : ''}
+        </div>
       `;
 
       if (!isIHSG) {
