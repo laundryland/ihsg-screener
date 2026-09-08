@@ -286,6 +286,17 @@
       color: #fca5a5;
     }
 
+    /* Animasi Kedip (Blink) untuk Kolom Petir Hijau */
+    @keyframes lightning-blink-animation {
+      0% { opacity: 1; box-shadow: 0 0 4px #22c55e; }
+      50% { opacity: 0.2; box-shadow: none; }
+      100% { opacity: 1; box-shadow: 0 0 4px #22c55e; }
+    }
+
+    .lightning-box-slot.lightning-blink {
+      animation: lightning-blink-animation 0.8s infinite;
+    }
+
     .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .group-tag { font-size: 0.65rem; color: #38bdf8; background: #0c4a6e; padding: 2px 5px; border-radius: 4px; display: inline-block; }
     
@@ -351,7 +362,6 @@
       height: 26px;
     }
 
-    /* Animasi Panah Kedip Hijau */
     @keyframes arrow-blink-green {
       0% { opacity: 1; transform: translateX(0); }
       50% { opacity: 0.2; transform: translateX(2px); }
@@ -972,30 +982,54 @@
 
     function renderLightningBoxes(stock) {
       const isSuspended = stock.is_suspended || stock.status === 'SUSPEND' || stock.volume === 0;
-      const vRatio = parseFloat(stock.vol_ratio) || 0;
       const closePrice = stock.price ?? 0;
       const prevClose = stock.prev_close ?? closePrice;
       const volStatus = (stock.vol_status || '').toUpperCase();
       const signalText = (stock.signal || '').toUpperCase();
 
-      let activeCount = 0;
+      // Penentuan Konfirmasi Sinyal Indikator Berdasarkan Strategi Time Frame
+      let tfStatus = 'NEUTRAL';
+      if (selectedTradingStyle === 'SCALPING') {
+        tfStatus = (stock.macd_status || '').toUpperCase();
+      } else if (selectedTradingStyle === 'INVESTMENT') {
+        tfStatus = (stock.rsi_status || '').toUpperCase();
+      } else { // SWING (Default)
+        tfStatus = (stock.ema_status || '').toUpperCase();
+        if (tfStatus === 'NEUTRAL') {
+          tfStatus = closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL';
+        }
+      }
 
+      const isBuySignal = signalText.includes('BUY') || signalText.includes('STRONG BUY');
+      const isTfBuy = tfStatus === 'BUY' || tfStatus === 'BULLISH';
+      const isReadyToBuy = (isBuySignal || isBuyWorthyStock(stock)) && isTfBuy;
+
+      let activeCount = 0;
       if (!isSuspended) {
+        let vRatio = parseFloat(stock.vol_ratio) || 0;
         if (vRatio >= 2.5) activeCount = 5;
         else if (vRatio >= 2.0) activeCount = 4;
         else if (vRatio >= 1.5) activeCount = 3;
         else if (vRatio >= 1.2) activeCount = 2;
         else if (vRatio >= 1.0) activeCount = 1;
         else activeCount = 0;
+
+        // Jika dalam fase BUY/LAYAK BELI, pastikan minimal ada 1 kotak petir aktif
+        if (isReadyToBuy && activeCount === 0) {
+          activeCount = 1;
+        }
       }
 
       const isDistribution = (volStatus === 'SELL') || (closePrice < prevClose) || signalText.includes('SELL');
       let activeClass = isDistribution ? 'active-red' : 'active-green';
+      
+      // Tambahkan efek kedip (blink) hanya jika statusnya siap/layak entry hijau
+      let blinkClass = (activeClass === 'active-green' && isReadyToBuy) ? 'lightning-blink' : '';
 
       let html = '<div class="lightning-grid-container">';
       for (let i = 1; i <= 5; i++) {
         if (!isSuspended && i <= activeCount) {
-          html += `<div class="lightning-box-slot ${activeClass}">⚡</div>`;
+          html += `<div class="lightning-box-slot ${activeClass} ${blinkClass}">⚡</div>`;
         } else {
           html += `<div class="lightning-box-slot">⚡</div>`;
         }
@@ -1230,7 +1264,6 @@
       const s2Class = (lowPrice <= s2 || closePrice <= s2) ? 'blink-green' : 'sr-sup';
       const s3Class = (lowPrice <= s3 || closePrice <= s3) ? 'blink-green' : 'sr-sup';
 
-      // Penentuan Panah Blink Hijau berdasarkan Strategi Trading Aktif
       const arrowSwing = selectedTradingStyle === 'SWING' ? '<span class="arrow-active-blink">➔</span>' : '';
       const arrowScalping = selectedTradingStyle === 'SCALPING' ? '<span class="arrow-active-blink">➔</span>' : '';
       const arrowInvestment = selectedTradingStyle === 'INVESTMENT' ? '<span class="arrow-active-blink">➔</span>' : '';
