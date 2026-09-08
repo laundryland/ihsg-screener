@@ -233,7 +233,6 @@
       gap: 8px;
     }
 
-    /* HARGA EMITEN DIBUAT LEBIH BESAR */
     .price-large { 
       font-size: 1.45rem; 
       font-weight: 800;
@@ -243,7 +242,6 @@
     .price-down { color: #ef4444; }
     .price-flat { color: #ffffff; }
 
-    /* PERSENTASE DIBUAT LEBIH BESAR DAN DIPINDAHKAN KE KANAN */
     .open-percent-badge { 
       font-size: 0.85rem; 
       padding: 3px 8px; 
@@ -331,7 +329,6 @@
 
     .signal-percent { font-size: 0.7rem; color: #cbd5e1; }
 
-    /* KOLOM INDIKATOR TERMASUK TREND DAN VOLUME DI BAWAH */
     .indicator-column-box, .ohlc-grid-box {
       background: #0f172a;
       border: 1px solid #334155;
@@ -352,6 +349,25 @@
       padding: 5px 6px; 
       border-radius: 4px; 
       height: 26px;
+    }
+
+    /* Animasi Panah Kedip Hijau */
+    @keyframes arrow-blink-green {
+      0% { opacity: 1; transform: translateX(0); }
+      50% { opacity: 0.2; transform: translateX(2px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    .arrow-active-blink {
+      display: inline-block;
+      color: #22c55e;
+      margin-right: 4px;
+      font-size: 0.75rem;
+      animation: arrow-blink-green 0.8s infinite;
+    }
+    .indicator-name {
+      display: flex;
+      align-items: center;
+      gap: 2px;
     }
 
     @keyframes dot-blink {
@@ -576,38 +592,22 @@
     </div>
   </header>
 
-  <!-- Banner Peringatan Waktu Operasional Bursa -->
-<div id="marketStatusAlert"></div>
-
-<!-- Dropdown Pilihan Gaya Trading / Timeframe -->
-<div class="filter-container" style="margin: 15px 0;">
-  <label for="strategyFilter"><strong>Pilih Gaya Trading & Timeframe:</strong></label>
-  <select id="strategyFilter" class="form-control">
-    <option value="scalping">Scalping / Short-Term (15m - EMA & RSI)</option>
-    <option value="swing" selected>Swing / Middle-Term (1D - EMA, MACD, ATR)</option>
-    <option value="investasi">Investasi / Long-Term (1D/1W - MA50/200)</option>
-  </select>
-</div>
-
-<!-- Container Hasil Data Screener -->
-<div id="stockListContainer"></div>
-
   <div class="control-box">
     <div class="control-header">
-      <span style="font-size: 0.75rem; color: #94a3b8;">MENU EMITEN & GAYA TRADING</span>
+      <span style="font-size: 0.75rem; color: #94a3b8;">MENU CARI & PILIH EMITEN</span>
       <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ SEMBUNYIKAN MENU</button>
     </div>
     <div class="form-row" id="dropdownRow">
       <input type="text" id="searchInput" placeholder="🔍 CARI EMITEN..." onkeyup="handleSearchKey(event)">
       
-      <select id="selectTradingStyle" onchange="changeTradingStyle(this.value)">
-        <option value="SCALPING">⚡ 1. SCALPING / SHORTTERM</option>
-        <option value="SWING" selected>📈 2. SWING / MIDDLETERM</option>
-        <option value="INVESTMENT">💎 3. INVESTASI / LONGTERM</option>
-      </select>
-
       <select id="selectTickerOption" onchange="autoAddStock(this)">
         <option value="">-- PILIH EMITEN --</option>
+      </select>
+
+      <select id="selectTradingStyle" onchange="changeTradingStyle(this)">
+        <option value="SWING">📈 SWING</option>
+        <option value="SCALPING">⚡ SCALPING</option>
+        <option value="INVESTMENT">💎 INVESTASI</option>
       </select>
     </div>
   </div>
@@ -748,6 +748,7 @@
         rawData = data.stocks || [];
 
         initMenuState();
+        initTradingStyleSelect();
         populateDropdownOptions();
         render();
         updateMarketClock();
@@ -792,10 +793,7 @@
     function initMenuState() {
       const row = document.getElementById('dropdownRow');
       const btn = document.getElementById('toggleBtn');
-      const selectStyle = document.getElementById('selectTradingStyle');
       
-      if (selectStyle) selectStyle.value = selectedTradingStyle;
-
       if (isMenuVisible) {
         row.classList.remove('hidden');
         btn.innerText = "👁️ SEMBUNYIKAN MENU";
@@ -805,16 +803,23 @@
       }
     }
 
+    function initTradingStyleSelect() {
+      const selectStyle = document.getElementById('selectTradingStyle');
+      if (selectStyle) {
+        selectStyle.value = selectedTradingStyle;
+      }
+    }
+
+    function changeTradingStyle(selectEl) {
+      selectedTradingStyle = selectEl.value;
+      localStorage.setItem('trading_style', selectedTradingStyle);
+      render();
+    }
+
     function toggleDropdownMenu() {
       isMenuVisible = !isMenuVisible;
       localStorage.setItem('menu_visible', JSON.stringify(isMenuVisible));
       initMenuState();
-    }
-
-    function changeTradingStyle(styleVal) {
-      selectedTradingStyle = styleVal;
-      localStorage.setItem('trading_style', selectedTradingStyle);
-      render();
     }
 
     function populateDropdownOptions() {
@@ -1225,6 +1230,11 @@
       const s2Class = (lowPrice <= s2 || closePrice <= s2) ? 'blink-green' : 'sr-sup';
       const s3Class = (lowPrice <= s3 || closePrice <= s3) ? 'blink-green' : 'sr-sup';
 
+      // Penentuan Panah Blink Hijau berdasarkan Strategi Trading Aktif
+      const arrowSwing = selectedTradingStyle === 'SWING' ? '<span class="arrow-active-blink">➔</span>' : '';
+      const arrowScalping = selectedTradingStyle === 'SCALPING' ? '<span class="arrow-active-blink">➔</span>' : '';
+      const arrowInvestment = selectedTradingStyle === 'INVESTMENT' ? '<span class="arrow-active-blink">➔</span>' : '';
+
       const card = document.createElement('div');
       card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
       card.dataset.ticker = stock.ticker;
@@ -1259,14 +1269,13 @@
           </div>
         </div>
 
-        <!-- KOLOM INDIKATOR DENGAN TREND & VOLUME DITAMBAHKAN DI BAGIAN PALING BAWAH -->
         <div class="indicator-column-box">
-          <div class="indicator-item"><span>RSI</span>${renderIndicator10Dots(rsiStatus, rsiVal)}</div>
-          <div class="indicator-item"><span>MACD</span>${renderIndicator10Dots(macdStatus, macdVal)}</div>
-          <div class="indicator-item"><span>EMA</span>${renderIndicator10Dots(emaStatus, emaVal)}</div>
-          <div class="indicator-item"><span>FIBO</span>${renderIndicator10Dots(fiboStatus)}</div>
-          <div class="indicator-item"><span>TREND</span>${renderIndicator10Dots(trendStatus, trendVal)}</div>
-          <div class="indicator-item"><span>VOLUME</span>${renderIndicator10Dots(volStatus, volVal)}</div>
+          <div class="indicator-item"><span class="indicator-name">PIVOT</span>${renderIndicator10Dots('BUY', 8)}</div>
+          <div class="indicator-item"><span class="indicator-name">TREND</span>${renderIndicator10Dots(trendStatus, trendVal)}</div>
+          <div class="indicator-item"><span class="indicator-name">VOLUME</span>${renderIndicator10Dots(volStatus, volVal)}</div>
+          <div class="indicator-item"><span class="indicator-name">${arrowSwing}EMA (1D)</span>${renderIndicator10Dots(emaStatus, emaVal)}</div>
+          <div class="indicator-item"><span class="indicator-name">${arrowScalping}MACD (15M)</span>${renderIndicator10Dots(macdStatus, macdVal)}</div>
+          <div class="indicator-item"><span class="indicator-name">${arrowInvestment}RSI (1W)</span>${renderIndicator10Dots(rsiStatus, rsiVal)}</div>
         </div>
 
         <div class="ohlc-grid-box">
