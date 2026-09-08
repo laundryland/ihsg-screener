@@ -622,6 +622,18 @@
 
   <div class="card-grid" id="stockGrid"></div>
 
+  <div id="marketWarning"></div>
+
+<!-- Tombol Pilihan Gaya Trading -->
+<div style="margin-bottom: 15px;">
+  <button class="style-btn active" data-style="scalping">⚡ Scalping (15m)</button>
+  <button class="style-btn" data-style="swing">🌊 Swing Trading (1D)</button>
+  <button class="style-btn" data-style="investing">🏦 Investasi (1W)</button>
+</div>
+
+<!-- Container Tabel Screener -->
+<div id="screenerContainer"></div>
+
   <script>
     let rawData = [];
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
