@@ -1,46 +1,45 @@
-// Path ke file JSON lokal di repositori GitHub kamu
-const IPO_JSON_URL = './ipo.json'; 
+// Path dihubungkan kembali ke data.json
+const STOCKS_JSON_URL = './data.json'; 
 
-// Fungsi untuk mengambil data dari ipo.json
-async function fetchIPONews() {
+// Fungsi mengambil data saham secara efisien
+async function fetchStockNews() {
   const tickerContainer = document.getElementById("ipoTickerContainer");
   if (!tickerContainer) return;
 
   try {
-    // Beri timestamp pada URL query agar browser tidak membaca dari cache lama
-    const response = await fetch(`${IPO_JSON_URL}?t=${new Date().getTime()}`);
+    // Menggunakan fetch standar agar ringan
+    const response = await fetch(STOCKS_JSON_URL);
     
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const ipoList = await response.json();
-    renderIPOTicker(ipoList);
+    const data = await response.json();
+    
+    // Langsung merender data saham
+    renderStockTicker(data.stocks);
   } catch (error) {
-    console.error("Gagal memuat data IPO:", error);
-    tickerContainer.innerHTML = `<span class="text-error">Gagal memuat info IPO terbaru.</span>`;
+    console.error("Gagal memuat data saham:", error);
+    tickerContainer.innerHTML = `<span>Gagal memuat info saham.</span>`;
   }
 }
 
-// Fungsi untuk me-render data IPO menjadi Running Text (Marquee)
-function renderIPOTicker(ipoList) {
+// Fungsi merender running text
+function renderStockTicker(stockList) {
   const tickerContainer = document.getElementById("ipoTickerContainer");
   
-  if (!ipoList || ipoList.length === 0) {
-    tickerContainer.innerHTML = `<span>Tidak ada emiten IPO dalam waktu dekat.</span>`;
+  if (!stockList || stockList.length === 0) {
+    tickerContainer.innerHTML = `<span>Data saham tidak tersedia.</span>`;
     return;
   }
 
-  // Format penggabungan item IPO dengan pemisah '|'
-  const tickerItems = ipoList.map(item => {
-    return `🔥 <strong>${item.nama} (${item.ticker})</strong> — Tgl IPO: ${item.tgl_ipo} <span class="badge">[${item.status}]</span>`;
-  }).join("&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;");
+  // Menggunakan properti ticker, price, dan signal dari data.json
+  const tickerItems = stockList.map(item => {
+    return `<strong>${item.ticker}</strong>: Rp${item.price.toLocaleString("id-ID")} [${item.signal}]`;
+  }).join("&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;");
 
-  // Masukkan ke dalam container animasi
   tickerContainer.innerHTML = `<div class="ipo-ticker-text">${tickerItems}</div>`;
 }
 
-// Panggil fungsi saat halaman dimuat
-document.addEventListener("DOMContentLoaded", () => {
-  fetchIPONews();
-});
+// Jalankan ketika dokumen siap
+document.addEventListener("DOMContentLoaded", fetchStockNews);
