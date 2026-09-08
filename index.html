@@ -1,1714 +1,383 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IHSG SCREENER - TRADING MONITOR</title>
-  
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0f172a">
-  <link rel="icon" type="image/png" sizes="192x192" href="./laundry1-512x512.png">
-  <link rel="apple-touch-icon" href="./laundry1-512x512.png">
-  
-  <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-      user-select: none; 
-      text-transform: uppercase; 
-      font-weight: bold; 
-    }
-
-    body { 
-      background-color: #0f172a; 
-      color: #f8fafc; 
-      padding: 16px; 
-      padding-top: 90px; 
-      padding-bottom: 40px; 
-    }
-    
-    header { 
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      background-color: #0f172a;
-      border-bottom: 1px solid #334155;
-      padding: 12px 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-
-    .header-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .header-left { display: flex; align-items: center; gap: 10px; }
-    
-    .app-logo { 
-      width: 40px; 
-      height: 40px; 
-      border-radius: 50%; 
-      object-fit: cover; 
-      flex-shrink: 0; 
-      border: 2px solid #38bdf8; 
-    }
-
-    .header-text { display: flex; flex-direction: column; }
-    h1 { font-size: 1rem; color: #38bdf8; letter-spacing: 0.5px; line-height: 1.2; }
-    .update-time { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
-
-    .header-actions { display: flex; gap: 6px; align-items: center; }
-
-    .btn-header {
-      background: #0284c7;
-      color: #fff;
-      border: 1px solid #38bdf8;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 0.7rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.2s;
-      flex-shrink: 0;
-    }
-    .btn-header:hover { background: #0369a1; }
-    .btn-reload-header { background: #334155; border-color: #475569; }
-    .btn-reload-header:hover { background: #475569; }
-
-    .control-box { 
-      position: sticky; 
-      top: 75px; 
-      z-index: 90; 
-      background: #1e293b; 
-      padding: 10px 12px; 
-      border-radius: 10px; 
-      border: 1px solid #334155; 
-      margin-bottom: 12px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
-    }
-    .control-header { display: flex; justify-content: space-between; align-items: center; }
-    .toggle-btn { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
-    
-    .form-row { 
-      margin-top: 8px; 
-      display: grid; 
-      grid-template-columns: repeat(4, 1fr); 
-      gap: 8px; 
-    }
-    .form-row.hidden { display: none; }
-    
-    select, input[type="text"], input[type="number"] { 
-      width: 100%; 
-      padding: 8px 10px; 
-      border-radius: 6px; 
-      border: 1px solid #475569; 
-      background: #0f172a; 
-      color: #fff; 
-      font-size: 0.75rem; 
-      outline: none;
-    }
-    select option { background: #0f172a; color: #fff; }
-    input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: #38bdf8; }
-
-    .group-tabs { 
-      position: sticky;
-      top: 135px;
-      z-index: 85;
-      background: #0f172a;
-      padding: 6px 0;
-      margin-bottom: 12px; 
-      display: flex; 
-      gap: 6px; 
-      overflow-x: auto; 
-      scrollbar-width: none; 
-      border-bottom: 1px solid #1e293b;
-    }
-    .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
-    .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
-
-    .tab.tab-buy-worthy {
-      background: #064e3b;
-      color: #4ade80;
-      border-color: #22c55e;
-    }
-    .tab.tab-buy-worthy.active {
-      background: #166534;
-      color: #ffffff;
-      border-color: #4ade80;
-      box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
-    }
-
-    .market-info-tab {
-      padding: 6px 10px;
-      border-radius: 16px;
-      font-size: 0.7rem;
-      white-space: nowrap;
-      border: 1px solid #334155;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-    .info-tab-1 { background: #111827; border-color: #374151; }
-    .info-tab-2 { background: #312e81; border-color: #4338ca; color: #c7d2fe; }
-
-    .info-tab-3 { 
-      background: #121212 !important; 
-      border-color: #27272a !important; 
-    }
-
-    .status-text-open { color: #4ade80 !important; }
-    .status-text-break { color: #a1a1aa !important; }
-    .status-text-closed { color: #f4f4f5 !important; }
-    .status-clock-open { color: #4ade80 !important; font-weight: 800; text-shadow: none !important; }
-
-    .card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-    
-    .card { background: #1e293b; padding: 12px; border-radius: 10px; border: 1px solid #334155; position: relative; cursor: grab; transition: transform 0.15s, opacity 0.15s; }
-    .card:active { cursor: grabbing; }
-    .card.dragging { opacity: 0.4; transform: scale(0.96); border-style: dashed; }
-    .card-ihsg { border: 2px solid #0284c7; background: #0f172a; cursor: default; }
-
-    .compact-actions-top {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      display: flex;
-      align-items: center;
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      overflow: hidden;
-      z-index: 10;
-    }
-
-    .compact-btn {
-      width: 24px;
-      height: 24px;
-      border: none;
-      background: transparent;
-      color: #38bdf8;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      transition: background 0.2s;
-    }
-    .compact-btn:hover { background: #334155; }
-    .compact-btn.close-compact { color: #fca5a5; border-left: 1px solid #334155; }
-    .compact-btn.close-compact:hover { background: #7f1d1d; color: #fff; }
-
-    .card-header-full {
-      background: #0f172a;
-      border: 1px solid #334155;
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      width: 100%;
-    }
-
-    .ticker-price-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-right: 50px;
-      gap: 6px;
-    }
-
-    .ticker-large { 
-      font-size: 1.3rem; 
-      color: #fff; 
-      letter-spacing: 0.5px;
-    }
-
-    .price-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .price-large { 
-      font-size: 1.45rem; 
-      font-weight: 800;
-    }
-    
-    .price-up { color: #22c55e; }
-    .price-down { color: #ef4444; }
-    .price-flat { color: #ffffff; }
-
-    .open-percent-badge { 
-      font-size: 0.85rem; 
-      padding: 3px 6px; 
-      border-radius: 5px; 
-      background: #0f172a; 
-      border: 1px solid #334155; 
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-      font-weight: 800;
-    }
-
-    /* BAR PETIR VOLUME / BANDARMOLOGY */
-    .lightning-grid-container {
-      display: flex;
-      gap: 3px;
-      width: 100%;
-      height: 18px;
-      margin-top: 2px;
-    }
-
-    .lightning-box-slot {
-      flex: 1;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      color: #475569;
-      transition: all 0.2s ease;
-    }
-
-    .lightning-box-slot.active-green {
-      background: #064e3b;
-      border-color: #22c55e;
-      color: #4ade80;
-    }
-
-    .lightning-box-slot.active-red {
-      background: #7f1d1d;
-      border-color: #ef4444;
-      color: #fca5a5;
-    }
-
-    .lightning-box-slot.active-gray {
-      background: #334155;
-      border-color: #64748b;
-      color: #cbd5e1;
-    }
-
-    @keyframes lightning-blink-animation {
-      0% { opacity: 1; box-shadow: 0 0 4px #22c55e; }
-      50% { opacity: 0.2; box-shadow: none; }
-      100% { opacity: 1; box-shadow: 0 0 4px #22c55e; }
-    }
-
-    .lightning-box-slot.lightning-blink {
-      animation: lightning-blink-animation 0.8s infinite;
-    }
-
-    .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .group-tag { font-size: 0.65rem; color: #38bdf8; background: #0c4a6e; padding: 2px 5px; border-radius: 4px; display: inline-block; }
-    
-    .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
-    .middle-signal-icon { font-size: 0.8rem; margin: 0 4px; }
-    
-    .ten-boxes-container { display: flex; gap: 2px; align-items: center; }
-    .box-ten {
-      width: 7px;
-      height: 9px;
-      border-radius: 1px;
-      background-color: #334155;
-      border: 1px solid #475569;
-    }
-    .box-ten.box-green-active { background-color: #22c55e; border-color: #4ade80; box-shadow: 0 0 2px #22c55e; }
-    .box-ten.box-red-active { background-color: #ef4444; border-color: #fca5a5; box-shadow: 0 0 2px #ef4444; }
-    .box-ten.box-gray-active { background-color: #64748b; border-color: #94a3b8; }
-
-    @keyframes box-blink-animation {
-      0% { opacity: 1; }
-      50% { opacity: 0.2; }
-      100% { opacity: 1; }
-    }
-    .box-blink {
-      animation: box-blink-animation 0.8s infinite;
-    }
-
-    .indicator-dots-row {
-      display: flex;
-      gap: 1.5px;
-      align-items: center;
-    }
-    .ind-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background-color: #334155;
-    }
-    .ind-dot.active-green { background-color: #22c55e; box-shadow: 0 0 2px #22c55e; }
-    .ind-dot.active-red { background-color: #ef4444; box-shadow: 0 0 2px #ef4444; }
-    .ind-dot.active-gray { background-color: #64748b; }
-
-    .signal-percent { font-size: 0.7rem; color: #cbd5e1; }
-
-    .indicator-column-box, .ohlc-grid-box {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 6px;
-      margin: 6px 0;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
-      font-size: 0.65rem;
-    }
-    
-    .indicator-item, .ohlc-item { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: #1e293b; 
-      padding: 5px 6px; 
-      border-radius: 4px; 
-      height: 26px;
-    }
-
-    .indicator-name {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    }
-
-    @keyframes dot-blink {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.3; transform: scale(0.85); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    .ohlc-val { color: #fff; }
-
-    .warning-box-col {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 6px;
-      margin-bottom: 8px;
-      text-align: center;
-      font-size: 0.68rem;
-    }
-
-    .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
-    .dot-red { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; animation: dot-blink 1s infinite; }
-    .dot-green { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; animation: dot-blink 1s infinite; }
-
-    @keyframes blink-animation {
-      0% { opacity: 1; }
-      50% { opacity: 0.2; }
-      100% { opacity: 1; }
-    }
-    .blink-red { color: #ef4444; animation: blink-animation 1s infinite; }
-    .blink-green { color: #22c55e; animation: blink-animation 1s infinite; }
-
-    @keyframes card-highlight {
-      0% { box-shadow: 0 0 0px #eab308; border-color: #334155; transform: scale(1); }
-      50% { box-shadow: 0 0 20px #eab308; border-color: #eab308; transform: scale(1.02); }
-      100% { box-shadow: 0 0 0px #eab308; border-color: #334155; transform: scale(1); }
-    }
-    .highlight-card { animation: card-highlight 0.7s ease-in-out 3; z-index: 10; }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
-
-    .collapse-toggle-btn {
-      width: 100%;
-      background: #1e293b;
-      border: 1px solid #38bdf8;
-      color: #38bdf8;
-      padding: 6px 8px;
-      border-radius: 6px;
-      font-size: 0.68rem;
-      cursor: pointer;
-      margin-top: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background 0.2s;
-    }
-    .collapse-toggle-btn:hover { background: #0f2744; }
-
-    .collapsible-content { display: none; margin-top: 6px; }
-    .collapsible-content.show { display: block; }
-
-    .sr-stat-box { 
-      padding: 6px; 
-      border-radius: 6px; 
-      background: #0f172a; 
-      border: 1px solid #334155; 
-      font-size: 0.65rem; 
-      color: #cbd5e1; 
-    }
-    .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; align-items: center; }
-    .sr-row:last-child { margin-bottom: 0; }
-    .sr-res { color: #f87171; }
-    .sr-sup { color: #4ade80; }
-
-    .sr-label-container {
-      position: sticky;
-      left: 0;
-      background: #0f172a;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding-right: 8px;
-    }
-
-    @keyframes arrow-blink-red {
-      0% { opacity: 1; transform: translateX(0); }
-      50% { opacity: 0.2; transform: translateX(-3px); }
-      100% { opacity: 1; transform: translateX(0); }
-    }
-    .arrow-blink-red {
-      color: #ef4444;
-      font-weight: 900;
-      font-size: 0.85rem;
-      margin: 0 6px;
-      display: inline-block;
-      animation: arrow-blink-red 0.6s infinite;
-    }
-
-    @keyframes arrow-blink-green-up {
-      0% { opacity: 1; transform: translateY(0); }
-      50% { opacity: 0.2; transform: translateY(-2px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    .arrow-blink-green-up {
-      color: #22c55e;
-      font-weight: 900;
-      font-size: 0.85rem;
-      margin: 0 6px;
-      display: inline-block;
-      animation: arrow-blink-green-up 0.6s infinite;
-    }
-
-    .sr-value-container { display: flex; align-items: center; justify-content: flex-end; }
-
-    .sr-check-badge {
-      color: #22c55e;
-      font-weight: 800;
-      font-size: 0.65rem;
-      background: rgba(34, 197, 94, 0.15);
-      border: 1px solid rgba(34, 197, 94, 0.4);
-      padding: 1px 4px;
-      border-radius: 4px;
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .sr-pivot-separator {
-      background-color: #0f172a;
-      border: 1px solid #ffffff;
-      padding: 3px 5px;
-      margin: 4px -5px;
-      border-radius: 4px;
-    }
-    .pivot-label-yellow { color: #eab308; }
-    .pivot-price-blue { color: #38bdf8; }
-    .pivot-price-green { color: #4ade80; }
-    .pivot-price-yellow { color: #eab308; }
-
-    .pivot-dots-container {
-      display: inline-flex;
-      gap: 2px;
-      align-items: center;
-      margin-left: 4px;
-      margin-right: auto;
-    }
-
-    .pivot-dot-small {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background-color: #334155;
-      display: inline-block;
-      flex-shrink: 0;
-    }
-    .pivot-dot-small.active-red { background-color: #ef4444; box-shadow: 0 0 3px #ef4444; }
-    .pivot-dot-small.active-green { background-color: #22c55e; box-shadow: 0 0 3px #22c55e; }
-    .pivot-dot-small.active-gray { background-color: #64748b; }
-    .pivot-dot-small.dot-blink { animation: dot-blink 0.8s infinite; }
-
-    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; }
-    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; }
-
-    .pivot-price-wrapper { display: inline-flex; align-items: center; }
-
-    .signal-badge-container { margin: 6px 0 4px 0; text-align: center; }
-    .badge { display: block; width: 100%; padding: 5px 6px; border-radius: 5px; font-size: 0.7rem; text-align: center; letter-spacing: 0.5px; }
-    .strong-buy { background: #047857; color: #34d399; border: 1px solid #10b981; }
-    .buy { background: #166534; color: #4ade80; border: 1px solid #22c55e; }
-    .neutral { background: #334155; color: #cbd5e1; border: 1px solid #475569; }
-    .sell { background: #991b1b; color: #fca5a5; border: 1px solid #ef4444; }
-    .strong-sell { background: #881337; color: #fda4af; border: 1px solid #f43f5e; }
-
-    .fibo-stat-box { margin-top: 4px; padding: 3px 5px; border-radius: 4px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; text-align: center; }
-    .fibo-oversold { color: #22c55e; border-color: #22c55e; }
-    .fibo-overbought { color: #ef4444; border-color: #ef4444; }
-    .fibo-normal { color: #64748b; }
-
-    .tf-badge-fibo { font-size: 0.58rem; padding: 1px 4px; border-radius: 3px; background: #334155; color: #38bdf8; margin-left: 4px; }
-
-    .trading-plan-wrapper { margin-top: 8px; padding: 8px; background: #0f172a; border-radius: 8px; border: 1px dashed #475569; }
-    .trading-plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
-    .plan-col { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 6px 4px; font-size: 0.6rem; text-align: center; display: flex; flex-direction: column; gap: 4px; }
-    .plan-col.active-style { border-color: #38bdf8; background: #0f2744; box-shadow: 0 0 6px rgba(56, 189, 248, 0.3); }
-    .plan-col-title { font-size: 0.62rem; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .plan-row-item { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; padding: 3px 2px; border-radius: 4px; border: 1px solid #1e293b; }
-    .plan-item-label { color: #94a3b8; font-size: 0.55rem; margin-bottom: 1px; }
-    .plan-item-val { color: #fff; font-size: 0.62rem; }
-    .val-tp { color: #4ade80; }
-    .val-cl { color: #f87171; }
-    .val-entry { color: #38bdf8; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Stock Screener - Advanced Analytics</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.95); }
+        }
+        .lightning-blink {
+            animation: pulse-fast 0.8s infinite ease-in-out;
+        }
+        /* Custom Scrollbar for clean UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
 </head>
-<body>
-
-  <header>
-    <div class="header-container">
-      <div class="header-left">
-        <img src="laundry1-512x512.png" alt="LOGO" class="app-logo">
-        <div class="header-text">
-          <h1>IHSG SCREENER</h1>
-          <p class="update-time" id="updateTime">MEMUAT DATA...</p>
-        </div>
-      </div>
-      <div class="header-actions">
-        <button class="btn-header" onclick="refreshAllData(this)">
-          <span class="refresh-icon">🔄</span> REFRESH
-        </button>
-        <button class="btn-header btn-reload-header" onclick="reloadPage()">
-          <span>⚡</span> RELOAD
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <div class="control-box">
-    <div class="control-header">
-      <span style="font-size: 0.75rem; color: #94a3b8;">MENU CARI & PILIH EMITEN</span>
-      <button class="toggle-btn" onclick="toggleDropdownMenu()" id="toggleBtn">👁️ SEMBUNYIKAN MENU</button>
-    </div>
-    <div class="form-row" id="dropdownRow">
-      <input type="text" id="searchInput" placeholder="🔍 CARI EMITEN..." onkeyup="handleSearchKey(event)">
-      
-      <select id="selectTickerOption" onchange="autoAddStock(this)">
-        <option value="">-- PILIH EMITEN --</option>
-      </select>
-
-      <select id="selectTradingStyle" onchange="changeTradingStyle(this)">
-        <option value="SWING">📈 SWING (TF 1D)</option>
-        <option value="SCALPING">⚡ SCALPING (TF 15M)</option>
-        <option value="INVESTMENT">💎 INVESTASI (TF 1W)</option>
-      </select>
-
-      <input type="number" id="minTurnoverInput" placeholder="VALUE (IDR)" value="2000000000" onchange="updateMinTurnover(this)" title="FILTER VALUE / TURNOVER MINIMAL (IDR)">
-    </div>
-  </div>
-
-  <div class="group-tabs" id="groupTabs">
-    <div class="tab" id="tab-ALL" onclick="filterGroup('ALL', this)">SEMUA</div>
-    <div class="tab tab-buy-worthy active" id="tab-LAYAK_BELI" onclick="filterGroup('LAYAK_BELI', this)">🔥 LAYAK BELI</div>
-    <div class="tab" id="tab-PERBANKAN" onclick="filterGroup('PERBANKAN', this)">PERBANKAN</div>
-    <div class="tab" id="tab-ENERGI" onclick="filterGroup('ENERGI', this)">ENERGI</div>
-    <div class="tab" id="tab-TAMBANG" onclick="filterGroup('TAMBANG', this)">TAMBANG</div>
-    <div class="tab" id="tab-TEKNOLOGI" onclick="filterGroup('TEKNOLOGI', this)">TEKNOLOGI</div>
-    <div class="tab" id="tab-MEDIA" onclick="filterGroup('MEDIA', this)">MEDIA</div>
-    <div class="tab" id="tab-KONSUMER" onclick="filterGroup('KONSUMER', this)">KONSUMER</div>
-    <div class="tab" id="tab-PROPERTI" onclick="filterGroup('PROPERTI', this)">PROPERTI</div>
-    <div class="tab" id="tab-INDUSTRI" onclick="filterGroup('INDUSTRI', this)">INDUSTRI</div>
-    <div class="tab" id="tab-KESEHATAN" onclick="filterGroup('KESEHATAN', this)">KESEHATAN</div>
-
-    <div class="market-info-tab info-tab-3" id="clockWibCol">
-      🕒 <span id="clockWibText">00:00:00 WIB</span>
-    </div>
-    <div class="market-info-tab info-tab-1" id="marketSessionCol">
-      🏛️ <span id="marketSessionText">SESI 1: 09:00-12:00</span>
-    </div>
-    <div class="market-info-tab info-tab-2" id="holidayWarningCol">
-      📅 <span id="holidayWarningText">BURSA BUKA (SENIN-JUMAT)</span>
-    </div>
-  </div>
-
-  <div class="card-grid" id="stockGrid"></div>
-
-  <script>
-    let rawData = [];
-    let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
-    let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
-    let selectedTradingStyle = localStorage.getItem('trading_style') || 'SWING';
-    let minTurnover = parseFloat(localStorage.getItem('min_turnover')) || 2000000000;
-    
-    let activeFilter = 'LAYAK_BELI';
-    let draggedTicker = null;
-    let lastResetDate = localStorage.getItem('last_sr_reset_date') || '';
-
-    function formatWIB(timeStr) {
-      if (!timeStr) return "-";
-      try {
-        const date = new Date(timeStr);
-        if (isNaN(date.getTime())) return timeStr;
-        return date.toLocaleString('id-ID', {
-          timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-        }) + " WIB";
-      } catch (e) { return timeStr; }
-    }
-
-    function formatNum(val) {
-      if (val === undefined || val === null || isNaN(val)) return '0';
-      return Number(val).toLocaleString('id-ID');
-    }
-
-    function reloadPage() {
-      window.location.reload();
-    }
-
-    function checkDailySrReset() {
-      const now = new Date();
-      const jakartaOptions = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
-      const formatter = new Intl.DateTimeFormat('en-US', jakartaOptions);
-      const parts = formatter.formatToParts(now);
-      let dateObj = {};
-      parts.forEach(p => dateObj[p.type] = p.value);
-
-      const todayStr = `${dateObj.year}-${dateObj.month}-${dateObj.day}`;
-      const currentHour = parseInt(dateObj.hour, 10);
-
-      if (currentHour >= 9 && lastResetDate !== todayStr) {
-        lastResetDate = todayStr;
-        localStorage.setItem('last_sr_reset_date', todayStr);
-        if (rawData && rawData.length > 0) {
-          rawData.forEach(stock => {
-            if (stock.hits) stock.hits = {};
-            stock.touch_count = 0;
-          });
-          render();
-        }
-      }
-    }
-
-    function updateMarketClock() {
-      const now = new Date();
-      const options = { timeZone: 'Asia/Jakarta', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      const timeString = now.toLocaleTimeString('id-ID', options);
-      
-      const day = now.getDay();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const totalMinutes = hours * 60 + minutes;
-
-      const clockEl = document.getElementById('clockWibText');
-      const sessionEl = document.getElementById('marketSessionText');
-      const holidayEl = document.getElementById('holidayWarningText');
-
-      if (clockEl) clockEl.innerText = `${timeString} WIB`;
-
-      let isWeekend = (day === 0 || day === 6);
-      let isFriday = (day === 5);
-
-      if (isWeekend) {
-        if (holidayEl) holidayEl.innerText = "LIBUR SABTU/MINGGU";
-        if (sessionEl) {
-          sessionEl.innerText = "BURSA TUTUP (WEEKEND)";
-          sessionEl.className = "status-text-closed";
-        }
-        if (clockEl) clockEl.className = "status-text-closed";
-        return;
-      } else {
-        if (holidayEl) holidayEl.innerText = "BURSA BUKA (HARI KERJA)";
-      }
-
-      const s1Start = 9 * 60; 
-      const s1End = 12 * 60;  
-      const s2StartNormal = 13 * 60 + 30; 
-      const s2StartFriday = 14 * 60;      
-      const s2Start = isFriday ? s2StartFriday : s2StartNormal;
-      const s2End = 16 * 60;  
-
-      if (totalMinutes >= s1Start && totalMinutes < s1End) {
-        if (sessionEl) {
-          sessionEl.innerText = "SESI 1 OPEN (09:00 - 12:00)";
-          sessionEl.className = "status-text-open";
-        }
-        if (clockEl) clockEl.className = "status-clock-open";
-      } else if (totalMinutes >= s1End && totalMinutes < s2Start) {
-        if (sessionEl) {
-          sessionEl.innerText = isFriday ? "ISTIRAHAT (12:00 - 14:00)" : "ISTIRAHAT (12:00 - 13:30)";
-          sessionEl.className = "status-text-break";
-        }
-        if (clockEl) clockEl.className = "status-text-break";
-      } else if (totalMinutes >= s2Start && totalMinutes < s2End) {
-        if (sessionEl) {
-          sessionEl.innerText = isFriday ? "SESI 2 OPEN (14:00 - 16:00)" : "SESI 2 OPEN (13:30 - 16:00)";
-          sessionEl.className = "status-text-open";
-        }
-        if (clockEl) clockEl.className = "status-clock-open";
-      } else {
-        if (sessionEl) {
-          sessionEl.innerText = "BURSA TUTUP";
-          sessionEl.className = "status-text-closed";
-        }
-        if (clockEl) clockEl.className = "status-text-closed";
-      }
-
-      checkDailySrReset();
-    }
-
-    setInterval(updateMarketClock, 1000);
-
-    async function fetchLatestData() {
-      const timestamp = new Date().getTime();
-      const res = await fetch(`./data.json?t=${timestamp}`, { cache: 'no-store' });
-      if (!res.ok) throw new Error("Gagal mengambil data");
-      return await res.json();
-    }
-
-    async function loadData() {
-      try {
-        const data = await fetchLatestData();
-        document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
-        rawData = data.stocks || [];
-
-        initMenuState();
-        initTradingStyleSelect();
-        initTurnoverInput();
-        populateDropdownOptions();
-        render();
-        updateMarketClock();
-      } catch (e) {
-        document.getElementById('updateTime').innerText = "GAGAL MEMUAT DATA.JSON";
-      }
-    }
-
-    async function refreshAllData(btnEl) {
-      const icon = btnEl.querySelector('.refresh-icon');
-      if (icon) icon.classList.add('spinning');
-      await loadData();
-      setTimeout(() => {
-        if (icon) icon.classList.remove('spinning');
-      }, 500);
-    }
-
-    async function refreshSingleCard(ticker, btnEl) {
-      btnEl.classList.add('spinning');
-      try {
-        const data = await fetchLatestData();
-        document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
-        rawData = data.stocks || [];
-
-        const targetStock = rawData.find(s => s.ticker === ticker);
-        if (targetStock) {
-          const oldCard = document.querySelector(`.card[data-ticker="${ticker}"]`);
-          if (oldCard) {
-            const isIHSG = (ticker === 'IHSG');
-            const newCard = createCardElement(targetStock, isIHSG);
-            oldCard.replaceWith(newCard);
-            highlightStockCard(ticker);
-          }
-        }
-      } catch (e) {
-        alert(`GAGAL MEMPERBARUI DATA ${ticker}`);
-      } finally {
-        btnEl.classList.remove('spinning');
-      }
-    }
-
-    function initMenuState() {
-      const row = document.getElementById('dropdownRow');
-      const btn = document.getElementById('toggleBtn');
-      
-      if (isMenuVisible) {
-        row.classList.remove('hidden');
-        btn.innerText = "👁️ SEMBUNYIKAN MENU";
-      } else {
-        row.classList.add('hidden');
-        btn.innerText = "👁️ TAMPILKAN MENU";
-      }
-    }
-
-    function initTradingStyleSelect() {
-      const selectStyle = document.getElementById('selectTradingStyle');
-      if (selectStyle) selectStyle.value = selectedTradingStyle;
-    }
-
-    function initTurnoverInput() {
-      const inputEl = document.getElementById('minTurnoverInput');
-      if (inputEl) inputEl.value = minTurnover;
-    }
-
-    function updateMinTurnover(inputEl) {
-      minTurnover = parseFloat(inputEl.value) || 2000000000;
-      localStorage.setItem('min_turnover', minTurnover);
-      render();
-    }
-
-    function changeTradingStyle(selectEl) {
-      selectedTradingStyle = selectEl.value;
-      localStorage.setItem('trading_style', selectedTradingStyle);
-      render();
-    }
-
-    function toggleDropdownMenu() {
-      isMenuVisible = !isMenuVisible;
-      localStorage.setItem('menu_visible', JSON.stringify(isMenuVisible));
-      initMenuState();
-    }
-
-    function toggleCardDetails(ticker) {
-      const contentEl = document.getElementById(`collapse-content-${ticker}`);
-      const btnEl = document.getElementById(`collapse-btn-${ticker}`);
-      if (!contentEl || !btnEl) return;
-
-      if (contentEl.classList.contains('show')) {
-        contentEl.classList.remove('show');
-        btnEl.innerHTML = `▼ TAMPILKAN PIVOT, S/R & STRATEGI PLAN`;
-      } else {
-        contentEl.classList.add('show');
-        btnEl.innerHTML = `▲ SEMBUNYIKAN PIVOT, S/R & STRATEGI PLAN`;
-      }
-    }
-
-    function populateDropdownOptions() {
-      const selectEl = document.getElementById('selectTickerOption');
-      selectEl.innerHTML = '<option value="">-- PILIH EMITEN --</option>';
-      
-      let sortedStocks = [...rawData].filter(s => s.ticker !== 'IHSG').sort((a, b) => a.ticker.localeCompare(b.ticker));
-
-      sortedStocks.forEach(stock => {
-        const option = document.createElement('option');
-        option.value = stock.ticker;
-        option.textContent = `${stock.ticker} (${stock.category || 'LAINNYA'})`;
-        selectEl.appendChild(option);
-      });
-    }
-
-    function autoAddStock(selectEl) {
-      const ticker = selectEl.value;
-      if (!ticker) return;
-
-      if (!stockOrder.includes(ticker)) {
-        stockOrder.push(ticker);
-        saveState();
-        render();
-      }
-      highlightStockCard(ticker);
-      selectEl.value = '';
-    }
-
-    function handleSearchKey(event) {
-      searchStock(event.target.value);
-    }
-
-    function searchStock(query) {
-      const cleanQuery = query.trim().toUpperCase();
-      if (!cleanQuery) return;
-
-      const targetCard = document.querySelector(`.card[data-ticker="${cleanQuery}"]`);
-      if (targetCard) {
-        highlightStockCard(cleanQuery);
-      } else {
-        const foundData = rawData.find(s => s.ticker === cleanQuery);
-        if (foundData) {
-          if (!stockOrder.includes(cleanQuery)) {
-            stockOrder.push(cleanQuery);
-            saveState();
-            render();
-          }
-          highlightStockCard(cleanQuery);
-        }
-      }
-    }
-
-    function highlightStockCard(ticker) {
-      setTimeout(() => {
-        const cardEl = document.querySelector(`.card[data-ticker="${ticker}"]`);
-        if (cardEl) {
-          cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          cardEl.classList.remove('highlight-card');
-          void cardEl.offsetWidth;
-          cardEl.classList.add('highlight-card');
-        }
-      }, 100);
-    }
-
-    // LOGIKA EVALUASI TRADING KEKUATAN & TIMEFRAME
-    function evaluateSwingIndicators(stock) {
-      const closePrice = stock.price ?? 0;
-      const ema20 = stock.ema20 || stock.ma20 || closePrice;
-      const ema50 = stock.ema50 || Math.round(ema20 * 0.98);
-      
-      const rsi = stock.rsi ?? 50;
-      const volRatio = parseFloat(stock.vol_ratio) || 1.0;
-      const turnover = stock.turnover || stock.value || 0;
-      
-      const high52w = stock.high_52w || stock.high || closePrice;
-      const dist52w = high52w > 0 ? ((high52w - closePrice) / high52w) * 100 : 0;
-
-      const condEma = (ema20 > ema50) && (closePrice >= ema20);
-      const condRsi = (rsi >= 50 && rsi <= 70);
-      const condVol = (volRatio >= 2.5);
-      const condTurnover = (turnover >= minTurnover);
-      const condDist = (dist52w <= 10 && dist52w >= 0);
-
-      let totalScore = 0;
-      if (condEma) totalScore += 20;
-      if (condRsi) totalScore += 20;
-      if (condVol) totalScore += 20;
-      if (condTurnover) totalScore += 20;
-      if (condDist) totalScore += 20;
-
-      return {
-        condEma, condRsi, condVol, condTurnover, condDist,
-        totalScore,
-        isBuyWorthy: totalScore >= 60 && condTurnover
-      };
-    }
-
-    function evaluateStockStrength(stock) {
-      let score = 50; 
-      let trendType = 'NEUTRAL'; 
-
-      if (selectedTradingStyle === 'SWING') {
-        const res = evaluateSwingIndicators(stock);
-        score = res.totalScore;
-        trendType = score >= 60 ? 'BUY' : (score <= 40 ? 'SELL' : 'NEUTRAL');
-      } else {
-        const signalText = (stock.signal || '').toUpperCase();
-        if (signalText.includes('STRONG BUY')) { score = 100; trendType = 'BUY'; }
-        else if (signalText.includes('BUY')) { score = 80; trendType = 'BUY'; }
-        else if (signalText.includes('STRONG SELL')) { score = 100; trendType = 'SELL'; }
-        else if (signalText.includes('SELL')) { score = 80; trendType = 'SELL'; }
-        else { score = 50; trendType = 'NEUTRAL'; }
-      }
-
-      let activeBoxes = Math.round(score / 10);
-      let signalLabel = 'NETRAL';
-
-      if (trendType === 'BUY') {
-        if (activeBoxes >= 6) signalLabel = 'STRONG BUY';
-        else if (activeBoxes >= 3) signalLabel = 'BUY';
-        else signalLabel = 'BUY LEMAH';
-      } else if (trendType === 'SELL') {
-        if (activeBoxes >= 6) signalLabel = 'STRONG SELL';
-        else if (activeBoxes >= 3) signalLabel = 'SELL';
-        else signalLabel = 'SELL LEMAH';
-      }
-
-      return { score, trendType, activeBoxes, signalLabel };
-    }
-
-    function isBuyWorthyStock(stock) {
-      const evalData = evaluateStockStrength(stock);
-      return (evalData.trendType === 'BUY' && evalData.activeBoxes >= 3);
-    }
-
-    function getTfAdjustedSR(stock) {
-      const closePrice = stock.price ?? 0;
-      const highPrice = stock.high ?? closePrice;
-      const lowPrice = stock.low ?? closePrice;
-      
-      const stdPivot = stock.pivot || Math.round((highPrice + lowPrice + closePrice) / 3);
-      const stdR1 = stock.resistance_1 || stock.resistance || Math.round(closePrice * 1.02);
-      const stdR2 = stock.resistance_2 || Math.round(stdR1 * 1.02);
-      const stdR3 = stock.resistance_3 || Math.round(stdR2 * 1.02);
-      const stdS1 = stock.support_1 || stock.support || Math.round(closePrice * 0.98);
-      const stdS2 = stock.support_2 || Math.round(stdS1 * 0.98);
-      const stdS3 = stock.support_3 || Math.round(stdS2 * 0.98);
-
-      if (selectedTradingStyle === 'SCALPING') {
-        return {
-          pivot: Math.round(closePrice),
-          r1: Math.round(closePrice * 1.01),
-          r2: Math.round(closePrice * 1.02),
-          r3: Math.round(closePrice * 1.03),
-          s1: Math.round(closePrice * 0.99),
-          s2: Math.round(closePrice * 0.98),
-          s3: Math.round(closePrice * 0.97)
-        };
-      } else if (selectedTradingStyle === 'INVESTMENT') {
-        return {
-          pivot: stdPivot,
-          r1: Math.round(closePrice * 1.03),
-          r2: Math.round(closePrice * 1.05),
-          r3: Math.round(closePrice * 1.08),
-          s1: Math.round(closePrice * 0.97),
-          s2: Math.round(closePrice * 0.95),
-          s3: Math.round(closePrice * 0.92)
-        };
-      } else {
-        return {
-          pivot: stdPivot,
-          r1: stdR1, r2: stdR2, r3: stdR3,
-          s1: stdS1, s2: stdS2, s3: stdS3
-        };
-      }
-    }
-
-    function calculateMultiTradingPlans(stock, isReadyToBuy) {
-      const closePrice = stock.price ?? 0;
-      const sr = getTfAdjustedSR(stock);
-
-      const scEntry = stock.entry_price || stock.low || closePrice;
-      const scTp1 = Math.round(scEntry * 1.015);
-      const scTp2 = stock.take_profit || Math.round(scEntry * 1.03);
-      const scTp3 = Math.round(scEntry * 1.05);
-      const scCl1 = Math.round(scEntry * 0.99);
-      const scCl2 = stock.cut_loss || Math.round(scEntry * 0.985);
-      const scCl3 = Math.round(scEntry * 0.98);
-
-      const swEntry = Math.min(closePrice, sr.pivot);
-      const swTp1 = sr.r1;
-      const swTp2 = sr.r2;
-      const swTp3 = sr.r3;
-      const swCl1 = sr.s1;
-      const swCl2 = sr.s2;
-      const swCl3 = sr.s3;
-
-      const invEntry = Math.min(sr.s1, sr.pivot);
-      const invTp1 = sr.r2;
-      const invTp2 = sr.r3;
-      const invTp3 = Math.round(invEntry * 1.15);
-      const invCl1 = sr.s3;
-      const invCl2 = Math.round(invEntry * 0.90);
-      const invCl3 = Math.round(invEntry * 0.85);
-
-      return {
-        scalping: {
-          entry: formatNum(scEntry),
-          tp1: formatNum(scTp1), tp2: formatNum(scTp2), tp3: formatNum(scTp3),
-          cl1: formatNum(scCl1), cl2: formatNum(scCl2), cl3: formatNum(scCl3)
-        },
-        swing: {
-          entry: formatNum(swEntry),
-          tp1: formatNum(swTp1), tp2: formatNum(swTp2), tp3: formatNum(swTp3),
-          cl1: formatNum(swCl1), cl2: formatNum(swCl2), cl3: formatNum(swCl3)
-        },
-        investment: {
-          entry: formatNum(invEntry),
-          tp1: formatNum(invTp1), tp2: formatNum(invTp2), tp3: formatNum(invTp3),
-          cl1: formatNum(invCl1), cl2: formatNum(invCl2), cl3: formatNum(invCl3)
-        }
-      };
-    }
-
-    // LOGIKA KOLOM PETIR (BANDARMOLOGY / VOLUME)
-    function renderLightningBoxes(stock) {
-      const isSuspended = stock.is_suspended || stock.status === 'SUSPEND' || stock.volume === 0;
-      
-      let volRatio = parseFloat(stock.vol_ratio) || 1.0;
-      let bandarStatus = (stock.bandarmology || stock.vol_status || 'NEUTRAL').toUpperCase();
-      
-      let activeCount = 0;
-      let colorType = 'NEUTRAL'; 
-
-      if (bandarStatus.includes('AKUMULASI') || bandarStatus.includes('BUY') || volRatio > 1.0) {
-        colorType = 'ACCUMULATION';
-        if (volRatio >= 3.0) activeCount = 5;
-        else if (volRatio >= 2.5) activeCount = 4;
-        else if (volRatio >= 2.0) activeCount = 3;
-        else if (volRatio >= 1.5) activeCount = 2;
-        else activeCount = 1;
-      } else if (bandarStatus.includes('DISTRUBUSI') || bandarStatus.includes('SELL') || volRatio < 0.8) {
-        colorType = 'DISTRIBUTION';
-        if (volRatio <= 0.2) activeCount = 5;
-        else if (volRatio <= 0.4) activeCount = 4;
-        else if (volRatio <= 0.6) activeCount = 3;
-        else if (volRatio <= 0.7) activeCount = 2;
-        else activeCount = 1;
-      }
-
-      let slotClass = 'active-gray';
-      if (colorType === 'ACCUMULATION') slotClass = 'active-green';
-      if (colorType === 'DISTRIBUTION') slotClass = 'active-red';
-
-      let isReadyToBuy = isBuyWorthyStock(stock);
-      let blinkClass = (slotClass === 'active-green' && isReadyToBuy) ? 'lightning-blink' : '';
-
-      let html = '<div class="lightning-grid-container">';
-      for (let i = 1; i <= 5; i++) {
-        if (!isSuspended && i <= activeCount) {
-          html += `<div class="lightning-box-slot ${slotClass} ${blinkClass}">⚡</div>`;
-        } else {
-          html += `<div class="lightning-box-slot">⚡</div>`;
-        }
-      }
-      html += '</div>';
-      return html;
-    }
-
-    function renderIndicator10Dots(status, customStrength = null) {
-      let isBullish = false;
-      let isBearish = false;
-
-      if (typeof status === 'boolean') {
-        isBullish = status;
-        isBearish = !status;
-      } else {
-        let st = (status || '').toUpperCase();
-        isBullish = st === 'BUY' || st === 'BULLISH' || st === 'OVER SOLD';
-        isBearish = st === 'SELL' || st === 'BEARISH' || st === 'OVER BOUGHT';
-      }
-      
-      let strength = customStrength !== null ? customStrength : ((isBullish || isBearish) ? 8 : 5);
-      let activeClass = isBullish ? 'active-green' : (isBearish ? 'active-red' : 'active-gray');
-
-      let html = '<div class="indicator-dots-row">';
-      for (let i = 1; i <= 10; i++) {
-        if (i <= strength) {
-          html += `<span class="ind-dot ${activeClass}"></span>`;
-        } else {
-          html += `<span class="ind-dot"></span>`;
-        }
-      }
-      html += '</div>';
-      return html;
-    }
-
-    function renderPivot10Dots(closePrice, pivotPoint) {
-      if (!pivotPoint || pivotPoint <= 0) {
-        let html = '<div class="pivot-dots-container">';
-        for (let i = 0; i < 10; i++) html += '<span class="pivot-dot-small"></span>';
-        return html + '</div>';
-      }
-
-      let diffRatio = (closePrice - pivotPoint) / pivotPoint;
-      let absDiff = Math.abs(diffRatio);
-
-      let activeCount = 0;
-      if (absDiff > 0) {
-        if (absDiff >= 0.050) activeCount = 10;
-        else if (absDiff >= 0.045) activeCount = 9;
-        else if (absDiff >= 0.040) activeCount = 8;
-        else if (absDiff >= 0.035) activeCount = 7;
-        else if (absDiff >= 0.030) activeCount = 6;
-        else if (absDiff >= 0.025) activeCount = 5;
-        else if (absDiff >= 0.020) activeCount = 4;
-        else if (absDiff >= 0.015) activeCount = 3;
-        else if (absDiff >= 0.010) activeCount = 2;
-        else activeCount = 1;
-      }
-
-      let isDown = closePrice < pivotPoint;
-      let isUp = closePrice > pivotPoint;
-      let isBlink = activeCount >= 7;
-
-      let colorClass = isDown ? 'active-red' : (isUp ? 'active-green' : 'active-gray');
-      let blinkClass = (isBlink && (isDown || isUp)) ? 'dot-blink' : '';
-
-      let html = '<div class="pivot-dots-container">';
-      for (let i = 1; i <= 10; i++) {
-        if (i <= activeCount) {
-          html += `<span class="pivot-dot-small ${colorClass} ${blinkClass}"></span>`;
-        } else {
-          html += `<span class="pivot-dot-small"></span>`;
-        }
-      }
-      html += '</div>';
-      return html;
-    }
-
-    function renderTouchCheckBadge(stock, targetLevel) {
-      if (!targetLevel || targetLevel <= 0) return '';
-
-      let hitCount = 0;
-      if (stock.hits && stock.hits[targetLevel]) {
-        hitCount = stock.hits[targetLevel];
-      } else {
-        const high = stock.high ?? stock.price ?? 0;
-        const low = stock.low ?? stock.price ?? 0;
-        if (low <= targetLevel && high >= targetLevel) {
-          hitCount = stock.touch_count || 1;
-        }
-      }
-
-      if (hitCount > 0) {
-        return `<span class="sr-check-badge">✓ x${hitCount}</span>`;
-      }
-      return '';
-    }
-
-    function renderSupportRowValue(stock, targetSupportPrice, defaultClass) {
-      const closePrice = stock.price ?? 0;
-      let arrowHtml = '';
-      
-      if (closePrice > 0 && closePrice <= targetSupportPrice) {
-        arrowHtml = '<span class="arrow-blink-red">➔&nbsp;</span>';
-      } else if (closePrice > targetSupportPrice && stock.low <= targetSupportPrice) {
-        arrowHtml = '<span class="arrow-blink-green-up">➔&nbsp;</span>';
-      }
-
-      return `<div class="sr-value-container">${arrowHtml}<span class="${defaultClass}">${formatNum(targetSupportPrice)}</span></div>`;
-    }
-
-    function createCardElement(stock, isIHSG = false) {
-      const group = isIHSG ? 'INDEKS UTAMA' : (stock.category || 'LAINNYA');
-
-      const openPrice = stock.open ?? stock.price;
-      const closePrice = stock.price ?? 0;
-      const prevClose = stock.prev_close ?? openPrice;
-      const highPrice = stock.high ?? closePrice;
-      const lowPrice = stock.low ?? closePrice;
-
-      let openPercentVal = openPrice > 0 ? ((closePrice - openPrice) / openPrice) * 100 : 0;
-      const openPercentSign = openPercentVal > 0 ? '+' : '';
-      const openPercentStr = `${openPercentSign}${openPercentVal.toFixed(2)}%`;
-      
-      let priceColorClass = 'price-flat';
-      if (closePrice > prevClose) priceColorClass = 'price-up';
-      else if (closePrice < prevClose) priceColorClass = 'price-down';
-
-      // EVALUASI STRUKTUR SINYAL DAN 10 KOTAK
-      const evalData = evaluateStockStrength(stock);
-      let avgStrengthPercent = evalData.score;
-      let signalText = evalData.signalLabel;
-      let trendType = evalData.trendType;
-      let activeBoxesCount = evalData.activeBoxes;
-
-      let badgeClass = 'neutral';
-      if (signalText.includes('STRONG BUY')) badgeClass = 'strong-buy';
-      else if (signalText.includes('BUY')) badgeClass = 'buy';
-      else if (signalText.includes('STRONG SELL')) badgeClass = 'strong-sell';
-      else if (signalText.includes('SELL')) badgeClass = 'sell';
-
-      let isReadyToBuy = isBuyWorthyStock(stock);
-      let percentIcon = '🛑'; 
-      if (trendType === 'NEUTRAL') {
-        percentIcon = '⏳';
-      } else if (isReadyToBuy) {
-        percentIcon = '✅';
-      }
-
-      let middleSignalIcon = '⚪'; 
-      if (signalText === 'STRONG BUY') middleSignalIcon = '🚀🚀🚀';
-      else if (signalText === 'BUY') middleSignalIcon = '🚀';
-      else if (signalText === 'STRONG SELL') middleSignalIcon = '❌❌❌';
-      else if (signalText === 'SELL') middleSignalIcon = '❌';
-
-      let displayBadgeText = signalText;
-      if (signalText === 'STRONG BUY') displayBadgeText = '🚀🚀🚀 STRONG BUY';
-      else if (signalText === 'BUY') displayBadgeText = '🚀 BUY';
-      else if (signalText === 'BUY LEMAH') displayBadgeText = '📈 BUY LEMAH';
-      else if (signalText === 'STRONG SELL') displayBadgeText = '🔒🔒🔒 STRONG SELL';
-      else if (signalText === 'SELL') displayBadgeText = '🔒 SELL';
-      else if (signalText === 'SELL LEMAH') displayBadgeText = '📉 SELL LEMAH';
-
-      let activeBoxColor = trendType === 'BUY' ? 'box-green-active' : (trendType === 'SELL' ? 'box-red-active' : 'box-gray-active');
-      let isStrongState = signalText.includes('STRONG');
-
-      let blinkClass = isStrongState ? 'box-blink' : '';
-      let topBoxesHtml = `<div class="ten-boxes-container ${blinkClass}">`;
-      for (let d = 1; d <= 10; d++) {
-        topBoxesHtml += `<span class="box-ten ${d <= activeBoxesCount ? activeBoxColor : ''}"></span>`;
-      }
-      topBoxesHtml += '</div>';
-
-      let warningHtml = '';
-      if (trendType === 'SELL') {
-        warningHtml = '<div class="warning-box-col blink-red">⚠️ WARNING! TREND TURUN!</div>';
-      } else if (trendType === 'BUY') {
-        warningHtml = '<div class="warning-box-col blink-green">⚠️ WARNING! TREND NAIK!</div>';
-      } else {
-        warningHtml = '<div class="warning-box-col" style="color:#64748b;">⚠️ WARNING! NETRAL</div>';
-      }
-
-      const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
-
-      const plans = calculateMultiTradingPlans(stock, isReadyToBuy);
-
-      let currentTfTag = selectedTradingStyle === 'SCALPING' ? 'TF 15M' : (selectedTradingStyle === 'INVESTMENT' ? 'TF 1W' : 'TF 1D');
-      let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
-      let fiboBoxClass = fiboStatus === 'OVER SOLD' ? 'fibo-oversold' : (fiboStatus === 'OVER BOUGHT' ? 'fibo-overbought' : 'fibo-normal');
-      let fiboText = `${fiboStatus} <span class="tf-badge-fibo">${currentTfTag}</span>`;
-
-      const sr = getTfAdjustedSR(stock);
-      const r1 = sr.r1; const r2 = sr.r2; const r3 = sr.r3;
-      const s1 = sr.s1; const s2 = sr.s2; const s3 = sr.s3;
-      const pivotPoint = sr.pivot;
-
-      let pivotPriceClass = closePrice < pivotPoint ? 'pivot-price-blue' : (closePrice > pivotPoint ? 'pivot-price-green' : 'pivot-price-yellow');
-      let pivotArrowIcon = closePrice < pivotPoint ? '<span class="pivot-arrow-down">▼&nbsp;&nbsp;</span>' : (closePrice > pivotPoint ? '<span class="pivot-arrow-up">▲&nbsp;&nbsp;</span>' : '');
-
-      const pivotDotsHtml = renderPivot10Dots(closePrice, pivotPoint);
-
-      const r3Class = (highPrice >= r3 || closePrice >= r3) ? 'blink-red' : 'sr-res';
-      const r2Class = (highPrice >= r2 || closePrice >= r2) ? 'blink-red' : 'sr-res';
-      const r1Class = (highPrice >= r1 || closePrice >= r1) ? 'blink-red' : 'sr-res';
-      
-      const s1Class = (lowPrice <= s1 || closePrice <= s1) ? 'blink-green' : 'sr-sup';
-      const s2Class = (lowPrice <= s2 || closePrice <= s2) ? 'blink-green' : 'sr-sup';
-      const s3Class = (lowPrice <= s3 || closePrice <= s3) ? 'blink-green' : 'sr-sup';
-
-      let indicatorsHtml = '';
-      if (selectedTradingStyle === 'SWING') {
-        const swingRes = evaluateSwingIndicators(stock);
-        indicatorsHtml = `
-          <div class="indicator-item"><span class="indicator-name">EMA 20 > EMA 50</span>${renderIndicator10Dots(swingRes.condEma)}</div>
-          <div class="indicator-item"><span class="indicator-name">RSI 50-70</span>${renderIndicator10Dots(swingRes.condRsi)}</div>
-          <div class="indicator-item"><span class="indicator-name">VOL ≥ 2.5X</span>${renderIndicator10Dots(swingRes.condVol)}</div>
-          <div class="indicator-item"><span class="indicator-name">VALUE IDR</span>${renderIndicator10Dots(swingRes.condTurnover)}</div>
-          <div class="indicator-item" style="grid-column: span 2;"><span class="indicator-name">DIST 52W HIGH (≤10%)</span>${renderIndicator10Dots(swingRes.condDist)}</div>
-        `;
-      } else {
-        indicatorsHtml = `
-          <div class="indicator-item"><span class="indicator-name">PIVOT (${currentTfTag})</span>${renderIndicator10Dots('BUY', 8)}</div>
-          <div class="indicator-item"><span class="indicator-name">TREND</span>${renderIndicator10Dots('BUY', 8)}</div>
-          <div class="indicator-item"><span class="indicator-name">VOLUME</span>${renderIndicator10Dots('BUY', 8)}</div>
-          <div class="indicator-item"><span class="indicator-name">MACD (15M)</span>${renderIndicator10Dots('BUY', 8)}</div>
-        `;
-      }
-
-      const card = document.createElement('div');
-      card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
-      card.dataset.ticker = stock.ticker;
-      if (!isIHSG) card.draggable = true;
-
-      card.innerHTML = `
-        <div class="compact-actions-top">
-          <button class="compact-btn" title="REFRESH DATA" onclick="refreshSingleCard('${stock.ticker}', this)">🔄</button>
-          ${!isIHSG ? `<button class="compact-btn close-compact" title="HAPUS EMITEN" onclick="removeStock('${stock.ticker}')">✕</button>` : ''}
-        </div>
-
-        ${warningHtml}
-
-        <div class="card-header-full">
-          <div class="ticker-price-row">
-            <span class="ticker-large">${stock.ticker}</span>
-            <div class="price-group">
-              <span class="price-large ${priceColorClass}">${formatNum(closePrice)}</span>
-              <span class="open-percent-badge ${priceColorClass}">${openPercentStr} ${percentIcon}</span>
-            </div>
-          </div>
-          ${renderLightningBoxes(stock)}
-        </div>
-
-        <div class="sub-header">
-          <span class="group-tag">${group}</span>
-          <span class="middle-signal-icon">${middleSignalIcon}</span>
-          <div class="signal-indicator-box">
-            ${topBoxesHtml}
-            <span class="signal-percent">${avgStrengthPercent}%</span>
-          </div>
-        </div>
-
-        <div class="indicator-column-box">
-          ${indicatorsHtml}
-        </div>
-
-        <div class="ohlc-grid-box">
-          <div class="ohlc-item"><span>PREV</span><span class="ohlc-val">${formatNum(prevClose)}</span></div>
-          <div class="ohlc-item"><span>OPEN</span><span class="ohlc-val">${formatNum(openPrice)}</span></div>
-          <div class="ohlc-item"><span>HIGH</span><span class="ohlc-val">${formatNum(highPrice)}</span></div>
-          <div class="ohlc-item"><span>LOW</span><span class="ohlc-val">${formatNum(lowPrice)}</span></div>
-        </div>
-
-        <div class="signal-badge-container">
-          <span class="badge ${badgeClass}">${displayBadgeText}</span>
-        </div>
-
-        <div class="fibo-stat-box ${fiboBoxClass}">
-          ${fiboText}
-        </div>
-
-        <button class="collapse-toggle-btn" id="collapse-btn-${stock.ticker}" onclick="toggleCardDetails('${stock.ticker}')">
-          ▼ TAMPILKAN PIVOT, S/R & STRATEGI PLAN
-        </button>
-
-        <div class="collapsible-content" id="collapse-content-${stock.ticker}">
-          <div class="sr-stat-box">
-            <div class="sr-row">
-              <div class="sr-label-container">
-                <span>RESISTAN 3 (R3):</span>
-                ${renderTouchCheckBadge(stock, r3)}
-              </div>
-              <span class="${r3Class}">${formatNum(r3)}</span>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-white">PRO STOCK SCREENER</h1>
+                    <p class="text-xs text-slate-400">Algorithmic Market Analytics & Signals</p>
+                </div>
             </div>
 
-            <div class="sr-row">
-              <div class="sr-label-container">
-                <span>RESISTAN 2 (R2):</span>
-                ${renderTouchCheckBadge(stock, r2)}
-              </div>
-              <span class="${r2Class}">${formatNum(r2)}</span>
-            </div>
+            <!-- CONTROLS & FILTERS -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Timeframe Selection (DEFAULT: SWING / 1D) -->
+                <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i data-lucide="clock" class="w-4 h-4 text-indigo-400"></i>
+                    <label for="tfSelect" class="text-xs font-medium text-slate-300">Strategy / TF:</label>
+                    <select id="tfSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700">
+                        <option value="scalping">SCALPING (15M)</option>
+                        <option value="swing" selected>SWING (1D)</option>
+                        <option value="investment">INVESTMENT (1W)</option>
+                    </select>
+                </div>
 
-            <div class="sr-row">
-              <div class="sr-label-container">
-                <span>RESISTAN 1 (R1):</span>
-                ${renderTouchCheckBadge(stock, r1)}
-              </div>
-              <span class="${r1Class}">${formatNum(r1)}</span>
+                <!-- Min Turnover Filter -->
+                <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                    <label for="turnoverSelect" class="text-xs font-medium text-slate-300">Min Turnover:</label>
+                    <select id="turnoverSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700">
+                        <option value="1">≥ 1 Miliar</option>
+                        <option value="5" selected>≥ 5 Miliar</option>
+                        <option value="10">≥ 10 Miliar</option>
+                        <option value="50">≥ 50 Miliar</option>
+                    </select>
+                </div>
+
+                <!-- Refresh Data Button -->
+                <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-lg shadow-indigo-600/20">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full flex flex-col gap-6">
+
+        <!-- STRATEGY INFO BANNER -->
+        <div id="strategyBanner" class="p-4 rounded-xl border bg-slate-900/60 backdrop-blur flex items-start gap-3 border-indigo-500/30">
+            <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 mt-0.5">
+                <i data-lucide="info" class="w-5 h-5"></i>
+            </div>
+            <div class="flex-1">
+                <h2 id="bannerTitle" class="font-semibold text-sm text-indigo-300">SWING TRADING STRATEGY (1D)</h2>
+                <p id="bannerDesc" class="text-xs text-slate-400 mt-0.5">
+                    Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.
+                </p>
+            </div>
+        </div>
+
+        <!-- NAVIGATION TABS -->
+        <div class="border-b border-slate-800 flex space-x-4">
+            <button id="tabLayakBeli" onclick="switchTab('layakBeli')" class="pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2">
+                <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i>
+                <span>🔥 LAYAK BELI</span>
+                <span id="badgeLayakBeli" class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+            <button id="tabAll" onclick="switchTab('all')" class="pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
+                <i data-lucide="list" class="w-4 h-4"></i>
+                <span>SEMUA SAHAM</span>
+                <span id="badgeAll" class="bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+        </div>
+
+        <!-- DATA TABLE -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-semibold">
+                        <tr>
+                            <th class="py-3.5 px-4">Emiten</th>
+                            <th class="py-3.5 px-3 text-right">Harga</th>
+                            <th class="py-3.5 px-3 text-right">Change (%)</th>
+                            <th class="py-3.5 px-3 text-right">Turnover</th>
+                            <th class="py-3.5 px-4 text-center">Indikator Skor / Signal</th>
+                            <th class="py-3.5 px-3 text-center">Volume & Bandar</th>
+                            <th class="py-3.5 px-4 text-center">Trading Plan (Entry / R1 / CL)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-300">
+                        <!-- Dynamic Rows Will Be Rendered Here -->
+                    </tbody>
+                </table>
             </div>
             
-            <div class="sr-row sr-pivot-separator">
-              <div class="sr-label-container">
-                <span class="pivot-label-yellow">PIVOT POINT (${currentTfTag}):</span>
-                ${renderTouchCheckBadge(stock, pivotPoint)}
-              </div>
-              ${pivotDotsHtml}
-              <div class="pivot-price-wrapper">
-                ${pivotArrowIcon}
-                <span class="${pivotPriceClass}">${formatNum(pivotPoint)}</span>
-              </div>
+            <!-- EMPTY STATE -->
+            <div id="emptyState" class="hidden py-12 text-center">
+                <i data-lucide="filter-x" class="w-12 h-12 text-slate-600 mx-auto mb-3"></i>
+                <p class="text-sm font-semibold text-slate-400">Tidak ada saham yang memenuhi kriteria filter saat ini.</p>
+                <p class="text-xs text-slate-500 mt-1">Coba turunkan ambang batas Min. Turnover atau ganti Timeframe Strategy.</p>
             </div>
-
-            <div class="sr-row">
-              <div class="sr-label-container">
-                <span>SUPPORT 1 (S1):</span>
-                ${renderTouchCheckBadge(stock, s1)}
-              </div>
-              ${renderSupportRowValue(stock, s1, s1Class)}
-            </div>
-
-            <div class="sr-row">
-              <div class="sr-label-container">
-                <span>SUPPORT 2 (S2):</span>
-                ${renderTouchCheckBadge(stock, s2)}
-              </div>
-              ${renderSupportRowValue(stock, s2, s2Class)}
-            </div>
-
-            <div class="sr-row">
-              <div class="sr-label-container">
-                <span>SUPPORT 3 (S3):</span>
-                ${renderTouchCheckBadge(stock, s3)}
-              </div>
-              ${renderSupportRowValue(stock, s3, s3Class)}
-            </div>
-          </div>
-
-          ${!isIHSG ? `
-            <div class="trading-plan-wrapper">
-              <div style="text-align:center; font-size:0.65rem; color:#cbd5e1; margin-bottom:4px;">
-                ${statusDotHtml} 🎯 STRATEGI TRADING PLAN (ENTRY, TP 1-3, CL 1-3)
-              </div>
-              
-              <div class="trading-plan-grid">
-                <div class="plan-col ${selectedTradingStyle === 'SCALPING' ? 'active-style' : ''}">
-                  <div class="plan-col-title">⚡ SCALPING</div>
-                  
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">ENTRY</span>
-                    <span class="plan-item-val val-entry">${plans.scalping.entry}</span>
-                  </div>
-
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 1</span>
-                    <span class="plan-item-val val-tp">${plans.scalping.tp1}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 2</span>
-                    <span class="plan-item-val val-tp">${plans.scalping.tp2}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 3</span>
-                    <span class="plan-item-val val-tp">${plans.scalping.tp3}</span>
-                  </div>
-
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 1</span>
-                    <span class="plan-item-val val-cl">${plans.scalping.cl1}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 2</span>
-                    <span class="plan-item-val val-cl">${plans.scalping.cl2}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 3</span>
-                    <span class="plan-item-val val-cl">${plans.scalping.cl3}</span>
-                  </div>
-                </div>
-
-                <div class="plan-col ${selectedTradingStyle === 'SWING' ? 'active-style' : ''}">
-                  <div class="plan-col-title">📈 SWING</div>
-
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">ENTRY</span>
-                    <span class="plan-item-val val-entry">${plans.swing.entry}</span>
-                  </div>
-
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 1</span>
-                    <span class="plan-item-val val-tp">${plans.swing.tp1}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 2</span>
-                    <span class="plan-item-val val-tp">${plans.swing.tp2}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 3</span>
-                    <span class="plan-item-val val-tp">${plans.swing.tp3}</span>
-                  </div>
-
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 1</span>
-                    <span class="plan-item-val val-cl">${plans.swing.cl1}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 2</span>
-                    <span class="plan-item-val val-cl">${plans.swing.cl2}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 3</span>
-                    <span class="plan-item-val val-cl">${plans.swing.cl3}</span>
-                  </div>
-                </div>
-
-                <div class="plan-col ${selectedTradingStyle === 'INVESTMENT' ? 'active-style' : ''}">
-                  <div class="plan-col-title">💎 INVESTASI</div>
-
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">ENTRY</span>
-                    <span class="plan-item-val val-entry">${plans.investment.entry}</span>
-                  </div>
-
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 1</span>
-                    <span class="plan-item-val val-tp">${plans.investment.tp1}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 2</span>
-                    <span class="plan-item-val val-tp">${plans.investment.tp2}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">TP 3</span>
-                    <span class="plan-item-val val-tp">${plans.investment.tp3}</span>
-                  </div>
-
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 1</span>
-                    <span class="plan-item-val val-cl">${plans.investment.cl1}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 2</span>
-                    <span class="plan-item-val val-cl">${plans.investment.cl2}</span>
-                  </div>
-                  <div class="plan-row-item">
-                    <span class="plan-item-label">CL 3</span>
-                    <span class="plan-item-val val-cl">${plans.investment.cl3}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ` : ''}
         </div>
-      `;
+    </main>
 
-      if (!isIHSG) {
-        card.addEventListener('dragstart', handleDragStart);
-        card.addEventListener('dragover', handleDragOver);
-        card.addEventListener('drop', handleDrop);
-        card.addEventListener('dragend', handleDragEnd);
-      }
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-4 mt-auto text-center text-xs text-slate-500">
+        <p>© 2026 Pro Stock Screener. Analytics strictly for educational & decision support purpose.</p>
+    </footer>
 
-      return card;
-    }
+    <!-- JAVASCRIPT LOGIC & ENGINE -->
+    <script>
+        // MOCK DATASET
+        const rawStockData = [
+            { ticker: "BBCA", name: "Bank Central Asia Tbk", price: 10250, change: 1.73, turnover: 420.5, ema20: 10100, ema50: 9800, rsi: 62, volRatio: 2.8, high52: 10400, bandarmology: "AKUMULASI", entry: 10150, r1: 10500, cl1: 9950, signal: "STRONG BUY" },
+            { ticker: "BMRI", name: "Bank Mandiri (Persero) Tbk", price: 7150, change: 2.51, turnover: 310.2, ema20: 6950, ema50: 6700, rsi: 68, volRatio: 3.1, high52: 7250, bandarmology: "AKUMULASI", entry: 7050, r1: 7350, cl1: 6850, signal: "STRONG BUY" },
+            { ticker: "TLKM", name: "Telkom Indonesia Tbk", price: 3820, change: -0.52, turnover: 180.0, ema20: 3850, ema50: 3900, rsi: 44, volRatio: 1.1, high52: 4200, bandarmology: "DISTRIBUSI", entry: 3800, r1: 3950, cl1: 3720, signal: "NEUTRAL" },
+            { ticker: "ASII", name: "Astra International Tbk", price: 5200, change: 0.97, turnover: 95.4, ema20: 5150, ema50: 5050, rsi: 55, volRatio: 1.8, high52: 5700, bandarmology: "NEUTRAL", entry: 5150, r1: 5350, cl1: 5000, signal: "BUY" },
+            { ticker: "AMMN", name: "Amman Mineral Internasional Tbk", price: 11800, change: 4.89, turnover: 540.8, ema20: 11200, ema50: 10100, rsi: 74, volRatio: 3.9, high52: 12000, bandarmology: "AKUMULASI", entry: 11600, r1: 12200, cl1: 11000, signal: "STRONG BUY" },
+            { ticker: "BREN", name: "Barito Renewables Energy Tbk", price: 8900, change: -2.20, turnover: 210.3, ema20: 9100, ema50: 9300, rsi: 41, volRatio: 0.8, high52: 10200, bandarmology: "DISTRIBUSI", entry: 8800, r1: 9300, cl1: 8500, signal: "SELL" },
+            { ticker: "ADRO", name: "Adaro Energy Indonesia Tbk", price: 3650, change: 3.11, turnover: 145.6, ema20: 3500, ema50: 3350, rsi: 65, volRatio: 2.6, high52: 3750, bandarmology: "AKUMULASI", entry: 3600, r1: 3800, cl1: 3450, signal: "STRONG BUY" },
+            { ticker: "PGAS", name: "Perusahaan Gas Negara Tbk", price: 1540, change: 1.32, turnover: 48.2, ema20: 1510, ema50: 1480, rsi: 58, volRatio: 2.1, high52: 1650, bandarmology: "AKUMULASI", entry: 1520, r1: 1600, cl1: 1470, signal: "BUY" },
+            { ticker: "GOTO", name: "GoTo Gojek Tokopedia Tbk", price: 68, change: 0.00, turnover: 25.1, ema20: 67, ema50: 68, rsi: 49, volRatio: 1.0, high52: 95, bandarmology: "NEUTRAL", entry: 67, r1: 72, cl1: 64, signal: "NEUTRAL" },
+            { ticker: "BRIS", name: "Bank Syariah Indonesia Tbk", price: 2950, change: 3.51, turnover: 112.0, ema20: 2800, ema50: 2650, rsi: 67, volRatio: 2.7, high52: 3050, bandarmology: "AKUMULASI", entry: 2900, r1: 3100, cl1: 2750, signal: "STRONG BUY" }
+        ];
 
-    function handleDragStart(e) {
-      draggedTicker = this.dataset.ticker;
-      this.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    }
+        let activeTab = "layakBeli";
 
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }
-
-    function handleDrop(e) {
-      e.preventDefault();
-      const targetTicker = this.dataset.ticker;
-
-      if (draggedTicker && targetTicker && draggedTicker !== targetTicker) {
-        const fromIndex = stockOrder.indexOf(draggedTicker);
-        const toIndex = stockOrder.indexOf(targetTicker);
-
-        if (fromIndex !== -1 && toIndex !== -1) {
-          const [movedItem] = stockOrder.splice(fromIndex, 1);
-          stockOrder.splice(toIndex, 0, movedItem);
-          saveState();
-          render();
-        }
-      }
-    }
-
-    function handleDragEnd() {
-      this.classList.remove('dragging');
-      draggedTicker = null;
-    }
-
-    function render() {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      const activeTabEl = document.getElementById(`tab-${activeFilter}`);
-      if (activeTabEl) activeTabEl.classList.add('active');
-
-      const grid = document.getElementById('stockGrid');
-      grid.innerHTML = '';
-
-      let ihsgData = rawData.find(s => s.ticker === 'IHSG') || {
-        ticker: 'IHSG', price: 0, open: 0, high: 0, low: 0, prev_close: 0, rsi: 0, rsi_status: 'NEUTRAL', ma20: 0, support: 0, resistance: 0, vol_ratio: 1.0, vol_status: 'NEUTRAL', macd_status: 'NEUTRAL', fibo_rsi_status: 'NORMAL', signal: 'NETRAL'
-      };
-      grid.appendChild(createCardElement(ihsgData, true));
-
-      let nonIhsgStocks = rawData.filter(s => s.ticker !== 'IHSG');
-      
-      if (stockOrder.length === 0) {
-        stockOrder = nonIhsgStocks.map(s => s.ticker);
-        saveState();
-      } else {
-        nonIhsgStocks.forEach(s => {
-          if (!stockOrder.includes(s.ticker)) stockOrder.push(s.ticker);
+        // INITIALIZATION
+        document.addEventListener("DOMContentLoaded", () => {
+            loadData();
         });
-      }
 
-      let displayList = [];
-      stockOrder.forEach(ticker => {
-        let item = nonIhsgStocks.find(s => s.ticker === ticker);
-        if (item) displayList.push(item);
-      });
+        // MAIN DATA FILTERING AND RENDERING
+        function loadData() {
+            const timeframe = document.getElementById("tfSelect").value;
+            const minTurnover = parseFloat(document.getElementById("turnoverSelect").value);
 
-      displayList.forEach(stock => {
-        const group = (stock.category || 'LAINNYA').toUpperCase();
+            updateBannerInfo(timeframe);
 
-        if (activeFilter === 'LAYAK_BELI') {
-          if (!isBuyWorthyStock(stock)) return;
-        } else if (activeFilter !== 'ALL' && group !== activeFilter) {
-          return;
+            // Filter & Process Stocks
+            const processedStocks = rawStockData.map(stock => {
+                let evaluation;
+                if (timeframe === "swing") {
+                    evaluation = evaluateSwingIndicators(stock, minTurnover);
+                } else {
+                    // For Scalping & Investment mock default fallback
+                    const activeBoxes = stock.signal === "STRONG BUY" ? 10 : (stock.signal === "BUY" ? 7 : 3);
+                    evaluation = {
+                        score: activeBoxes * 10,
+                        activeBoxes: activeBoxes,
+                        label: stock.signal,
+                        isStrongBuy: stock.signal === "STRONG BUY"
+                    };
+                }
+                const isBuyWorthy = isBuyWorthyStock(stock, evaluation, minTurnover);
+
+                return { ...stock, eval: evaluation, isBuyWorthy: isBuyWorthy };
+            });
+
+            // Filter by Turnover Global
+            const validStocks = processedStocks.filter(s => s.turnover >= minTurnover);
+
+            // Filter by Tab
+            const displayStocks = activeTab === "layakBeli" 
+                ? validStocks.filter(s => s.isBuyWorthy)
+                : validStocks;
+
+            // Update Badges
+            const countLayakBeli = validStocks.filter(s => s.isBuyWorthy).length;
+            document.getElementById("badgeLayakBeli").innerText = countLayakBeli;
+            document.getElementById("badgeAll").innerText = validStocks.length;
+
+            renderTable(displayStocks);
         }
 
-        grid.appendChild(createCardElement(stock, false));
-      });
-    }
+        // SWING INDICATORS EVALUATION ENGINE (TF 1D)
+        function evaluateSwingIndicators(stock, minTurnover) {
+            let score = 0;
 
-    function removeStock(ticker) {
-      stockOrder = stockOrder.filter(t => t !== ticker);
-      saveState();
-      render();
-    }
+            // 1. Trend EMA (20 Poin)
+            if (stock.ema20 > stock.ema50 && stock.price >= stock.ema20) score += 20;
 
-    function filterGroup(group, el) {
-      activeFilter = group;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      if (el) el.classList.add('active');
-      render();
-    }
+            // 2. RSI Momentum (20 Poin)
+            if (stock.rsi >= 50 && stock.rsi <= 70) score += 20;
 
-    function saveState() {
-      localStorage.setItem('stock_order', JSON.stringify(stockOrder));
-    }
+            // 3. Volume Ratio (20 Poin)
+            if (stock.volRatio >= 2.5) score += 20;
 
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-    loadData();
-  </script>
+            // 4. Turnover Threshold (20 Poin)
+            if (stock.turnover >= minTurnover) score += 20;
+
+            // 5. Proximity to 52-Week High <= 10% (20 Poin)
+            const diffHigh = ((stock.high52 - stock.price) / stock.high52) * 100;
+            if (diffHigh <= 10) score += 20;
+
+            const activeBoxes = Math.round(score / 10);
+            let label = "NEUTRAL";
+            if (score >= 90) label = "🚀🚀🚀 STRONG BUY";
+            else if (score >= 60) label = "BUY";
+            else if (score <= 30) label = "SELL";
+
+            return {
+                score: score,
+                activeBoxes: activeBoxes,
+                label: label,
+                isStrongBuy: score >= 90
+            };
+        }
+
+        // LAYAK BELI EVALUATION
+        function isBuyWorthyStock(stock, evaluation, minTurnover) {
+            return stock.turnover >= minTurnover && evaluation.score >= 60 && evaluation.activeBoxes >= 6;
+        }
+
+        // RENDER TABLE ROWS
+        function renderTable(stocks) {
+            const tbody = document.getElementById("stockTableBody");
+            const emptyState = document.getElementById("emptyState");
+            tbody.innerHTML = "";
+
+            if (stocks.length === 0) {
+                emptyState.classList.remove("hidden");
+                return;
+            } else {
+                emptyState.classList.add("hidden");
+            }
+
+            stocks.forEach(stock => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors border-b border-slate-800/50";
+
+                const isPos = stock.change >= 0;
+                const changeClass = isPos ? "text-emerald-400" : "text-rose-400";
+                const changeSign = isPos ? "+" : "";
+
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-bold text-white">
+                        <div class="text-sm">${stock.ticker}</div>
+                        <div class="text-[10px] text-slate-400 font-normal truncate max-w-[140px]">${stock.name}</div>
+                    </td>
+                    <td class="py-3.5 px-3 text-right font-semibold text-slate-100">${stock.price.toLocaleString('id-ID')}</td>
+                    <td class="py-3.5 px-3 text-right font-bold ${changeClass}">${changeSign}${stock.change.toFixed(2)}%</td>
+                    <td class="py-3.5 px-3 text-right font-medium text-slate-300">Rp ${stock.turnover.toFixed(1)} M</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="flex flex-col items-center gap-1">
+                            ${renderBoxes(stock.eval.activeBoxes)}
+                            <span class="text-[10px] font-extrabold ${stock.eval.isStrongBuy ? 'text-emerald-400 animate-pulse' : 'text-slate-300'}">
+                                ${stock.eval.label}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-3 text-center">
+                        ${renderLightningBoxes(stock)}
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="text-[11px] font-medium text-slate-300">
+                            <span class="text-emerald-400">EP: ${stock.entry}</span> | 
+                            <span class="text-indigo-400">R1: ${stock.r1}</span> | 
+                            <span class="text-rose-400">CL: ${stock.cl1}</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Re-initialize Lucide Icons for rendered content
+            lucide.createIcons();
+        }
+
+        // RENDER 10 BOXES INDICATOR
+        function renderBoxes(activeCount) {
+            let boxesHTML = '<div class="flex items-center gap-0.5 justify-center">';
+            for (let i = 1; i <= 10; i++) {
+                if (i <= activeCount) {
+                    boxesHTML += `<div class="w-2 h-3.5 bg-emerald-500 rounded-sm"></div>`;
+                } else {
+                    boxesHTML += `<div class="w-2 h-3.5 bg-slate-800 rounded-sm"></div>`;
+                }
+            }
+            boxesHTML += '</div>';
+            return boxesHTML;
+        }
+
+        // RENDER HYBRID LIGHTNING ICON (VOLUME + BANDARMOLOGY)
+        function renderLightningBoxes(stock) {
+            const isAkumulasi = stock.bandarmology === "AKUMULASI";
+            const isBlink = stock.isBuyWorthy;
+            
+            let colorClass = "text-slate-700";
+            if (isAkumulasi) {
+                colorClass = isBlink ? "text-emerald-400 lightning-blink" : "text-emerald-500";
+            } else if (stock.bandarmology === "DISTRIBUSI") {
+                colorClass = "text-rose-500";
+            }
+
+            return `
+                <div class="flex flex-col items-center justify-center gap-0.5">
+                    <i data-lucide="zap" class="w-5 h-5 ${colorClass} fill-current"></i>
+                    <span class="text-[9px] font-bold text-slate-400">${stock.bandarmology}</span>
+                </div>
+            `;
+        }
+
+        // TAB SWITCHING
+        function switchTab(tab) {
+            activeTab = tab;
+            const btnLayak = document.getElementById("tabLayakBeli");
+            const btnAll = document.getElementById("tabAll");
+
+            if (tab === "layakBeli") {
+                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
+                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
+            } else {
+                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
+                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
+            }
+            loadData();
+        }
+
+        // FILTER EVENT HANDLER
+        function handleFilterChange() {
+            loadData();
+        }
+
+        // STRATEGY BANNER UPDATER
+        function updateBannerInfo(tf) {
+            const title = document.getElementById("bannerTitle");
+            const desc = document.getElementById("bannerDesc");
+
+            if (tf === "swing") {
+                title.innerText = "SWING TRADING STRATEGY (1D)";
+                desc.innerText = "Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.";
+            } else if (tf === "scalping") {
+                title.innerText = "SCALPING FAST STRATEGY (15M)";
+                desc.innerText = "Fokus pada momentum intraday cepat. Mengutamakan lompatan Volume Ratio mendadak, break resistance terdekat, dan aliran arus kas cepat.";
+            } else if (tf === "investment") {
+                title.innerText = "LONG TERM INVESTMENT STRATEGY (1W)";
+                desc.innerText = "Fokus pada akumulasi jangka panjang (Weekly). Memfilter emiten dengan fundamental likuiditas tinggi dan tren akumulasi besar konsisten.";
+            }
+        }
+    </script>
 </body>
 </html>
