@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IHSG SH4NDY'S SCREENER - ADVANCED S/R MONITOR</title>
+  <title>IHSG SH4NDY'S SCREENER - SWING TRADING MONITOR</title>
   
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0f172a">
@@ -94,12 +94,12 @@
     .form-row { 
       margin-top: 8px; 
       display: grid; 
-      grid-template-columns: repeat(3, 1fr); 
+      grid-template-columns: repeat(4, 1fr); 
       gap: 8px; 
     }
     .form-row.hidden { display: none; }
     
-    select, input[type="text"] { 
+    select, input[type="text"], input[type="number"] { 
       width: 100%; 
       padding: 8px 10px; 
       border-radius: 6px; 
@@ -110,7 +110,7 @@
       outline: none;
     }
     select option { background: #0f172a; color: #fff; }
-    input[type="text"]:focus, select:focus { border-color: #38bdf8; }
+    input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: #38bdf8; }
 
     .group-tabs { 
       position: sticky;
@@ -422,7 +422,6 @@
     }
     .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
 
-    /* COLLAPSIBLE ACCORDION FOR MONITORING S/R */
     .collapse-toggle-btn {
       width: 100%;
       background: #1e293b;
@@ -438,19 +437,11 @@
       align-items: center;
       transition: background 0.2s;
     }
-    .collapse-toggle-btn:hover {
-      background: #0f2744;
-    }
+    .collapse-toggle-btn:hover { background: #0f2744; }
 
-    .collapsible-content {
-      display: none;
-      margin-top: 6px;
-    }
-    .collapsible-content.show {
-      display: block;
-    }
+    .collapsible-content { display: none; margin-top: 6px; }
+    .collapsible-content.show { display: block; }
 
-    /* FIXED KATEGORI & S/R MONITORING LAYOUT */
     .sr-stat-box { 
       padding: 6px; 
       border-radius: 6px; 
@@ -459,17 +450,11 @@
       font-size: 0.65rem; 
       color: #cbd5e1; 
     }
-    .sr-row { 
-      display: flex; 
-      justify-content: space-between; 
-      margin-bottom: 2px; 
-      align-items: center; 
-    }
+    .sr-row { display: flex; justify-content: space-between; margin-bottom: 2px; align-items: center; }
     .sr-row:last-child { margin-bottom: 0; }
     .sr-res { color: #f87171; }
     .sr-sup { color: #4ade80; }
 
-    /* STICKY COLUMN FOR CATEGORY / LABEL LEADING TO PERMANENT NON-SCROLL */
     .sr-label-container {
       position: sticky;
       left: 0;
@@ -481,7 +466,6 @@
       padding-right: 8px;
     }
 
-    /* PANAH RED & GREEN BLINK STYLING DEKAT HARGA SUPPORT */
     @keyframes arrow-blink-red {
       0% { opacity: 1; transform: translateX(0); }
       50% { opacity: 0.2; transform: translateX(-3px); }
@@ -510,11 +494,7 @@
       animation: arrow-blink-green-up 0.6s infinite;
     }
 
-    .sr-value-container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
+    .sr-value-container { display: flex; align-items: center; justify-content: flex-end; }
 
     .sr-check-badge {
       color: #22c55e;
@@ -557,28 +537,15 @@
       display: inline-block;
       flex-shrink: 0;
     }
-    .pivot-dot-small.active-red {
-      background-color: #ef4444;
-      box-shadow: 0 0 3px #ef4444;
-    }
-    .pivot-dot-small.active-green {
-      background-color: #22c55e;
-      box-shadow: 0 0 3px #22c55e;
-    }
-    .pivot-dot-small.active-gray {
-      background-color: #64748b;
-    }
-    .pivot-dot-small.dot-blink {
-      animation: dot-blink 0.8s infinite;
-    }
+    .pivot-dot-small.active-red { background-color: #ef4444; box-shadow: 0 0 3px #ef4444; }
+    .pivot-dot-small.active-green { background-color: #22c55e; box-shadow: 0 0 3px #22c55e; }
+    .pivot-dot-small.active-gray { background-color: #64748b; }
+    .pivot-dot-small.dot-blink { animation: dot-blink 0.8s infinite; }
 
     .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; }
     .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; }
 
-    .pivot-price-wrapper {
-      display: inline-flex;
-      align-items: center;
-    }
+    .pivot-price-wrapper { display: inline-flex; align-items: center; }
 
     .signal-badge-container { margin: 6px 0 4px 0; text-align: center; }
     .badge { display: block; width: 100%; padding: 5px 6px; border-radius: 5px; font-size: 0.7rem; text-align: center; letter-spacing: 0.5px; }
@@ -593,69 +560,19 @@
     .fibo-overbought { color: #ef4444; border-color: #ef4444; }
     .fibo-normal { color: #64748b; }
 
-    .tf-badge-fibo {
-      font-size: 0.58rem;
-      padding: 1px 4px;
-      border-radius: 3px;
-      background: #334155;
-      color: #38bdf8;
-      margin-left: 4px;
-    }
+    .tf-badge-fibo { font-size: 0.58rem; padding: 1px 4px; border-radius: 3px; background: #334155; color: #38bdf8; margin-left: 4px; }
 
-    .trading-plan-wrapper { 
-      margin-top: 8px; 
-      padding: 8px; 
-      background: #0f172a; 
-      border-radius: 8px; 
-      border: 1px dashed #475569; 
-    }
-    .trading-plan-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .plan-col {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 6px 4px;
-      font-size: 0.6rem;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .plan-col.active-style {
-      border-color: #38bdf8;
-      background: #0f2744;
-      box-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
-    }
-    .plan-col-title {
-      font-size: 0.62rem;
-      color: #38bdf8;
-      border-bottom: 1px solid #334155;
-      padding-bottom: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .plan-row-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #0f172a;
-      padding: 3px 2px;
-      border-radius: 4px;
-      border: 1px solid #1e293b;
-    }
+    .trading-plan-wrapper { margin-top: 8px; padding: 8px; background: #0f172a; border-radius: 8px; border: 1px dashed #475569; }
+    .trading-plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+    .plan-col { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 6px 4px; font-size: 0.6rem; text-align: center; display: flex; flex-direction: column; gap: 4px; }
+    .plan-col.active-style { border-color: #38bdf8; background: #0f2744; box-shadow: 0 0 6px rgba(56, 189, 248, 0.3); }
+    .plan-col-title { font-size: 0.62rem; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .plan-row-item { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; padding: 3px 2px; border-radius: 4px; border: 1px solid #1e293b; }
     .plan-item-label { color: #94a3b8; font-size: 0.55rem; margin-bottom: 1px; }
     .plan-item-val { color: #fff; font-size: 0.62rem; }
     .val-tp { color: #4ade80; }
     .val-cl { color: #f87171; }
     .val-entry { color: #38bdf8; }
-    .val-wait { color: #f59e0b; }
   </style>
 </head>
 <body>
@@ -697,6 +614,8 @@
         <option value="SCALPING">⚡ SCALPING (TF 15M)</option>
         <option value="INVESTMENT">💎 INVESTASI (TF 1W)</option>
       </select>
+
+      <input type="number" id="minTurnoverInput" placeholder="VALUE (IDR)" value="2000000000" onchange="updateMinTurnover(this)" title="FILTER VALUE / TURNOVER MINIMAL (IDR)">
     </div>
   </div>
 
@@ -731,9 +650,11 @@
     let stockOrder = JSON.parse(localStorage.getItem('stock_order')) || [];
     let isMenuVisible = JSON.parse(localStorage.getItem('menu_visible')) ?? true;
     let selectedTradingStyle = localStorage.getItem('trading_style') || 'SWING';
+    let minTurnover = parseFloat(localStorage.getItem('min_turnover')) || 2000000000;
     
     let activeFilter = 'LAYAK_BELI';
     let draggedTicker = null;
+    let lastResetDate = localStorage.getItem('last_sr_reset_date') || '';
 
     function formatWIB(timeStr) {
       if (!timeStr) return "-";
@@ -753,6 +674,31 @@
 
     function reloadPage() {
       window.location.reload();
+    }
+
+    function checkDailySrReset() {
+      const now = new Date();
+      const jakartaOptions = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+      const formatter = new Intl.DateTimeFormat('en-US', jakartaOptions);
+      const parts = formatter.formatToParts(now);
+      let dateObj = {};
+      parts.forEach(p => dateObj[p.type] = p.value);
+
+      const todayStr = `${dateObj.year}-${dateObj.month}-${dateObj.day}`;
+      const currentHour = parseInt(dateObj.hour, 10);
+
+      // RESET SEBELUM PEMBUKAAN PASAR (JAM 09:00 WIB SETIAP HARI BARU)
+      if (currentHour >= 9 && lastResetDate !== todayStr) {
+        lastResetDate = todayStr;
+        localStorage.setItem('last_sr_reset_date', todayStr);
+        if (rawData && rawData.length > 0) {
+          rawData.forEach(stock => {
+            if (stock.hits) stock.hits = {};
+            stock.touch_count = 0;
+          });
+          render();
+        }
+      }
     }
 
     function updateMarketClock() {
@@ -818,6 +764,8 @@
         }
         if (clockEl) clockEl.className = "status-text-closed";
       }
+
+      checkDailySrReset();
     }
 
     setInterval(updateMarketClock, 1000);
@@ -837,6 +785,7 @@
 
         initMenuState();
         initTradingStyleSelect();
+        initTurnoverInput();
         populateDropdownOptions();
         render();
         updateMarketClock();
@@ -893,9 +842,18 @@
 
     function initTradingStyleSelect() {
       const selectStyle = document.getElementById('selectTradingStyle');
-      if (selectStyle) {
-        selectStyle.value = selectedTradingStyle;
-      }
+      if (selectStyle) selectStyle.value = selectedTradingStyle;
+    }
+
+    function initTurnoverInput() {
+      const inputEl = document.getElementById('minTurnoverInput');
+      if (inputEl) inputEl.value = minTurnover;
+    }
+
+    function updateMinTurnover(inputEl) {
+      minTurnover = parseFloat(inputEl.value) || 2000000000;
+      localStorage.setItem('min_turnover', minTurnover);
+      render();
     }
 
     function changeTradingStyle(selectEl) {
@@ -987,7 +945,44 @@
       }, 100);
     }
 
+    // LOGIKA INDIKATOR SWING TRADING DENGAN AMBANG MINIMUM TURNOVER DINAMIS
+    function evaluateSwingIndicators(stock) {
+      const closePrice = stock.price ?? 0;
+      const ema20 = stock.ema20 || stock.ma20 || closePrice;
+      const ema50 = stock.ema50 || Math.round(ema20 * 0.98);
+      
+      const rsi = stock.rsi ?? 50;
+      const volRatio = parseFloat(stock.vol_ratio) || 1.0;
+      const turnover = stock.turnover || stock.value || 0;
+      
+      const high52w = stock.high_52w || stock.high || closePrice;
+      const dist52w = high52w > 0 ? ((high52w - closePrice) / high52w) * 100 : 0;
+
+      const condEma = (ema20 > ema50) && (closePrice >= ema20);
+      const condRsi = (rsi >= 50 && rsi <= 70);
+      const condVol = (volRatio >= 2.5);
+      const condTurnover = (turnover >= minTurnover);
+      const condDist = (dist52w <= 10 && dist52w >= 0);
+
+      let totalScore = 0;
+      if (condEma) totalScore += 20;
+      if (condRsi) totalScore += 20;
+      if (condVol) totalScore += 20;
+      if (condTurnover) totalScore += 20;
+      if (condDist) totalScore += 20;
+
+      return {
+        condEma, condRsi, condVol, condTurnover, condDist,
+        totalScore,
+        isBuyWorthy: totalScore >= 60 && condTurnover
+      };
+    }
+
     function isBuyWorthyStock(stock) {
+      if (selectedTradingStyle === 'SWING') {
+        return evaluateSwingIndicators(stock).isBuyWorthy;
+      }
+      
       const signalText = (stock.signal || '').toUpperCase();
       const isBuySignal = signalText.includes('BUY') || signalText.includes('STRONG BUY');
       if (!isBuySignal) return false;
@@ -1053,7 +1048,6 @@
       const closePrice = stock.price ?? 0;
       const sr = getTfAdjustedSR(stock);
 
-      // PENDEKATAN PRO: ENTRY TIDAK SAMA DENGAN HARGA LAST TETAPI PADA TITIK INDIKATOR/SUPPORT TIMEFRAME
       const scEntry = stock.entry_price || stock.low || closePrice;
       const scTp1 = Math.round(scEntry * 1.015);
       const scTp2 = stock.take_profit || Math.round(scEntry * 1.03);
@@ -1101,42 +1095,27 @@
       const isSuspended = stock.is_suspended || stock.status === 'SUSPEND' || stock.volume === 0;
       const closePrice = stock.price ?? 0;
       const prevClose = stock.prev_close ?? closePrice;
-      const volStatus = (stock.vol_status || '').toUpperCase();
-      const signalText = (stock.signal || '').toUpperCase();
 
-      let tfStatus = 'NEUTRAL';
-      if (selectedTradingStyle === 'SCALPING') {
-        tfStatus = (stock.macd_status || '').toUpperCase();
-      } else if (selectedTradingStyle === 'INVESTMENT') {
-        tfStatus = (stock.rsi_status || '').toUpperCase();
-      } else { 
-        tfStatus = (stock.ema_status || '').toUpperCase();
-        if (tfStatus === 'NEUTRAL') {
-          tfStatus = closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL';
-        }
-      }
-
-      const isBuySignal = signalText.includes('BUY') || signalText.includes('STRONG BUY');
-      const isTfBuy = tfStatus === 'BUY' || tfStatus === 'BULLISH';
-      const isReadyToBuy = (isBuySignal || isBuyWorthyStock(stock)) && isTfBuy;
-
+      let isReadyToBuy = false;
       let activeCount = 0;
-      if (!isSuspended) {
+
+      if (selectedTradingStyle === 'SWING') {
+        const swingRes = evaluateSwingIndicators(stock);
+        isReadyToBuy = swingRes.isBuyWorthy;
+        activeCount = Math.round(swingRes.totalScore / 20);
+      } else {
+        const volStatus = (stock.vol_status || '').toUpperCase();
+        const signalText = (stock.signal || '').toUpperCase();
+        isReadyToBuy = signalText.includes('BUY');
         let vRatio = parseFloat(stock.vol_ratio) || 0;
         if (vRatio >= 2.5) activeCount = 5;
         else if (vRatio >= 2.0) activeCount = 4;
         else if (vRatio >= 1.5) activeCount = 3;
         else if (vRatio >= 1.2) activeCount = 2;
         else if (vRatio >= 1.0) activeCount = 1;
-        else activeCount = 0;
-
-        if (isReadyToBuy && activeCount === 0) {
-          activeCount = 1;
-        }
       }
 
-      const isDistribution = (volStatus === 'SELL') || (closePrice < prevClose) || signalText.includes('SELL');
-      let activeClass = isDistribution ? 'active-red' : 'active-green';
+      let activeClass = closePrice < prevClose ? 'active-red' : 'active-green';
       let blinkClass = (activeClass === 'active-green' && isReadyToBuy) ? 'lightning-blink' : '';
 
       let html = '<div class="lightning-grid-container">';
@@ -1152,15 +1131,19 @@
     }
 
     function renderIndicator10Dots(status, customStrength = null) {
-      let st = (status || '').toUpperCase();
-      let isBullish = st === 'BUY' || st === 'BULLISH' || st === 'OVER SOLD';
-      let isBearish = st === 'SELL' || st === 'BEARISH' || st === 'OVER BOUGHT';
-      
-      let strength = customStrength;
-      if (strength === null) {
-        strength = (isBullish || isBearish) ? 8 : 5; 
-      }
+      let isBullish = false;
+      let isBearish = false;
 
+      if (typeof status === 'boolean') {
+        isBullish = status;
+        isBearish = !status;
+      } else {
+        let st = (status || '').toUpperCase();
+        isBullish = st === 'BUY' || st === 'BULLISH' || st === 'OVER SOLD';
+        isBearish = st === 'SELL' || st === 'BEARISH' || st === 'OVER BOUGHT';
+      }
+      
+      let strength = customStrength !== null ? customStrength : ((isBullish || isBearish) ? 8 : 5);
       let activeClass = isBullish ? 'active-green' : (isBearish ? 'active-red' : 'active-gray');
 
       let html = '<div class="indicator-dots-row">';
@@ -1203,11 +1186,7 @@
       let isUp = closePrice > pivotPoint;
       let isBlink = activeCount >= 7;
 
-      let colorClass = '';
-      if (isDown) colorClass = 'active-red';
-      else if (isUp) colorClass = 'active-green';
-      else colorClass = 'active-gray';
-
+      let colorClass = isDown ? 'active-red' : (isUp ? 'active-green' : 'active-gray');
       let blinkClass = (isBlink && (isDown || isUp)) ? 'dot-blink' : '';
 
       let html = '<div class="pivot-dots-container">';
@@ -1242,19 +1221,13 @@
       return '';
     }
 
-    // LOGIKA RENDER HARGA SUPPORT DENGAN PANAH RED/GREEN BLINK LENGKAP SPASI
     function renderSupportRowValue(stock, targetSupportPrice, defaultClass) {
       const closePrice = stock.price ?? 0;
-      const prevClose = stock.prev_close ?? closePrice;
-
       let arrowHtml = '';
       
-      // PANAH MERAH BLINK: JIKA HARGA SAAT INI TERKENA KOREKSI/SANGAT DEKAT SUPPORT (Price <= Support)
       if (closePrice > 0 && closePrice <= targetSupportPrice) {
         arrowHtml = '<span class="arrow-blink-red">➔&nbsp;</span>';
-      } 
-      // PANAH HIJAU BLINK: JIKA TERJADI KOREKSI KEMBALI KEATAS / PANTULAN (Price > Support & Trend positif)
-      else if (closePrice > targetSupportPrice && stock.low <= targetSupportPrice) {
+      } else if (closePrice > targetSupportPrice && stock.low <= targetSupportPrice) {
         arrowHtml = '<span class="arrow-blink-green-up">➔&nbsp;</span>';
       }
 
@@ -1270,10 +1243,7 @@
       const highPrice = stock.high ?? closePrice;
       const lowPrice = stock.low ?? closePrice;
 
-      let openPercentVal = 0;
-      if (openPrice > 0) {
-        openPercentVal = ((closePrice - openPrice) / openPrice) * 100;
-      }
+      let openPercentVal = openPrice > 0 ? ((closePrice - openPrice) / openPrice) * 100 : 0;
       const openPercentSign = openPercentVal > 0 ? '+' : '';
       const openPercentStr = `${openPercentSign}${openPercentVal.toFixed(2)}%`;
       
@@ -1281,72 +1251,44 @@
       if (closePrice > prevClose) priceColorClass = 'price-up';
       else if (closePrice < prevClose) priceColorClass = 'price-down';
 
-      let rsiStatus = stock.rsi_status || 'NEUTRAL';
-      let rsiVal = (rsiStatus === 'BUY') ? 8 : ((rsiStatus === 'SELL') ? 2 : 5);
-
-      let macdStatus = stock.macd_status || 'NEUTRAL';
-      let macdVal = (macdStatus === 'BUY') ? 8 : ((macdStatus === 'SELL') ? 2 : 5);
-
-      let volStatus = stock.vol_status || 'NEUTRAL';
-      let volVal = (volStatus === 'BUY') ? 8 : ((volStatus === 'SELL') ? 2 : 5);
-
-      let emaStatus = stock.ema_status || (closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL');
-      let emaVal = (emaStatus === 'BUY') ? 8 : ((emaStatus === 'SELL') ? 2 : 5);
-
-      let rawTrend = (stock.trend_status || '').toUpperCase();
-      let trendStatus = 'SIDEWAYS';
-      if (rawTrend.includes('BULL') || rawTrend === 'BUY') trendStatus = 'BULLISH';
-      else if (rawTrend.includes('BEAR') || rawTrend === 'SELL') trendStatus = 'BEARISH';
-      else {
-        if (closePrice > prevClose) trendStatus = 'BULLISH';
-        else if (closePrice < prevClose) trendStatus = 'BEARISH';
-      }
-      let trendVal = (trendStatus === 'BULLISH') ? 8 : ((trendStatus === 'BEARISH') ? 2 : 5);
-
-      let totalVal = rsiVal + macdVal + volVal + emaVal + trendVal;
-      let avgStrengthPercent = Math.round((totalVal / 50) * 100);
-
+      let avgStrengthPercent = 50;
       let signalText = 'NETRAL';
       let badgeClass = 'neutral';
+      let swingRes = evaluateSwingIndicators(stock);
 
-      if (stock.signal) {
-        if (stock.signal.includes('STRONG BUY')) { avgStrengthPercent = 100; signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
-        else if (stock.signal.includes('BUY')) { avgStrengthPercent = 80; signalText = 'BUY'; badgeClass = 'buy'; }
-        else if (stock.signal.includes('STRONG SELL')) { avgStrengthPercent = 100; signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
-        else if (stock.signal.includes('SELL')) { avgStrengthPercent = 80; signalText = 'SELL'; badgeClass = 'sell'; }
+      if (selectedTradingStyle === 'SWING') {
+        avgStrengthPercent = swingRes.totalScore;
+        if (avgStrengthPercent >= 80) { signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
+        else if (avgStrengthPercent >= 60) { signalText = 'BUY'; badgeClass = 'buy'; }
+        else if (avgStrengthPercent <= 20) { signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
+        else if (avgStrengthPercent <= 40) { signalText = 'SELL'; badgeClass = 'sell'; }
+      } else {
+        if (stock.signal) {
+          if (stock.signal.includes('STRONG BUY')) { avgStrengthPercent = 100; signalText = 'STRONG BUY'; badgeClass = 'strong-buy'; }
+          else if (stock.signal.includes('BUY')) { avgStrengthPercent = 80; signalText = 'BUY'; badgeClass = 'buy'; }
+          else if (stock.signal.includes('STRONG SELL')) { avgStrengthPercent = 100; signalText = 'STRONG SELL'; badgeClass = 'strong-sell'; }
+          else if (stock.signal.includes('SELL')) { avgStrengthPercent = 80; signalText = 'SELL'; badgeClass = 'sell'; }
+        }
       }
 
-      let isBullishMode = signalText.includes('BUY') || trendStatus === 'BULLISH';
-      let isBearishMode = signalText.includes('SELL') || trendStatus === 'BEARISH';
+      let isBullishMode = signalText.includes('BUY');
+      let isBearishMode = signalText.includes('SELL');
       let isStrongState = signalText === 'STRONG BUY' || signalText === 'STRONG SELL';
 
       let avgBoxesCount = Math.round(avgStrengthPercent / 10);
-      let activeBoxColor = 'box-gray-active';
-
-      if (isBullishMode) {
-        activeBoxColor = 'box-green-active';
-      } else if (isBearishMode) {
-        activeBoxColor = 'box-red-active';
-      }
+      let activeBoxColor = isBullishMode ? 'box-green-active' : (isBearishMode ? 'box-red-active' : 'box-gray-active');
 
       let blinkClass = isStrongState ? 'box-blink' : '';
       let topBoxesHtml = `<div class="ten-boxes-container ${blinkClass}">`;
       for (let d = 1; d <= 10; d++) {
-        if (d <= avgBoxesCount) {
-          topBoxesHtml += `<span class="box-ten ${activeBoxColor}"></span>`;
-        } else {
-          topBoxesHtml += `<span class="box-ten"></span>`;
-        }
+        topBoxesHtml += `<span class="box-ten ${d <= avgBoxesCount ? activeBoxColor : ''}"></span>`;
       }
       topBoxesHtml += '</div>';
 
       let warningHtml = '';
-      const isReversalDown = (closePrice < openPrice && trendStatus === 'BULLISH') || trendStatus === 'BEARISH' || stock.reversal === 'DOWN' || stock.reversal === 'BEARISH';
-      const isReversalUp = (closePrice > openPrice && (trendStatus === 'BEARISH' || signalText.includes('SELL'))) || trendStatus === 'BULLISH' || stock.reversal === 'UP' || stock.reversal === 'BULLISH';
-
-      if (trendStatus === 'BEARISH' || isReversalDown) {
+      if (isBearishMode) {
         warningHtml = '<div class="warning-box-col blink-red">⚠️ WARNING! TREND TURUN!</div>';
-      } else if (trendStatus === 'BULLISH' || isReversalUp) {
+      } else if (isBullishMode) {
         warningHtml = '<div class="warning-box-col blink-green">⚠️ WARNING! TREND NAIK!</div>';
       } else {
         warningHtml = '<div class="warning-box-col" style="color:#64748b;">⚠️ WARNING! NETRAL</div>';
@@ -1359,31 +1301,16 @@
 
       let currentTfTag = selectedTradingStyle === 'SCALPING' ? 'TF 15M' : (selectedTradingStyle === 'INVESTMENT' ? 'TF 1W' : 'TF 1D');
       let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
-      let fiboBoxClass = 'fibo-normal';
-      let fiboText = `FIBO-RSI (${currentTfTag}): NORMAL`;
-      if (fiboStatus === 'OVER SOLD') {
-        fiboBoxClass = 'fibo-oversold'; 
-        fiboText = `OVER SOLD <span class="tf-badge-fibo">${currentTfTag}</span>`;
-      } else if (fiboStatus === 'OVER BOUGHT') {
-        fiboBoxClass = 'fibo-overbought'; 
-        fiboText = `OVER BOUGHT <span class="tf-badge-fibo">${currentTfTag}</span>`;
-      }
+      let fiboBoxClass = fiboStatus === 'OVER SOLD' ? 'fibo-oversold' : (fiboStatus === 'OVER BOUGHT' ? 'fibo-overbought' : 'fibo-normal');
+      let fiboText = `${fiboStatus} <span class="tf-badge-fibo">${currentTfTag}</span>`;
 
       const sr = getTfAdjustedSR(stock);
       const r1 = sr.r1; const r2 = sr.r2; const r3 = sr.r3;
       const s1 = sr.s1; const s2 = sr.s2; const s3 = sr.s3;
       const pivotPoint = sr.pivot;
 
-      let pivotPriceClass = 'pivot-price-yellow';
-      let pivotArrowIcon = '';
-
-      if (closePrice < pivotPoint) {
-        pivotPriceClass = 'pivot-price-blue';
-        pivotArrowIcon = '<span class="pivot-arrow-down">▼&nbsp;&nbsp;</span>';
-      } else if (closePrice > pivotPoint) {
-        pivotPriceClass = 'pivot-price-green';
-        pivotArrowIcon = '<span class="pivot-arrow-up">▲&nbsp;&nbsp;</span>';
-      }
+      let pivotPriceClass = closePrice < pivotPoint ? 'pivot-price-blue' : (closePrice > pivotPoint ? 'pivot-price-green' : 'pivot-price-yellow');
+      let pivotArrowIcon = closePrice < pivotPoint ? '<span class="pivot-arrow-down">▼&nbsp;&nbsp;</span>' : (closePrice > pivotPoint ? '<span class="pivot-arrow-up">▲&nbsp;&nbsp;</span>' : '');
 
       const pivotDotsHtml = renderPivot10Dots(closePrice, pivotPoint);
 
@@ -1395,16 +1322,28 @@
       const s2Class = (lowPrice <= s2 || closePrice <= s2) ? 'blink-green' : 'sr-sup';
       const s3Class = (lowPrice <= s3 || closePrice <= s3) ? 'blink-green' : 'sr-sup';
 
-      const arrowSwing = selectedTradingStyle === 'SWING' ? '<span class="arrow-active-blink">➔</span>' : '';
-      const arrowScalping = selectedTradingStyle === 'SCALPING' ? '<span class="arrow-active-blink">➔</span>' : '';
-      const arrowInvestment = selectedTradingStyle === 'INVESTMENT' ? '<span class="arrow-active-blink">➔</span>' : '';
+      let indicatorsHtml = '';
+      if (selectedTradingStyle === 'SWING') {
+        indicatorsHtml = `
+          <div class="indicator-item"><span class="indicator-name">EMA 20 > EMA 50</span>${renderIndicator10Dots(swingRes.condEma)}</div>
+          <div class="indicator-item"><span class="indicator-name">RSI 50-70</span>${renderIndicator10Dots(swingRes.condRsi)}</div>
+          <div class="indicator-item"><span class="indicator-name">VOL ≥ 2.5X</span>${renderIndicator10Dots(swingRes.condVol)}</div>
+          <div class="indicator-item"><span class="indicator-name">VALUE IDR</span>${renderIndicator10Dots(swingRes.condTurnover)}</div>
+          <div class="indicator-item" style="grid-column: span 2;"><span class="indicator-name">DIST 52W HIGH (≤10%)</span>${renderIndicator10Dots(swingRes.condDist)}</div>
+        `;
+      } else {
+        indicatorsHtml = `
+          <div class="indicator-item"><span class="indicator-name">PIVOT (${currentTfTag})</span>${renderIndicator10Dots('BUY', 8)}</div>
+          <div class="indicator-item"><span class="indicator-name">TREND</span>${renderIndicator10Dots('BUY', 8)}</div>
+          <div class="indicator-item"><span class="indicator-name">VOLUME</span>${renderIndicator10Dots('BUY', 8)}</div>
+          <div class="indicator-item"><span class="indicator-name">MACD (15M)</span>${renderIndicator10Dots('BUY', 8)}</div>
+        `;
+      }
 
       const card = document.createElement('div');
       card.className = `card ${isIHSG ? 'card-ihsg' : ''}`;
       card.dataset.ticker = stock.ticker;
-      if (!isIHSG) {
-        card.draggable = true;
-      }
+      if (!isIHSG) card.draggable = true;
 
       card.innerHTML = `
         <div class="compact-actions-top">
@@ -1434,12 +1373,7 @@
         </div>
 
         <div class="indicator-column-box">
-          <div class="indicator-item"><span class="indicator-name">PIVOT (${currentTfTag})</span>${renderIndicator10Dots('BUY', 8)}</div>
-          <div class="indicator-item"><span class="indicator-name">TREND</span>${renderIndicator10Dots(trendStatus, trendVal)}</div>
-          <div class="indicator-item"><span class="indicator-name">VOLUME</span>${renderIndicator10Dots(volStatus, volVal)}</div>
-          <div class="indicator-item"><span class="indicator-name">${arrowSwing}EMA (1D)</span>${renderIndicator10Dots(emaStatus, emaVal)}</div>
-          <div class="indicator-item"><span class="indicator-name">${arrowScalping}MACD (15M)</span>${renderIndicator10Dots(macdStatus, macdVal)}</div>
-          <div class="indicator-item"><span class="indicator-name">${arrowInvestment}RSI (1W)</span>${renderIndicator10Dots(rsiStatus, rsiVal)}</div>
+          ${indicatorsHtml}
         </div>
 
         <div class="ohlc-grid-box">
@@ -1499,7 +1433,6 @@
               </div>
             </div>
 
-            <!-- TABEL MONITOR SUPPORT TETAP TERBUKA SECARA BENAR (TIDAK ADA WAIT) -->
             <div class="sr-row">
               <div class="sr-label-container">
                 <span>SUPPORT 1 (S1):</span>
@@ -1688,9 +1621,7 @@
     function render() {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       const activeTabEl = document.getElementById(`tab-${activeFilter}`);
-      if (activeTabEl) {
-        activeTabEl.classList.add('active');
-      }
+      if (activeTabEl) activeTabEl.classList.add('active');
 
       const grid = document.getElementById('stockGrid');
       grid.innerHTML = '';
@@ -1707,9 +1638,7 @@
         saveState();
       } else {
         nonIhsgStocks.forEach(s => {
-          if (!stockOrder.includes(s.ticker)) {
-            stockOrder.push(s.ticker);
-          }
+          if (!stockOrder.includes(s.ticker)) stockOrder.push(s.ticker);
         });
       }
 
