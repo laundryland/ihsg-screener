@@ -31,6 +31,16 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #475569;
         }
+
+        /* Animation Blink 3x untuk hasil pencarian */
+        @keyframes blink-three-times {
+            0%, 100% { background-color: transparent; }
+            16%, 50%, 83% { background-color: rgba(99, 102, 241, 0.35); }
+            33%, 66% { background-color: transparent; }
+        }
+        .search-blink {
+            animation: blink-three-times 2.4s ease-in-out forwards;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
@@ -50,6 +60,22 @@
 
             <!-- CONTROLS & FILTERS -->
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <!-- Kolom Pencarian Emiten -->
+                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i data-lucide="search" class="w-4 h-4 text-indigo-400"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari Emiten..." class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none rounded px-2 py-1 border border-slate-700 w-28 uppercase placeholder:normal-case placeholder:text-slate-500">
+                </div>
+
+                <!-- Kategori Strong Buy dengan Icon Target -->
+                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <span class="text-sm">🎯</span>
+                    <label for="strongBuySelect" class="text-xs font-medium text-slate-300">Strong Buy Only:</label>
+                    <select id="strongBuySelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-400 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
+                        <option value="all">Semua Signal</option>
+                        <option value="strongBuy">🎯 Strong Buy</option>
+                    </select>
+                </div>
+
                 <!-- Timeframe Selection (DEFAULT: SWING / 1D) -->
                 <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
                     <i data-lucide="clock" class="w-4 h-4 text-indigo-400"></i>
@@ -187,6 +213,7 @@
         function processAndRender() {
             const timeframe = document.getElementById("tfSelect").value;
             const minTurnover = parseFloat(document.getElementById("turnoverSelect").value);
+            const strongBuyFilter = document.getElementById("strongBuySelect").value;
 
             updateBannerInfo(timeframe);
 
@@ -210,7 +237,12 @@
             });
 
             // Filter by Turnover Global
-            const validStocks = processedStocks.filter(s => s.turnover >= minTurnover);
+            let validStocks = processedStocks.filter(s => s.turnover >= minTurnover);
+
+            // Filter by Strong Buy Dropdown
+            if (strongBuyFilter === "strongBuy") {
+                validStocks = validStocks.filter(s => s.eval.isStrongBuy);
+            }
 
             // Filter by Tab
             const displayStocks = activeTab === "layakBeli" 
@@ -279,6 +311,7 @@
 
                 // 1. RENDER DESKTOP TABLE ROW
                 const tr = document.createElement("tr");
+                tr.id = `stock-row-${stock.ticker.toUpperCase()}`;
                 tr.className = "hover:bg-slate-800/40 transition-colors border-b border-slate-800/50";
                 tr.innerHTML = `
                     <td class="py-3.5 px-4 font-bold text-white">
@@ -311,6 +344,7 @@
 
                 // 2. RENDER MOBILE CARD
                 const card = document.createElement("div");
+                card.id = `stock-card-${stock.ticker.toUpperCase()}`;
                 card.className = "bg-slate-950 border border-slate-800/80 rounded-xl p-3.5 flex flex-col gap-3 shadow-md";
                 card.innerHTML = `
                     <div class="flex items-center justify-between border-b border-slate-800/60 pb-2">
@@ -353,6 +387,9 @@
 
             // Re-initialize Lucide Icons
             lucide.createIcons();
+
+            // Jalankan pencarian jika kolom cari berisi teks
+            handleSearch();
         }
 
         // RENDER 10 BOXES INDICATOR
@@ -408,6 +445,27 @@
         // FILTER EVENT HANDLER
         function handleFilterChange() {
             processAndRender();
+        }
+
+        // SEARCH ENGINE WITH SCROLL & BLINK 3X
+        function handleSearch() {
+            const query = document.getElementById("searchInput").value.trim().toUpperCase();
+
+            // Bersihkan efek blink dari pencarian sebelumnya
+            document.querySelectorAll(".search-blink").forEach(el => {
+                el.classList.remove("search-blink");
+            });
+
+            if (!query) return;
+
+            const isMobile = window.innerWidth < 768;
+            const targetId = isMobile ? `stock-card-${query}` : `stock-row-${query}`;
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetElement.classList.add("search-blink");
+            }
         }
 
         // STRATEGY BANNER UPDATER
