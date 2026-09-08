@@ -112,18 +112,19 @@
     select option { background: #0f172a; color: #fff; }
     input[type="text"]:focus, select:focus { border-color: #38bdf8; }
 
+    /* FIX: KOLOM KATEGORI KUNCI DENGAN STICKY AGAR TIDAK IKUT SCROLL KELUAR LAYAR */
     .group-tabs { 
       position: sticky;
       top: 135px;
-      z-index: 85;
+      z-index: 95;
       background: #0f172a;
-      padding: 6px 0;
+      padding: 8px 0;
       margin-bottom: 12px; 
       display: flex; 
       gap: 6px; 
       overflow-x: auto; 
       scrollbar-width: none; 
-      border-bottom: 1px solid #1e293b;
+      border-bottom: 1px solid #334155;
     }
     .tab { padding: 6px 12px; background: #1e293b; border-radius: 16px; font-size: 0.75rem; white-space: nowrap; border: 1px solid #334155; color: #94a3b8; cursor: pointer; flex-shrink: 0; }
     .tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
@@ -422,7 +423,6 @@
     }
     .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
 
-    /* TOMBOL DROPDOWN ACCORDION UNTUK MONITORING S/R */
     .collapse-toggle-btn {
       width: 100%;
       background: #1e293b;
@@ -518,8 +518,21 @@
       animation: dot-blink 0.8s infinite;
     }
 
-    .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; }
-    .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; }
+    /* SPASI DAN TANDA PANAH INDIKATOR PENURUNAN & KOREKSI */
+    .price-arrow-down { 
+      color: #ef4444; 
+      font-size: 0.75rem; 
+      margin: 0 6px; 
+      display: inline-block;
+      animation: blink-animation 1s infinite; 
+    }
+    .price-arrow-up { 
+      color: #22c55e; 
+      font-size: 0.75rem; 
+      margin: 0 6px; 
+      display: inline-block;
+      animation: blink-animation 1s infinite; 
+    }
 
     .pivot-price-wrapper {
       display: inline-flex;
@@ -601,7 +614,6 @@
     .val-tp { color: #4ade80; }
     .val-cl { color: #f87171; }
     .val-entry { color: #38bdf8; }
-    .val-wait { color: #f59e0b; }
   </style>
 </head>
 <body>
@@ -953,7 +965,6 @@
       return score >= 3;
     }
 
-    // HITUNG SUPPORT, RESISTANCE & PIVOT BERDASARKAN TIME FRAME STRATEGY
     function getTfAdjustedSR(stock) {
       const closePrice = stock.price ?? 0;
       const highPrice = stock.high ?? closePrice;
@@ -968,7 +979,6 @@
       const stdS3 = stock.support_3 || Math.round(stdS2 * 0.98);
 
       if (selectedTradingStyle === 'SCALPING') {
-        // SCALPING (TF 15M): Range S/R rapat agar tidak jauh dari running price (1%-3%)
         return {
           pivot: Math.round(closePrice),
           r1: Math.round(closePrice * 1.01),
@@ -979,7 +989,6 @@
           s3: Math.round(closePrice * 0.97)
         };
       } else if (selectedTradingStyle === 'INVESTMENT') {
-        // INVESTMENT (TF 1W): Range S/R lebar untuk rentang mingguan/bulanan (3%-8%)
         return {
           pivot: stdPivot,
           r1: Math.round(closePrice * 1.03),
@@ -990,7 +999,6 @@
           s3: Math.round(closePrice * 0.92)
         };
       } else {
-        // SWING (TF 1D): Menggunakan teknikal harian standar
         return {
           pivot: stdPivot,
           r1: stdR1, r2: stdR2, r3: stdR3,
@@ -999,18 +1007,12 @@
       }
     }
 
-    function calculateMultiTradingPlans(stock, isReadyToBuy) {
-      if (!isReadyToBuy) {
-        return {
-          scalping: { entry: 'WAIT', tp1: 'WAIT', tp2: 'WAIT', tp3: 'WAIT', cl1: 'WAIT', cl2: 'WAIT', cl3: 'WAIT' },
-          swing: { entry: 'WAIT', tp1: 'WAIT', tp2: 'WAIT', tp3: 'WAIT', cl1: 'WAIT', cl2: 'WAIT', cl3: 'WAIT' },
-          investment: { entry: 'WAIT', tp1: 'WAIT', tp2: 'WAIT', tp3: 'WAIT', cl1: 'WAIT', cl2: 'WAIT', cl3: 'WAIT' }
-        };
-      }
-
+    /* FIX: HAPUSKAN OPSI "WAIT" DAN TAMPILKAN ANGKA ENTRY TERKONTROL SESUAI KONTROL TRADER PROFESIONAL */
+    function calculateMultiTradingPlans(stock) {
       const closePrice = stock.price ?? 0;
       const sr = getTfAdjustedSR(stock);
 
+      // SCALPING: Entry mengacu pada titik running/breakout terdekat
       const scEntry = stock.entry_price || closePrice;
       const scTp1 = Math.round(scEntry * 1.015);
       const scTp2 = stock.take_profit || Math.round(scEntry * 1.03);
@@ -1019,6 +1021,7 @@
       const scCl2 = stock.cut_loss || Math.round(scEntry * 0.985);
       const scCl3 = Math.round(scEntry * 0.98);
 
+      // SWING: Entry pada Pivot/Pullback Support 1 terdekat
       const swEntry = Math.min(closePrice, sr.pivot);
       const swTp1 = sr.r1;
       const swTp2 = sr.r2;
@@ -1027,6 +1030,7 @@
       const swCl2 = sr.s2;
       const swCl3 = sr.s3;
 
+      // INVESTASI: Entry dialokasikan pada titik Support Utama (S1/Pivot)
       const invEntry = Math.min(sr.s1, sr.pivot);
       const invTp1 = sr.r2;
       const invTp2 = sr.r3;
@@ -1199,6 +1203,17 @@
       return '';
     }
 
+    // MEMBUAT DYNAMIC ARROW MERAH (TURUN) ATAU HIJAU (KOREKSI/MEMANTUL KEATAS) DENGAN SPASI LONGGAR
+    function renderPriceArrowIcon(price, targetLevel) {
+      if (!targetLevel || targetLevel <= 0) return '';
+      if (price < targetLevel) {
+        return '<span class="price-arrow-down">&nbsp;▼&nbsp;</span>';
+      } else if (price >= targetLevel) {
+        return '<span class="price-arrow-up">&nbsp;▲&nbsp;</span>';
+      }
+      return '';
+    }
+
     function createCardElement(stock, isIHSG = false) {
       const group = isIHSG ? 'INDEKS UTAMA' : (stock.category || 'LAINNYA');
 
@@ -1293,9 +1308,8 @@
       const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
       const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
 
-      const plans = calculateMultiTradingPlans(stock, isReadyToBuy);
+      const plans = calculateMultiTradingPlans(stock);
 
-      // FITUR FIBO + RSI DENGAN TANDAI STRATEGI TIME FRAME
       let currentTfTag = selectedTradingStyle === 'SCALPING' ? 'TF 15M' : (selectedTradingStyle === 'INVESTMENT' ? 'TF 1W' : 'TF 1D');
       let fiboStatus = stock.fibo_rsi_status || 'NORMAL';
       let fiboBoxClass = 'fibo-normal';
@@ -1308,21 +1322,16 @@
         fiboText = `OVER BOUGHT <span class="tf-badge-fibo">${currentTfTag}</span>`;
       }
 
-      // INTEGRASI SUPPORT & RESISTANCE DENGAN STRATEGI TIME FRAME
       const sr = getTfAdjustedSR(stock);
       const r1 = sr.r1; const r2 = sr.r2; const r3 = sr.r3;
       const s1 = sr.s1; const s2 = sr.s2; const s3 = sr.s3;
       const pivotPoint = sr.pivot;
 
       let pivotPriceClass = 'pivot-price-yellow';
-      let pivotArrowIcon = '';
-
       if (closePrice < pivotPoint) {
         pivotPriceClass = 'pivot-price-blue';
-        pivotArrowIcon = '<span class="pivot-arrow-down">▼&nbsp;&nbsp;</span>';
       } else if (closePrice > pivotPoint) {
         pivotPriceClass = 'pivot-price-green';
-        pivotArrowIcon = '<span class="pivot-arrow-up">▲&nbsp;&nbsp;</span>';
       }
 
       const pivotDotsHtml = renderPivot10Dots(closePrice, pivotPoint);
@@ -1397,7 +1406,6 @@
           ${fiboText}
         </div>
 
-        <!-- TOMBOL COLLAPSIBLE DARI RESISTAN KEBAWAH AGAR UNTUK MONITOR RINGAN -->
         <button class="collapse-toggle-btn" id="collapse-btn-${stock.ticker}" onclick="toggleCardDetails('${stock.ticker}')">
           ▼ TAMPILKAN PIVOT, S/R & STRATEGI PLAN
         </button>
@@ -1409,7 +1417,7 @@
                 <span>RESISTAN 3 (R3):</span>
                 ${renderTouchCheckBadge(stock, r3)}
               </div>
-              <span class="${r3Class}">${formatNum(r3)}</span>
+              <span class="${r3Class}">${renderPriceArrowIcon(closePrice, r3)}${formatNum(r3)}</span>
             </div>
 
             <div class="sr-row">
@@ -1417,7 +1425,7 @@
                 <span>RESISTAN 2 (R2):</span>
                 ${renderTouchCheckBadge(stock, r2)}
               </div>
-              <span class="${r2Class}">${formatNum(r2)}</span>
+              <span class="${r2Class}">${renderPriceArrowIcon(closePrice, r2)}${formatNum(r2)}</span>
             </div>
 
             <div class="sr-row">
@@ -1425,7 +1433,7 @@
                 <span>RESISTAN 1 (R1):</span>
                 ${renderTouchCheckBadge(stock, r1)}
               </div>
-              <span class="${r1Class}">${formatNum(r1)}</span>
+              <span class="${r1Class}">${renderPriceArrowIcon(closePrice, r1)}${formatNum(r1)}</span>
             </div>
             
             <div class="sr-row sr-pivot-separator">
@@ -1435,8 +1443,7 @@
               </div>
               ${pivotDotsHtml}
               <div class="pivot-price-wrapper">
-                ${pivotArrowIcon}
-                <span class="${pivotPriceClass}">${formatNum(pivotPoint)}</span>
+                <span class="${pivotPriceClass}">${renderPriceArrowIcon(closePrice, pivotPoint)}${formatNum(pivotPoint)}</span>
               </div>
             </div>
 
@@ -1445,7 +1452,7 @@
                 <span>SUPPORT 1 (S1):</span>
                 ${renderTouchCheckBadge(stock, s1)}
               </div>
-              <span class="${s1Class}">${formatNum(s1)}</span>
+              <span class="${s1Class}">${renderPriceArrowIcon(closePrice, s1)}${formatNum(s1)}</span>
             </div>
 
             <div class="sr-row">
@@ -1453,7 +1460,7 @@
                 <span>SUPPORT 2 (S2):</span>
                 ${renderTouchCheckBadge(stock, s2)}
               </div>
-              <span class="${s2Class}">${formatNum(s2)}</span>
+              <span class="${s2Class}">${renderPriceArrowIcon(closePrice, s2)}${formatNum(s2)}</span>
             </div>
 
             <div class="sr-row">
@@ -1461,7 +1468,7 @@
                 <span>SUPPORT 3 (S3):</span>
                 ${renderTouchCheckBadge(stock, s3)}
               </div>
-              <span class="${s3Class}">${formatNum(s3)}</span>
+              <span class="${s3Class}">${renderPriceArrowIcon(closePrice, s3)}${formatNum(s3)}</span>
             </div>
           </div>
 
@@ -1477,33 +1484,33 @@
                   
                   <div class="plan-row-item">
                     <span class="plan-item-label">ENTRY</span>
-                    <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.entry}</span>
+                    <span class="plan-item-val val-entry">${plans.scalping.entry}</span>
                   </div>
 
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 1</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp1}</span>
+                    <span class="plan-item-val val-tp">${plans.scalping.tp1}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 2</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp2}</span>
+                    <span class="plan-item-val val-tp">${plans.scalping.tp2}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 3</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.tp3}</span>
+                    <span class="plan-item-val val-tp">${plans.scalping.tp3}</span>
                   </div>
 
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 1</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl1}</span>
+                    <span class="plan-item-val val-cl">${plans.scalping.cl1}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 2</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl2}</span>
+                    <span class="plan-item-val val-cl">${plans.scalping.cl2}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 3</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.scalping.cl3}</span>
+                    <span class="plan-item-val val-cl">${plans.scalping.cl3}</span>
                   </div>
                 </div>
 
@@ -1512,33 +1519,33 @@
 
                   <div class="plan-row-item">
                     <span class="plan-item-label">ENTRY</span>
-                    <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.entry}</span>
+                    <span class="plan-item-val val-entry">${plans.swing.entry}</span>
                   </div>
 
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 1</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp1}</span>
+                    <span class="plan-item-val val-tp">${plans.swing.tp1}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 2</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp2}</span>
+                    <span class="plan-item-val val-tp">${plans.swing.tp2}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 3</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.tp3}</span>
+                    <span class="plan-item-val val-tp">${plans.swing.tp3}</span>
                   </div>
 
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 1</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl1}</span>
+                    <span class="plan-item-val val-cl">${plans.swing.cl1}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 2</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl2}</span>
+                    <span class="plan-item-val val-cl">${plans.swing.cl2}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 3</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.swing.cl3}</span>
+                    <span class="plan-item-val val-cl">${plans.swing.cl3}</span>
                   </div>
                 </div>
 
@@ -1547,33 +1554,33 @@
 
                   <div class="plan-row-item">
                     <span class="plan-item-label">ENTRY</span>
-                    <span class="plan-item-val val-entry ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.entry}</span>
+                    <span class="plan-item-val val-entry">${plans.investment.entry}</span>
                   </div>
 
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 1</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp1}</span>
+                    <span class="plan-item-val val-tp">${plans.investment.tp1}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 2</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp2}</span>
+                    <span class="plan-item-val val-tp">${plans.investment.tp2}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">TP 3</span>
-                    <span class="plan-item-val val-tp ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.tp3}</span>
+                    <span class="plan-item-val val-tp">${plans.investment.tp3}</span>
                   </div>
 
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 1</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl1}</span>
+                    <span class="plan-item-val val-cl">${plans.investment.cl1}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 2</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl2}</span>
+                    <span class="plan-item-val val-cl">${plans.investment.cl2}</span>
                   </div>
                   <div class="plan-row-item">
                     <span class="plan-item-label">CL 3</span>
-                    <span class="plan-item-val val-cl ${isReadyToBuy ? '' : 'val-wait'}">${plans.investment.cl3}</span>
+                    <span class="plan-item-val val-cl">${plans.investment.cl3}</span>
                   </div>
                 </div>
               </div>
