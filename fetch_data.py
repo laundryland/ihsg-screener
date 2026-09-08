@@ -30,16 +30,13 @@ def get_screener_data():
         try:
             ticker = yf.Ticker(symbol)
             
-            # ==========================================
-            # 1. SCALPING
-            # ==========================================
+            # 1. SCALPING (15m)
             df_scalp = ticker.history(period="5d", interval="15m")
             if not df_scalp.empty and len(df_scalp) >= 30:
                 df_scalp['EMA9'] = df_scalp['Close'].ewm(span=9, adjust=False).mean()
                 df_scalp['EMA21'] = df_scalp['Close'].ewm(span=21, adjust=False).mean()
                 df_scalp['RSI'] = calculate_rsi(df_scalp['Close'], 14)
                 
-                # Indikator Baru: Stoch RSI
                 rsi_min = df_scalp['RSI'].rolling(14).min()
                 rsi_max = df_scalp['RSI'].rolling(14).max()
                 df_scalp['Stoch_RSI'] = (df_scalp['RSI'] - rsi_min) / (rsi_max - rsi_min)
@@ -77,9 +74,7 @@ def get_screener_data():
                     "cl_levels": [round(close_p - (atr * 1.0), 2), round(close_p - (atr * 1.5), 2), round(close_p - (atr * 2.0), 2)]
                 })
 
-            # ==========================================
-            # 2. SWING
-            # ==========================================
+            # 2. SWING (1D)
             df_swing = ticker.history(period="6m", interval="1d")
             if not df_swing.empty and len(df_swing) >= 50:
                 df_swing['EMA20'] = df_swing['Close'].ewm(span=20, adjust=False).mean()
@@ -92,7 +87,6 @@ def get_screener_data():
                 df_swing['Signal'] = df_swing['MACD'].ewm(span=9, adjust=False).mean()
                 df_swing['Hist'] = df_swing['MACD'] - df_swing['Signal']
 
-                # Indikator Baru: Bollinger Bands
                 df_swing['SMA20'] = df_swing['Close'].rolling(20).mean()
                 df_swing['STD20'] = df_swing['Close'].rolling(20).std()
                 df_swing['UpperBB'] = df_swing['SMA20'] + (df_swing['STD20'] * 2)
@@ -130,9 +124,7 @@ def get_screener_data():
                     "cl_levels": [round(ema20 * 0.98, 2), round(ema50 * 0.97, 2), round(ema50 * 0.95, 2)]
                 })
 
-            # ==========================================
-            # 3. INVESTING
-            # ==========================================
+            # 3. INVESTING (1W)
             df_inv = ticker.history(period="2y", interval="1wk")
             if not df_inv.empty and len(df_inv) >= 50:
                 df_inv['SMA50'] = df_inv['Close'].rolling(window=50).mean()
