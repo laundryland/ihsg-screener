@@ -153,11 +153,7 @@
     }
     .info-tab-1 { background: #111827; border-color: #374151; }
     .info-tab-2 { background: #312e81; border-color: #4338ca; color: #c7d2fe; }
-
-    .info-tab-3 { 
-      background: #121212 !important; 
-      border-color: #27272a !important; 
-    }
+    .info-tab-3 { background: #121212 !important; border-color: #27272a !important; }
 
     .status-text-open { color: #4ade80 !important; }
     .status-text-break { color: #a1a1aa !important; }
@@ -221,22 +217,11 @@
       gap: 6px;
     }
 
-    .ticker-large { 
-      font-size: 1.3rem; 
-      color: #fff; 
-      letter-spacing: 0.5px;
-    }
+    .ticker-large { font-size: 1.3rem; color: #fff; letter-spacing: 0.5px; }
 
-    .price-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .price-group { display: flex; align-items: center; gap: 8px; }
 
-    .price-large { 
-      font-size: 1.45rem; 
-      font-weight: 800;
-    }
+    .price-large { font-size: 1.45rem; font-weight: 800; }
     
     .price-up { color: #22c55e; }
     .price-down { color: #ef4444; }
@@ -286,7 +271,6 @@
       color: #fca5a5;
     }
 
-    /* Animasi Kedip (Blink) untuk Kolom Petir Hijau */
     @keyframes lightning-blink-animation {
       0% { opacity: 1; box-shadow: 0 0 4px #22c55e; }
       50% { opacity: 0.2; box-shadow: none; }
@@ -319,21 +303,10 @@
       50% { opacity: 0.2; }
       100% { opacity: 1; }
     }
-    .box-blink {
-      animation: box-blink-animation 0.8s infinite;
-    }
+    .box-blink { animation: box-blink-animation 0.8s infinite; }
 
-    .indicator-dots-row {
-      display: flex;
-      gap: 1.5px;
-      align-items: center;
-    }
-    .ind-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background-color: #334155;
-    }
+    .indicator-dots-row { display: flex; gap: 1.5px; align-items: center; }
+    .ind-dot { width: 5px; height: 5px; border-radius: 50%; background-color: #334155; }
     .ind-dot.active-green { background-color: #22c55e; box-shadow: 0 0 2px #22c55e; }
     .ind-dot.active-red { background-color: #ef4444; box-shadow: 0 0 2px #ef4444; }
     .ind-dot.active-gray { background-color: #64748b; }
@@ -374,11 +347,7 @@
       font-size: 0.75rem;
       animation: arrow-blink-green 0.8s infinite;
     }
-    .indicator-name {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    }
+    .indicator-name { display: flex; align-items: center; gap: 2px; }
 
     @keyframes dot-blink {
       0% { opacity: 1; transform: scale(1); }
@@ -386,17 +355,10 @@
       100% { opacity: 1; transform: scale(1); }
     }
 
-    .dot-indicator { 
-      display: inline-block; 
-      width: 10px; 
-      height: 10px; 
-      border-radius: 50%; 
-      flex-shrink: 0;
-    }
+    .dot-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .dot-buy { background-color: #22c55e; box-shadow: 0 0 5px #22c55e; animation: dot-blink 1s infinite; }
     .dot-sell { background-color: #ef4444; box-shadow: 0 0 5px #ef4444; animation: dot-blink 1s infinite; }
     .dot-neutral { background-color: #64748b; }
-    .dot-sideways { background-color: #ffffff; box-shadow: 0 0 4px #ffffff; }
 
     .ohlc-val { color: #fff; }
 
@@ -429,10 +391,7 @@
     }
     .highlight-card { animation: card-highlight 0.7s ease-in-out 3; z-index: 10; }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
 
     .sr-stat-box { margin-top: 6px; padding: 6px; border-radius: 6px; background: #0f172a; border: 1px solid #334155; font-size: 0.65rem; color: #cbd5e1; }
@@ -441,12 +400,7 @@
     .sr-res { color: #f87171; }
     .sr-sup { color: #4ade80; }
 
-    .sr-label-container {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-right: 14px;
-    }
+    .sr-label-container { display: flex; align-items: center; gap: 6px; margin-right: 14px; }
     .sr-check-badge {
       color: #22c55e;
       font-weight: 800;
@@ -472,13 +426,7 @@
     .pivot-price-green { color: #4ade80; }
     .pivot-price-yellow { color: #eab308; }
 
-    .pivot-dots-container {
-      display: inline-flex;
-      gap: 2px;
-      align-items: center;
-      margin-left: 4px;
-      margin-right: auto;
-    }
+    .pivot-dots-container { display: inline-flex; gap: 2px; align-items: center; margin-left: 4px; margin-right: auto; }
 
     .pivot-dot-small {
       width: 4px;
@@ -488,28 +436,15 @@
       display: inline-block;
       flex-shrink: 0;
     }
-    .pivot-dot-small.active-red {
-      background-color: #ef4444;
-      box-shadow: 0 0 3px #ef4444;
-    }
-    .pivot-dot-small.active-green {
-      background-color: #22c55e;
-      box-shadow: 0 0 3px #22c55e;
-    }
-    .pivot-dot-small.active-gray {
-      background-color: #64748b;
-    }
-    .pivot-dot-small.dot-blink {
-      animation: dot-blink 0.8s infinite;
-    }
+    .pivot-dot-small.active-red { background-color: #ef4444; box-shadow: 0 0 3px #ef4444; }
+    .pivot-dot-small.active-green { background-color: #22c55e; box-shadow: 0 0 3px #22c55e; }
+    .pivot-dot-small.active-gray { background-color: #64748b; }
+    .pivot-dot-small.dot-blink { animation: dot-blink 0.8s infinite; }
 
     .pivot-arrow-down { color: #ef4444; font-size: 0.75rem; animation: blink-animation 1s infinite; }
     .pivot-arrow-up { color: #4ade80; font-size: 0.75rem; animation: blink-animation 1s infinite; }
 
-    .pivot-price-wrapper {
-      display: inline-flex;
-      align-items: center;
-    }
+    .pivot-price-wrapper { display: inline-flex; align-items: center; }
 
     .signal-badge-container { margin: 6px 0 4px 0; text-align: center; }
     .badge { display: block; width: 100%; padding: 5px 6px; border-radius: 5px; font-size: 0.7rem; text-align: center; letter-spacing: 0.5px; }
@@ -531,12 +466,7 @@
       border-radius: 8px; 
       border: 1px dashed #475569; 
     }
-    .trading-plan-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 6px;
-    }
+    .trading-plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
     .plan-col {
       background: #1e293b;
       border: 1px solid #334155;
@@ -987,13 +917,12 @@
       const volStatus = (stock.vol_status || '').toUpperCase();
       const signalText = (stock.signal || '').toUpperCase();
 
-      // Penentuan Konfirmasi Sinyal Indikator Berdasarkan Strategi Time Frame
       let tfStatus = 'NEUTRAL';
       if (selectedTradingStyle === 'SCALPING') {
         tfStatus = (stock.macd_status || '').toUpperCase();
       } else if (selectedTradingStyle === 'INVESTMENT') {
         tfStatus = (stock.rsi_status || '').toUpperCase();
-      } else { // SWING (Default)
+      } else {
         tfStatus = (stock.ema_status || '').toUpperCase();
         if (tfStatus === 'NEUTRAL') {
           tfStatus = closePrice >= (stock.ma20 || closePrice) ? 'BUY' : 'SELL';
@@ -1014,7 +943,6 @@
         else if (vRatio >= 1.0) activeCount = 1;
         else activeCount = 0;
 
-        // Jika dalam fase BUY/LAYAK BELI, pastikan minimal ada 1 kotak petir aktif
         if (isReadyToBuy && activeCount === 0) {
           activeCount = 1;
         }
@@ -1022,8 +950,6 @@
 
       const isDistribution = (volStatus === 'SELL') || (closePrice < prevClose) || signalText.includes('SELL');
       let activeClass = isDistribution ? 'active-red' : 'active-green';
-      
-      // Tambahkan efek kedip (blink) hanya jika statusnya siap/layak entry hijau
       let blinkClass = (activeClass === 'active-green' && isReadyToBuy) ? 'lightning-blink' : '';
 
       let html = '<div class="lightning-grid-container">';
