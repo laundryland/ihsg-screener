@@ -244,11 +244,13 @@
 
     .open-percent-badge { 
       font-size: 0.85rem; 
-      padding: 3px 8px; 
+      padding: 3px 6px; 
       border-radius: 5px; 
       background: #0f172a; 
       border: 1px solid #334155; 
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       white-space: nowrap;
       font-weight: 800;
     }
@@ -300,6 +302,7 @@
     .group-tag { font-size: 0.65rem; color: #38bdf8; background: #0c4a6e; padding: 2px 5px; border-radius: 4px; display: inline-block; }
     
     .signal-indicator-box { display: flex; align-items: center; gap: 6px; }
+    .middle-signal-icon { font-size: 0.8rem; margin: 0 4px; }
     
     .ten-boxes-container { display: flex; gap: 2px; align-items: center; }
     .box-ten {
@@ -687,7 +690,6 @@
       const todayStr = `${dateObj.year}-${dateObj.month}-${dateObj.day}`;
       const currentHour = parseInt(dateObj.hour, 10);
 
-      // RESET SEBELUM PEMBUKAAN PASAR (JAM 09:00 WIB SETIAP HARI BARU)
       if (currentHour >= 9 && lastResetDate !== todayStr) {
         lastResetDate = todayStr;
         localStorage.setItem('last_sr_reset_date', todayStr);
@@ -945,7 +947,7 @@
       }, 100);
     }
 
-    // LOGIKA INDIKATOR SWING TRADING DENGAN AMBANG MINIMUM TURNOVER DINAMIS
+    // LOGIKA EVALUASI STRATEGI SESUAI TIMEFRAME
     function evaluateSwingIndicators(stock) {
       const closePrice = stock.price ?? 0;
       const ema20 = stock.ema20 || stock.ma20 || closePrice;
@@ -1104,7 +1106,6 @@
         isReadyToBuy = swingRes.isBuyWorthy;
         activeCount = Math.round(swingRes.totalScore / 20);
       } else {
-        const volStatus = (stock.vol_status || '').toUpperCase();
         const signalText = (stock.signal || '').toUpperCase();
         isReadyToBuy = signalText.includes('BUY');
         let vRatio = parseFloat(stock.vol_ratio) || 0;
@@ -1271,6 +1272,40 @@
         }
       }
 
+      // --- LOGIKA ICON DISAMPING PERSENTASE HARGA (SISI KANAN) ---
+      let isReadyToBuy = isBuyWorthyStock(stock);
+      let percentIcon = '🛑'; // Default Stop Sign jika belum layak open/buy
+      
+      if (signalText === 'NETRAL' || (avgStrengthPercent > 40 && avgStrengthPercent < 60)) {
+        percentIcon = '⏳'; // Hourglass jika power netral
+      } else if (isReadyToBuy) {
+        percentIcon = '✅'; // Green Checkmark jika signal open terbentuk
+      }
+
+      // --- LOGIKA ICON DI ANTARA LABEL EMITEN/KATEGORI DAN 10 BOX SIGNAL ---
+      let middleSignalIcon = '⚪'; // Bayangan abu2 jika netral
+      if (signalText === 'STRONG BUY') {
+        middleSignalIcon = '🚀🚀🚀';
+      } else if (signalText === 'BUY') {
+        middleSignalIcon = '🚀';
+      } else if (signalText === 'STRONG SELL') {
+        middleSignalIcon = '❌❌❌';
+      } else if (signalText === 'SELL') {
+        middleSignalIcon = '❌';
+      }
+
+      // --- LOGIKA BADGE LABEL SIGNAL (MENGGANTI BADGE TEXT / TAMBAH ICON) ---
+      let displayBadgeText = signalText;
+      if (signalText === 'STRONG BUY') {
+        displayBadgeText = '🚀🚀🚀 STRONG BUY';
+      } else if (signalText === 'BUY') {
+        displayBadgeText = '🚀 BUY';
+      } else if (signalText === 'STRONG SELL') {
+        displayBadgeText = '🔒🔒🔒 STRONG SELL';
+      } else if (signalText === 'SELL') {
+        displayBadgeText = '🔒 SELL';
+      }
+
       let isBullishMode = signalText.includes('BUY');
       let isBearishMode = signalText.includes('SELL');
       let isStrongState = signalText === 'STRONG BUY' || signalText === 'STRONG SELL';
@@ -1294,7 +1329,6 @@
         warningHtml = '<div class="warning-box-col" style="color:#64748b;">⚠️ WARNING! NETRAL</div>';
       }
 
-      const isReadyToBuy = signalText === 'STRONG BUY' || signalText === 'BUY';
       const statusDotHtml = isReadyToBuy ? '<span class="status-dot dot-green"></span>' : '<span class="status-dot dot-red"></span>';
 
       const plans = calculateMultiTradingPlans(stock, isReadyToBuy);
@@ -1358,7 +1392,7 @@
             <span class="ticker-large">${stock.ticker}</span>
             <div class="price-group">
               <span class="price-large ${priceColorClass}">${formatNum(closePrice)}</span>
-              <span class="open-percent-badge ${priceColorClass}">${openPercentStr}</span>
+              <span class="open-percent-badge ${priceColorClass}">${openPercentStr} ${percentIcon}</span>
             </div>
           </div>
           ${renderLightningBoxes(stock)}
@@ -1366,6 +1400,7 @@
 
         <div class="sub-header">
           <span class="group-tag">${group}</span>
+          <span class="middle-signal-icon">${middleSignalIcon}</span>
           <div class="signal-indicator-box">
             ${topBoxesHtml}
             <span class="signal-percent">${avgStrengthPercent}%</span>
@@ -1384,7 +1419,7 @@
         </div>
 
         <div class="signal-badge-container">
-          <span class="badge ${badgeClass}">${signalText}</span>
+          <span class="badge ${badgeClass}">${displayBadgeText}</span>
         </div>
 
         <div class="fibo-stat-box ${fiboBoxClass}">
