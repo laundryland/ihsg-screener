@@ -576,6 +576,22 @@
     </div>
   </header>
 
+  <!-- Banner Peringatan Waktu Operasional Bursa -->
+<div id="marketStatusAlert"></div>
+
+<!-- Dropdown Pilihan Gaya Trading / Timeframe -->
+<div class="filter-container" style="margin: 15px 0;">
+  <label for="strategyFilter"><strong>Pilih Gaya Trading & Timeframe:</strong></label>
+  <select id="strategyFilter" class="form-control">
+    <option value="scalping">Scalping / Short-Term (15m - EMA & RSI)</option>
+    <option value="swing" selected>Swing / Middle-Term (1D - EMA, MACD, ATR)</option>
+    <option value="investasi">Investasi / Long-Term (1D/1W - MA50/200)</option>
+  </select>
+</div>
+
+<!-- Container Hasil Data Screener -->
+<div id="stockListContainer"></div>
+
   <div class="control-box">
     <div class="control-header">
       <span style="font-size: 0.75rem; color: #94a3b8;">MENU EMITEN & GAYA TRADING</span>
