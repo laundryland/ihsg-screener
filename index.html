@@ -185,14 +185,14 @@
             loadData();
         });
 
-        // Pengambilan data dinamis langsung dari data.json
+        // Pengambilan data dinamis langsung dari 100emitendata_2.json
         async function loadData() {
             const refreshIcon = document.getElementById("refreshIcon");
             if (refreshIcon) refreshIcon.classList.add("animate-spin");
 
             try {
-                const response = await fetch(`./data.json?t=${new Date().getTime()}`);
-                if (!response.ok) throw new Error("Gagal mengambil berkas data.json");
+                const response = await fetch(`./100emitendata_2.json?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error("Gagal mengambil berkas 100emitendata_2.json");
                 
                 const data = await response.json();
                 rawStockData = data.stocks || (Array.isArray(data) ? data : []);
@@ -212,12 +212,20 @@
 
             updateBannerInfo(timeframe);
 
-            // Pemprosesan emiten dinamis dari JSON tanpa meng-hardcode nama/kode emiten
+            // Pemprosesan emiten dan penerapan algoritma indikator secara independen di JS
             const processedStocks = rawStockData.map(stock => {
                 const evaluation = evaluateIndicators(stock, minTurnover, timeframe);
+                const tradingPlan = calculateTradingPlan(stock, evaluation);
                 const isBuyWorthy = stock.turnover >= minTurnover && evaluation.score >= 60 && evaluation.activeBoxes >= 6;
 
-                return { ...stock, eval: evaluation, isBuyWorthy: isBuyWorthy };
+                return { 
+                    ...stock, 
+                    eval: evaluation, 
+                    entry: tradingPlan.entry,
+                    r1: tradingPlan.r1,
+                    cl1: tradingPlan.cl1,
+                    isBuyWorthy: isBuyWorthy 
+                };
             });
 
             let validStocks = processedStocks.filter(s => s.turnover >= minTurnover);
@@ -236,22 +244,36 @@
             renderViews(displayStocks);
         }
 
-        // Kalkulasi skor berdasarkan atribut riil dari data.json
+        // Kalkulasi Algoritma & Indikator Teknikal murni berbasis strategi HTML
         function evaluateIndicators(stock, minTurnover, tf) {
             let score = 0;
 
-            if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50 && stock.price >= stock.ema20) score += 20;
-            if (stock.rsi && stock.rsi >= 50 && stock.rsi <= 70) score += 20;
-            if (stock.volRatio && stock.volRatio >= 2.5) score += 20;
-            if (stock.turnover && stock.turnover >= minTurnover) score += 20;
+            // Algoritma Penilaian Tergantung Timeframe Strategy
+            if (tf === "scalping") {
+                if (stock.volRatio && stock.volRatio >= 3.0) score += 30;
+                if (stock.rsi && stock.rsi >= 60 && stock.rsi <= 80) score += 30;
+                if (stock.change && stock.change > 2.0) score += 20;
+                if (stock.turnover && stock.turnover >= minTurnover) score += 20;
+            } else if (tf === "investment") {
+                if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50) score += 25;
+                if (stock.turnover && stock.turnover >= 20) score += 25;
+                if (stock.bandarmology === "AKUMULASI") score += 25;
+                if (stock.rsi && stock.rsi >= 45 && stock.rsi <= 65) score += 25;
+            } else {
+                // Swing Strategy (Default)
+                if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50 && stock.price >= stock.ema20) score += 20;
+                if (stock.rsi && stock.rsi >= 50 && stock.rsi <= 70) score += 20;
+                if (stock.volRatio && stock.volRatio >= 2.5) score += 20;
+                if (stock.turnover && stock.turnover >= minTurnover) score += 20;
 
-            if (stock.high52 && stock.high52 > 0) {
-                const diffHigh = ((stock.high52 - stock.price) / stock.high52) * 100;
-                if (diffHigh <= 10) score += 20;
+                if (stock.high52 && stock.high52 > 0) {
+                    const diffHigh = ((stock.high52 - stock.price) / stock.high52) * 100;
+                    if (diffHigh <= 10) score += 20;
+                }
             }
 
             const activeBoxes = Math.round(score / 10);
-            let label = stock.signal || "NEUTRAL";
+            let label = "NEUTRAL";
             
             if (score >= 90) label = "🚀🚀🚀 STRONG BUY";
             else if (score >= 60) label = "BUY";
@@ -261,8 +283,32 @@
                 score: score,
                 activeBoxes: activeBoxes,
                 label: label,
-                isStrongBuy: score >= 90 || stock.signal === "STRONG BUY"
+                isStrongBuy: score >= 90
             };
+        }
+
+        // Kalkulasi Trading Plan (EP, R1, CL) otomatis
+        function calculateTradingPlan(stock, evalData) {
+            const price = Math.round(stock.price);
+            let entry = price;
+            let r1 = Math.round(price * 1.05);
+            let cl1 = Math.round(price * 0.96);
+
+            if (stock.ema20 && price > stock.ema20) {
+                entry = Math.round(stock.ema20 * 1.005);
+            }
+            if (stock.high52 && stock.high52 > price) {
+                r1 = Math.round(stock.high52);
+            } else {
+                r1 = Math.round(price * 1.08);
+            }
+            if (stock.ema50 && stock.ema50 < price) {
+                cl1 = Math.round(stock.ema50 * 0.99);
+            } else {
+                cl1 = Math.round(price * 0.95);
+            }
+
+            return { entry, r1, cl1 };
         }
 
         function renderViews(stocks) {
