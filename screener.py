@@ -3,7 +3,7 @@ import datetime
 import yfinance as yf
 import pandas as pd
 
-# 1. Daftar Ticker Utama (IDX Baseline)
+# Daftar Ticker Utama & Bluechip
 TICKERS_BASE = [
     "BBCA", "BBRI", "BMRI", "BBNI", "TLKM", "ASII", "AMMN", "BREN", "TPIA", "ADRO", 
     "PGAS", "GOTO", "BRIS", "UNVR", "ICBP", "INDF", "CPIN", "JPFA", "KLBF", "MIKA", 
@@ -18,7 +18,6 @@ TICKERS_BASE = [
     "BEST", "DMAS", "KIJA", "LPKR", "LPCK"
 ]
 
-# 2. Daftar Saham Bluechip / LQ45 Utama
 TICKERS_BLUECHIP = [
     "ACES", "ADRO", "AMRT", "ANTM", "ARTO", "ASII", "BBCA", "BBNI", "BBRI", "BBTN",
     "BMRI", "BRPT", "CPIN", "EMTK", "EXCL", "GOTO", "HRUM", "ICBP", "INDF", "INKP",
@@ -26,18 +25,29 @@ TICKERS_BLUECHIP = [
     "PTBA", "SCMA", "SIDO", "SMGR", "TBIG", "TPIA", "TLKM", "TOWR", "UNVR", "UNTR"
 ]
 
+def fetch_ihsg_data():
+    """Mengambil Data Paten IHSG (^JKSE)"""
+    try:
+        ihsg = yf.Ticker("^JKSE")
+        df = ihsg.history(period="5d")
+        if not df.empty and len(df) >= 2:
+            curr = float(df['Close'].iloc[-1])
+            prev = float(df['Close'].iloc[-2])
+            chg = round(((curr - prev) / prev) * 100, 2)
+            return {"price": int(curr), "change": chg}
+    except Exception as e:
+        print(f"Gagal mengambil data IHSG: {e}")
+    return {"price": 0, "change": 0.0}
+
 def fetch_top_gainers():
-    """Mengambil saham top gainers dari yfinance"""
     try:
         gainers = yf.TradingData().get_gainers()
         jk_gainers = [t.replace('.JK', '') for t in gainers.index if t.endswith('.JK')]
         return jk_gainers
     except Exception as e:
-        print(f"Warning: Gagal mengambil top gainers ({e}), menggunakan daftar default.")
         return []
 
 def calculate_rsi(series, period=14):
-    """Kalkulasi RSI 14-period"""
     delta = series.diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
     loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
@@ -55,7 +65,6 @@ def process_stock(ticker_symbol):
         if df.empty or len(df) < 50:
             return None
 
-        # Data Harga & Keamanan Nilai
         close_series = df['Close']
         raw_price = close_series.iloc[-1]
         current_price = int(raw_price) if not pd.isna(raw_price) else 0
@@ -65,7 +74,6 @@ def process_stock(ticker_symbol):
         
         change_pct = round(((current_price - prev_price) / prev_price) * 100, 2) if prev_price > 0 else 0.0
 
-        # Indikator Teknikal
         vol_today = df['Volume'].iloc[-1]
         vol_avg_20 = df['Volume'].tail(20).mean()
         vol_ratio = round(float(vol_today / vol_avg_20), 2) if vol_avg_20 > 0 else 0.0
@@ -101,19 +109,16 @@ def process_stock(ticker_symbol):
             "cl1": int(current_price * 0.95)
         }
     except Exception as e:
-        print(f"Gagal memproses {ticker_symbol}: {e}")
         return None
 
 def main():
-    # 1. Ambil Top Gainers
+    ihsg_data = fetch_ihsg_data()
     top_gainers = fetch_top_gainers()
     
-    # 2. Gabungkan ketiga sumber data (TICKERS_BASE + TICKERS_BLUECHIP + top_gainers)
-    # Penggunaan set() secara otomatis menghapus semua ticker yang duplikat/kembar
     combined_tickers = set(TICKERS_BASE + TICKERS_BLUECHIP + top_gainers)
     all_tickers = sorted(list(combined_tickers))
     
-    print(f"Total emiten unik yang diproses: {len(all_tickers)}")
+    print(f"Memproses {len(all_tickers)} emiten...")
     
     stocks_data = []
     for ticker in all_tickers:
@@ -121,17 +126,16 @@ def main():
         if result:
             stocks_data.append(result)
 
-    # Susun payload JSON akhir
     output = {
         "updatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "ihsg": ihsg_data,
         "stocks": stocks_data
     }
 
-    # Simpan ke data.json
     with open('data.json', 'w') as f:
         json.dump(output, f, indent=2)
 
-    print("Berhasil memperbarui data.json!")
+    print("Data berhasil diperbarui!")
 
 if __name__ == "__main__":
     main()
