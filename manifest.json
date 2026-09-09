@@ -5,17 +5,20 @@
     {
       "src": "laundry1-512x512.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "laundry1-512x512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": "./",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "start_url": "./1.html",
+  "id": "ihsg-sh4ndy-screener",
+  "background_color": "#f4f6f9",
+  "theme_color": "#1e1e1e",
   "display": "standalone",
   "orientation": "portrait"
 }
