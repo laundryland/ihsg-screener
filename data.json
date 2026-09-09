@@ -1,10 +1,25 @@
 {
-  "updatedAt": "2026-09-09T16:25:34.300347+00:00",
+  "updatedAt": "2026-09-09T16:27:53.844532+00:00",
   "ihsg": {
     "price": 6678,
     "change": -0.12
   },
   "stocks": [
+    {
+      "ticker": "ACES",
+      "name": "Aspirasi Hidup Indonesia Tbk.",
+      "price": 354,
+      "change": -0.56,
+      "rsi": 40.0,
+      "ema20": 355.9,
+      "ema50": 351.5,
+      "volRatio": 0.52,
+      "high52": 423,
+      "bandarmology": "NEUTRAL",
+      "entry": 354,
+      "r1": 371,
+      "cl1": 336
+    },
     {
       "ticker": "ADHI",
       "name": "Adhi Karya (Persero) Tbk",
