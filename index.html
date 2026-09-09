@@ -4,27 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IHSG Stock Screener</title>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
         .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { margin-top: 0; color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        h1 { margin-top: 0; color: #333; font-size: 1.5rem; }
+        
+        /* Header Layout & Controls */
+        .header-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-action {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-action:hover { background: #34495e; }
+        
+        input[type="text"], input[type="number"] {
+            padding: 7px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* 5 Small Summary Boxes */
+        .summary-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .s-box {
+            background: #fff;
+            border: 1px solid #e1e4e8;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .s-box .title { font-size: 0.8rem; color: #666; margin-bottom: 5px; }
+        .s-box .value { font-size: 1.1rem; font-weight: bold; }
+
+        /* Animations */
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        .blink-rocket { color: #27ae60; animation: blink 1s infinite; }
+        .blink-hourglass { color: #e74c3c; animation: blink 1s infinite; }
+        .neutral-gray { color: #95a5a6; }
+
+        /* Table Design */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background-color: #2c3e50; color: white; }
         tr:hover { background-color: #f1f1f1; }
+        
+        .company-name { font-size: 0.85em; color: #555; }
         .positive { color: #27ae60; font-weight: bold; }
         .negative { color: #e74c3c; font-weight: bold; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
         .badge-akumulasi { background: #d4edda; color: #155724; }
         .badge-distribusi { background: #f8d7da; color: #721c24; }
         .badge-neutral { background: #e2e3e5; color: #383d41; }
+        
+        .highlight-row {
+            animation: blink 0.6s ease 3;
+            background-color: #fff3cd !important;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Screener Saham IHSG</h1>
-    <p id="updatedTime">Memuat data...</p>
+    <p id="updatedTime" style="font-size: 0.85rem; color: #666;">Memuat data...</p>
+
+    <!-- Header Controls: Refresh, Reset, Manual Nominal, Search -->
+    <div class="header-controls">
+        <div class="control-group">
+            <button class="btn-action" onclick="loadStockData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn-action" onclick="resetFilters()"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
+        </div>
+        <div class="control-group">
+            <label for="manualNominal" style="font-size: 0.85rem; font-weight: 600;">Nominal Input:</label>
+            <input type="number" id="manualNominal" value="5000000000" oninput="calculateStrategies()" style="width: 140px;">
+        </div>
+        <div class="control-group">
+            <input type="text" id="searchInput" placeholder="Cari emiten (contoh: BBCA)..." onkeyup="handleSearch(event)">
+        </div>
+    </div>
+
+    <!-- 5 Small Boxes based on Swing Trader Strategy -->
+    <div class="summary-boxes" id="summaryBoxes">
+        <div class="s-box">
+            <div class="title">Top Status / Market Bias</div>
+            <div class="value" id="boxBias">-</div>
+        </div>
+        <div class="s-box">
+            <div class="title">Avg Vol Ratio</div>
+            <div class="value" id="boxVol">-</div>
+        </div>
+        <div class="s-box">
+            <div class="title">Avg RSI (14)</div>
+            <div class="value" id="boxRsi">-</div>
+        </div>
+        <div class="s-box">
+            <div class="title">Alokasi Modal / Emiten</div>
+            <div class="value" id="boxAllocation">-</div>
+        </div>
+        <div class="s-box">
+            <div class="title">Sinyal Makro Swing</div>
+            <div class="value" id="boxSignal">-</div>
+        </div>
+    </div>
 
     <table>
         <thead>
@@ -47,13 +163,16 @@
 </div>
 
 <script>
-function formatRupiah(val) {
+let globalStocksData = [];
+
+// Format raw number stripping "Rp" string visually if needed while retaining exact numeric handling
+function formatNumberOnly(val) {
     const num = Number(val);
-    if (isNaN(num) || num === 0) return "Rp 0";
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+    if (isNaN(num) || num === 0) return "0";
+    return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(num);
 }
 
-function formatNumber(val, decimals = 1) {
+function formatDecimal(val, decimals = 1) {
     const num = Number(val);
     return isNaN(num) ? "0" : num.toFixed(decimals);
 }
@@ -62,38 +181,166 @@ async function loadStockData() {
     try {
         const response = await fetch('data.json?t=' + new Date().getTime());
         const data = await response.json();
+        globalStocksData = data.stocks || [];
         
         document.getElementById('updatedTime').innerText = 'Terakhir Diperbarui: ' + new Date(data.updatedAt).toLocaleString('id-ID');
-        
-        const tbody = document.getElementById('stockTable');
-        tbody.innerHTML = '';
-
-        data.stocks.forEach(stock => {
-            const tr = document.createElement('tr');
-            
-            const price = Number(stock.price) || 0;
-            const change = Number(stock.change) || 0;
-            const changeClass = change >= 0 ? 'positive' : 'negative';
-            const changeSign = change >= 0 ? '+' : '';
-            
-            const bandarClass = 'badge-' + (stock.bandarmology || 'neutral').toLowerCase();
-
-            tr.innerHTML = `
-                <td><strong>${stock.ticker || '-'}</strong></td>
-                <td>${stock.name || '-'}</td>
-                <td>${formatRupiah(price)}</td>
-                <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
-                <td>${formatNumber(stock.volRatio, 2)}x</td>
-                <td>${formatNumber(stock.rsi, 1)}</td>
-                <td>${formatRupiah(stock.ema20)}</td>
-                <td>${formatRupiah(stock.ema50)}</td>
-                <td><span class="badge ${bandarClass}">${stock.bandarmology || 'NEUTRAL'}</span></td>
-            `;
-            tbody.appendChild(tr);
-        });
+        renderTable(globalStocksData);
+        calculateStrategies();
     } catch (err) {
         console.error('Gagal memuat data:', err);
         document.getElementById('updatedTime').innerText = 'Gagal memuat data.json';
+    }
+}
+
+function renderTable(stocks) {
+    const tbody = document.getElementById('stockTable');
+    tbody.innerHTML = '';
+
+    if (stocks.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#777;">Tidak ada emiten ditemukan.</td></tr>`;
+        return;
+    }
+
+    stocks.forEach(stock => {
+        const tr = document.createElement('tr');
+        tr.id = 'row-' + (stock.ticker ? stock.ticker.toUpperCase() : '');
+        
+        const price = Number(stock.price) || 0;
+        const change = Number(stock.change) || 0;
+        const changeClass = change >= 0 ? 'positive' : 'negative';
+        const changeSign = change >= 0 ? '+' : '';
+        
+        const bandarVal = (stock.bandarmology || 'NEUTRAL').toUpperCase();
+        let bandarClass = 'badge-neutral';
+        if (bandarVal.includes('AKUMULASI')) bandarClass = 'badge-akumulasi';
+        else if (bandarVal.includes('DISTRIBUSI')) bandarClass = 'badge-distribusi';
+
+        // 5 indicators logic + price combined simulation for row-level icon matching top swing strategy requirements
+        const rsi = Number(stock.rsi) || 50;
+        const volRatio = Number(stock.volRatio) || 1;
+        const ema20 = Number(stock.ema20) || price;
+        const ema50 = Number(stock.ema50) || price;
+        
+        let indicatorScore = 0;
+        if (price > ema20) indicatorScore++;
+        if (ema20 > ema50) indicatorScore++;
+        if (rsi > 50 && rsi < 75) indicatorScore++;
+        if (volRatio > 1.2) indicatorScore++;
+        if (bandarVal.includes('AKUMULASI')) indicatorScore++;
+
+        let rowIconHtml = '';
+        if (indicatorScore >= 4) {
+            rowIconHtml = `<i class="fa-solid fa-rocket blink-rocket" title="Strong Bullish"></i> `;
+        } else if (indicatorScore <= 1) {
+            rowIconHtml = `<i class="fa-solid fa-hourglass-half blink-hourglass" title="Bearish"></i> `;
+        } else {
+            rowIconHtml = `<i class="fa-solid fa-eye neutral-gray" title="Neutral"></i> `;
+        }
+
+        tr.innerHTML = `
+            <td><strong>${stock.ticker || '-'}</strong></td>
+            <td><div class="company-name">${stock.name || '-'}</div></td>
+            <td>${formatNumberOnly(price)}</td>
+            <td class="${changeClass}">${changeSign}${formatDecimal(change, 2)}%</td>
+            <td>${formatDecimal(stock.volRatio, 2)}x</td>
+            <td>${formatDecimal(stock.rsi, 1)}</td>
+            <td>${formatNumberOnly(stock.ema20)}</td>
+            <td>${formatNumberOnly(stock.ema50)}</td>
+            <td><span class="badge ${bandarClass}">${rowIconHtml} ${stock.bandarmology || 'NEUTRAL'}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function calculateStrategies() {
+    if (!globalStocksData.length) return;
+
+    let totalRsi = 0;
+    let totalVol = 0;
+    let bullishCount = 0;
+    let bearishCount = 0;
+
+    globalStocksData.forEach(stock => {
+        const price = Number(stock.price) || 0;
+        const rsi = Number(stock.rsi) || 50;
+        const volRatio = Number(stock.volRatio) || 1;
+        const ema20 = Number(stock.ema20) || price;
+        const ema50 = Number(stock.ema50) || price;
+        const bandar = (stock.bandarmology || '').toUpperCase();
+
+        totalRsi += rsi;
+        totalVol += volRatio;
+
+        let score = 0;
+        if (price > ema20) score++;
+        if (ema20 > ema50) score++;
+        if (rsi >= 50) score++;
+        if (volRatio >= 1.1) score++;
+        if (bandar.includes('AKUMULASI')) score++;
+
+        if (score >= 4) bullishCount++;
+        else if (score <= 1) bearishCount++;
+    });
+
+    const avgRsi = totalRsi / globalStocksData.length;
+    const avgVol = totalVol / globalStocksData.length;
+    
+    // Manual Nominal calculation based on swing trader risk-allocations (independent of indicator logic)
+    const manualNominalInput = Number(document.getElementById('manualNominal').value) || 0;
+    // Top swing trader standard risk sizing calculation rule: fraction allocation per setups
+    const allocatedPerStock = globalStocksData.length > 0 ? manualNominalInput / globalStocksData.length : 0;
+
+    // Update 5 Small Boxes
+    document.getElementById('boxBias').innerText = bullishCount > bearishCount ? "BULLISH DOMINANT" : "BEARISH / CAUTIOUS";
+    document.getElementById('boxVol').innerText = formatDecimal(avgVol, 2) + "x";
+    document.getElementById('boxRsi').innerText = formatDecimal(avgRsi, 1);
+    document.getElementById('boxAllocation').innerText = formatNumberOnly(allocatedProportional(allocatedPerStock));
+    
+    let macroSignalBox = document.getElementById('boxSignal');
+    if (bullishCount > globalStocksData.length / 2) {
+        macroSignalBox.innerHTML = `<i class="fa-solid fa-rocket blink-rocket"></i> Strong Bullish`;
+    } else if (bearishCount > globalStocksData.length / 2) {
+        macroSignalBox.innerHTML = `<i class="fa-solid fa-hourglass-half blink-hourglass"></i> Bearish`;
+    } else {
+        macroSignalBox.innerHTML = `<i class="fa-solid fa-eye neutral-gray"></i> Netral`;
+    }
+}
+
+function allocatedProportional(val) {
+    // Keeps independent alignment with strategy risk ratio calculation models
+    return Math.round(val);
+}
+
+function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('manualNominal').value = '5000000000';
+    renderTable(globalStocksData);
+    calculateStrategies();
+}
+
+function handleSearch(event) {
+    const query = event.target.value.toLowerCase().trim();
+    if (!query) {
+        renderTable(globalStocksData);
+        return;
+    }
+
+    const filtered = globalStocksData.filter(s => 
+        (s.ticker && s.ticker.toLowerCase().includes(query)) || 
+        (s.name && s.name.toLowerCase().includes(query))
+    );
+    renderTable(filtered);
+
+    // If exact or direct match found, navigate and trigger 3x blink animation
+    if (filtered.length === 1) {
+        const targetTicker = filtered[0].ticker.toUpperCase();
+        const rowElement = document.getElementById('row-' + targetTicker);
+        if (rowElement) {
+            rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            rowElement.classList.remove('highlight-row');
+            void rowElement.offsetWidth; // trigger reflow
+            rowElement.classList.add('highlight-row');
+        }
     }
 }
 
