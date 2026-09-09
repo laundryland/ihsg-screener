@@ -6,39 +6,57 @@
     <title>IHSG Stock Screener Pro - Swing Strategy</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { margin-top: 0; color: #333; font-size: 18px; margin-bottom: 8px; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #333; font-size: 18px; margin-bottom: 10px; }
         
-        /* Header Controls */
-        .header-controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; margin-bottom: 12px; background: #eaedf1; padding: 8px; border-radius: 6px; }
-        .control-group { display: flex; align-items: center; gap: 4px; }
+        /* Header Controls (Sticky) */
+        .header-controls { 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 15px; 
+            background: #eaedf1; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .control-group { display: flex; align-items: center; gap: 6px; }
         .control-group label { font-size: 11px; font-weight: bold; color: #333; }
         .control-group input, .control-group button { padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; }
         .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 4px; }
         .control-group button:hover { background: #34495e; }
 
-        /* IHSG Monitor Header Badge */
-        .ihsg-monitor { background: #2c3e50; color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
-
         /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #ddd; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
+        th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 12px; }
         th { background-color: #2c3e50; color: white; }
         tr:hover { background-color: #f1f1f1; }
         
-        .positive { color: #27ae60; font-weight: bold; }
-        .negative { color: #e74c3c; font-weight: bold; }
-        
+        /* Lebar Kolom Disesuaikan Agar Rapat & Pas */
+        th:nth-child(1), td:nth-child(1) { width: 25%; }
+        th:nth-child(2), td:nth-child(2) { width: 75%; }
+
+        .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; display: inline-block; }
+        .badge-akumulasi { background: #d4edda; color: #155724; }
+        .badge-distribusi { background: #f8d7da; color: #721c24; }
         .badge-neutral { background: #e2e3e5; color: #383d41; }
 
         /* 5 Kotak Kekuatan Swing (Masing-masing 20%) */
         .swing-container { display: flex; align-items: center; gap: 6px; }
         .boxes-group { display: flex; gap: 2px; }
-        .swing-box-segment { width: 14px; height: 18px; border-radius: 2px; display: inline-block; }
+        .swing-box-segment { width: 12px; height: 16px; border-radius: 2px; display: inline-block; }
         .box-green { background-color: #27ae60; }
         .box-red { background-color: #e74c3c; }
         .box-empty { background-color: #dcdde1; }
         .total-percentage { font-size: 11px; font-weight: bold; margin-left: 5px; }
+
+        .positive { color: #27ae60; font-weight: bold; }
+        .negative { color: #e74c3c; font-weight: bold; }
 
         /* Animasi Blink */
         @keyframes blinkEffect {
@@ -60,35 +78,27 @@
 <body>
 
 <div class="container">
-    <h1>IHSG Stock Screener Pro (Swing Strategy Multi-Timeframe)</h1>
+    <h1>IHSG Stock Screener Pro (Swing Strategy)</h1>
     
-    <!-- Header Control Panel -->
+    <!-- Header Control Panel (Sticky) -->
     <div class="header-controls">
-        <!-- 2 Kolom Tombol: Refresh & Reload -->
         <div class="control-group">
             <button onclick="loadStockData()" title="Memperbarui data JSON tanpa memuat ulang halaman">
-                🔄 Refresh Data
+                🔄 Refresh
             </button>
             <button onclick="location.reload()" title="Memuat ulang seluruh halaman web">
-                ⚡ Reload Page
+                ⚡ Reload
             </button>
         </div>
 
-        <!-- Kolom Monitor IHSG -->
-        <div class="ihsg-monitor" id="ihsgMonitor">
-            📈 IHSG Monitor: Memuat...
-        </div>
-
-        <!-- Input Modal Manual -->
         <div class="control-group">
             <label for="manualNominal">Dana:</label>
-            <input type="text" id="manualNominal" value="5.000.000.000" style="width: 90px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
+            <input type="text" id="manualNominal" value="5.000.000.000" style="width: 85px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
         </div>
 
-        <!-- Kolom Pencarian Ticker -->
         <div class="control-group">
             <label for="searchTicker">Cari:</label>
-            <input type="text" id="searchTicker" placeholder="Ketik Ticker..." style="width: 80px;" onkeyup="searchStock()">
+            <input type="text" id="searchTicker" placeholder="Ticker..." style="width: 75px;" onkeyup="searchStock()">
         </div>
     </div>
 
@@ -96,8 +106,6 @@
         <thead>
             <tr>
                 <th>Ticker</th>
-                <th>Harga</th>
-                <th>Change</th>
                 <th>POWER</th>
             </tr>
         </thead>
@@ -108,17 +116,6 @@
 </div>
 
 <script>
-function formatNominal(val) {
-    const num = Number(val);
-    if (isNaN(num) || num === 0) return "0";
-    return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(num);
-}
-
-function formatNumber(val, decimals = 1) {
-    const num = Number(val);
-    return isNaN(num) ? "0" : num.toFixed(decimals);
-}
-
 function cleanInputNominal(el) {
     el.value = el.value.replace(/\./g, '');
 }
@@ -133,33 +130,26 @@ function formatInputNominal(el) {
     loadStockData();
 }
 
-// Algoritma Kekuatan Swing (5 Kotak, Masing-masing 20%) dengan bandarmology di latar belakang
+// Algoritma Kekuatan Swing (Tetap berjalan di latar belakang)
 function calculateSwingPower(stock, manualCapital) {
     const price = Number(stock.price) || 0;
     const rsi = Number(stock.rsi) || 50;
     const volRatio = Number(stock.volRatio) || 1;
     const ema20 = Number(stock.ema20) || price;
     const ema50 = Number(stock.ema50) || price;
-    const bandarmology = (stock.bandarmology || 'neutral').toLowerCase();
 
-    // Faktor bandarmology di latar belakang
-    let bandarFactor = bandarmology === 'akumulasi' ? 1.2 : (bandarmology === 'distribusi' ? 0.6 : 1.0);
-
-    // Logika perhitungan independen indikator + faktor modal + bandarmology latar belakang
     let scoreFactor = (price > ema20 ? 1 : 0) + (ema20 > ema50 ? 1 : 0);
     let rsiScore = (rsi >= 45 && rsi <= 65) ? 1 : (rsi > 65 ? 0.8 : 0.3);
     let volScore = volRatio > 1.1 ? 1 : 0.5;
     let capitalEffect = manualCapital >= 1000000000 ? 1 : 0.8;
 
-    // Total persentase kekuatan gabungan (0 - 100%) dengan pengaruh bandarmology
-    let rawScore = (((scoreFactor + rsiScore + volScore + capitalEffect) / 4.8) * 100) * (bandarFactor / 1.0);
+    let rawScore = ((scoreFactor + rsiScore + volScore + capitalEffect) / 4.8) * 100;
     let totalPercent = Math.min(Math.max(rawScore, 0), 100);
 
-    // 5 Kotak (1 kotak = 20%)
     let activeBoxes = Math.round(totalPercent / 20);
     activeBoxes = Math.min(Math.max(activeBoxes, 0), 5);
 
-    let isBearishStrong = totalPercent <= 30; // Jika lemah, merah semua (100% bearish)
+    let isBearishStrong = totalPercent <= 30;
     
     return {
         percent: totalPercent.toFixed(1),
@@ -176,24 +166,9 @@ async function loadStockData() {
         const response = await fetch('data.json?t=' + new Date().getTime());
         const data = await response.json();
         globalStocksData = data.stocks || [];
-        
-        // Update Monitor IHSG di Header
-        if (data.ihsg) {
-            const ihsgChange = Number(data.ihsg.change) || 0;
-            const ihsgClass = ihsgChange >= 0 ? 'positive' : 'negative';
-            const ihsgSign = ihsgChange >= 0 ? '+' : '';
-            document.getElementById('ihsgMonitor').innerHTML = `
-                📈 IHSG: ${formatNominal(data.ihsg.price)} 
-                <span class="${ihsgClass}">(${ihsgSign}${formatNumber(ihsgChange, 2)}%)</span>
-            `;
-        } else {
-            document.getElementById('ihsgMonitor').innerHTML = `📈 IHSG Monitor: Aktif (Updated)`;
-        }
-
         renderTable(globalStocksData);
     } catch (err) {
         console.error('Gagal memuat data.json:', err);
-        document.getElementById('ihsgMonitor').innerHTML = `📈 IHSG Monitor: Gagal memuat data.json`;
     }
 }
 
@@ -208,14 +183,9 @@ function renderTable(stocks) {
         const tr = document.createElement('tr');
         tr.id = 'row-' + (stock.ticker ? stock.ticker.toUpperCase() : index);
         
-        const price = Number(stock.price) || 0;
-        const change = Number(stock.change) || 0;
-        const changeClass = change >= 0 ? 'positive' : 'negative';
-        const changeSign = change >= 0 ? '+' : '';
-
         const swing = calculateSwingPower(stock, currentCapital);
 
-        // Render 5 Kotak (Masing-masing 20%)
+        // Render 5 Kotak POWER
         let boxesHtml = `<div class="swing-container"><div class="boxes-group">`;
         for (let i = 1; i <= 5; i++) {
             let boxClass = 'box-empty';
@@ -226,7 +196,6 @@ function renderTable(stocks) {
         }
         boxesHtml += `</div>`;
 
-        // Gambar Ikon & Keterangan Layak Beli / Jual
         let statusIcon = '';
         let recommendationText = '';
         
@@ -245,8 +214,6 @@ function renderTable(stocks) {
 
         tr.innerHTML = `
             <td><strong>${stock.ticker || '-'}</strong></td>
-            <td>${formatNominal(price)}</td>
-            <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
             <td>${boxesHtml}</td>
         `;
         tbody.appendChild(tr);
