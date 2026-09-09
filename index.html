@@ -121,157 +121,161 @@
     </table>
   </div>
 
-  <script>
-    let stockData = [];
-    let currentTab = 'swing';
-    const REFRESH_INTERVAL_MS = 30 * 60 * 1000; // 30 Menit
+<script>
+  let stockData = [];
+  let currentTab = 'swing';
+  const REFRESH_INTERVAL_MS = 30 * 60 * 1000; // 30 Menit
 
-    // Memuat file JSON Lokal
-    async function loadInitialJSON() {
+  // Memuat file JSON Lokal
+  async function loadInitialJSON() {
+    try {
+      const response = await fetch('100emitendata.json');
+      stockData = await response.json();
+      renderTable();
+      fetchRealtimePrices(); // Jalankan update harga otomatis
+    } catch (err) {
+      console.error("Gagal memuat 100emitendata.json:", err);
+    }
+  }
+
+  // Ambil Data Yahoo Finance Secara Paralel (Jauh Lebih Cepat)
+  async function fetchRealtimePrices() {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'inline-block';
+    loader.innerText = 'Memperbarui harga...';
+
+    // Buat daftar request sekaligus (paralel)
+    const requests = stockData.map(async (item) => {
       try {
-        const response = await fetch('100emitendata.json');
-        stockData = await response.json();
-        renderTable();
-        fetchRealtimePrices(); // Jalankan sinkronisasi yfinance
-      } catch (err) {
-        console.error("Gagal memuat 100emitendata.json:", err);
-      }
-    }
+        const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${item.ticker}?interval=1m&range=1d`);
+        const proxyUrl = `https://api.allorigins.win/get?url=${targetUrl}`;
+        
+        // Timeout 5 detik agar tidak menggantung jika koneksi lambat
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    // Ambil Data dari Yahoo Finance API via CORS Proxy Client Side
-    async function fetchRealtimePrices() {
-      document.getElementById('loader').style.display = 'inline-block';
-      
-      for (let item of stockData) {
-        try {
-          // Endpoint Query Yahoo Finance v8 (dilewatkan via Proxy untuk hindari CORS)
-          const proxyUrl = 'https://corsproxy.io/?';
-          const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${item.ticker}?interval=1m&range=1d`);
-          
-          const res = await fetch(proxyUrl + targetUrl);
-          const data = await res.json();
+        const res = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
 
-          if (data.chart && data.chart.result && data.chart.result[0]) {
-            const meta = data.chart.result[0].meta;
-            const latestPrice = meta.regularMarketPrice;
-            item.previousPrice = item.price;
-            item.price = latestPrice;
-          }
-        } catch (e) {
-          console.warn(`Gagal memperbarui harga untuk ${item.ticker}:`, e);
+        const responseData = await res.json();
+        const parsedData = JSON.parse(responseData.contents);
+
+        if (parsedData.chart && parsedData.chart.result && parsedData.chart.result[0]) {
+          const latestPrice = parsedData.chart.result[0].meta.regularMarketPrice;
+          item.previousPrice = item.price;
+          item.price = latestPrice;
         }
+      } catch (e) {
+        console.warn(`Gagal memperbarui harga untuk ${item.ticker}:`, e.message);
       }
+    });
 
-      const now = new Date();
-      document.getElementById('last-update').innerText = now.toLocaleTimeString('id-ID');
-      document.getElementById('loader').style.display = 'none';
-      renderTable();
+    // Jalankan semua permintaan secara bersamaan
+    await Promise.all(requests);
+
+    const now = new Date();
+    document.getElementById('last-update').innerText = now.toLocaleTimeString('id-ID');
+    loader.style.display = 'none';
+    renderTable();
+  }
+
+  // Cek Jam Buka Pasar IHSG (Senin-Jumat 09:00 - 16:00 WIB)
+  function checkMarketOpenStatus() {
+    const now = new Date();
+    const day = now.getDay();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    const isWeekday = day >= 1 && day <= 5;
+    const isOpenTime = (hours > 9 || (hours === 9 && minutes >= 0)) && hours < 16;
+    const isMarketOpen = isWeekday && isOpenTime;
+
+    const statusEl = document.getElementById('market-status');
+    if (isMarketOpen) {
+      statusEl.innerText = "OPEN MARKET";
+      statusEl.style.color = "var(--green)";
+    } else {
+      statusEl.innerText = "CLOSED";
+      statusEl.style.color = "var(--red)";
     }
 
-    // Cek Jam Buka Pasar IHSG (Senin-Jumat 09:00 - 16:00 WIB)
-    function checkMarketOpenStatus() {
-      const now = new Date();
-      const day = now.getDay(); // 0 = Minggu, 6 = Sabtu
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-
-      const isWeekday = day >= 1 && day <= 5;
-      const isOpenTime = (hours > 9 || (hours === 9 && minutes >= 0)) && hours < 16;
-      const isMarketOpen = isWeekday && isOpenTime;
-
-      const statusEl = document.getElementById('market-status');
-      if (isMarketOpen) {
-        statusEl.innerText = "OPEN MARKET";
-        statusEl.style.color = "var(--green)";
-      } else {
-        statusEl.innerText = "CLOSED";
-        statusEl.style.color = "var(--red)";
-      }
-
-      // Jika tepat pukul 09:00 WIB (Open Market), perbarui harga secara instan
-      if (isWeekday && hours === 9 && minutes === 0) {
-        fetchRealtimePrices();
-      }
-    }
-
-    // Beralih Tab UI (Swing / Investasi)
-    function switchTab(tab) {
-      currentTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      renderTable();
-    }
-
-    // Render Tabel Sesuai Data & Tab Terpilih
-    function renderTable() {
-      const headersEl = document.getElementById('table-headers');
-      const bodyEl = document.getElementById('table-body');
-
-      if (currentTab === 'swing') {
-        headersEl.innerHTML = `
-          <th>Ticker</th>
-          <th>Nama Emiter</th>
-          <th>Harga Realtime</th>
-          <th>Area Entry</th>
-          <th>Target (R1)</th>
-          <th>Cut Loss (CL1)</th>
-          <th>Sinyal</th>
-          <th>Bandarmology</th>
-        `;
-
-        bodyEl.innerHTML = stockData.map(s => `
-          <tr>
-            <td><strong>${s.ticker}</strong></td>
-            <td>${s.name}</td>
-            <td class="${s.previousPrice ? (s.price >= s.previousPrice ? 'price-up' : 'price-down') : ''}">
-              Rp ${s.price.toLocaleString('id-ID')}
-            </td>
-            <td>Rp ${s.swing.entry.toLocaleString('id-ID')}</td>
-            <td class="price-up">Rp ${s.swing.r1.toLocaleString('id-ID')}</td>
-            <td class="price-down">Rp ${s.swing.cl1.toLocaleString('id-ID')}</td>
-            <td><span class="badge ${s.signal.includes('BUY') ? 'badge-buy' : 'badge-neutral'}">${s.signal}</span></td>
-            <td><span class="badge ${s.bandarmology === 'AKUMULASI' ? 'badge-buy' : 'badge-neutral'}">${s.bandarmology}</span></td>
-          </tr>
-        `).join('');
-
-      } else if (currentTab === 'investasi') {
-        headersEl.innerHTML = `
-          <th>Ticker</th>
-          <th>Nama Emiter</th>
-          <th>Harga Realtime</th>
-          <th>Target 1 Tahun</th>
-          <th>Valuasi (PBV)</th>
-          <th>Sinyal</th>
-          <th>Bandarmology</th>
-        `;
-
-        bodyEl.innerHTML = stockData.map(s => `
-          <tr>
-            <td><strong>${s.ticker}</strong></td>
-            <td>${s.name}</td>
-            <td>Rp ${s.price.toLocaleString('id-ID')}</td>
-            <td class="price-up">Rp ${s.investasi.target_1y.toLocaleString('id-ID')}</td>
-            <td>${s.investasi.valas_pbv}x</td>
-            <td><span class="badge ${s.signal.includes('BUY') ? 'badge-buy' : 'badge-neutral'}">${s.signal}</span></td>
-            <td><span class="badge ${s.bandarmology === 'AKUMULASI' ? 'badge-buy' : 'badge-neutral'}">${s.bandarmology}</span></td>
-          </tr>
-        `).join('');
-      }
-    }
-
-    // Init Logic
-    loadInitialJSON();
-    checkMarketOpenStatus();
-
-    // Timer Auto-Refresh 30 Menit
-    setInterval(() => {
+    if (isWeekday && hours === 9 && minutes === 0) {
       fetchRealtimePrices();
-    }, REFRESH_INTERVAL_MS);
+    }
+  }
 
-    // Timer Cek Status Jam Pasar Setiap 1 Menit
-    setInterval(() => {
-      checkMarketOpenStatus();
-    }, 60000);
-  </script>
+  // Beralih Tab UI
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    renderTable();
+  }
+
+  // Render Tabel
+  function renderTable() {
+    const headersEl = document.getElementById('table-headers');
+    const bodyEl = document.getElementById('table-body');
+
+    if (currentTab === 'swing') {
+      headersEl.innerHTML = `
+        <th>Ticker</th>
+        <th>Nama Emiter</th>
+        <th>Harga Realtime</th>
+        <th>Area Entry</th>
+        <th>Target (R1)</th>
+        <th>Cut Loss (CL1)</th>
+        <th>Sinyal</th>
+        <th>Bandarmology</th>
+      `;
+
+      bodyEl.innerHTML = stockData.map(s => `
+        <tr>
+          <td><strong>${s.ticker}</strong></td>
+          <td>${s.name}</td>
+          <td class="${s.previousPrice ? (s.price >= s.previousPrice ? 'price-up' : 'price-down') : ''}">
+            Rp ${s.price.toLocaleString('id-ID')}
+          </td>
+          <td>Rp ${s.swing.entry.toLocaleString('id-ID')}</td>
+          <td class="price-up">Rp ${s.swing.r1.toLocaleString('id-ID')}</td>
+          <td class="price-down">Rp ${s.swing.cl1.toLocaleString('id-ID')}</td>
+          <td><span class="badge ${s.signal.includes('BUY') ? 'badge-buy' : 'badge-neutral'}">${s.signal}</span></td>
+          <td><span class="badge ${s.bandarmology === 'AKUMULASI' ? 'badge-buy' : 'badge-neutral'}">${s.bandarmology}</span></td>
+        </tr>
+      `).join('');
+
+    } else if (currentTab === 'investasi') {
+      headersEl.innerHTML = `
+        <th>Ticker</th>
+        <th>Nama Emiter</th>
+        <th>Harga Realtime</th>
+        <th>Target 1 Tahun</th>
+        <th>Valuasi (PBV)</th>
+        <th>Sinyal</th>
+        <th>Bandarmology</th>
+      `;
+
+      bodyEl.innerHTML = stockData.map(s => `
+        <tr>
+          <td><strong>${s.ticker}</strong></td>
+          <td>${s.name}</td>
+          <td>Rp ${s.price.toLocaleString('id-ID')}</td>
+          <td class="price-up">Rp ${s.investasi.target_1y.toLocaleString('id-ID')}</td>
+          <td>${s.investasi.valas_pbv}x</td>
+          <td><span class="badge ${s.signal.includes('BUY') ? 'badge-buy' : 'badge-neutral'}">${s.signal}</span></td>
+          <td><span class="badge ${s.bandarmology === 'AKUMULASI' ? 'badge-buy' : 'badge-neutral'}">${s.bandarmology}</span></td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // Inisialisasi
+  loadInitialJSON();
+  checkMarketOpenStatus();
+
+  // Interval Refresh
+  setInterval(fetchRealtimePrices, REFRESH_INTERVAL_MS);
+  setInterval(checkMarketOpenStatus, 60000);
+</script>
 </body>
 </html>
