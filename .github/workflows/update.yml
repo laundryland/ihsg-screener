@@ -1,118 +1,41 @@
-import json
-import datetime
-import yfinance as yf
-import pandas as pd
+name: Update Stock Data
 
-TICKERS_BASE = [
-    "BBCA", "BBRI", "BMRI", "BBNI", "TLKM", "ASII", "AMMN", "BREN", "TPIA", "ADRO", 
-    "PGAS", "GOTO", "BRIS", "UNVR", "ICBP", "INDF", "CPIN", "JPFA", "KLBF", "MIKA", 
-    "MDKA", "MBMA", "ANTM", "INCO", "PTBA", "ITMG", "HRUM", "MEDC", "AKRA", "CUAN", 
-    "BUMI", "BRMS", "ENRG", "DEWA", "DOOID", "BSDE", "CTRA", "PRAW", "SMRA", "PTPP", 
-    "ADHI", "WIKA", "JSMR", "PGEO", "ISAT", "EXCL", "TOWR", "TBIG", "INKP", "TKIM", 
-    "SMGR", "INTP", "GGRM", "HMSP", "PANI", "FILM", "BFIN", "PNBN", "BNGA", "BBTN", 
-    "ARTO", "MEDP", "ACES", "MAPI", "MAPA", "ERAA", "KPGP", "SSIA", "SIDO", "MYOR", 
-    "CMRY", "AMRT", "DOOH", "STRT", "SOLA", "WIFI", "HUMI", "LEAD", "PTRO", "CGAS", 
-    "ASHA", "AUTO", "GJTL", "SMSM", "SILO", "SAME", "IRRA", "KAEF", "INAF", "ELSA", 
-    "MBSS", "SMDR", "TMAS", "BIRD", "ASSA", "GTVN", "WOOD", "APLN", "ASRI", "MDLN", 
-    "BEST", "DMAS", "KIJA", "LPKR", "LPCK"
-]
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'screener.py'
+      - '.github/workflows/*'
+  schedule:
+    - cron: '0 9 * * 1-5'
 
-def fetch_top_gainers():
-    try:
-        gainers = yf.TradingData().get_gainers()
-        return [t.replace('.JK', '') for t in gainers.index if t.endswith('.JK')]
-    except Exception as e:
-        print(f"Warning: Gagal mengambil top gainers ({e}), menggunakan daftar default.")
-        return []
+jobs:
+  run-screener:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-def calculate_rsi(series, period=14):
-    delta = series.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-    rs = gain / loss
-    return 100 - (100 / (1 + rs))
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-def process_stock(ticker_symbol):
-    formatted_ticker = ticker_symbol if ticker_symbol.endswith('.JK') else f"{ticker_symbol}.JK"
-    clean_ticker = ticker_symbol.replace('.JK', '')
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance pandas
 
-    try:
-        stock = yf.Ticker(formatted_ticker)
-        df = stock.history(period="1y")
+      - name: Run Screener Script
+        run: python screener.py
 
-        if df.empty or len(df) < 50:
-            return None
-
-        # Keamanan Data Harga
-        close_series = df['Close']
-        raw_price = close_series.iloc[-1]
-        current_price = int(raw_price) if not pd.isna(raw_price) else 0
-
-        raw_prev = close_series.iloc[-2]
-        prev_price = float(raw_prev) if not pd.isna(raw_prev) else current_price
-        
-        change_pct = round(((current_price - prev_price) / prev_price) * 100, 2) if prev_price > 0 else 0.0
-
-        # Indikator Teknikal
-        vol_today = df['Volume'].iloc[-1]
-        vol_avg_20 = df['Volume'].tail(20).mean()
-        vol_ratio = round(float(vol_today / vol_avg_20), 2) if vol_avg_20 > 0 else 0.0
-
-        rsi_series = calculate_rsi(close_series)
-        last_rsi = rsi_series.iloc[-1]
-        current_rsi = round(float(last_rsi), 1) if not pd.isna(last_rsi) else 50.0
-
-        ema20_val = close_series.ewm(span=20, adjust=False).mean().iloc[-1]
-        ema50_val = close_series.ewm(span=50, adjust=False).mean().iloc[-1]
-        
-        ema20 = round(float(ema20_val), 1) if not pd.isna(ema20_val) else float(current_price)
-        ema50 = round(float(ema50_val), 1) if not pd.isna(ema50_val) else float(current_price)
-
-        high_52 = int(df['High'].max()) if not pd.isna(df['High'].max()) else current_price
-
-        info = stock.info
-        name = info.get('shortName') or info.get('longName') or clean_ticker
-
-        return {
-            "ticker": clean_ticker,
-            "name": name,
-            "price": current_price,
-            "change": change_pct,
-            "rsi": current_rsi,
-            "ema20": ema20,
-            "ema50": ema50,
-            "volRatio": vol_ratio,
-            "high52": high_52,
-            "bandarmology": "NEUTRAL",
-            "entry": current_price,
-            "r1": int(current_price * 1.05),
-            "cl1": int(current_price * 0.95)
-        }
-    except Exception as e:
-        print(f"Gagal memproses {ticker_symbol}: {e}")
-        return None
-
-def main():
-    top_gainers = fetch_top_gainers()
-    all_tickers = list(set(TICKERS_BASE + top_gainers))
-    
-    print(f"Memproses {len(all_tickers)} emiten...")
-    
-    stocks_data = []
-    for ticker in all_tickers:
-        result = process_stock(ticker)
-        if result:
-            stocks_data.append(result)
-
-    output = {
-        "updatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "stocks": stocks_data
-    }
-
-    with open('data.json', 'w') as f:
-        json.dump(output, f, indent=2)
-
-    print("Berhasil memperbarui data.json!")
-
-if __name__ == "__main__":
-    main()
+      - name: Commit & Push JSON Update
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git status
+          git diff-index --quiet HEAD || git commit -m "auto: update stock data"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
