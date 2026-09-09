@@ -1,498 +1,277 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IHSG Pro Screener - Advanced Analytics</title>
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#0f172a">
-    <link rel="icon" type="image/png" sizes="192x192" href="./laundry1-512x512.png">
-    <link rel="apple-touch-icon" href="./laundry1-512x512.png">
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <style>
-        @keyframes pulse-fast {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.95); }
-        }
-        .lightning-blink {
-            animation: pulse-fast 0.8s infinite ease-in-out;
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Saham IHSG - Swing & Investasi</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent: #38bdf8;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+    }
 
-        /* Animation Blink 3x untuk hasil pencarian */
-        @keyframes blink-three-times {
-            0%, 100% { background-color: transparent; }
-            16%, 50%, 83% { background-color: rgba(99, 102, 241, 0.35); }
-            33%, 66% { background-color: transparent; }
-        }
-        .search-blink {
-            animation: blink-three-times 2.4s ease-in-out forwards;
-        }
-    </style>
+    body {
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 15px;
+    }
+
+    h1 { margin: 0; font-size: 1.5rem; color: var(--accent); }
+    .status-bar { font-size: 0.85rem; color: var(--text-sub); }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid #334155;
+      color: var(--text-main);
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+
+    th { background: #0f172a; color: var(--text-sub); font-size: 0.9rem; }
+    
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .badge-buy { background: rgba(34, 197, 94, 0.2); color: var(--green); }
+    .badge-sell { background: rgba(239, 68, 68, 0.2); color: var(--red); }
+    .badge-neutral { background: rgba(234, 179, 8, 0.2); color: var(--yellow); }
+
+    .price-up { color: var(--green); }
+    .price-down { color: var(--red); }
+
+    .loading-overlay {
+      display: inline-block;
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+<body>
 
-    <!-- HEADER / NAVBAR -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center space-x-3">
-                <img src="laundry1-512x512.png" alt="LOGO" class="w-10 h-10 rounded-full border-2 border-indigo-500 object-cover">
-                <div>
-                    <h1 class="font-bold text-lg leading-tight text-white uppercase">PRO STOCK SCREENER</h1>
-                    <p id="updateTime" class="text-xs text-slate-400">MEMUAT DATA...</p>
-                </div>
-            </div>
+  <div class="header">
+    <div>
+      <h1>IHSG Trading & Investment Monitor</h1>
+      <div class="status-bar">
+        Status Pasar: <span id="market-status">-</span> | 
+        Pembaruan Terakhir: <span id="last-update">Menunggu Data...</span>
+      </div>
+    </div>
+    <div id="loader" class="loading-overlay" style="display:none;">Refreshing Yahoo Finance...</div>
+  </div>
 
-            <!-- CONTROLS & FILTERS -->
-            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                <!-- Pencarian Emiten -->
-                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <i data-lucide="search" class="w-4 h-4 text-indigo-400"></i>
-                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari Emiten..." class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none rounded px-2 py-1 border border-slate-700 w-28 uppercase placeholder:normal-case placeholder:text-slate-500">
-                </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('swing')">Strategi Swing Trading</button>
+    <button class="tab-btn" onclick="switchTab('investasi')">Strategi Investasi</button>
+  </div>
 
-                <!-- Kategori Strong Buy -->
-                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <span class="text-sm">🎯</span>
-                    <label for="strongBuySelect" class="text-xs font-medium text-slate-300">Strong Buy Only:</label>
-                    <select id="strongBuySelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-400 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
-                        <option value="all">Semua Signal</option>
-                        <option value="strongBuy">🎯 Strong Buy</option>
-                    </select>
-                </div>
+  <div id="content-area">
+    <table id="stock-table">
+      <thead>
+        <tr id="table-headers"></tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
 
-                <!-- Timeframe Selection -->
-                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <i data-lucide="clock" class="w-4 h-4 text-indigo-400"></i>
-                    <label for="tfSelect" class="text-xs font-medium text-slate-300">Strategy / TF:</label>
-                    <select id="tfSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
-                        <option value="scalping">SCALPING (15M)</option>
-                        <option value="swing" selected>SWING (1D)</option>
-                        <option value="investment">INVESTMENT (1W)</option>
-                    </select>
-                </div>
+  <script>
+    let stockData = [];
+    let currentTab = 'swing';
+    const REFRESH_INTERVAL_MS = 30 * 60 * 1000; // 30 Menit
 
-                <!-- Min Turnover Filter -->
-                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
-                    <label for="turnoverSelect" class="text-xs font-medium text-slate-300">Min Turnover:</label>
-                    <select id="turnoverSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
-                        <option value="0">Semua Turnover</option>
-                        <option value="1">≥ 1 Miliar</option>
-                        <option value="5" selected>≥ 5 Miliar</option>
-                        <option value="10">≥ 10 Miliar</option>
-                        <option value="50">≥ 50 Miliar</option>
-                    </select>
-                </div>
+    // Memuat file JSON Lokal
+    async function loadInitialJSON() {
+      try {
+        const response = await fetch('100emitendata.json');
+        stockData = await response.json();
+        renderTable();
+        fetchRealtimePrices(); // Jalankan sinkronisasi yfinance
+      } catch (err) {
+        console.error("Gagal memuat 100emitendata.json:", err);
+      }
+    }
 
-                <!-- Refresh Button -->
-                <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-indigo-600/20 w-full sm:w-auto">
-                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
-                    <span>Refresh</span>
-                </button>
-            </div>
-        </div>
-    </header>
+    // Ambil Data dari Yahoo Finance API via CORS Proxy Client Side
+    async function fetchRealtimePrices() {
+      document.getElementById('loader').style.display = 'inline-block';
+      
+      for (let item of stockData) {
+        try {
+          // Endpoint Query Yahoo Finance v8 (dilewatkan via Proxy untuk hindari CORS)
+          const proxyUrl = 'https://corsproxy.io/?';
+          const targetUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${item.ticker}?interval=1m&range=1d`);
+          
+          const res = await fetch(proxyUrl + targetUrl);
+          const data = await res.json();
 
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full flex flex-col gap-6">
-
-        <!-- STRATEGY INFO BANNER -->
-        <div id="strategyBanner" class="p-4 rounded-xl border bg-slate-900/60 backdrop-blur flex items-start gap-3 border-indigo-500/30">
-            <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 mt-0.5 shrink-0">
-                <i data-lucide="info" class="w-5 h-5"></i>
-            </div>
-            <div class="flex-1">
-                <h2 id="bannerTitle" class="font-semibold text-sm text-indigo-300">SWING TRADING STRATEGY (1D)</h2>
-                <p id="bannerDesc" class="text-xs text-slate-400 mt-0.5">
-                    Fokus pada tren menengah (Daily). Mengalkulasi indikator teknikal utama: Trend EMA, RSI Momentum, Spike Volume, Likuiditas Pasar, dan kedekatan dengan 52-Week High.
-                </p>
-            </div>
-        </div>
-
-        <!-- NAVIGATION TABS -->
-        <div class="border-b border-slate-800 flex space-x-4">
-            <button id="tabLayakBeli" onclick="switchTab('layakBeli')" class="pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2">
-                <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i>
-                <span>🔥 LAYAK BELI</span>
-                <span id="badgeLayakBeli" class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded-full">0</span>
-            </button>
-            <button id="tabAll" onclick="switchTab('all')" class="pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
-                <i data-lucide="list" class="w-4 h-4"></i>
-                <span>SEMUA SAHAM (MONITORING)</span>
-                <span id="badgeAll" class="bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded-full">0</span>
-            </button>
-        </div>
-
-        <!-- DATA CONTAINER -->
-        <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-            
-            <!-- MOBILE CARD VIEW (< 768px) -->
-            <div id="stockCardGrid" class="block md:hidden p-3 space-y-3"></div>
-
-            <!-- DESKTOP TABLE VIEW (>= 768px) -->
-            <div class="hidden md:block overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse">
-                    <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-semibold">
-                        <tr>
-                            <th class="py-3.5 px-4">Emiten</th>
-                            <th class="py-3.5 px-3 text-right">Harga</th>
-                            <th class="py-3.5 px-3 text-right">Change (%)</th>
-                            <th class="py-3.5 px-3 text-right">Turnover</th>
-                            <th class="py-3.5 px-4 text-center">Indikator Skor / Signal</th>
-                            <th class="py-3.5 px-3 text-center">Volume & Bandar</th>
-                            <th class="py-3.5 px-4 text-center">Trading Plan (Entry / R1 / CL)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="stockTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-300"></tbody>
-                </table>
-            </div>
-            
-            <!-- EMPTY STATE -->
-            <div id="emptyState" class="hidden py-12 text-center">
-                <i data-lucide="filter-x" class="w-12 h-12 text-slate-600 mx-auto mb-3"></i>
-                <p class="text-sm font-semibold text-slate-400">Tidak ada saham yang dapat ditampilkan saat ini.</p>
-                <p class="text-xs text-slate-500 mt-1">Pastikan file data.json tersedia dan format datanya sesuai.</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-slate-800 bg-slate-950 py-4 mt-auto text-center text-xs text-slate-500">
-        <p>© 2026 Pro Stock Screener. Analytics strictly for educational & decision support purpose.</p>
-    </footer>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        let rawStockData = [];
-        let activeTab = "layakBeli";
-
-        document.addEventListener("DOMContentLoaded", () => {
-            loadData();
-        });
-
-        function formatWIB(timeStr) {
-            if (!timeStr) return "-";
-            try {
-                const date = new Date(timeStr);
-                if (isNaN(date.getTime())) return timeStr;
-                return date.toLocaleString('id-ID', {
-                    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                }) + " WIB";
-            } catch (e) { return timeStr; }
+          if (data.chart && data.chart.result && data.chart.result[0]) {
+            const meta = data.chart.result[0].meta;
+            const latestPrice = meta.regularMarketPrice;
+            item.previousPrice = item.price;
+            item.price = latestPrice;
+          }
+        } catch (e) {
+          console.warn(`Gagal memperbarui harga untuk ${item.ticker}:`, e);
         }
+      }
 
-        async function loadData() {
-            const refreshIcon = document.getElementById("refreshIcon");
-            if (refreshIcon) refreshIcon.classList.add("animate-spin");
+      const now = new Date();
+      document.getElementById('last-update').innerText = now.toLocaleTimeString('id-ID');
+      document.getElementById('loader').style.display = 'none';
+      renderTable();
+    }
 
-            try {
-                const response = await fetch(`./data.json?t=${new Date().getTime()}`);
-                if (!response.ok) throw new Error("Gagal mengambil berkas data.json");
-                
-                const data = await response.json();
-                if (data.updated_at) {
-                    document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
-                }
-                rawStockData = data.stocks || (Array.isArray(data) ? data : []);
-                
-                processAndRender();
-            } catch (error) {
-                console.error("Error loading stock data:", error);
-                document.getElementById('updateTime').innerText = "GAGAL MEMUAT DATA.JSON";
-            } finally {
-                if (refreshIcon) refreshIcon.classList.remove("animate-spin");
-            }
-        }
+    // Cek Jam Buka Pasar IHSG (Senin-Jumat 09:00 - 16:00 WIB)
+    function checkMarketOpenStatus() {
+      const now = new Date();
+      const day = now.getDay(); // 0 = Minggu, 6 = Sabtu
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
 
-        function processAndRender() {
-            const timeframe = document.getElementById("tfSelect").value;
-            const minTurnover = parseFloat(document.getElementById("turnoverSelect").value);
-            const strongBuyFilter = document.getElementById("strongBuySelect").value;
+      const isWeekday = day >= 1 && day <= 5;
+      const isOpenTime = (hours > 9 || (hours === 9 && minutes >= 0)) && hours < 16;
+      const isMarketOpen = isWeekday && isOpenTime;
 
-            updateBannerInfo(timeframe);
+      const statusEl = document.getElementById('market-status');
+      if (isMarketOpen) {
+        statusEl.innerText = "OPEN MARKET";
+        statusEl.style.color = "var(--green)";
+      } else {
+        statusEl.innerText = "CLOSED";
+        statusEl.style.color = "var(--red)";
+      }
 
-            // Olah seluruh saham secara komprehensif
-            const processedStocks = rawStockData.map(stock => {
-                let turnoverNum = stock.turnover;
-                if (typeof turnoverNum === 'string') {
-                    turnoverNum = parseFloat(turnoverNum.replace(/[^0-9.-]/g, '')) || 0;
-                }
-                turnoverNum = turnoverNum || 0;
+      // Jika tepat pukul 09:00 WIB (Open Market), perbarui harga secara instan
+      if (isWeekday && hours === 9 && minutes === 0) {
+        fetchRealtimePrices();
+      }
+    }
 
-                const evaluation = evaluateIndicators(stock, minTurnover, timeframe);
-                const isBuyWorthy = turnoverNum >= minTurnover && evaluation.score >= 60 && evaluation.activeBoxes >= 6;
+    // Beralih Tab UI (Swing / Investasi)
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderTable();
+    }
 
-                return { 
-                    ...stock, 
-                    turnover: turnoverNum, 
-                    eval: evaluation, 
-                    isBuyWorthy: isBuyWorthy 
-                };
-            });
+    // Render Tabel Sesuai Data & Tab Terpilih
+    function renderTable() {
+      const headersEl = document.getElementById('table-headers');
+      const bodyEl = document.getElementById('table-body');
 
-            // Filter khusus untuk tab Layak Beli (Aturan Strategi Trading)
-            let filteredForBuy = processedStocks.filter(s => s.turnover >= minTurnover && s.isBuyWorthy);
-            if (strongBuyFilter === "strongBuy") {
-                filteredForBuy = filteredForBuy.filter(s => s.eval.isStrongBuy);
-            }
+      if (currentTab === 'swing') {
+        headersEl.innerHTML = `
+          <th>Ticker</th>
+          <th>Nama Emiter</th>
+          <th>Harga Realtime</th>
+          <th>Area Entry</th>
+          <th>Target (R1)</th>
+          <th>Cut Loss (CL1)</th>
+          <th>Sinyal</th>
+          <th>Bandarmology</th>
+        `;
 
-            // Tab SEMUA SAHAM dikecualikan dari filter strategi & turnover (Murni untuk Monitor)
-            const displayStocks = activeTab === "layakBeli" ? filteredForBuy : processedStocks;
+        bodyEl.innerHTML = stockData.map(s => `
+          <tr>
+            <td><strong>${s.ticker}</strong></td>
+            <td>${s.name}</td>
+            <td class="${s.previousPrice ? (s.price >= s.previousPrice ? 'price-up' : 'price-down') : ''}">
+              Rp ${s.price.toLocaleString('id-ID')}
+            </td>
+            <td>Rp ${s.swing.entry.toLocaleString('id-ID')}</td>
+            <td class="price-up">Rp ${s.swing.r1.toLocaleString('id-ID')}</td>
+            <td class="price-down">Rp ${s.swing.cl1.toLocaleString('id-ID')}</td>
+            <td><span class="badge ${s.signal.includes('BUY') ? 'badge-buy' : 'badge-neutral'}">${s.signal}</span></td>
+            <td><span class="badge ${s.bandarmology === 'AKUMULASI' ? 'badge-buy' : 'badge-neutral'}">${s.bandarmology}</span></td>
+          </tr>
+        `).join('');
 
-            document.getElementById("badgeLayakBeli").innerText = filteredForBuy.length;
-            document.getElementById("badgeAll").innerText = processedStocks.length;
+      } else if (currentTab === 'investasi') {
+        headersEl.innerHTML = `
+          <th>Ticker</th>
+          <th>Nama Emiter</th>
+          <th>Harga Realtime</th>
+          <th>Target 1 Tahun</th>
+          <th>Valuasi (PBV)</th>
+          <th>Sinyal</th>
+          <th>Bandarmology</th>
+        `;
 
-            renderViews(displayStocks);
-        }
+        bodyEl.innerHTML = stockData.map(s => `
+          <tr>
+            <td><strong>${s.ticker}</strong></td>
+            <td>${s.name}</td>
+            <td>Rp ${s.price.toLocaleString('id-ID')}</td>
+            <td class="price-up">Rp ${s.investasi.target_1y.toLocaleString('id-ID')}</td>
+            <td>${s.investasi.valas_pbv}x</td>
+            <td><span class="badge ${s.signal.includes('BUY') ? 'badge-buy' : 'badge-neutral'}">${s.signal}</span></td>
+            <td><span class="badge ${s.bandarmology === 'AKUMULASI' ? 'badge-buy' : 'badge-neutral'}">${s.bandarmology}</span></td>
+          </tr>
+        `).join('');
+      }
+    }
 
-        function evaluateIndicators(stock, minTurnover, tf) {
-            let score = 0;
-            const price = stock.price || 0;
+    // Init Logic
+    loadInitialJSON();
+    checkMarketOpenStatus();
 
-            if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50 && price >= stock.ema20) score += 20;
-            else if (stock.ema_status === 'BUY') score += 20;
+    // Timer Auto-Refresh 30 Menit
+    setInterval(() => {
+      fetchRealtimePrices();
+    }, REFRESH_INTERVAL_MS);
 
-            if (stock.rsi && stock.rsi >= 50 && stock.rsi <= 70) score += 20;
-            else if (stock.rsi_status === 'BUY') score += 20;
-
-            if (stock.volRatio && stock.volRatio >= 2.5) score += 20;
-            else if (parseFloat(stock.vol_ratio) >= 1.5 || stock.vol_status === 'BUY') score += 20;
-
-            if (stock.turnover && stock.turnover >= minTurnover) score += 20;
-            else score += 10;
-
-            if (stock.high52 && stock.high52 > 0) {
-                const diffHigh = ((stock.high52 - price) / stock.high52) * 100;
-                if (diffHigh <= 10) score += 20;
-            } else if (stock.macd_status === 'BUY') {
-                score += 20;
-            }
-
-            const activeBoxes = Math.round(score / 10);
-            let label = stock.signal || "NEUTRAL";
-            
-            if (score >= 90 || label.includes("STRONG BUY")) label = "🚀🚀🚀 STRONG BUY";
-            else if (score >= 60 || label.includes("BUY")) label = "BUY";
-            else if (score <= 30 || label.includes("SELL")) label = "SELL";
-
-            return {
-                score: score,
-                activeBoxes: activeBoxes,
-                label: label,
-                isStrongBuy: score >= 90 || label.includes("STRONG BUY")
-            };
-        }
-
-        function renderViews(stocks) {
-            const tbody = document.getElementById("stockTableBody");
-            const cardGrid = document.getElementById("stockCardGrid");
-            const emptyState = document.getElementById("emptyState");
-
-            tbody.innerHTML = "";
-            cardGrid.innerHTML = "";
-
-            if (!stocks || stocks.length === 0) {
-                emptyState.classList.remove("hidden");
-                return;
-            } else {
-                emptyState.classList.add("hidden");
-            }
-
-            stocks.forEach(stock => {
-                const changeVal = stock.change !== undefined ? stock.change : 0;
-                const isPos = changeVal >= 0;
-                const changeClass = isPos ? "text-emerald-400" : "text-rose-400";
-                const changeSign = isPos ? "+" : "";
-
-                const entryVal = stock.entry || stock.entry_price || stock.price || '-';
-                const r1Val = stock.r1 || stock.resistance_1 || stock.resistance || '-';
-                const clVal = stock.cl1 || stock.cut_loss || stock.support_1 || stock.support || '-';
-                const turnoverVal = stock.turnover !== undefined ? Number(stock.turnover).toFixed(1) : '0.0';
-
-                // Desktop Row
-                const tr = document.createElement("tr");
-                tr.id = `stock-row-${stock.ticker.toUpperCase()}`;
-                tr.className = "hover:bg-slate-800/40 transition-colors border-b border-slate-800/50";
-                tr.innerHTML = `
-                    <td class="py-3.5 px-4 font-bold text-white">
-                        <div class="text-sm">${stock.ticker}</div>
-                        <div class="text-[10px] text-slate-400 font-normal truncate max-w-[140px]">${stock.name || stock.category || stock.ticker}</div>
-                    </td>
-                    <td class="py-3.5 px-3 text-right font-semibold text-slate-100">${Number(stock.price || 0).toLocaleString('id-ID')}</td>
-                    <td class="py-3.5 px-3 text-right font-bold ${changeClass}">${changeSign}${Number(changeVal).toFixed(2)}%</td>
-                    <td class="py-3.5 px-3 text-right font-medium text-slate-300">Rp ${turnoverVal} M</td>
-                    <td class="py-3.5 px-4 text-center">
-                        <div class="flex flex-col items-center gap-1">
-                            ${renderBoxes(stock.eval.activeBoxes)}
-                            <span class="text-[10px] font-extrabold ${stock.eval.isStrongBuy ? 'text-emerald-400 animate-pulse' : 'text-slate-300'}">
-                                ${stock.eval.label}
-                            </span>
-                        </div>
-                    </td>
-                    <td class="py-3.5 px-3 text-center">
-                        ${renderLightningBoxes(stock)}
-                    </td>
-                    <td class="py-3.5 px-4 text-center">
-                        <div class="text-[11px] font-medium text-slate-300">
-                            <span class="text-emerald-400">EP: ${entryVal}</span> | 
-                            <span class="text-indigo-400">R1: ${r1Val}</span> | 
-                            <span class="text-rose-400">CL: ${clVal}</span>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-
-                // Mobile Card
-                const card = document.createElement("div");
-                card.id = `stock-card-${stock.ticker.toUpperCase()}`;
-                card.className = "bg-slate-950 border border-slate-800/80 rounded-xl p-3.5 flex flex-col gap-3 shadow-md";
-                card.innerHTML = `
-                    <div class="flex items-center justify-between border-b border-slate-800/60 pb-2">
-                        <div>
-                            <span class="text-base font-bold text-white tracking-wide">${stock.ticker}</span>
-                            <span class="text-[10px] text-slate-400 block font-normal truncate max-w-[180px]">${stock.name || stock.category || stock.ticker}</span>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-sm font-extrabold text-slate-100">${Number(stock.price || 0).toLocaleString('id-ID')}</div>
-                            <div class="text-xs font-bold ${changeClass}">${changeSign}${Number(changeVal).toFixed(2)}%</div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/40 text-xs">
-                        <div>
-                            <span class="text-[10px] text-slate-400 block">Turnover</span>
-                            <span class="font-semibold text-slate-200">Rp ${turnoverVal} M</span>
-                        </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-[10px] text-slate-400 block">Bandarmology</span>
-                            ${renderLightningBoxes(stock)}
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/40 p-2 rounded-lg border border-slate-800/30">
-                        ${renderBoxes(stock.eval.activeBoxes)}
-                        <span class="text-[11px] font-extrabold ${stock.eval.isStrongBuy ? 'text-emerald-400 animate-pulse' : 'text-slate-300'}">
-                            ${stock.eval.label}
-                        </span>
-                    </div>
-
-                    <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/40 font-semibold">
-                        <span class="text-emerald-400">EP: ${entryVal}</span>
-                        <span class="text-indigo-400">R1: ${r1Val}</span>
-                        <span class="text-rose-400">CL: ${clVal}</span>
-                    </div>
-                `;
-                cardGrid.appendChild(card);
-            });
-
-            lucide.createIcons();
-            handleSearch();
-        }
-
-        function renderBoxes(activeCount) {
-            let boxesHTML = '<div class="flex items-center gap-0.5 justify-center">';
-            for (let i = 1; i <= 10; i++) {
-                boxesHTML += `<div class="w-2 h-3.5 ${i <= activeCount ? 'bg-emerald-500' : 'bg-slate-800'} rounded-sm"></div>`;
-            }
-            boxesHTML += '</div>';
-            return boxesHTML;
-        }
-
-        function renderLightningBoxes(stock) {
-            const bandarStatus = stock.bandarmology || (stock.vol_status === 'BUY' ? 'AKUMULASI' : (stock.vol_status === 'SELL' ? 'DISTRIBUSI' : 'NEUTRAL'));
-            const isAkumulasi = bandarStatus === "AKUMULASI";
-            const isBlink = stock.isBuyWorthy;
-            
-            let colorClass = "text-slate-700";
-            if (isAkumulasi) {
-                colorClass = isBlink ? "text-emerald-400 lightning-blink" : "text-emerald-500";
-            } else if (bandarStatus === "DISTRIBUSI") {
-                colorClass = "text-rose-500";
-            }
-
-            return `
-                <div class="flex items-center gap-1">
-                    <i data-lucide="zap" class="w-4 h-4 ${colorClass} fill-current"></i>
-                    <span class="text-[10px] font-bold text-slate-300">${bandarStatus}</span>
-                </div>
-            `;
-        }
-
-        function switchTab(tab) {
-            activeTab = tab;
-            const btnLayak = document.getElementById("tabLayakBeli");
-            const btnAll = document.getElementById("tabAll");
-
-            if (tab === "layakBeli") {
-                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
-                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
-            } else {
-                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
-                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
-            }
-            processAndRender();
-        }
-
-        function handleFilterChange() {
-            processAndRender();
-        }
-
-        function handleSearch() {
-            const query = document.getElementById("searchInput").value.trim().toUpperCase();
-
-            document.querySelectorAll(".search-blink").forEach(el => {
-                el.classList.remove("search-blink");
-            });
-
-            if (!query) return;
-
-            const isMobile = window.innerWidth < 768;
-            const targetId = isMobile ? `stock-card-${query}` : `stock-row-${query}`;
-            const targetElement = document.getElementById(targetId);
-
-            if (targetElement) {
-                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                targetElement.classList.add("search-blink");
-            }
-        }
-
-        function updateBannerInfo(tf) {
-            const title = document.getElementById("bannerTitle");
-            const desc = document.getElementById("bannerDesc");
-
-            if (tf === "swing") {
-                title.innerText = "SWING TRADING STRATEGY (1D)";
-                desc.innerText = "Fokus pada tren menengah (Daily). Mengalkulasi indikator teknikal utama: Trend EMA, RSI Momentum, Spike Volume, Likuiditas Pasar, dan kedekatan dengan 52-Week High.";
-            } else if (tf === "scalping") {
-                title.innerText = "SCALPING FAST STRATEGY (15M)";
-                desc.innerText = "Fokus pada momentum intraday cepat. Mengutamakan lompatan Volume Ratio mendadak, break resistance terdekat, dan aliran arus kas cepat.";
-            } else if (tf === "investment") {
-                title.innerText = "LONG TERM INVESTMENT STRATEGY (1W)";
-                desc.innerText = "Fokus pada akumulasi jangka panjang (Weekly). Memfilter emiten dengan fundamental likuiditas tinggi dan tren akumulasi besar konsisten.";
-            }
-        }
-
-        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-    </script>
+    // Timer Cek Status Jam Pasar Setiap 1 Menit
+    setInterval(() => {
+      checkMarketOpenStatus();
+    }, 60000);
+  </script>
 </body>
 </html>
