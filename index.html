@@ -14,7 +14,7 @@
         }
         
         .container { 
-            max-width: 1000px; 
+            max-width: 1080px; 
             margin: auto; 
             background: white; 
             padding: 8px; 
@@ -22,7 +22,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
         }
         
-        /* Header Utama (TETAP CASE NORMAL/MIXED) */
+        /* Header Utama (Mixed Case) */
         .main-header { 
             display: flex; 
             justify-content: space-between; 
@@ -38,36 +38,82 @@
             text-transform: none !important; 
         }
 
-        /* IHSG Live Widget Badge */
+        /* Widget IHSG (Hitam Doff) */
         .ihsg-badge {
-            background: #2c3e50;
-            color: #fff;
-            padding: 4px 8px;
+            background: #1e1e1e; /* HITAM DOFF */
+            color: #f1f2f6;
+            padding: 5px 10px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: bold;
             display: flex;
             gap: 6px;
             align-items: center;
+            border: 1px solid #333;
+            box-shadow: inset 0 0 4px rgba(255,255,255,0.05);
         }
+        .ihsg-badge .ihsg-title { color: #f39c12; }
         .ihsg-badge .ihsg-val { color: #2ecc71; }
         
-        /* Header Control Panel (Sticky Header 1) */
-        .header-controls { 
+        /* Header Controls 1 (Sticky Top 0) */
+        .header-controls-1 { 
             display: flex; 
             flex-wrap: wrap; 
             gap: 6px; 
             align-items: center; 
             justify-content: space-between; 
-            margin-bottom: 6px; 
+            margin-bottom: 4px; 
             background: #eaedf1; 
             padding: 6px 10px; 
             border-radius: 4px; 
             position: sticky; 
             top: 0; 
-            z-index: 1000; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.08); 
+            z-index: 1001; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
         }
+
+        /* Header Controls 2 (Kategori & Counter - Sticky Top 32px) */
+        .header-controls-2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #2c3e50;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            position: sticky;
+            top: 32px;
+            z-index: 1000;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .category-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
+        .btn-cat {
+            background: #34495e;
+            color: #dcdde1;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .btn-cat.active, .btn-cat:hover {
+            background: #e67e22;
+            color: white;
+        }
+
+        .total-counter {
+            font-size: 10px;
+            font-weight: bold;
+            background: #16a085;
+            padding: 2px 8px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
         .control-group { display: flex; align-items: center; gap: 4px; }
         .control-group label { font-size: 10px; font-weight: bold; color: #333; }
         .control-group input, .control-group button { 
@@ -78,18 +124,17 @@
             text-transform: uppercase;
         }
         .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 2px; }
-        .control-group button:hover { background: #34495e; }
 
         /* Table Styling */
         table { width: 100%; border-collapse: collapse; margin-top: 2px; }
         th, td { padding: 5px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; font-size: 11px; }
         
-        /* Header Tabel (Sticky Header 2) */
+        /* Sticky Header 3 (Table Head Sticky Top 62px) */
         thead th { 
             position: sticky; 
-            top: 33px; 
+            top: 62px; 
             z-index: 999; 
-            background-color: #2c3e50; 
+            background-color: #1e272e; 
             color: white; 
             font-size: 11px;
             padding: 6px 8px;
@@ -105,17 +150,11 @@
         .badge-distribusi { background: #f8d7da; color: #721c24; }
         .badge-neutral { background: #e2e3e5; color: #383d41; }
 
-        /* Status Warna Baris */
         .status-strong-sell { background-color: #f8d7da !important; animation: blinkStrongSell 0.8s infinite; }
         .status-sell { background-color: #fdf2f2 !important; }
+        .status-oversold { background-color: #e8f4f8 !important; }
 
-        /* Layout Kolom Power / Swing */
-        .swing-container { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            width: 100%; 
-        }
+        .swing-container { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .swing-left { display: flex; align-items: center; gap: 6px; }
         .boxes-group { display: flex; gap: 2px; }
         .swing-box-segment { width: 10px; height: 14px; border-radius: 2px; display: inline-block; }
@@ -124,55 +163,41 @@
         .box-empty { background-color: #dcdde1; }
         
         .percent-middle { font-size: 10px; font-weight: bold; color: #444; }
-        .buy-sell-right { text-align: right; min-width: 75px; }
+        .buy-sell-right { text-align: right; min-width: 85px; }
 
-        /* Animasi Blink Icon & Strong Sell */
-        @keyframes blinkEffect {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-        @keyframes blinkStrongSell {
-            0% { background-color: #f8d7da; }
-            50% { background-color: #f5c6cb; }
-            100% { background-color: #f8d7da; }
-        }
+        .sizing-info { font-size: 9px; color: #555; }
+
+        @keyframes blinkEffect { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        @keyframes blinkStrongSell { 0% { background-color: #f8d7da; } 50% { background-color: #f5c6cb; } 100% { background-color: #f8d7da; } }
         .blink-icon { animation: blinkEffect 1s infinite; display: inline-block; }
 
-        /* Efek Blink Baris saat Pencarian (Tepat 3 kali) */
-        @keyframes rowBlink3Times {
-            0% { background-color: #f1c40f; }
-            50% { background-color: transparent; }
-            100% { background-color: #f1c40f; }
-        }
-        .highlight-blink { 
-            animation: rowBlink3Times 0.4s ease-in-out 3; 
-        }
+        @keyframes rowBlink3Times { 0% { background-color: #f1c40f; } 50% { background-color: transparent; } 100% { background-color: #f1c40f; } }
+        .highlight-blink { animation: rowBlink3Times 0.4s ease-in-out 3; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Header Utama (Nama Aplikasi + Widget IHSG) -->
     <div class="main-header">
         <h1>IHSG Stock Screener Pro</h1>
+        <!-- Widget IHSG Hitam Doff -->
         <div class="ihsg-badge" id="ihsgWidget">
-            <span>IHSG:</span>
+            <span class="ihsg-title">IHSG:</span>
             <span class="ihsg-val" id="ihsgPrice">LOADING...</span>
             <span id="ihsgChange"></span>
         </div>
     </div>
     
-    <!-- Header Controls (Sticky Header 1) -->
-    <div class="header-controls">
+    <!-- Header Controls 1 -->
+    <div class="header-controls-1">
         <div class="control-group">
-            <label for="manualNominal">DANA:</label>
-            <input type="text" id="manualNominal" value="5.000.000.000" style="width: 80px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
+            <label for="manualNominal">DANA (IDR):</label>
+            <input type="text" id="manualNominal" value="100.000.000" style="width: 85px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
         </div>
 
         <div class="control-group">
             <label for="searchTicker">CARI:</label>
-            <input type="text" id="searchTicker" placeholder="TICKER..." style="width: 70px;" onkeyup="searchStock()">
+            <input type="text" id="searchTicker" placeholder="TICKER..." style="width: 70px;" onkeyup="filterAndRender()">
         </div>
 
         <div class="control-group" style="margin-left: auto;">
@@ -181,15 +206,27 @@
         </div>
     </div>
 
-    <!-- Tabel Data (Sticky Header 2 berada di thead) -->
+    <!-- Header Controls 2 (Kategori & Total Multi Counter) -->
+    <div class="header-controls-2">
+        <div class="category-buttons">
+            <button class="btn-cat active" onclick="setCategory('ALL', this)">ALL IDX</button>
+            <button class="btn-cat" onclick="setCategory('BLUECHIP', this)">BLUECHIP</button>
+            <button class="btn-cat" onclick="setCategory('TOP GAINERS', this)">TOP GAINERS</button>
+            <button class="btn-cat" onclick="setCategory('HIGH VOLATILITY', this)">HIGH VOLATILITY</button>
+        </div>
+        <div class="total-counter" id="totalCounter">TOTAL: 0 EMITEN</div>
+    </div>
+
     <table>
         <thead>
             <tr>
-                <th style="width: 15%;">TICKER</th>
-                <th style="width: 15%;">HARGA</th>
-                <th style="width: 15%;">CHANGE</th>
-                <th style="width: 15%;">BANDAR</th>
-                <th style="width: 40%;">POWER / SIGNAL</th>
+                <th style="width: 12%;">TICKER</th>
+                <th style="width: 12%;">HARGA</th>
+                <th style="width: 10%;">CHANGE</th>
+                <th style="width: 12%;">BANDAR</th>
+                <th style="width: 18%;">LEVEL (SL / TP)</th>
+                <th style="width: 12%;">RISK SIZING</th>
+                <th style="width: 24%;">POWER / SIGNAL</th>
             </tr>
         </thead>
         <tbody id="stockTable">
@@ -199,6 +236,9 @@
 </div>
 
 <script>
+let globalStocksData = [];
+let currentCategory = 'ALL';
+
 function formatNominal(val) {
     const num = Number(val);
     if (isNaN(num) || num === 0) return "0";
@@ -210,59 +250,75 @@ function formatNumber(val, decimals = 1) {
     return isNaN(num) ? "0" : num.toFixed(decimals);
 }
 
-function cleanInputNominal(el) {
-    el.value = el.value.replace(/\./g, '');
-}
+function cleanInputNominal(el) { el.value = el.value.replace(/\./g, ''); }
 
 function formatInputNominal(el) {
     const num = Number(el.value);
     if (!isNaN(num) && num > 0) {
         el.value = new Intl.NumberFormat('id-ID').format(num);
     } else {
-        el.value = "5.000.000.000";
+        el.value = "100.000.000";
     }
-    loadStockData();
+    filterAndRender();
 }
 
-function calculateSwingPower(stock, manualCapital) {
+function setCategory(cat, btn) {
+    currentCategory = cat;
+    document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterAndRender();
+}
+
+function calculateSwingPower(stock) {
     const price = Number(stock.price) || 0;
     const rsi = Number(stock.rsi) || 50;
     const volRatio = Number(stock.volRatio) || 1;
     const ema20 = Number(stock.ema20) || price;
     const ema50 = Number(stock.ema50) || price;
 
-    let scoreFactor = (price > ema20 ? 1 : 0) + (ema20 > ema50 ? 1 : 0);
-    let rsiScore = (rsi >= 45 && rsi <= 65) ? 1 : (rsi > 65 ? 0.8 : 0.3);
-    let volScore = volRatio > 1.1 ? 1 : 0.5;
-    let capitalEffect = manualCapital >= 1000000000 ? 1 : 0.8;
+    let trendScore = (price > ema20 ? 1 : 0) + (ema20 > ema50 ? 1 : 0);
+    let rsiScore = (rsi >= 45 && rsi <= 65) ? 1 : (rsi > 65 ? 0.7 : 0.2);
+    let volScore = volRatio >= 1.2 ? 1 : (volRatio >= 1.0 ? 0.6 : 0.2);
 
-    let rawScore = ((scoreFactor + rsiScore + volScore + capitalEffect) / 4.8) * 100;
+    let rawScore = ((trendScore + rsiScore + volScore) / 4.0) * 100;
     let totalPercent = Math.min(Math.max(rawScore, 0), 100);
 
     let activeBoxes = Math.round(totalPercent / 20);
     activeBoxes = Math.min(Math.max(activeBoxes, 0), 5);
 
-    let isBearishStrong = totalPercent <= 30;
+    let isOversold = rsi < 30;
+    let isBearish = totalPercent <= 35 && !isOversold;
     let isStrongBuy = totalPercent >= 80;
     let isBullish = totalPercent >= 60;
     
     return {
         percent: totalPercent.toFixed(1),
-        activeBoxes: isBearishStrong ? 5 : activeBoxes,
-        isBearishStrong: isBearishStrong,
+        activeBoxes: activeBoxes,
+        isOversold: isOversold,
+        isBearish: isBearish,
         isStrongBuy: isStrongBuy,
         isBullish: isBullish
     };
 }
 
-let globalStocksData = [];
+function calculatePositionSize(capital, entryPrice, stopLossPrice) {
+    if (entryPrice <= stopLossPrice || entryPrice <= 0) return { maxLot: 0 };
+    const maxRiskPerTrade = capital * 0.02;
+    const riskPerShare = entryPrice - stopLossPrice;
+    let sharesToBuy = Math.floor(maxRiskPerTrade / riskPerShare);
+    let lotsToBuy = Math.floor(sharesToBuy / 100);
+    
+    if ((lotsToBuy * 100 * entryPrice) > capital) {
+        lotsToBuy = Math.floor(capital / (entryPrice * 100));
+    }
+    return { maxLot: lotsToBuy };
+}
 
 async function loadStockData() {
     try {
         const response = await fetch('data.json?t=' + new Date().getTime());
         const data = await response.json();
         
-        // Render Data IHSG Jika Ada
         if (data.ihsg) {
             document.getElementById('ihsgPrice').innerText = formatNominal(data.ihsg.price);
             const changeElem = document.getElementById('ihsgChange');
@@ -273,10 +329,23 @@ async function loadStockData() {
         }
 
         globalStocksData = data.stocks || [];
-        renderTable(globalStocksData);
+        filterAndRender();
     } catch (err) {
         console.error('GAGAL MEMUAT DATA.JSON:', err);
     }
+}
+
+function filterAndRender() {
+    const keyword = document.getElementById('searchTicker').value.trim().toUpperCase();
+    
+    let filtered = globalStocksData.filter(stock => {
+        const matchCat = currentCategory === 'ALL' || (stock.categories && stock.categories.includes(currentCategory));
+        const matchSearch = !keyword || (stock.ticker && stock.ticker.toUpperCase().includes(keyword));
+        return matchCat && matchSearch;
+    });
+
+    document.getElementById('totalCounter').innerText = `TOTAL: ${filtered.length} EMITEN`;
+    renderTable(filtered);
 }
 
 function renderTable(stocks) {
@@ -284,7 +353,7 @@ function renderTable(stocks) {
     tbody.innerHTML = '';
 
     const rawCapitalInput = document.getElementById('manualNominal').value.replace(/\./g, '');
-    const currentCapital = Number(rawCapitalInput) || 5000000000;
+    const currentCapital = Number(rawCapitalInput) || 100000000;
 
     stocks.forEach((stock, index) => {
         const tr = document.createElement('tr');
@@ -297,19 +366,22 @@ function renderTable(stocks) {
         const changeSign = change >= 0 ? '+' : '';
         const bandarClass = 'badge-' + (stock.bandarmology || 'neutral').toLowerCase();
 
-        const swing = calculateSwingPower(stock, currentCapital);
+        const swing = calculateSwingPower(stock);
+        const sizing = calculatePositionSize(currentCapital, price, stock.sl);
 
-        // Pengaturan Baris: Hanya Merah/Strong Sell yang diwarnai latar belakang barisnya
         let rowStatusClass = '';
         let statusIcon = '';
         let recommendationText = '';
 
-        if (swing.isBearishStrong) {
-            rowStatusClass = swing.percent < 15 ? 'status-strong-sell' : 'status-sell';
-            statusIcon = `<span class="blink-icon" title="STRONG SELL">⏳</span>`;
-            recommendationText = `<span class="negative">STRONG SELL</span>`;
+        if (swing.isOversold) {
+            rowStatusClass = 'status-oversold';
+            statusIcon = `<span class="blink-icon" title="OVERSOLD BOUNCE">🎯</span>`;
+            recommendationText = `<span style="color:#0275d8;">OVERSOLD</span>`;
+        } else if (swing.isBearish) {
+            rowStatusClass = swing.percent < 20 ? 'status-strong-sell' : 'status-sell';
+            statusIcon = `<span class="blink-icon" title="SELL / BEARISH">⏳</span>`;
+            recommendationText = `<span class="negative">BEARISH</span>`;
         } else if (swing.isBullish) {
-            // Latar belakang baris bullish dibuat netral/transparan
             statusIcon = `<span class="${swing.isStrongBuy ? 'blink-icon' : ''}" title="${swing.isStrongBuy ? 'STRONG BUY' : 'BUY'}">🚀</span>`;
             recommendationText = `<span class="positive">${swing.isStrongBuy ? 'STRONG BUY' : 'BUY'}</span>`;
         } else {
@@ -317,18 +389,15 @@ function renderTable(stocks) {
             recommendationText = `<span class="badge-neutral" style="padding:2px 4px;">NEUTRAL</span>`;
         }
 
-        if (rowStatusClass) {
-            tr.classList.add(rowStatusClass);
-        }
+        if (rowStatusClass) tr.classList.add(rowStatusClass);
 
-        // Render Kotak: Ikon di Kiri, Persentase di Tengah, Buy/Sell di Pojok Kanan
         let boxesHtml = `<div class="boxes-group">`;
         for (let i = 1; i <= 5; i++) {
             let boxClass = 'box-empty';
             if (i <= swing.activeBoxes) {
-                boxClass = swing.isBearishStrong ? 'box-red' : (swing.isBullish ? 'box-green' : 'box-red');
+                boxClass = swing.isBearish ? 'box-red' : 'box-green';
             }
-            boxesHtml += `<span class="swing-box-segment ${boxClass}" title="KOTAK ${i} (20%)"></span>`;
+            boxesHtml += `<span class="swing-box-segment ${boxClass}"></span>`;
         }
         boxesHtml += `</div>`;
 
@@ -348,28 +417,18 @@ function renderTable(stocks) {
             <td>${formatNominal(price)}</td>
             <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
             <td><span class="badge ${bandarClass}">${(stock.bandarmology || 'NEUTRAL').toUpperCase()}</span></td>
+            <td>
+                <span class="negative">SL: ${formatNominal(stock.sl)}</span><br>
+                <span class="positive">TP: ${formatNominal(stock.tp)}</span>
+            </td>
+            <td class="sizing-info">
+                <strong>${sizing.maxLot} LOT</strong><br>
+                <span style="color:#777;">(RISK 2%)</span>
+            </td>
             <td>${powerColumnContent}</td>
         `;
         tbody.appendChild(tr);
     });
-}
-
-function searchStock() {
-    const keyword = document.getElementById('searchTicker').value.trim().toUpperCase();
-    if (!keyword) return;
-
-    const matchedStock = globalStocksData.find(s => s.ticker && s.ticker.toUpperCase() === keyword);
-    if (matchedStock) {
-        const rowId = 'row-' + keyword;
-        const targetRow = document.getElementById(rowId);
-        if (targetRow) {
-            targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Triggers CSS restart animation untuk blink tepat 3x
-            targetRow.classList.remove('highlight-blink');
-            void targetRow.offsetWidth; 
-            targetRow.classList.add('highlight-blink');
-        }
-    }
 }
 
 loadStockData();
