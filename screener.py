@@ -1,84 +1,127 @@
 import json
-import random
-from datetime import datetime
+import datetime
+import yfinance as yf
+import pandas as pd
 
-# Daftar acuan harga wajar (Baseline Price) untuk mencegah harga melambung
-BASE_STOCKS = [
-    {"ticker": "BBCA", "name": "Bank Central Asia Tbk", "base_price": 10250},
-    {"ticker": "BBRI", "name": "Bank Rakyat Indonesia Tbk", "base_price": 5150},
-    {"ticker": "BMRI", "name": "Bank Mandiri (Persero) Tbk", "base_price": 7150},
-    {"ticker": "BBNI", "name": "Bank Negara Indonesia Tbk", "base_price": 5450},
-    {"ticker": "TLKM", "name": "Telkom Indonesia Tbk", "base_price": 3820},
-    {"ticker": "ASII", "name": "Astra International Tbk", "base_price": 5200},
-    {"ticker": "AMMN", "name": "Amman Mineral Internasional Tbk", "base_price": 11800},
-    {"ticker": "ADRO", "name": "Adaro Energy Indonesia Tbk", "base_price": 3650},
-    {"ticker": "PGAS", "name": "Perusahaan Gas Negara Tbk", "base_price": 1540},
-    {"ticker": "BRIS", "name": "Bank Syariah Indonesia Tbk", "base_price": 2950}
+# 1. Daftar Ticker Utama + Otomatis Format Suffix .JK
+TICKERS_BASE = [
+    "BBCA", "BBRI", "BMRI", "BBNI", "TLKM", "ASII", "AMMN", "BREN", "TPIA", "ADRO", 
+    "PGAS", "GOTO", "BRIS", "UNVR", "ICBP", "INDF", "CPIN", "JPFA", "KLBF", "MIKA", 
+    "MDKA", "MBMA", "ANTM", "INCO", "PTBA", "ITMG", "HRUM", "MEDC", "AKRA", "CUAN", 
+    "BUMI", "BRMS", "ENRG", "DEWA", "DOOID", "BSDE", "CTRA", "PRAW", "SMRA", "PTPP", 
+    "ADHI", "WIKA", "JSMR", "PGEO", "ISAT", "EXCL", "TOWR", "TBIG", "INKP", "TKIM", 
+    "SMGR", "INTP", "GGRM", "HMSP", "PANI", "FILM", "BFIN", "PNBN", "BNGA", "BBTN", 
+    "ARTO", "MEDP", "ACES", "MAPI", "MAPA", "ERAA", "KPGP", "SSIA", "SIDO", "MYOR", 
+    "CMRY", "AMRT", "DOOH", "STRT", "SOLA", "WIFI", "HUMI", "LEAD", "PTRO", "CGAS", 
+    "ASHA", "AUTO", "GJTL", "SMSM", "SILO", "SAME", "IRRA", "KAEF", "INAF", "ELSA", 
+    "MBSS", "SMDR", "TMAS", "BIRD", "ASSA", "GTVN", "WOOD", "APLN", "ASRI", "MDLN", 
+    "BEST", "DMAS", "KIJA", "LPKR", "LPCK"
 ]
 
-def generate_stock_data():
-    unique_stocks = {}
-    
-    for item in BASE_STOCKS:
-        ticker = item["ticker"]
-        # Skip jika ticker duplikat
-        if ticker in unique_stocks:
-            continue
-            
-        base = item["base_price"]
-        # Variasi harga wajar maksimal ±3% dari harga acuan
-        price = int(base * random.uniform(0.97, 1.03))
-        change = round(random.uniform(-3.5, 4.5), 2)
-        turnover = random.randint(5_000_000_000, 350_000_000_000)
-        
-        ema20 = int(price * random.uniform(0.97, 1.01))
-        ema50 = int(price * random.uniform(0.93, 0.98))
-        rsi = random.randint(40, 75)
-        vol_ratio = round(random.uniform(1.0, 3.5), 1)
-        high52 = int(price * random.uniform(1.01, 1.10))
-        
-        # Penentuan Bandarmology & Signal
-        if rsi >= 60 and vol_ratio >= 2.5:
-            bandarmology = "AKUMULASI"
-            signal = "STRONG BUY"
-        elif rsi >= 50:
-            bandarmology = "NEUTRAL"
-            signal = "BUY"
-        else:
-            bandarmology = "DISTRIBUSI"
-            signal = "SELL"
+def fetch_top_gainers():
+    """Mengambil saham top gainers dari yfinance"""
+    try:
+        gainers = yf.TradingData().get_gainers()
+        # Filter ticker yang dari bursa Indonesia (.JK)
+        jk_gainers = [t.replace('.JK', '') for t in gainers.index if t.endswith('.JK')]
+        return jk_gainers
+    except Exception as e:
+        print(f"Warning: Gagal mengambil top gainers ({e}), menggunakan daftar default.")
+        return []
 
-        entry = int(price * 0.99)
-        r1 = int(price * 1.04)
-        cl1 = int(price * 0.95)
+def calculate_rsi(series, period=14):
+    """Kalkulasi RSI 14-period"""
+    delta = series.diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    rs = gain / loss
+    return 100 - (100 / (1 + rs))
 
-        unique_stocks[ticker] = {
-            "ticker": ticker,
-            "name": item["name"],
-            "price": price,
-            "change": change,
-            "turnover": turnover,
+def process_stock(ticker_symbol):
+    formatted_ticker = ticker_symbol if ticker_symbol.endswith('.JK') else f"{ticker_symbol}.JK"
+    clean_ticker = ticker_symbol.replace('.JK', '')
+
+    try:
+        stock = yf.Ticker(formatted_ticker)
+        df = stock.history(period="1y")
+
+        if df.empty or len(df) < 50:
+            return None
+
+        # Data Harga & Indikator Teknikal
+        close_series = df['Close']
+        current_price = int(close_series.iloc[-1])
+        prev_price = close_series.iloc[-2]
+        change_pct = round(((current_price - prev_price) / prev_price) * 100, 2)
+
+        # 1. Vol Ratio
+        vol_today = df['Volume'].iloc[-1]
+        vol_avg_20 = df['Volume'].tail(20).mean()
+        vol_ratio = round(vol_today / vol_avg_20, 2) if vol_avg_20 > 0 else 0.0
+
+        # 2. RSI 14
+        rsi_series = calculate_rsi(close_series)
+        current_rsi = round(rsi_series.iloc[-1], 1) if not pd.isna(rsi_series.iloc[-1]) else 50.0
+
+        # 3. EMA 20 & 50
+        ema20 = round(close_series.ewm(span=20, adjust=False).mean().iloc[-1], 1)
+        ema50 = round(close_series.ewm(span=50, adjust=False).mean().iloc[-1], 1)
+
+        # 4. 52-Week High
+        high_52 = int(df['High'].max())
+
+        # Support / Resistance & Stop Loss Sederhana
+        entry_price = current_price
+        r1 = int(current_price * 1.05)
+        cl1 = int(current_price * 0.95)
+
+        # Nama Perusahaan (fallback ke ticker jika kosong)
+        info = stock.info
+        name = info.get('shortName') or info.get('longName') or clean_ticker
+
+        return {
+            "ticker": clean_ticker,
+            "name": name,
+            "price": current_price,
+            "change": change_pct,
+            "rsi": current_rsi,
             "ema20": ema20,
             "ema50": ema50,
-            "rsi": rsi,
             "volRatio": vol_ratio,
-            "high52": high52,
-            "bandarmology": bandarmology,
-            "entry": entry,
+            "high52": high_52,
+            "bandarmology": "NEUTRAL",  # Dipantau manual
+            "entry": entry_price,
             "r1": r1,
-            "cl1": cl1,
-            "signal": signal
+            "cl1": cl1
         }
+    except Exception as e:
+        print(f"Gagal memproses {ticker_symbol}: {e}")
+        return None
 
-    data = {
-        "updated_at": datetime.utcnow().isoformat() + "Z",
-        "stocks": list(unique_stocks.values())
+def main():
+    # Gabungkan ticker bawaan + top gainers (tanpa duplikasi)
+    top_gainers = fetch_top_gainers()
+    all_tickers = list(set(TICKERS_BASE + top_gainers))
+    
+    print(f"Total emiten yang diproses: {len(all_tickers)}")
+    
+    stocks_data = []
+    for ticker in all_tickers:
+        result = process_stock(ticker)
+        if result:
+            stocks_data.append(result)
+
+    # Susun payload JSON akhir
+    output = {
+        "updatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "stocks": stocks_data
     }
 
-    with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    # Simpan ke data.json
+    with open('data.json', 'w') as f:
+        json.dump(output, f, indent=2)
 
-    print(f"Data {len(data['stocks'])} emiten berhasil diperbarui tanpa duplikat.")
+    print("Berhasil memperbarui data.json!")
 
 if __name__ == "__main__":
-    generate_stock_data()
+    main()
