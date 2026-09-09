@@ -3,483 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Stock Screener - Pure Technical Analytics</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>IHSG Stock Screener</title>
     <style>
-        @keyframes pulse-fast {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.95); }
-        }
-        .lightning-blink { animation: pulse-fast 0.8s infinite ease-in-out; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        
-        @keyframes blink-three-times {
-            0%, 100% { background-color: transparent; }
-            16%, 50%, 83% { background-color: rgba(99, 102, 241, 0.35); }
-            33%, 66% { background-color: transparent; }
-        }
-        .search-blink { animation: blink-three-times 2.4s ease-in-out forwards; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #2c3e50; color: white; }
+        tr:hover { background-color: #f1f1f1; }
+        .positive { color: #27ae60; font-weight: bold; }
+        .negative { color: #e74c3c; font-weight: bold; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
+        .badge-akumulasi { background: #d4edda; color: #155724; }
+        .badge-distribusi { background: #f8d7da; color: #721c24; }
+        .badge-neutral { background: #e2e3e5; color: #383d41; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+<body>
 
-    <!-- HEADER / NAVBAR -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 p-2 rounded-lg text-white">
-                    <i data-lucide="trending-up" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight text-white">PRO STOCK SCREENER</h1>
-                    <p class="text-xs text-slate-400">Pure Technical Strategy & Manual Monitoring</p>
-                </div>
-            </div>
+<div class="container">
+    <h1>Screener Saham IHSG</h1>
+    <p id="updatedTime">Memuat data...</p>
 
-            <!-- CONTROLS & FILTERS -->
-            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <i data-lucide="search" class="w-4 h-4 text-indigo-400"></i>
-                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari Emiten..." class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none rounded px-2 py-1 border border-slate-700 w-28 uppercase placeholder:normal-case placeholder:text-slate-500">
-                </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Nama Perusahaan</th>
+                <th>Harga</th>
+                <th>Change (%)</th>
+                <th>Vol Ratio</th>
+                <th>RSI (14)</th>
+                <th>EMA20</th>
+                <th>EMA50</th>
+                <th>Bandarmology</th>
+            </tr>
+        </thead>
+        <tbody id="stockTable">
+            <!-- Data rendered via JS -->
+        </tbody>
+    </table>
+</div>
 
-                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <span class="text-sm">🎯</span>
-                    <label for="signalSelect" class="text-xs font-medium text-slate-300">Sinyal Teknikal:</label>
-                    <select id="signalSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-400 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
-                        <option value="all">Semua Sinyal</option>
-                        <option value="strongBullish">🚀 Strong Bullish</option>
-                        <option value="bullish">📈 Bullish</option>
-                    </select>
-                </div>
+<script>
+function formatRupiah(val) {
+    const num = Number(val);
+    if (isNaN(num) || num === 0) return "Rp 0";
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+}
 
-                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <i data-lucide="clock" class="w-4 h-4 text-indigo-400"></i>
-                    <label for="tfSelect" class="text-xs font-medium text-slate-300">Strategy / TF:</label>
-                    <select id="tfSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
-                        <option value="swing" selected>SWING TRADING (1D)</option>
-                        <option value="investment">INVESTMENT (1W)</option>
-                    </select>
-                </div>
+function formatNumber(val, decimals = 1) {
+    const num = Number(val);
+    return isNaN(num) ? "0" : num.toFixed(decimals);
+}
 
-                <!-- Turnover Standalone Filter -->
-                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
-                    <label for="turnoverSelect" class="text-xs font-medium text-slate-300">Min Turnover:</label>
-                    <select id="turnoverSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
-                        <option value="0">Semua Turnover</option>
-                        <option value="1000000000">≥ 1 Milyar</option>
-                        <option value="5000000000" selected>≥ 5 Milyar</option>
-                        <option value="10000000000">≥ 10 Milyar</option>
-                    </select>
-                </div>
+async function loadStockData() {
+    try {
+        const response = await fetch('data.json?t=' + new Date().getTime());
+        const data = await response.json();
+        
+        document.getElementById('updatedTime').innerText = 'Terakhir Diperbarui: ' + new Date(data.updatedAt).toLocaleString('id-ID');
+        
+        const tbody = document.getElementById('stockTable');
+        tbody.innerHTML = '';
 
-                <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-md w-full sm:w-auto">
-                    <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
-                    <span>Reload</span>
-                </button>
-
-                <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-indigo-600/20 w-full sm:w-auto">
-                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
-                    <span>Refresh</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full flex flex-col gap-6">
-        <div id="strategyBanner" class="p-4 rounded-xl border bg-slate-900/60 backdrop-blur flex items-start gap-3 border-indigo-500/30">
-            <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 mt-0.5 shrink-0">
-                <i data-lucide="info" class="w-5 h-5"></i>
-            </div>
-            <div class="flex-1">
-                <h2 id="bannerTitle" class="font-semibold text-sm text-indigo-300">SWING TRADING STRATEGY (PURE TECHNICAL)</h2>
-                <p id="bannerDesc" class="text-xs text-slate-400 mt-0.5">
-                    Sinyal dihitung murni dari 4 indikator teknikal: Trend EMA (Price ≥ EMA20 > EMA50), RSI Momentum (50-80), Spike Volume (≥2.5x), dan Kedekatan 52-Week High (≤10%). Turnover & Bandarmology dipisah sebagai acuan pemantauan manual.
-                </p>
-            </div>
-        </div>
-
-        <div class="border-b border-slate-800 flex space-x-4">
-            <button id="tabLayakBeli" onclick="switchTab('layakBeli')" class="pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2">
-                <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i>
-                <span>🔥 SINYAL BULLISH</span>
-                <span id="badgeLayakBeli" class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded-full">0</span>
-            </button>
-            <button id="tabAll" onclick="switchTab('all')" class="pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
-                <i data-lucide="list" class="w-4 h-4"></i>
-                <span>SEMUA SAHAM</span>
-                <span id="badgeAll" class="bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded-full">0</span>
-            </button>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-            <!-- Mobile View Grid -->
-            <div id="stockCardGrid" class="block md:hidden p-3 space-y-3"></div>
-
-            <!-- Desktop View Table -->
-            <div class="hidden md:block overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse">
-                    <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-semibold">
-                        <tr>
-                            <th class="py-3.5 px-4">Emiten</th>
-                            <th class="py-3.5 px-3 text-right">Harga</th>
-                            <th class="py-3.5 px-3 text-right">Change (%)</th>
-                            <th class="py-3.5 px-4 text-center">Indikator & Sinyal Teknikal</th>
-                            <th class="py-3.5 px-3 text-right">Turnover (Pantau)</th>
-                            <th class="py-3.5 px-3 text-center">Bandarmology (Pantau)</th>
-                            <th class="py-3.5 px-4 text-center">Trading Plan (Entry / R1 / CL)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="stockTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-300"></tbody>
-                </table>
-            </div>
+        data.stocks.forEach(stock => {
+            const tr = document.createElement('tr');
             
-            <div id="emptyState" class="hidden py-12 text-center">
-                <i data-lucide="filter-x" class="w-12 h-12 text-slate-600 mx-auto mb-3"></i>
-                <p class="text-sm font-semibold text-slate-400">Tidak ada saham yang memenuhi kriteria filter saat ini.</p>
-            </div>
-        </div>
-    </main>
-
-    <footer class="border-t border-slate-800 bg-slate-950 py-4 mt-auto text-center text-xs text-slate-500">
-        <p>© 2026 Pro Stock Screener. Pure technical algorithmic system.</p>
-    </footer>
-
-    <script>
-        let rawStockData = [];
-        let activeTab = "layakBeli";
-
-        document.addEventListener("DOMContentLoaded", () => {
-            loadData();
-        });
-
-        function formatTurnover(val) {
-            const num = parseFloat(val) || 0;
-            if (num >= 1e12) return (num / 1e12).toFixed(2) + " T";
-            if (num >= 1e9) return (num / 1e9).toFixed(2) + " B";
-            if (num >= 1e6) return (num / 1e6).toFixed(2) + " M";
-            return num.toLocaleString('id-ID');
-        }
-
-        async function loadData() {
-            const refreshIcon = document.getElementById("refreshIcon");
-            if (refreshIcon) refreshIcon.classList.add("animate-spin");
-
-            try {
-                const response = await fetch(`./data.json?t=${new Date().getTime()}`);
-                if (!response.ok) throw new Error("Gagal mengambil data.json");
-                
-                const data = await response.json();
-                const fetchedList = data.stocks || (Array.isArray(data) ? data : []);
-                
-                const uniqueMap = new Map();
-                fetchedList.forEach(item => {
-                    if (item.ticker) {
-                        const cleanTicker = String(item.ticker).trim().toUpperCase();
-                        if (!uniqueMap.has(cleanTicker)) {
-                            uniqueMap.set(cleanTicker, { ...item, ticker: cleanTicker });
-                        }
-                    }
-                });
-                
-                rawStockData = Array.from(uniqueMap.values());
-                processAndRender();
-            } catch (error) {
-                console.error("Error loading stock data:", error);
-            } finally {
-                if (refreshIcon) refreshIcon.classList.remove("animate-spin");
-            }
-        }
-
-        function processAndRender() {
-            const timeframe = document.getElementById("tfSelect").value;
-            const minTurnover = parseFloat(document.getElementById("turnoverSelect").value) || 0;
-            const signalFilter = document.getElementById("signalSelect").value;
-
-            updateBannerInfo(timeframe);
-
-            const processedStocks = rawStockData.map(stock => {
-                const stockTurnover = parseFloat(stock.turnover) || 0;
-                // Evaluasi murni teknikal tanpa terikat turnover/bandarmology
-                const evaluation = evaluateTechnicalIndicators(stock);
-                
-                return { 
-                    ...stock, 
-                    turnoverNum: stockTurnover, 
-                    eval: evaluation 
-                };
-            });
-
-            let displayStocks = processedStocks.filter(s => s.turnoverNum >= minTurnover);
-
-            if (activeTab === "layakBeli") {
-                displayStocks = displayStocks.filter(s => s.eval.isBullish || s.eval.isStrongBullish);
-            }
-
-            if (signalFilter === "strongBullish") {
-                displayStocks = displayStocks.filter(s => s.eval.isStrongBullish);
-            } else if (signalFilter === "bullish") {
-                displayStocks = displayStocks.filter(s => s.eval.isBullish);
-            }
-
-            const totalLayakBeli = processedStocks.filter(s => s.turnoverNum >= minTurnover && (s.eval.isBullish || s.eval.isStrongBullish)).length;
-            const totalAll = processedStocks.filter(s => s.turnoverNum >= minTurnover).length;
-
-            document.getElementById("badgeLayakBeli").innerText = totalLayakBeli;
-            document.getElementById("badgeAll").innerText = totalAll;
-
-            renderViews(displayStocks);
-        }
-
-        // PERBAIKAN LOGIKA: Sinyal Teknikal Murni
-        function evaluateTechnicalIndicators(stock) {
-            let score = 0;
-            const price = parseFloat(stock.price) || 0;
-            const rsi = parseFloat(stock.rsi) || 0;
-            const volRatio = parseFloat(stock.volRatio) || 0;
-            const high52 = parseFloat(stock.high52) || 0;
-
-            // 1. Trend EMA (Maks 25)
-            if (stock.ema20 && stock.ema50 && price >= stock.ema20 && stock.ema20 > stock.ema50) {
-                score += 25;
-            } else if (stock.ema20 && price >= stock.ema20) {
-                score += 15;
-            }
-
-            // 2. RSI Momentum (Maks 25)
-            if (rsi >= 50 && rsi <= 70) {
-                score += 25;
-            } else if (rsi > 70 && rsi <= 80) {
-                score += 15;
-            }
-
-            // 3. Spike Volume (Maks 25)
-            if (volRatio >= 2.5) {
-                score += 25;
-            } else if (volRatio >= 1.5) {
-                score += 15;
-            }
-
-            // 4. Kedekatan dengan 52-Week High (Maks 25)
-            if (high52 > 0) {
-                const diffPercent = ((high52 - price) / high52) * 100;
-                if (diffPercent >= 0 && diffPercent <= 10) {
-                    score += 25;
-                } else if (diffPercent > 10 && diffPercent <= 20) {
-                    score += 15;
-                }
-            }
-
-            const activeBoxes = Math.min(10, Math.max(1, Math.round(score / 10)));
+            const price = Number(stock.price) || 0;
+            const change = Number(stock.change) || 0;
+            const changeClass = change >= 0 ? 'positive' : 'negative';
+            const changeSign = change >= 0 ? '+' : '';
             
-            let label = "NEUTRAL";
-            let isStrongBullish = false;
-            let isBullish = false;
+            const bandarClass = 'badge-' + (stock.bandarmology || 'neutral').toLowerCase();
 
-            if (score >= 85) {
-                label = "🚀 STRONG BULLISH";
-                isStrongBullish = true;
-            } else if (score >= 60) {
-                label = "📈 BULLISH";
-                isBullish = true;
-            } else if (score <= 35) {
-                label = "📉 BEARISH";
-            }
-
-            return {
-                score: score,
-                activeBoxes: activeBoxes,
-                label: label,
-                isStrongBullish: isStrongBullish,
-                isBullish: isBullish
-            };
-        }
-
-        function renderViews(stocks) {
-            const tbody = document.getElementById("stockTableBody");
-            const cardGrid = document.getElementById("stockCardGrid");
-            const emptyState = document.getElementById("emptyState");
-
-            tbody.innerHTML = "";
-            cardGrid.innerHTML = "";
-
-            if (stocks.length === 0) {
-                emptyState.classList.remove("hidden");
-                return;
-            } else {
-                emptyState.classList.add("hidden");
-            }
-
-            stocks.forEach(stock => {
-                const isPos = (stock.change || 0) >= 0;
-                const changeClass = isPos ? "text-emerald-400" : "text-rose-400";
-                const changeSign = isPos ? "+" : "";
-
-                // Desktop Table Row
-                const tr = document.createElement("tr");
-                tr.id = `stock-row-${stock.ticker}`;
-                tr.className = "hover:bg-slate-800/40 transition-colors border-b border-slate-800/50";
-                tr.innerHTML = `
-                    <td class="py-3.5 px-4 font-bold text-white">
-                        <div class="text-sm">${stock.ticker}</div>
-                        <div class="text-[10px] text-slate-400 font-normal truncate max-w-[140px]">${stock.name || stock.ticker}</div>
-                    </td>
-                    <td class="py-3.5 px-3 text-right font-semibold text-slate-100">Rp ${Number(stock.price).toLocaleString('id-ID')}</td>
-                    <td class="py-3.5 px-3 text-right font-bold ${changeClass}">${changeSign}${Number(stock.change).toFixed(2)}%</td>
-                    <td class="py-3.5 px-4 text-center">
-                        <div class="flex flex-col items-center gap-1">
-                            ${renderBoxes(stock.eval.activeBoxes)}
-                            <span class="text-[10px] font-extrabold ${stock.eval.isStrongBullish ? 'text-emerald-400 animate-pulse' : stock.eval.isBullish ? 'text-indigo-400' : 'text-slate-400'}">
-                                ${stock.eval.label}
-                            </span>
-                        </div>
-                    </td>
-                    <td class="py-3.5 px-3 text-right font-semibold text-slate-200">
-                        ${formatTurnover(stock.turnoverNum)}
-                    </td>
-                    <td class="py-3.5 px-3 text-center">
-                        ${renderLightningBoxes(stock)}
-                    </td>
-                    <td class="py-3.5 px-4 text-center">
-                        <div class="text-[11px] font-medium text-slate-300">
-                            <span class="text-emerald-400">EP: ${stock.entry ? Number(stock.entry).toLocaleString('id-ID') : '-'}</span> | 
-                            <span class="text-indigo-400">R1: ${stock.r1 ? Number(stock.r1).toLocaleString('id-ID') : '-'}</span> | 
-                            <span class="text-rose-400">CL: ${stock.cl1 ? Number(stock.cl1).toLocaleString('id-ID') : '-'}</span>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-
-                // Mobile Card View
-                const card = document.createElement("div");
-                card.id = `stock-card-${stock.ticker}`;
-                card.className = "bg-slate-950 border border-slate-800/80 rounded-xl p-3.5 flex flex-col gap-3 shadow-md";
-                card.innerHTML = `
-                    <div class="flex items-center justify-between border-b border-slate-800/60 pb-2">
-                        <div>
-                            <span class="text-base font-bold text-white tracking-wide">${stock.ticker}</span>
-                            <span class="text-[10px] text-slate-400 block font-normal truncate max-w-[180px]">${stock.name || stock.ticker}</span>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-sm font-extrabold text-slate-100">Rp ${Number(stock.price).toLocaleString('id-ID')}</div>
-                            <div class="text-xs font-bold ${changeClass}">${changeSign}${Number(stock.change).toFixed(2)}%</div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/30">
-                        <span class="text-[10px] text-slate-400 block">Sinyal Teknikal Murni</span>
-                        ${renderBoxes(stock.eval.activeBoxes)}
-                        <span class="text-[11px] font-extrabold ${stock.eval.isStrongBullish ? 'text-emerald-400 animate-pulse' : stock.eval.isBullish ? 'text-indigo-400' : 'text-slate-400'}">
-                            ${stock.eval.label}
-                        </span>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/40 text-xs">
-                        <div>
-                            <span class="text-[10px] text-slate-400 block">Turnover (Pantau)</span>
-                            <span class="font-semibold text-slate-200">${formatTurnover(stock.turnoverNum)}</span>
-                        </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-[10px] text-slate-400 block">Bandarmology (Pantau)</span>
-                            ${renderLightningBoxes(stock)}
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/40 font-semibold">
-                        <span class="text-emerald-400">EP: ${stock.entry ? Number(stock.entry).toLocaleString('id-ID') : '-'}</span>
-                        <span class="text-indigo-400">R1: ${stock.r1 ? Number(stock.r1).toLocaleString('id-ID') : '-'}</span>
-                        <span class="text-rose-400">CL: ${stock.cl1 ? Number(stock.cl1).toLocaleString('id-ID') : '-'}</span>
-                    </div>
-                `;
-                cardGrid.appendChild(card);
-            });
-
-            lucide.createIcons();
-            handleSearch();
-        }
-
-        function renderBoxes(activeCount) {
-            let boxesHTML = '<div class="flex items-center gap-0.5 justify-center">';
-            for (let i = 1; i <= 10; i++) {
-                boxesHTML += `<div class="w-2 h-3.5 ${i <= activeCount ? 'bg-emerald-500' : 'bg-slate-800'} rounded-sm"></div>`;
-            }
-            boxesHTML += '</div>';
-            return boxesHTML;
-        }
-
-        function renderLightningBoxes(stock) {
-            const isAkumulasi = stock.bandarmology === "AKUMULASI";
-            let colorClass = "text-slate-700";
-
-            if (isAkumulasi) {
-                colorClass = "text-emerald-400 lightning-blink";
-            } else if (stock.bandarmology === "DISTRIBUSI") {
-                colorClass = "text-rose-500";
-            }
-
-            return `
-                <div class="flex items-center gap-1">
-                    <i data-lucide="zap" class="w-4 h-4 ${colorClass} fill-current"></i>
-                    <span class="text-[10px] font-bold text-slate-300">${stock.bandarmology || 'NEUTRAL'}</span>
-                </div>
+            tr.innerHTML = `
+                <td><strong>${stock.ticker || '-'}</strong></td>
+                <td>${stock.name || '-'}</td>
+                <td>${formatRupiah(price)}</td>
+                <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
+                <td>${formatNumber(stock.volRatio, 2)}x</td>
+                <td>${formatNumber(stock.rsi, 1)}</td>
+                <td>${formatRupiah(stock.ema20)}</td>
+                <td>${formatRupiah(stock.ema50)}</td>
+                <td><span class="badge ${bandarClass}">${stock.bandarmology || 'NEUTRAL'}</span></td>
             `;
-        }
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error('Gagal memuat data:', err);
+        document.getElementById('updatedTime').innerText = 'Gagal memuat data.json';
+    }
+}
 
-        function switchTab(tab) {
-            activeTab = tab;
-            const btnLayak = document.getElementById("tabLayakBeli");
-            const btnAll = document.getElementById("tabAll");
+loadStockData();
+</script>
 
-            if (tab === "layakBeli") {
-                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
-                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
-            } else {
-                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
-                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
-            }
-            processAndRender();
-        }
-
-        function handleFilterChange() {
-            processAndRender();
-        }
-
-        function handleSearch() {
-            const query = document.getElementById("searchInput").value.trim().toUpperCase();
-
-            document.querySelectorAll(".search-blink").forEach(el => {
-                el.classList.remove("search-blink");
-            });
-
-            if (!query) return;
-
-            const isMobile = window.innerWidth < 768;
-            const targetId = isMobile ? `stock-card-${query}` : `stock-row-${query}`;
-            const targetElement = document.getElementById(targetId);
-
-            if (targetElement) {
-                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                targetElement.classList.add("search-blink");
-            }
-        }
-
-        function updateBannerInfo(tf) {
-            const title = document.getElementById("bannerTitle");
-            const desc = document.getElementById("bannerDesc");
-
-            if (tf === "swing") {
-                title.innerText = "SWING TRADING STRATEGY (PURE TECHNICAL)";
-                desc.innerText = "Sinyal dihitung murni dari 4 indikator teknikal: Trend EMA (Price ≥ EMA20 > EMA50), RSI Momentum (50-80), Spike Volume (≥2.5x), dan Kedekatan 52-Week High (≤10%). Turnover & Bandarmology dipisah sebagai acuan pemantauan manual.";
-            } else if (tf === "investment") {
-                title.innerText = "LONG TERM INVESTMENT STRATEGY (PURE TECHNICAL)";
-                desc.innerText = "Fokus pada struktur tren teknikal jangka panjang. Parameter pendukung lainnya dipantau secara mandiri.";
-            }
-        }
-    </script>
 </body>
 </html>
