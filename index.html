@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Stock Screener - Advanced Analytics</title>
+    <title>IHSG Pro Screener - Advanced Analytics</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/png" sizes="192x192" href="./laundry1-512x512.png">
+    <link rel="apple-touch-icon" href="./laundry1-512x512.png">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
     <style>
         @keyframes pulse-fast {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -49,24 +55,22 @@
     <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 p-2 rounded-lg text-white">
-                    <i data-lucide="trending-up" class="w-6 h-6"></i>
-                </div>
+                <img src="laundry1-512x512.png" alt="LOGO" class="w-10 h-10 rounded-full border-2 border-indigo-500 object-cover">
                 <div>
-                    <h1 class="font-bold text-lg leading-tight text-white">PRO STOCK SCREENER</h1>
-                    <p class="text-xs text-slate-400">Algorithmic Market Analytics & Signals</p>
+                    <h1 class="font-bold text-lg leading-tight text-white uppercase">PRO STOCK SCREENER</h1>
+                    <p id="updateTime" class="text-xs text-slate-400">MEMUAT DATA...</p>
                 </div>
             </div>
 
             <!-- CONTROLS & FILTERS -->
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                <!-- Kolom Pencarian Emiten -->
+                <!-- Pencarian Emiten -->
                 <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
                     <i data-lucide="search" class="w-4 h-4 text-indigo-400"></i>
                     <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari Emiten..." class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none rounded px-2 py-1 border border-slate-700 w-28 uppercase placeholder:normal-case placeholder:text-slate-500">
                 </div>
 
-                <!-- Kategori Strong Buy dengan Icon Target -->
+                <!-- Kategori Strong Buy -->
                 <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
                     <span class="text-sm">🎯</span>
                     <label for="strongBuySelect" class="text-xs font-medium text-slate-300">Strong Buy Only:</label>
@@ -92,6 +96,7 @@
                     <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
                     <label for="turnoverSelect" class="text-xs font-medium text-slate-300">Min Turnover:</label>
                     <select id="turnoverSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
+                        <option value="0">Semua Turnover</option>
                         <option value="1">≥ 1 Miliar</option>
                         <option value="5" selected>≥ 5 Miliar</option>
                         <option value="10">≥ 10 Miliar</option>
@@ -99,7 +104,7 @@
                     </select>
                 </div>
 
-                <!-- Refresh Data Button -->
+                <!-- Refresh Button -->
                 <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-indigo-600/20 w-full sm:w-auto">
                     <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
                     <span>Refresh</span>
@@ -119,7 +124,7 @@
             <div class="flex-1">
                 <h2 id="bannerTitle" class="font-semibold text-sm text-indigo-300">SWING TRADING STRATEGY (1D)</h2>
                 <p id="bannerDesc" class="text-xs text-slate-400 mt-0.5">
-                    Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.
+                    Fokus pada tren menengah (Daily). Mengalkulasi indikator teknikal utama: Trend EMA, RSI Momentum, Spike Volume, Likuiditas Pasar, dan kedekatan dengan 52-Week High.
                 </p>
             </div>
         </div>
@@ -185,21 +190,35 @@
             loadData();
         });
 
-        // Pengambilan data dinamis langsung dari 100emitendata_2.json
+        function formatWIB(timeStr) {
+            if (!timeStr) return "-";
+            try {
+                const date = new Date(timeStr);
+                if (isNaN(date.getTime())) return timeStr;
+                return date.toLocaleString('id-ID', {
+                    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) + " WIB";
+            } catch (e) { return timeStr; }
+        }
+
         async function loadData() {
             const refreshIcon = document.getElementById("refreshIcon");
             if (refreshIcon) refreshIcon.classList.add("animate-spin");
 
             try {
-                const response = await fetch(`./100emitendata_2.json?t=${new Date().getTime()}`);
-                if (!response.ok) throw new Error("Gagal mengambil berkas 100emitendata_2.json");
+                const response = await fetch(`./data.json?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error("Gagal mengambil berkas data.json");
                 
                 const data = await response.json();
+                if (data.updated_at) {
+                    document.getElementById('updateTime').innerText = "DIPERBARUI: " + formatWIB(data.updated_at);
+                }
                 rawStockData = data.stocks || (Array.isArray(data) ? data : []);
                 
                 processAndRender();
             } catch (error) {
                 console.error("Error loading stock data:", error);
+                document.getElementById('updateTime').innerText = "GAGAL MEMUAT DATA.JSON";
             } finally {
                 if (refreshIcon) refreshIcon.classList.remove("animate-spin");
             }
@@ -212,23 +231,15 @@
 
             updateBannerInfo(timeframe);
 
-            // Pemprosesan emiten dan penerapan algoritma indikator secara independen di JS
             const processedStocks = rawStockData.map(stock => {
                 const evaluation = evaluateIndicators(stock, minTurnover, timeframe);
-                const tradingPlan = calculateTradingPlan(stock, evaluation);
-                const isBuyWorthy = stock.turnover >= minTurnover && evaluation.score >= 60 && evaluation.activeBoxes >= 6;
+                const stockTurnover = stock.turnover || 0;
+                const isBuyWorthy = stockTurnover >= minTurnover && evaluation.score >= 60 && evaluation.activeBoxes >= 6;
 
-                return { 
-                    ...stock, 
-                    eval: evaluation, 
-                    entry: tradingPlan.entry,
-                    r1: tradingPlan.r1,
-                    cl1: tradingPlan.cl1,
-                    isBuyWorthy: isBuyWorthy 
-                };
+                return { ...stock, eval: evaluation, isBuyWorthy: isBuyWorthy };
             });
 
-            let validStocks = processedStocks.filter(s => s.turnover >= minTurnover);
+            let validStocks = processedStocks.filter(s => (s.turnover || 0) >= minTurnover);
 
             if (strongBuyFilter === "strongBuy") {
                 validStocks = validStocks.filter(s => s.eval.isStrongBuy);
@@ -244,71 +255,42 @@
             renderViews(displayStocks);
         }
 
-        // Kalkulasi Algoritma & Indikator Teknikal murni berbasis strategi HTML
         function evaluateIndicators(stock, minTurnover, tf) {
             let score = 0;
+            const price = stock.price || 0;
 
-            // Algoritma Penilaian Tergantung Timeframe Strategy
-            if (tf === "scalping") {
-                if (stock.volRatio && stock.volRatio >= 3.0) score += 30;
-                if (stock.rsi && stock.rsi >= 60 && stock.rsi <= 80) score += 30;
-                if (stock.change && stock.change > 2.0) score += 20;
-                if (stock.turnover && stock.turnover >= minTurnover) score += 20;
-            } else if (tf === "investment") {
-                if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50) score += 25;
-                if (stock.turnover && stock.turnover >= 20) score += 25;
-                if (stock.bandarmology === "AKUMULASI") score += 25;
-                if (stock.rsi && stock.rsi >= 45 && stock.rsi <= 65) score += 25;
-            } else {
-                // Swing Strategy (Default)
-                if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50 && stock.price >= stock.ema20) score += 20;
-                if (stock.rsi && stock.rsi >= 50 && stock.rsi <= 70) score += 20;
-                if (stock.volRatio && stock.volRatio >= 2.5) score += 20;
-                if (stock.turnover && stock.turnover >= minTurnover) score += 20;
+            if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50 && price >= stock.ema20) score += 20;
+            else if (stock.ema_status === 'BUY') score += 20;
 
-                if (stock.high52 && stock.high52 > 0) {
-                    const diffHigh = ((stock.high52 - stock.price) / stock.high52) * 100;
-                    if (diffHigh <= 10) score += 20;
-                }
+            if (stock.rsi && stock.rsi >= 50 && stock.rsi <= 70) score += 20;
+            else if (stock.rsi_status === 'BUY') score += 20;
+
+            if (stock.volRatio && stock.volRatio >= 2.5) score += 20;
+            else if (parseFloat(stock.vol_ratio) >= 1.5 || stock.vol_status === 'BUY') score += 20;
+
+            if (stock.turnover && stock.turnover >= minTurnover) score += 20;
+            else score += 10;
+
+            if (stock.high52 && stock.high52 > 0) {
+                const diffHigh = ((stock.high52 - price) / stock.high52) * 100;
+                if (diffHigh <= 10) score += 20;
+            } else if (stock.macd_status === 'BUY') {
+                score += 20;
             }
 
             const activeBoxes = Math.round(score / 10);
-            let label = "NEUTRAL";
+            let label = stock.signal || "NEUTRAL";
             
-            if (score >= 90) label = "🚀🚀🚀 STRONG BUY";
-            else if (score >= 60) label = "BUY";
-            else if (score <= 30) label = "SELL";
+            if (score >= 90 || label.includes("STRONG BUY")) label = "🚀🚀🚀 STRONG BUY";
+            else if (score >= 60 || label.includes("BUY")) label = "BUY";
+            else if (score <= 30 || label.includes("SELL")) label = "SELL";
 
             return {
                 score: score,
                 activeBoxes: activeBoxes,
                 label: label,
-                isStrongBuy: score >= 90
+                isStrongBuy: score >= 90 || label.includes("STRONG BUY")
             };
-        }
-
-        // Kalkulasi Trading Plan (EP, R1, CL) otomatis
-        function calculateTradingPlan(stock, evalData) {
-            const price = Math.round(stock.price);
-            let entry = price;
-            let r1 = Math.round(price * 1.05);
-            let cl1 = Math.round(price * 0.96);
-
-            if (stock.ema20 && price > stock.ema20) {
-                entry = Math.round(stock.ema20 * 1.005);
-            }
-            if (stock.high52 && stock.high52 > price) {
-                r1 = Math.round(stock.high52);
-            } else {
-                r1 = Math.round(price * 1.08);
-            }
-            if (stock.ema50 && stock.ema50 < price) {
-                cl1 = Math.round(stock.ema50 * 0.99);
-            } else {
-                cl1 = Math.round(price * 0.95);
-            }
-
-            return { entry, r1, cl1 };
         }
 
         function renderViews(stocks) {
@@ -327,9 +309,15 @@
             }
 
             stocks.forEach(stock => {
-                const isPos = stock.change >= 0;
+                const changeVal = stock.change !== undefined ? stock.change : 0;
+                const isPos = changeVal >= 0;
                 const changeClass = isPos ? "text-emerald-400" : "text-rose-400";
                 const changeSign = isPos ? "+" : "";
+
+                const entryVal = stock.entry || stock.entry_price || stock.price || '-';
+                const r1Val = stock.r1 || stock.resistance_1 || stock.resistance || '-';
+                const clVal = stock.cl1 || stock.cut_loss || stock.support_1 || stock.support || '-';
+                const turnoverVal = stock.turnover !== undefined ? Number(stock.turnover).toFixed(1) : '0.0';
 
                 // Desktop Row
                 const tr = document.createElement("tr");
@@ -338,11 +326,11 @@
                 tr.innerHTML = `
                     <td class="py-3.5 px-4 font-bold text-white">
                         <div class="text-sm">${stock.ticker}</div>
-                        <div class="text-[10px] text-slate-400 font-normal truncate max-w-[140px]">${stock.name || stock.ticker}</div>
+                        <div class="text-[10px] text-slate-400 font-normal truncate max-w-[140px]">${stock.name || stock.category || stock.ticker}</div>
                     </td>
-                    <td class="py-3.5 px-3 text-right font-semibold text-slate-100">${Number(stock.price).toLocaleString('id-ID')}</td>
-                    <td class="py-3.5 px-3 text-right font-bold ${changeClass}">${changeSign}${Number(stock.change).toFixed(2)}%</td>
-                    <td class="py-3.5 px-3 text-right font-medium text-slate-300">Rp ${Number(stock.turnover).toFixed(1)} M</td>
+                    <td class="py-3.5 px-3 text-right font-semibold text-slate-100">${Number(stock.price || 0).toLocaleString('id-ID')}</td>
+                    <td class="py-3.5 px-3 text-right font-bold ${changeClass}">${changeSign}${Number(changeVal).toFixed(2)}%</td>
+                    <td class="py-3.5 px-3 text-right font-medium text-slate-300">Rp ${turnoverVal} M</td>
                     <td class="py-3.5 px-4 text-center">
                         <div class="flex flex-col items-center gap-1">
                             ${renderBoxes(stock.eval.activeBoxes)}
@@ -356,9 +344,9 @@
                     </td>
                     <td class="py-3.5 px-4 text-center">
                         <div class="text-[11px] font-medium text-slate-300">
-                            <span class="text-emerald-400">EP: ${stock.entry || '-'}</span> | 
-                            <span class="text-indigo-400">R1: ${stock.r1 || '-'}</span> | 
-                            <span class="text-rose-400">CL: ${stock.cl1 || '-'}</span>
+                            <span class="text-emerald-400">EP: ${entryVal}</span> | 
+                            <span class="text-indigo-400">R1: ${r1Val}</span> | 
+                            <span class="text-rose-400">CL: ${clVal}</span>
                         </div>
                     </td>
                 `;
@@ -372,18 +360,18 @@
                     <div class="flex items-center justify-between border-b border-slate-800/60 pb-2">
                         <div>
                             <span class="text-base font-bold text-white tracking-wide">${stock.ticker}</span>
-                            <span class="text-[10px] text-slate-400 block font-normal truncate max-w-[180px]">${stock.name || stock.ticker}</span>
+                            <span class="text-[10px] text-slate-400 block font-normal truncate max-w-[180px]">${stock.name || stock.category || stock.ticker}</span>
                         </div>
                         <div class="text-right">
-                            <div class="text-sm font-extrabold text-slate-100">${Number(stock.price).toLocaleString('id-ID')}</div>
-                            <div class="text-xs font-bold ${changeClass}">${changeSign}${Number(stock.change).toFixed(2)}%</div>
+                            <div class="text-sm font-extrabold text-slate-100">${Number(stock.price || 0).toLocaleString('id-ID')}</div>
+                            <div class="text-xs font-bold ${changeClass}">${changeSign}${Number(changeVal).toFixed(2)}%</div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/40 text-xs">
                         <div>
                             <span class="text-[10px] text-slate-400 block">Turnover</span>
-                            <span class="font-semibold text-slate-200">Rp ${Number(stock.turnover).toFixed(1)} M</span>
+                            <span class="font-semibold text-slate-200">Rp ${turnoverVal} M</span>
                         </div>
                         <div class="flex flex-col items-end">
                             <span class="text-[10px] text-slate-400 block">Bandarmology</span>
@@ -399,9 +387,9 @@
                     </div>
 
                     <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/40 font-semibold">
-                        <span class="text-emerald-400">EP: ${stock.entry || '-'}</span>
-                        <span class="text-indigo-400">R1: ${stock.r1 || '-'}</span>
-                        <span class="text-rose-400">CL: ${stock.cl1 || '-'}</span>
+                        <span class="text-emerald-400">EP: ${entryVal}</span>
+                        <span class="text-indigo-400">R1: ${r1Val}</span>
+                        <span class="text-rose-400">CL: ${clVal}</span>
                     </div>
                 `;
                 cardGrid.appendChild(card);
@@ -421,20 +409,21 @@
         }
 
         function renderLightningBoxes(stock) {
-            const isAkumulasi = stock.bandarmology === "AKUMULASI";
+            const bandarStatus = stock.bandarmology || (stock.vol_status === 'BUY' ? 'AKUMULASI' : (stock.vol_status === 'SELL' ? 'DISTRIBUSI' : 'NEUTRAL'));
+            const isAkumulasi = bandarStatus === "AKUMULASI";
             const isBlink = stock.isBuyWorthy;
             
             let colorClass = "text-slate-700";
             if (isAkumulasi) {
                 colorClass = isBlink ? "text-emerald-400 lightning-blink" : "text-emerald-500";
-            } else if (stock.bandarmology === "DISTRIBUSI") {
+            } else if (bandarStatus === "DISTRIBUSI") {
                 colorClass = "text-rose-500";
             }
 
             return `
                 <div class="flex items-center gap-1">
                     <i data-lucide="zap" class="w-4 h-4 ${colorClass} fill-current"></i>
-                    <span class="text-[10px] font-bold text-slate-300">${stock.bandarmology || 'NEUTRAL'}</span>
+                    <span class="text-[10px] font-bold text-slate-300">${bandarStatus}</span>
                 </div>
             `;
         }
@@ -483,7 +472,7 @@
 
             if (tf === "swing") {
                 title.innerText = "SWING TRADING STRATEGY (1D)";
-                desc.innerText = "Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.";
+                desc.innerText = "Fokus pada tren menengah (Daily). Mengalkulasi indikator teknikal utama: Trend EMA, RSI Momentum, Spike Volume, Likuiditas Pasar, dan kedekatan dengan 52-Week High.";
             } else if (tf === "scalping") {
                 title.innerText = "SCALPING FAST STRATEGY (15M)";
                 desc.innerText = "Fokus pada momentum intraday cepat. Mengutamakan lompatan Volume Ratio mendadak, break resistance terdekat, dan aliran arus kas cepat.";
@@ -492,6 +481,8 @@
                 desc.innerText = "Fokus pada akumulasi jangka panjang (Weekly). Memfilter emiten dengan fundamental likuiditas tinggi dan tren akumulasi besar konsisten.";
             }
         }
+
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
     </script>
 </body>
 </html>
