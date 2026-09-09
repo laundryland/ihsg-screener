@@ -64,7 +64,6 @@
                     </select>
                 </div>
 
-                <!-- Turnover Filter Menggunakan Nilai M/B yang Valid -->
                 <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
                     <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
                     <label for="turnoverSelect" class="text-xs font-medium text-slate-300">Min Turnover:</label>
@@ -98,7 +97,7 @@
             <div class="flex-1">
                 <h2 id="bannerTitle" class="font-semibold text-sm text-indigo-300">SWING TRADING STRATEGY (1D)</h2>
                 <p id="bannerDesc" class="text-xs text-slate-400 mt-0.5">
-                    Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.
+                    Fokus pada tren harian. Evaluasi presisi 5 indikator: Trend EMA (Price ≥ EMA20 & EMA20 > EMA50), RSI Momentum (50-70 ideal, 70-80 breakout), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High (≤10%).
                 </p>
             </div>
         </div>
@@ -117,8 +116,10 @@
         </div>
 
         <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+            <!-- Mobile View Grid -->
             <div id="stockCardGrid" class="block md:hidden p-3 space-y-3"></div>
 
+            <!-- Desktop View Table -->
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs border-collapse">
                     <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-semibold">
@@ -155,7 +156,7 @@
             loadData();
         });
 
-        // Helper Format Turnover Ringkas (M / B) Tanpa Merusak Nilai Asli
+        // Formatter turnover tanpa mengubah atau merusak angka asli
         function formatTurnover(val) {
             const num = parseFloat(val) || 0;
             if (num >= 1e12) return (num / 1e12).toFixed(2) + " T";
@@ -170,15 +171,15 @@
 
             try {
                 const response = await fetch(`./data.json?t=${new Date().getTime()}`);
-                if (!response.ok) throw new Error("Gagal mengambil berkas data.json");
+                if (!response.ok) throw new Error("Gagal mengambil data.json");
                 
                 const data = await response.json();
                 const fetchedList = data.stocks || (Array.isArray(data) ? data : []);
                 
-                // PEMBERSIHAN DUPLIKAT: Pastikan Ticker Unik
+                // Sanitasi dan Hilangkan Duplikat Ticker
                 const uniqueMap = new Map();
                 fetchedList.forEach(item => {
-                    if(item.ticker) {
+                    if (item.ticker) {
                         const cleanTicker = String(item.ticker).trim().toUpperCase();
                         if (!uniqueMap.has(cleanTicker)) {
                             uniqueMap.set(cleanTicker, { ...item, ticker: cleanTicker });
@@ -204,10 +205,17 @@
 
             const processedStocks = rawStockData.map(stock => {
                 const stockTurnover = parseFloat(stock.turnover) || 0;
-                const evaluation = evaluateIndicators(stock, minTurnover, timeframe);
-                const isBuyWorthy = stockTurnover >= minTurnover && evaluation.score >= 60 && evaluation.activeBoxes >= 6;
+                const evaluation = evaluateIndicators(stock, minTurnover);
+                
+                // Kriteria Layak Beli: Lolos Turnover, Skor minimal 60 (6 kotak), dan Tren dasar aman
+                const isBuyWorthy = stockTurnover >= minTurnover && evaluation.score >= 60;
 
-                return { ...stock, turnoverNum: stockTurnover, eval: evaluation, isBuyWorthy: isBuyWorthy };
+                return { 
+                    ...stock, 
+                    turnoverNum: stockTurnover, 
+                    eval: evaluation, 
+                    isBuyWorthy: isBuyWorthy 
+                };
             });
 
             let displayStocks = [];
@@ -235,33 +243,71 @@
             renderViews(displayStocks);
         }
 
-        function evaluateIndicators(stock, minTurnover, tf) {
+        // PERBAIKAN UTAMA: Evaluasi Logika 5 Indikator Bertingkat
+        function evaluateIndicators(stock, minTurnover) {
             let score = 0;
             const price = parseFloat(stock.price) || 0;
             const turnover = parseFloat(stock.turnover) || 0;
+            const rsi = parseFloat(stock.rsi) || 0;
+            const volRatio = parseFloat(stock.volRatio) || 0;
+            const high52 = parseFloat(stock.high52) || 0;
 
-            if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50 && price >= stock.ema20) score += 20;
-            if (stock.rsi && stock.rsi >= 50 && stock.rsi <= 70) score += 20;
-            if (stock.volRatio && stock.volRatio >= 2.5) score += 20;
-            if (turnover >= minTurnover) score += 20;
-
-            if (stock.high52 && stock.high52 > 0) {
-                const diffHigh = ((stock.high52 - price) / stock.high52) * 100;
-                if (diffHigh <= 10) score += 20;
+            // 1. Trend EMA (Max 20 Poin)
+            if (stock.ema20 && stock.ema50 && price >= stock.ema20 && stock.ema20 > stock.ema50) {
+                score += 20; // Uptrend Sempurna
+            } else if (stock.ema20 && price >= stock.ema20) {
+                score += 10; // Cenderung Uptrend
             }
 
-            const activeBoxes = Math.round(score / 10);
-            let label = stock.signal || "NEUTRAL";
+            // 2. RSI Momentum (Max 20 Poin)
+            if (rsi >= 50 && rsi <= 70) {
+                score += 20; // Momentum Ideal
+            } else if (rsi > 70 && rsi <= 80) {
+                score += 10; // Breakout / Strong Momentum
+            }
+
+            // 3. Spike Volume (Max 20 Poin)
+            if (volRatio >= 2.5) {
+                score += 20; // Spike Volume Sangat Tinggi
+            } else if (volRatio >= 1.5) {
+                score += 10; // Volume Sedang
+            }
+
+            // 4. Likuiditas Pasar / Turnover (Max 20 Poin)
+            if (turnover >= minTurnover) {
+                score += 20; // Memenuhi Ambang Batas
+            }
+
+            // 5. Kedekatan dengan 52-Week High (Max 20 Poin)
+            if (high52 > 0) {
+                const diffPercent = ((high52 - price) / high52) * 100;
+                if (diffPercent >= 0 && diffPercent <= 10) {
+                    score += 20; // Sangat Dekat (0-10%)
+                } else if (diffPercent > 10 && diffPercent <= 20) {
+                    score += 10; // Cukup Dekat (10-20%)
+                }
+            }
+
+            // Konversi Poin ke Jumlah Kotak (1 - 10 Kotak)
+            const activeBoxes = Math.min(10, Math.max(1, Math.round(score / 10)));
             
-            if (score >= 90) label = "🚀🚀🚀 STRONG BUY";
-            else if (score >= 60) label = "BUY";
-            else if (score <= 30) label = "SELL";
+            let label = "NEUTRAL";
+            let isStrongBuy = false;
+
+            if (score >= 80) {
+                label = "🚀🚀🚀 STRONG BUY";
+                isStrongBuy = true;
+            } else if (score >= 60) {
+                label = "BUY";
+            } else if (score <= 30) {
+                label = "SELL";
+            }
 
             return {
                 score: score,
                 activeBoxes: activeBoxes,
                 label: label,
-                isStrongBuy: score >= 90 || stock.signal === "STRONG BUY"
+                isStrongBuy: isStrongBuy
             };
         }
 
@@ -285,6 +331,7 @@
                 const changeClass = isPos ? "text-emerald-400" : "text-rose-400";
                 const changeSign = isPos ? "+" : "";
 
+                // Render Baris Tabel (Desktop)
                 const tr = document.createElement("tr");
                 tr.id = `stock-row-${stock.ticker}`;
                 tr.className = "hover:bg-slate-800/40 transition-colors border-b border-slate-800/50";
@@ -317,6 +364,7 @@
                 `;
                 tbody.appendChild(tr);
 
+                // Render Kartu (Mobile)
                 const card = document.createElement("div");
                 card.id = `stock-card-${stock.ticker}`;
                 card.className = "bg-slate-950 border border-slate-800/80 rounded-xl p-3.5 flex flex-col gap-3 shadow-md";
@@ -435,10 +483,10 @@
 
             if (tf === "swing") {
                 title.innerText = "SWING TRADING STRATEGY (1D)";
-                desc.innerText = "Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.";
+                desc.innerText = "Fokus pada tren harian. Evaluasi presisi 5 indikator: Trend EMA (Price ≥ EMA20 & EMA20 > EMA50), RSI Momentum (50-70 ideal, 70-80 breakout), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High (≤10%).";
             } else if (tf === "investment") {
                 title.innerText = "LONG TERM INVESTMENT STRATEGY (1W)";
-                desc.innerText = "Fokus pada akumulasi jangka panjang (Weekly). Memfilter emiten dengan fundamental likuiditas tinggi dan tren akumulasi besar konsisten.";
+                desc.innerText = "Fokus pada akumulasi jangka panjang. Memfilter emiten dengan likuiditas tinggi dan struktur akumulasi harga yang solid.";
             }
         }
     </script>
