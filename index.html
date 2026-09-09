@@ -5,34 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IHSG Stock Screener Pro - Swing Strategy</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
-        .container { max-width: 1450px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { margin-top: 0; color: #333; font-size: 22px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; }
+        .container { max-width: 1200px; margin: auto; background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #333; font-size: 18px; margin-bottom: 8px; }
         
         /* Header Controls */
-        .header-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #eaedf1; padding: 12px; border-radius: 6px; }
-        .control-group { display: flex; align-items: center; gap: 8px; }
-        .control-group label { font-size: 12px; font-weight: bold; color: #333; }
-        .control-group input, .control-group button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
-        .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .header-controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; margin-bottom: 12px; background: #eaedf1; padding: 8px; border-radius: 6px; }
+        .control-group { display: flex; align-items: center; gap: 4px; }
+        .control-group label { font-size: 11px; font-weight: bold; color: #333; }
+        .control-group input, .control-group button { padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; }
+        .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 4px; }
         .control-group button:hover { background: #34495e; }
 
         /* IHSG Monitor Header Badge */
-        .ihsg-monitor { background: #2c3e50; color: white; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .ihsg-monitor { background: #2c3e50; color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
 
         /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #ddd; font-size: 12px; }
         th { background-color: #2c3e50; color: white; }
         tr:hover { background-color: #f1f1f1; }
         
-        .company-name { font-size: 0.8em; color: #555; }
         .positive { color: #27ae60; font-weight: bold; }
         .negative { color: #e74c3c; font-weight: bold; }
         
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; display: inline-block; }
-        .badge-akumulasi { background: #d4edda; color: #155724; }
-        .badge-distribusi { background: #f8d7da; color: #721c24; }
         .badge-neutral { background: #e2e3e5; color: #383d41; }
 
         /* 5 Kotak Kekuatan Swing (Masing-masing 20%) */
@@ -45,7 +41,7 @@
         .total-percentage { font-size: 11px; font-weight: bold; margin-left: 5px; }
 
         /* Animasi Blink */
-        @@keyframes blinkEffect {
+        @keyframes blinkEffect {
             0% { opacity: 1; }
             50% { opacity: 0.3; }
             100% { opacity: 1; }
@@ -53,7 +49,7 @@
         .blink-icon { animation: blinkEffect 1s infinite; display: inline-block; }
 
         /* Efek Blink Baris saat Pencarian Ditemukan */
-        @@keyframes rowBlink {
+        @keyframes rowBlink {
             0% { background-color: #f1c40f; }
             50% { background-color: transparent; }
             100% { background-color: #f1c40f; }
@@ -86,13 +82,13 @@
         <!-- Input Modal Manual -->
         <div class="control-group">
             <label for="manualNominal">Dana:</label>
-            <input type="text" id="manualNominal" value="5.000.000.000" style="width: 100px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
+            <input type="text" id="manualNominal" value="5.000.000.000" style="width: 90px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
         </div>
 
         <!-- Kolom Pencarian Ticker -->
         <div class="control-group">
             <label for="searchTicker">Cari:</label>
-            <input type="text" id="searchTicker" placeholder="Ketik Ticker..." style="width: 90px;" onkeyup="searchStock()">
+            <input type="text" id="searchTicker" placeholder="Ketik Ticker..." style="width: 80px;" onkeyup="searchStock()">
         </div>
     </div>
 
@@ -100,15 +96,9 @@
         <thead>
             <tr>
                 <th>Ticker</th>
-                <th>Perusahaan</th>
                 <th>Harga</th>
                 <th>Change</th>
-                <th>Vol Ratio</th>
-                <th>RSI</th>
-                <th>EMA20</th>
-                <th>EMA50</th>
-                <th>Bandarmology</th>
-                <th>Swing Power 5-Box (20% / Kotak) & Rekomendasi</th>
+                <th>POWER</th>
             </tr>
         </thead>
         <tbody id="stockTable">
@@ -143,22 +133,26 @@ function formatInputNominal(el) {
     loadStockData();
 }
 
-// Algoritma Kekuatan Swing (5 Kotak, Masing-masing 20%)
+// Algoritma Kekuatan Swing (5 Kotak, Masing-masing 20%) dengan bandarmology di latar belakang
 function calculateSwingPower(stock, manualCapital) {
     const price = Number(stock.price) || 0;
     const rsi = Number(stock.rsi) || 50;
     const volRatio = Number(stock.volRatio) || 1;
     const ema20 = Number(stock.ema20) || price;
     const ema50 = Number(stock.ema50) || price;
+    const bandarmology = (stock.bandarmology || 'neutral').toLowerCase();
 
-    // Logika perhitungan independen indikator + faktor modal
+    // Faktor bandarmology di latar belakang
+    let bandarFactor = bandarmology === 'akumulasi' ? 1.2 : (bandarmology === 'distribusi' ? 0.6 : 1.0);
+
+    // Logika perhitungan independen indikator + faktor modal + bandarmology latar belakang
     let scoreFactor = (price > ema20 ? 1 : 0) + (ema20 > ema50 ? 1 : 0);
     let rsiScore = (rsi >= 45 && rsi <= 65) ? 1 : (rsi > 65 ? 0.8 : 0.3);
     let volScore = volRatio > 1.1 ? 1 : 0.5;
     let capitalEffect = manualCapital >= 1000000000 ? 1 : 0.8;
 
-    // Total persentase kekuatan gabungan (0 - 100%)
-    let rawScore = ((scoreFactor + rsiScore + volScore + capitalEffect) / 4.8) * 100;
+    // Total persentase kekuatan gabungan (0 - 100%) dengan pengaruh bandarmology
+    let rawScore = (((scoreFactor + rsiScore + volScore + capitalEffect) / 4.8) * 100) * (bandarFactor / 1.0);
     let totalPercent = Math.min(Math.max(rawScore, 0), 100);
 
     // 5 Kotak (1 kotak = 20%)
@@ -218,7 +212,6 @@ function renderTable(stocks) {
         const change = Number(stock.change) || 0;
         const changeClass = change >= 0 ? 'positive' : 'negative';
         const changeSign = change >= 0 ? '+' : '';
-        const bandarClass = 'badge-' + (stock.bandarmology || 'neutral').toLowerCase();
 
         const swing = calculateSwingPower(stock, currentCapital);
 
@@ -227,7 +220,6 @@ function renderTable(stocks) {
         for (let i = 1; i <= 5; i++) {
             let boxClass = 'box-empty';
             if (i <= swing.activeBoxes) {
-                // Jika bearish strong (lemah semua), kotak jadi merah semua (100% merah)
                 boxClass = swing.isBearishStrong ? 'box-red' : (swing.isBullish ? 'box-green' : 'box-red');
             }
             boxesHtml += `<span class="swing-box-segment ${boxClass}" title="Kotak ${i} (20%)"></span>`;
@@ -253,14 +245,8 @@ function renderTable(stocks) {
 
         tr.innerHTML = `
             <td><strong>${stock.ticker || '-'}</strong></td>
-            <td class="company-name">${stock.name || '-'}</td>
             <td>${formatNominal(price)}</td>
             <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
-            <td>${formatNumber(stock.volRatio, 2)}x</td>
-            <td>${formatNumber(stock.rsi, 1)}</td>
-            <td>${formatNominal(stock.ema20)}</td>
-            <td>${formatNominal(stock.ema50)}</td>
-            <td><span class="badge ${bandarClass}">${stock.bandarmology || 'NEUTRAL'}</span></td>
             <td>${boxesHtml}</td>
         `;
         tbody.appendChild(tr);
