@@ -3,214 +3,459 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Screener Emiten</title>
+    <title>Pro Stock Screener - Advanced Analytics</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 20px;
-            background-color: #f4f6f9;
-            color: #333;
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.95); }
         }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .lightning-blink {
+            animation: pulse-fast 0.8s infinite ease-in-out;
         }
-        .filter-section {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        .form-group {
-            flex: 1;
-            min-width: 200px;
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
         }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
         }
-        select, input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+
+        /* Animation Blink 3x untuk hasil pencarian */
+        @keyframes blink-three-times {
+            0%, 100% { background-color: transparent; }
+            16%, 50%, 83% { background-color: rgba(99, 102, 241, 0.35); }
+            33%, 66% { background-color: transparent; }
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #0056b3;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .badge-ticker {
-            font-weight: bold;
-            color: #0056b3;
-            background: #e6f0fa;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        .no-data {
-            text-align: center;
-            color: #777;
-            padding: 20px;
+        .search-blink {
+            animation: blink-three-times 2.4s ease-in-out forwards;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
 
-<div class="container">
-    <h2>Screener Data Emiten</h2>
-    
-    <!-- Filter Section / Screener Controls -->
-    <div class="filter-section">
-        <div class="form-group">
-            <label for="searchTicker">Cari Ticker / Nama:</label>
-            <input type="text" id="searchTicker" placeholder="Contoh: BBCA, Bank..." oninput="filterData()">
+    <!-- HEADER / NAVBAR -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-white">PRO STOCK SCREENER</h1>
+                    <p class="text-xs text-slate-400">Algorithmic Market Analytics & Signals</p>
+                </div>
+            </div>
+
+            <!-- CONTROLS & FILTERS -->
+            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <!-- Kolom Pencarian Emiten -->
+                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i data-lucide="search" class="w-4 h-4 text-indigo-400"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari Emiten..." class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none rounded px-2 py-1 border border-slate-700 w-28 uppercase placeholder:normal-case placeholder:text-slate-500">
+                </div>
+
+                <!-- Kategori Strong Buy dengan Icon Target -->
+                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <span class="text-sm">🎯</span>
+                    <label for="strongBuySelect" class="text-xs font-medium text-slate-300">Strong Buy Only:</label>
+                    <select id="strongBuySelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-400 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
+                        <option value="all">Semua Signal</option>
+                        <option value="strongBuy">🎯 Strong Buy</option>
+                    </select>
+                </div>
+
+                <!-- Timeframe Selection (Scalping Dibuang) -->
+                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i data-lucide="clock" class="w-4 h-4 text-indigo-400"></i>
+                    <label for="tfSelect" class="text-xs font-medium text-slate-300">Strategy / TF:</label>
+                    <select id="tfSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-indigo-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
+                        <option value="swing" selected>SWING (1D)</option>
+                        <option value="investment">INVESTMENT (1W)</option>
+                    </select>
+                </div>
+
+                <!-- Min Turnover Filter -->
+                <div class="flex-1 sm:flex-none flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                    <label for="turnoverSelect" class="text-xs font-medium text-slate-300">Min Turnover:</label>
+                    <select id="turnoverSelect" onchange="handleFilterChange()" class="bg-slate-900 text-xs font-semibold text-emerald-300 focus:outline-none cursor-pointer rounded px-2 py-1 border border-slate-700 w-full">
+                        <option value="1000000000">≥ 1.000.000.000</option>
+                        <option value="5000000000" selected>≥ 5.000.000.000</option>
+                        <option value="10000000000">≥ 10.000.000.000</option>
+                        <option value="50000000000">≥ 50.000.000.000</option>
+                    </select>
+                </div>
+
+                <!-- Reload Button -->
+                <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-md w-full sm:w-auto">
+                    <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+                    <span>Reload</span>
+                </button>
+
+                <!-- Refresh Data Button -->
+                <button onclick="loadData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-indigo-600/20 w-full sm:w-auto">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full flex flex-col gap-6">
+
+        <!-- STRATEGY INFO BANNER -->
+        <div id="strategyBanner" class="p-4 rounded-xl border bg-slate-900/60 backdrop-blur flex items-start gap-3 border-indigo-500/30">
+            <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 mt-0.5 shrink-0">
+                <i data-lucide="info" class="w-5 h-5"></i>
+            </div>
+            <div class="flex-1">
+                <h2 id="bannerTitle" class="font-semibold text-sm text-indigo-300">SWING TRADING STRATEGY (1D)</h2>
+                <p id="bannerDesc" class="text-xs text-slate-400 mt-0.5">
+                    Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.
+                </p>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="sectorSelect">Filter Sektor:</label>
-            <select id="sectorSelect" onchange="filterData()">
-                <option value="">-- Semua Sektor --</option>
-                <!-- Opsi Sektor diisi otomatis dari data.json -->
-            </select>
+        <!-- NAVIGATION TABS -->
+        <div class="border-b border-slate-800 flex space-x-4">
+            <button id="tabLayakBeli" onclick="switchTab('layakBeli')" class="pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2">
+                <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i>
+                <span>🔥 LAYAK BELI</span>
+                <span id="badgeLayakBeli" class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+            <button id="tabAll" onclick="switchTab('all')" class="pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
+                <i data-lucide="list" class="w-4 h-4"></i>
+                <span>SEMUA SAHAM</span>
+                <span id="badgeAll" class="bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
         </div>
-    </div>
 
-    <!-- Tabel Hasil Screener -->
-    <div style="overflow-x: auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Ticker</th>
-                    <th>Nama Perusahaan</th>
-                    <th>Sektor</th>
-                    <th>Harga (IDR)</th>
-                    <th>PER (x)</th>
-                    <th>PBV (x)</th>
-                    <th>ROE (%)</th>
-                    <th>Market Cap</th>
-                </tr>
-            </thead>
-            <tbody id="emitenTableBody">
-                <!-- Data emiten akan ditampilkan di sini -->
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    let globalEmitens = [];
-
-    // Mengambil data dari file data.json
-    async function loadEmitenData() {
-        try {
-            const response = await fetch('data.json');
-            if (!response.ok) {
-                throw new Error('Gagal memuat data.json');
-            }
-            const data = await response.json();
+        <!-- DATA CONTAINER -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
             
-            // Hapus duplikat berdasarkan ticker
-            globalEmitens = removeDuplicates(data.emitens, 'ticker');
+            <!-- MOBILE CARD VIEW (< 768px) -->
+            <div id="stockCardGrid" class="block md:hidden p-3 space-y-3"></div>
+
+            <!-- DESKTOP TABLE VIEW (>= 768px) -->
+            <div class="hidden md:block overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider border-b border-slate-800 font-semibold">
+                        <tr>
+                            <th class="py-3.5 px-4">Emiten</th>
+                            <th class="py-3.5 px-3 text-right">Harga</th>
+                            <th class="py-3.5 px-3 text-right">Change (%)</th>
+                            <th class="py-3.5 px-3 text-right">Turnover</th>
+                            <th class="py-3.5 px-4 text-center">Indikator Skor / Signal</th>
+                            <th class="py-3.5 px-3 text-center">Volume & Bandar</th>
+                            <th class="py-3.5 px-4 text-center">Trading Plan (Entry / R1 / CL)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-300"></tbody>
+                </table>
+            </div>
             
-            populateSectorDropdown(globalEmitens);
-            renderTable(globalEmitens);
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('emitenTableBody').innerHTML = 
-                '<tr><td colspan="8" class="no-data">Gagal mengambil data dari data.json. Pastikan file ada dan format JSON benar.</td></tr>';
-        }
-    }
+            <!-- EMPTY STATE -->
+            <div id="emptyState" class="hidden py-12 text-center">
+                <i data-lucide="filter-x" class="w-12 h-12 text-slate-600 mx-auto mb-3"></i>
+                <p class="text-sm font-semibold text-slate-400">Tidak ada saham yang memenuhi kriteria filter saat ini.</p>
+                <p class="text-xs text-slate-500 mt-1">Coba turunkan ambang batas Min. Turnover atau ganti Timeframe Strategy.</p>
+            </div>
+        </div>
+    </main>
 
-    // Fungsi menghapus duplikat
-    function removeDuplicates(array, key) {
-        return array.filter((item, index, self) =>
-            index === self.findIndex((t) => t[key] === item[key])
-        );
-    }
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-4 mt-auto text-center text-xs text-slate-500">
+        <p>© 2026 Pro Stock Screener. Analytics strictly for educational & decision support purpose.</p>
+    </footer>
 
-    // Mengisi dropdown Sektor
-    function populateSectorDropdown(emitens) {
-        const sectorSelect = document.getElementById('sectorSelect');
-        
-        // Ambil sektor unik
-        const sectors = [...new Set(emitens.map(item => item.sector))];
-        
-        sectors.forEach(sector => {
-            if(sector) {
-                const option = document.createElement('option');
-                option.value = sector;
-                option.textContent = sector;
-                sectorSelect.appendChild(option);
-            }
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let rawStockData = [];
+        let activeTab = "layakBeli";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadData();
         });
-    }
 
-    // Menampilkan data ke dalam tabel Screener
-    function renderTable(data) {
-        const tbody = document.getElementById('emitenTableBody');
-        tbody.innerHTML = '';
+        // Pengambilan data dinamis dari data.json
+        async function loadData() {
+            const refreshIcon = document.getElementById("refreshIcon");
+            if (refreshIcon) refreshIcon.classList.add("animate-spin");
 
-        if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="no-data">Tidak ada emiten yang sesuai kriteria screener.</td></tr>';
-            return;
+            try {
+                const response = await fetch(`./data.json?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error("Gagal mengambil berkas data.json");
+                
+                const data = await response.json();
+                rawStockData = data.stocks || (Array.isArray(data) ? data : []);
+                
+                processAndRender();
+            } catch (error) {
+                console.error("Error loading stock data:", error);
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove("animate-spin");
+            }
         }
 
-        data.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><span class="badge-ticker">${item.ticker}</span></td>
-                <td>${item.name}</td>
-                <td>${item.sector}</td>
-                <td>${item.price.toLocaleString('id-ID')}</td>
-                <td>${item.per}</td>
-                <td>${item.pbv}</td>
-                <td>${item.roe}%</td>
-                <td>${item.market_cap}</td>
+        function processAndRender() {
+            const timeframe = document.getElementById("tfSelect").value;
+            const minTurnover = parseFloat(document.getElementById("turnoverSelect").value);
+            const strongBuyFilter = document.getElementById("strongBuySelect").value;
+
+            updateBannerInfo(timeframe);
+
+            // Pemprosesan emiten dinamis dari JSON
+            const processedStocks = rawStockData.map(stock => {
+                const evaluation = evaluateIndicators(stock, minTurnover, timeframe);
+                const isBuyWorthy = stock.turnover >= minTurnover && evaluation.score >= 60 && evaluation.activeBoxes >= 6;
+
+                return { ...stock, eval: evaluation, isBuyWorthy: isBuyWorthy };
+            });
+
+            let displayStocks = [];
+
+            if (activeTab === "layakBeli") {
+                let validStocks = processedStocks.filter(s => s.turnover >= minTurnover && s.isBuyWorthy);
+                if (strongBuyFilter === "strongBuy") {
+                    validStocks = validStocks.filter(s => s.eval.isStrongBuy);
+                }
+                displayStocks = validStocks;
+            } else {
+                let validStocks = processedStocks;
+                if (strongBuyFilter === "strongBuy") {
+                    validStocks = validStocks.filter(s => s.eval.isStrongBuy);
+                }
+                displayStocks = validStocks;
+            }
+
+            const totalLayakBeli = processedStocks.filter(s => s.turnover >= minTurnover && s.isBuyWorthy && (strongBuyFilter !== "strongBuy" || s.eval.isStrongBuy)).length;
+            const totalAll = processedStocks.filter(s => (strongBuyFilter !== "strongBuy" || s.eval.isStrongBuy)).length;
+
+            document.getElementById("badgeLayakBeli").innerText = totalLayakBeli;
+            document.getElementById("badgeAll").innerText = totalAll;
+
+            renderViews(displayStocks);
+        }
+
+        function evaluateIndicators(stock, minTurnover, tf) {
+            let score = 0;
+
+            if (stock.ema20 && stock.ema50 && stock.ema20 > stock.ema50 && stock.price >= stock.ema20) score += 20;
+            if (stock.rsi && stock.rsi >= 50 && stock.rsi <= 70) score += 20;
+            if (stock.volRatio && stock.volRatio >= 2.5) score += 20;
+            if (stock.turnover && stock.turnover >= minTurnover) score += 20;
+
+            if (stock.high52 && stock.high52 > 0) {
+                const diffHigh = ((stock.high52 - stock.price) / stock.high52) * 100;
+                if (diffHigh <= 10) score += 20;
+            }
+
+            const activeBoxes = Math.round(score / 10);
+            let label = stock.signal || "NEUTRAL";
+            
+            if (score >= 90) label = "🚀🚀🚀 STRONG BUY";
+            else if (score >= 60) label = "BUY";
+            else if (score <= 30) label = "SELL";
+
+            return {
+                score: score,
+                activeBoxes: activeBoxes,
+                label: label,
+                isStrongBuy: score >= 90 || stock.signal === "STRONG BUY"
+            };
+        }
+
+        function renderViews(stocks) {
+            const tbody = document.getElementById("stockTableBody");
+            const cardGrid = document.getElementById("stockCardGrid");
+            const emptyState = document.getElementById("emptyState");
+
+            tbody.innerHTML = "";
+            cardGrid.innerHTML = "";
+
+            if (stocks.length === 0) {
+                emptyState.classList.remove("hidden");
+                return;
+            } else {
+                emptyState.classList.add("hidden");
+            }
+
+            stocks.forEach(stock => {
+                const isPos = stock.change >= 0;
+                const changeClass = isPos ? "text-emerald-400" : "text-rose-400";
+                const changeSign = isPos ? "+" : "";
+
+                // Desktop Row
+                const tr = document.createElement("tr");
+                tr.id = `stock-row-${stock.ticker.toUpperCase()}`;
+                tr.className = "hover:bg-slate-800/40 transition-colors border-b border-slate-800/50";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-bold text-white">
+                        <div class="text-sm">${stock.ticker}</div>
+                        <div class="text-[10px] text-slate-400 font-normal truncate max-w-[140px]">${stock.name || stock.ticker}</div>
+                    </td>
+                    <td class="py-3.5 px-3 text-right font-semibold text-slate-100">${Number(stock.price).toLocaleString('id-ID')}</td>
+                    <td class="py-3.5 px-3 text-right font-bold ${changeClass}">${changeSign}${Number(stock.change).toFixed(2)}%</td>
+                    <td class="py-3.5 px-3 text-right font-medium text-slate-300">${Number(stock.turnover).toLocaleString('id-ID')}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="flex flex-col items-center gap-1">
+                            ${renderBoxes(stock.eval.activeBoxes)}
+                            <span class="text-[10px] font-extrabold ${stock.eval.isStrongBuy ? 'text-emerald-400 animate-pulse' : 'text-slate-300'}">
+                                ${stock.eval.label}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-3 text-center">
+                        ${renderLightningBoxes(stock)}
+                    </td>
+                    <td class="py-3.5 px-4 text-center">
+                        <div class="text-[11px] font-medium text-slate-300">
+                            <span class="text-emerald-400">EP: ${stock.entry ? Number(stock.entry).toLocaleString('id-ID') : '-'}</span> | 
+                            <span class="text-indigo-400">R1: ${stock.r1 ? Number(stock.r1).toLocaleString('id-ID') : '-'}</span> | 
+                            <span class="text-rose-400">CL: ${stock.cl1 ? Number(stock.cl1).toLocaleString('id-ID') : '-'}</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                // Mobile Card
+                const card = document.createElement("div");
+                card.id = `stock-card-${stock.ticker.toUpperCase()}`;
+                card.className = "bg-slate-950 border border-slate-800/80 rounded-xl p-3.5 flex flex-col gap-3 shadow-md";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-800/60 pb-2">
+                        <div>
+                            <span class="text-base font-bold text-white tracking-wide">${stock.ticker}</span>
+                            <span class="text-[10px] text-slate-400 block font-normal truncate max-w-[180px]">${stock.name || stock.ticker}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-extrabold text-slate-100">${Number(stock.price).toLocaleString('id-ID')}</div>
+                            <div class="text-xs font-bold ${changeClass}">${changeSign}${Number(stock.change).toFixed(2)}%</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/40 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block">Turnover</span>
+                            <span class="font-semibold text-slate-200">${Number(stock.turnover).toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] text-slate-400 block">Bandarmology</span>
+                            ${renderLightningBoxes(stock)}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center gap-1 bg-slate-900/40 p-2 rounded-lg border border-slate-800/30">
+                        ${renderBoxes(stock.eval.activeBoxes)}
+                        <span class="text-[11px] font-extrabold ${stock.eval.isStrongBuy ? 'text-emerald-400 animate-pulse' : 'text-slate-300'}">
+                            ${stock.eval.label}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/40 font-semibold">
+                        <span class="text-emerald-400">EP: ${stock.entry ? Number(stock.entry).toLocaleString('id-ID') : '-'}</span>
+                        <span class="text-indigo-400">R1: ${stock.r1 ? Number(stock.r1).toLocaleString('id-ID') : '-'}</span>
+                        <span class="text-rose-400">CL: ${stock.cl1 ? Number(stock.cl1).toLocaleString('id-ID') : '-'}</span>
+                    </div>
+                `;
+                cardGrid.appendChild(card);
+            });
+
+            lucide.createIcons();
+            handleSearch();
+        }
+
+        function renderBoxes(activeCount) {
+            let boxesHTML = '<div class="flex items-center gap-0.5 justify-center">';
+            for (let i = 1; i <= 10; i++) {
+                boxesHTML += `<div class="w-2 h-3.5 ${i <= activeCount ? 'bg-emerald-500' : 'bg-slate-800'} rounded-sm"></div>`;
+            }
+            boxesHTML += '</div>';
+            return boxesHTML;
+        }
+
+        function renderLightningBoxes(stock) {
+            const isAkumulasi = stock.bandarmology === "AKUMULASI";
+            const isBlink = stock.isBuyWorthy;
+            
+            let colorClass = "text-slate-700";
+            if (isAkumulasi) {
+                colorClass = isBlink ? "text-emerald-400 lightning-blink" : "text-emerald-500";
+            } else if (stock.bandarmology === "DISTRIBUSI") {
+                colorClass = "text-rose-500";
+            }
+
+            return `
+                <div class="flex items-center gap-1">
+                    <i data-lucide="zap" class="w-4 h-4 ${colorClass} fill-current"></i>
+                    <span class="text-[10px] font-bold text-slate-300">${stock.bandarmology || 'NEUTRAL'}</span>
+                </div>
             `;
-            tbody.appendChild(tr);
-        });
-    }
+        }
 
-    // Fungsi Logika Screener / Filter
-    function filterData() {
-        const searchText = document.getElementById('searchTicker').value.toLowerCase();
-        const selectedSector = document.getElementById('sectorSelect').value;
+        function switchTab(tab) {
+            activeTab = tab;
+            const btnLayak = document.getElementById("tabLayakBeli");
+            const btnAll = document.getElementById("tabAll");
 
-        const filtered = globalEmitens.filter(item => {
-            const matchesSearch = item.ticker.toLowerCase().includes(searchText) || 
-                                  item.name.toLowerCase().includes(searchText);
-            const matchesSector = selectedSector === '' || item.sector === selectedSector;
+            if (tab === "layakBeli") {
+                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
+                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
+            } else {
+                btnAll.className = "pb-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2";
+                btnLayak.className = "pb-2 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2";
+            }
+            processAndRender();
+        }
 
-            return matchesSearch && matchesSector;
-        });
+        function handleFilterChange() {
+            processAndRender();
+        }
 
-        renderTable(filtered);
-    }
+        function handleSearch() {
+            const query = document.getElementById("searchInput").value.trim().toUpperCase();
 
-    // Inisialisasi halaman
-    document.addEventListener('DOMContentLoaded', loadEmitenData);
-</script>
+            document.querySelectorAll(".search-blink").forEach(el => {
+                el.classList.remove("search-blink");
+            });
 
+            if (!query) return;
+
+            const isMobile = window.innerWidth < 768;
+            const targetId = isMobile ? `stock-card-${query}` : `stock-row-${query}`;
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetElement.classList.add("search-blink");
+            }
+        }
+
+        function updateBannerInfo(tf) {
+            const title = document.getElementById("bannerTitle");
+            const desc = document.getElementById("bannerDesc");
+
+            if (tf === "swing") {
+                title.innerText = "SWING TRADING STRATEGY (1D)";
+                desc.innerText = "Fokus pada tren menengah (Daily). Mengalkulasi 5 indikator teknikal utama: Trend EMA (EMA20 > EMA50), RSI Momentum (50-70), Spike Volume (≥2.5x), Likuiditas Pasar, dan Kedekatan dengan 52-Week High.";
+            } else if (tf === "investment") {
+                title.innerText = "LONG TERM INVESTMENT STRATEGY (1W)";
+                desc.innerText = "Fokus pada akumulasi jangka panjang (Weekly). Memfilter emiten dengan fundamental likuiditas tinggi dan tren akumulasi besar konsisten.";
+            }
+        }
+    </script>
 </body>
 </html>
