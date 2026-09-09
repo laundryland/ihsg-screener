@@ -3,99 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Strategi Trading</title>
+    <title>Stock Screener Emiten</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 20px;
             background-color: #f4f6f9;
             color: #333;
         }
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             background: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .form-group {
+        .filter-section {
+            display: flex;
+            gap: 15px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
         }
         label {
             font-weight: bold;
             display: block;
             margin-bottom: 8px;
+            font-size: 14px;
         }
-        select {
+        select, input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 14px;
+            box-sizing: border-box;
         }
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 15px;
-            margin-top: 15px;
-            background-color: #fafafa;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
         }
-        .card h3 {
-            margin-top: 0;
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
             color: #0056b3;
         }
-        .badge {
-            display: inline-block;
-            background: #e0e0e0;
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .badge-ticker {
+            font-weight: bold;
+            color: #0056b3;
+            background: #e6f0fa;
             padding: 4px 8px;
             border-radius: 4px;
-            font-size: 12px;
-            margin-right: 5px;
         }
-        ul {
-            padding-left: 20px;
+        .no-data {
+            text-align: center;
+            color: #777;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Pilih Strategi Trading</h2>
+    <h2>Screener Data Emiten</h2>
     
-    <div class="form-group">
-        <label for="strategySelect">Dropdown Strategi:</label>
-        <select id="strategySelect" onchange="renderStrategyDetails()">
-            <option value="">-- Pilih Strategi --</option>
-            <!-- Opsi diisi secara dinamis dari data.json -->
-        </select>
+    <!-- Filter Section / Screener Controls -->
+    <div class="filter-section">
+        <div class="form-group">
+            <label for="searchTicker">Cari Ticker / Nama:</label>
+            <input type="text" id="searchTicker" placeholder="Contoh: BBCA, Bank..." oninput="filterData()">
+        </div>
+
+        <div class="form-group">
+            <label for="sectorSelect">Filter Sektor:</label>
+            <select id="sectorSelect" onchange="filterData()">
+                <option value="">-- Semua Sektor --</option>
+                <!-- Opsi Sektor diisi otomatis dari data.json -->
+            </select>
+        </div>
     </div>
 
-    <div id="strategyDetail" class="card" style="display: none;">
-        <h3 id="strategyTitle"></h3>
-        <p id="strategyDesc"></p>
-        
-        <h4>Timeframes:</h4>
-        <div id="strategyTimeframes"></div>
-        
-        <h4>Indikator:</h4>
-        <div id="strategyIndicators"></div>
-
-        <h4>Aturan Trading:</h4>
-        <ul>
-            <li><strong>Entry:</strong> <span id="ruleEntry"></span></li>
-            <li><strong>Exit:</strong> <span id="ruleExit"></span></li>
-            <li><strong>Stop Loss:</strong> <span id="ruleSL"></span></li>
-            <li><strong>Take Profit:</strong> <span id="ruleTP"></span></li>
-        </ul>
+    <!-- Tabel Hasil Screener -->
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Nama Perusahaan</th>
+                    <th>Sektor</th>
+                    <th>Harga (IDR)</th>
+                    <th>PER (x)</th>
+                    <th>PBV (x)</th>
+                    <th>ROE (%)</th>
+                    <th>Market Cap</th>
+                </tr>
+            </thead>
+            <tbody id="emitenTableBody">
+                <!-- Data emiten akan ditampilkan di sini -->
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    let globalData = [];
+    let globalEmitens = [];
 
     // Mengambil data dari file data.json
-    async function loadTradingData() {
+    async function loadEmitenData() {
         try {
             const response = await fetch('data.json');
             if (!response.ok) {
@@ -103,71 +130,86 @@
             }
             const data = await response.json();
             
-            // Hapus duplikat data berdasarkan ID jika ada
-            globalData = removeDuplicates(data.strategies, 'id');
+            // Hapus duplikat berdasarkan ticker
+            globalEmitens = removeDuplicates(data.emitens, 'ticker');
             
-            populateDropdown(globalData);
+            populateSectorDropdown(globalEmitens);
+            renderTable(globalEmitens);
         } catch (error) {
             console.error('Error:', error);
+            document.getElementById('emitenTableBody').innerHTML = 
+                '<tr><td colspan="8" class="no-data">Gagal mengambil data dari data.json. Pastikan file ada dan format JSON benar.</td></tr>';
         }
     }
 
-    // Fungsi utilitas untuk menghapus data duplikat
+    // Fungsi menghapus duplikat
     function removeDuplicates(array, key) {
         return array.filter((item, index, self) =>
             index === self.findIndex((t) => t[key] === item[key])
         );
     }
 
-    // Mengisi dropdown opsi (tanpa Scalping)
-    function populateDropdown(strategies) {
-        const selectElement = document.getElementById('strategySelect');
-        selectElement.innerHTML = '<option value="">-- Pilih Strategi --</option>';
-
-        strategies.forEach(strategy => {
-            const option = document.createElement('option');
-            option.value = strategy.id;
-            option.textContent = strategy.name;
-            selectElement.appendChild(option);
+    // Mengisi dropdown Sektor
+    function populateSectorDropdown(emitens) {
+        const sectorSelect = document.getElementById('sectorSelect');
+        
+        // Ambil sektor unik
+        const sectors = [...new Set(emitens.map(item => item.sector))];
+        
+        sectors.forEach(sector => {
+            if(sector) {
+                const option = document.createElement('option');
+                option.value = sector;
+                option.textContent = sector;
+                sectorSelect.appendChild(option);
+            }
         });
     }
 
-    // Menampilkan detail strategi yang dipilih
-    function renderStrategyDetails() {
-        const selectedId = document.getElementById('strategySelect').value;
-        const detailContainer = document.getElementById('strategyDetail');
+    // Menampilkan data ke dalam tabel Screener
+    function renderTable(data) {
+        const tbody = document.getElementById('emitenTableBody');
+        tbody.innerHTML = '';
 
-        if (!selectedId) {
-            detailContainer.style.display = 'none';
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="no-data">Tidak ada emiten yang sesuai kriteria screener.</td></tr>';
             return;
         }
 
-        const strategy = globalData.find(item => item.id === selectedId);
-
-        if (strategy) {
-            document.getElementById('strategyTitle').textContent = strategy.name;
-            document.getElementById('strategyDesc').textContent = strategy.description;
-
-            // Render Timeframes
-            const tfContainer = document.getElementById('strategyTimeframes');
-            tfContainer.innerHTML = strategy.timeframes.map(tf => `<span class="badge">${tf}</span>`).join('');
-
-            // Render Indikator
-            const indContainer = document.getElementById('strategyIndicators');
-            indContainer.innerHTML = strategy.indicators.map(ind => `<span class="badge">${ind}</span>`).join('');
-
-            // Render Aturan
-            document.getElementById('ruleEntry').textContent = strategy.rules.entry;
-            document.getElementById('ruleExit').textContent = strategy.rules.exit;
-            document.getElementById('ruleSL').textContent = strategy.rules.stop_loss;
-            document.getElementById('ruleTP').textContent = strategy.rules.take_profit;
-
-            detailContainer.style.display = 'block';
-        }
+        data.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><span class="badge-ticker">${item.ticker}</span></td>
+                <td>${item.name}</td>
+                <td>${item.sector}</td>
+                <td>${item.price.toLocaleString('id-ID')}</td>
+                <td>${item.per}</td>
+                <td>${item.pbv}</td>
+                <td>${item.roe}%</td>
+                <td>${item.market_cap}</td>
+            `;
+            tbody.appendChild(tr);
+        });
     }
 
-    // Inisialisasi saat halaman selesai dimuat
-    document.addEventListener('DOMContentLoaded', loadTradingData);
+    // Fungsi Logika Screener / Filter
+    function filterData() {
+        const searchText = document.getElementById('searchTicker').value.toLowerCase();
+        const selectedSector = document.getElementById('sectorSelect').value;
+
+        const filtered = globalEmitens.filter(item => {
+            const matchesSearch = item.ticker.toLowerCase().includes(searchText) || 
+                                  item.name.toLowerCase().includes(searchText);
+            const matchesSector = selectedSector === '' || item.sector === selectedSector;
+
+            return matchesSearch && matchesSector;
+        });
+
+        renderTable(filtered);
+    }
+
+    // Inisialisasi halaman
+    document.addEventListener('DOMContentLoaded', loadEmitenData);
 </script>
 
 </body>
