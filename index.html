@@ -1,412 +1,192 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1e1e1e">
-    <link rel="manifest" href="manifest.json">
-    <title>IHSG SH4NDY Screener</title>
-    <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f6f9; 
-            margin: 0; 
-            padding: 6px; 
-            text-transform: uppercase; 
-        }
-        
-        .container { 
-            max-width: 1080px; 
-            margin: auto; 
-            background: white; 
-            padding: 8px; 
-            border-radius: 6px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-        }
-        
-        /* Header Utama */
-        .main-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 6px; 
-            padding-bottom: 4px; 
-            border-bottom: 2px solid #2c3e50; 
-        }
-        h1 { 
-            margin: 0; 
-            color: #333; 
-            font-size: 16px; 
-            text-transform: none !important; 
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Screener & Bandarmology</title>
+  
+  <!-- CSS DIPASANG DI SINI -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      margin: 0;
+      padding: 12px;
+    }
 
-        /* Widget IHSG Hitam Doff */
-        .ihsg-badge {
-            background: #1e1e1e;
-            color: #f1f2f6;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            border: 1px solid #333;
-        }
-        .ihsg-badge .ihsg-title { color: #f39c12; }
-        .ihsg-badge .ihsg-val { color: #2ecc71; }
-        
-        /* Header Controls 1 */
-        .header-controls-1 { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 6px; 
-            align-items: center; 
-            justify-content: space-between; 
-            margin-bottom: 4px; 
-            background: #eaedf1; 
-            padding: 6px 10px; 
-            border-radius: 4px; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1001; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-        }
+    /* Tampilan Ramping & Kompak */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-        /* Header Controls 2 */
-        .header-controls-2 {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #2c3e50;
-            padding: 5px 10px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-            position: sticky;
-            top: 32px;
-            z-index: 1000;
-            color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #38bdf8;
+    }
 
-        .category-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
-        .btn-cat {
-            background: #34495e;
-            color: #dcdde1;
-            border: none;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        .btn-cat.active, .btn-cat:hover {
-            background: #e67e22;
-            color: white;
-        }
+    .updated-time {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+    }
 
-        .total-counter {
-            font-size: 10px;
-            font-weight: bold;
-            background: #16a085;
-            padding: 2px 8px;
-            border-radius: 3px;
-            white-space: nowrap;
-        }
+    .table-compact {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background-color: #1e293b;
+      border-radius: 6px;
+      overflow: hidden;
+    }
 
-        .control-group { display: flex; align-items: center; gap: 4px; }
-        .control-group label { font-size: 10px; font-weight: bold; color: #333; }
-        .control-group input, .control-group button { 
-            padding: 4px 8px; 
-            border: 1px solid #ccc; 
-            border-radius: 3px; 
-            font-size: 10px; 
-            text-transform: uppercase;
-        }
-        .btn-add {
-            background: #27ae60 !important;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn-add:hover { background: #219150 !important; }
+    .table-compact th {
+      background-color: #334155;
+      color: #cbd5e1;
+      text-align: left;
+      padding: 6px 10px;
+      font-weight: 600;
+    }
 
-        .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 2px; }
+    .table-compact td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #334155;
+    }
 
-        /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 2px; }
-        th, td { padding: 5px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; font-size: 11px; }
-        
-        thead th { 
-            position: sticky; 
-            top: 62px; 
-            z-index: 999; 
-            background-color: #1e272e; 
-            color: white; 
-            font-size: 11px;
-            padding: 6px 8px;
-        }
-        
-        tr:hover { background-color: #f8f9fa; }
-        
-        .positive { color: #27ae60; font-weight: bold; }
-        .negative { color: #e74c3c; font-weight: bold; }
-        
-        .badge { padding: 2px 5px; border-radius: 3px; font-size: 0.75em; font-weight: bold; display: inline-block; }
-        .badge-akumulasi { background: #d4edda; color: #155724; }
-        .badge-distribusi { background: #f8d7da; color: #721c24; }
-        .badge-neutral { background: #e2e3e5; color: #383d41; }
+    .table-compact tr:hover {
+      background-color: #334155;
+    }
 
-        .status-strong-sell { background-color: #f8d7da !important; animation: blinkStrongSell 0.8s infinite; }
-        .status-sell { background-color: #fdf2f2 !important; }
-        .status-oversold { background-color: #e8f4f8 !important; }
+    /* Style 10 Kotak Indikator Power Bar */
+    .power-bar-container {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
 
-        .swing-container { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-        .swing-left { display: flex; align-items: center; gap: 6px; }
-        .boxes-group { display: flex; gap: 2px; }
-        .swing-box-segment { width: 10px; height: 14px; border-radius: 2px; display: inline-block; }
-        .box-green { background-color: #27ae60; }
-        .box-red { background-color: #e74c3c; }
-        .box-empty { background-color: #dcdde1; }
-        
-        .percent-middle { font-size: 10px; font-weight: bold; color: #444; }
-        .buy-sell-right { text-align: right; min-width: 85px; }
+    .power-box {
+      width: 6px;
+      height: 12px;
+      background-color: #475569; /* Abu-abu default/off */
+      border-radius: 1px;
+    }
 
-        @keyframes blinkEffect { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        @keyframes blinkStrongSell { 0% { background-color: #f8d7da; } 50% { background-color: #f5c6cb; } 100% { background-color: #f8d7da; } }
-        .blink-icon { animation: blinkEffect 1s infinite; display: inline-block; }
+    /* Warna Kotak Sesuai Sinyal */
+    .power-box.green { background-color: #22c55e; }
+    .power-box.red   { background-color: #ef4444; }
+    .power-box.gray  { background-color: #94a3b8; }
 
-        @keyframes rowBlink3Times { 0% { background-color: #f1c40f; } 50% { background-color: transparent; } 100% { background-color: #f1c40f; } }
-        .highlight-blink { animation: rowBlink3Times 0.4s ease-in-out 3; }
-    </style>
+    /* Animasi Blink Kedip */
+    @keyframes blink-animation {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .blink-green {
+      background-color: #22c55e !important;
+      animation: blink-animation 0.8s infinite;
+    }
+
+    .blink-red {
+      background-color: #ef4444 !important;
+      animation: blink-animation 0.8s infinite;
+    }
+
+    .txt-green { color: #4ade80; font-weight: bold; }
+    .txt-red   { color: #f87171; font-weight: bold; }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="main-header">
-        <h1>IHSG SH4NDY Screener</h1>
-        <div class="ihsg-badge" id="ihsgWidget">
-            <span class="ihsg-title">IHSG:</span>
-            <span class="ihsg-val" id="ihsgPrice">LOADING...</span>
-            <span id="ihsgChange"></span>
-        </div>
-    </div>
-    
-    <!-- Header Controls 1 -->
-    <div class="header-controls-1">
-        <div class="control-group" style="flex-grow: 1;">
-            <label for="searchTicker">CARI EMITEN:</label>
-            <input type="text" id="searchTicker" placeholder="TICKER (MISAL: JARR, JGLE)..." style="width: 220px;" onkeyup="handleSearchKey(event)">
-            <button class="btn-add" onclick="filterAndRender()">CARI</button>
-        </div>
+  <div class="container">
+    <h2>IDX Bandarmology & Power Screener</h2>
+    <div class="updated-time" id="last-update">Update: -</div>
 
-        <div class="control-group" style="margin-left: auto;">
-            <button onclick="loadStockData()" title="REFRESH DATA">🔄 REFRESH</button>
-            <button onclick="location.reload()" title="RELOAD PAGE">⚡ RELOAD</button>
-        </div>
-    </div>
-
-    <!-- Header Controls 2 -->
-    <div class="header-controls-2">
-        <div class="category-buttons">
-            <button class="btn-cat active" onclick="setCategory('ALL', this)">ALL IDX</button>
-            <button class="btn-cat" onclick="setCategory('BLUECHIP', this)">BLUECHIP</button>
-            <button class="btn-cat" onclick="setCategory('TOP GAINERS', this)">TOP GAINERS</button>
-            <button class="btn-cat" onclick="setCategory('HIGH VOLATILITY', this)">HIGH VOLATILITY</button>
-        </div>
-        <div class="total-counter" id="totalCounter">TOTAL: 0 EMITEN</div>
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 15%;">TICKER</th>
-                <th style="width: 15%;">HARGA</th>
-                <th style="width: 12%;">CHANGE</th>
-                <th style="width: 15%;">BANDAR</th>
-                <th style="width: 18%;">LEVEL (SL / TP)</th>
-                <th style="width: 25%;">POWER / SIGNAL</th>
-            </tr>
-        </thead>
-        <tbody id="stockTable">
-            <!-- Render via JS -->
-        </tbody>
+    <table class="table-compact">
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Harga</th>
+          <th>Chg (%)</th>
+          <th>Bandarmology</th>
+          <th>Signal</th>
+          <th>Power Bar (10 Kotak)</th>
+        </tr>
+      </thead>
+      <tbody id="stock-list">
+        <!-- Data akan dimuat lewat JavaScript -->
+      </tbody>
     </table>
-</div>
+  </div>
 
-<script>
-let globalStocksData = [];
-let currentCategory = 'ALL';
+  <!-- JAVASCRIPT DIPASANG DI SINI -->
+  <script>
+    // Fungsi membuat 10 kotak indikator (1 kotak = 10%)
+    function renderPowerBar(score, signal) {
+      const activeBoxes = Math.round(score / 10);
+      let html = '<div class="power-bar-container">';
 
-function formatNominal(val) {
-    const num = Number(val);
-    if (isNaN(num) || num === 0) return "0";
-    return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(num);
-}
+      for (let i = 1; i <= 10; i++) {
+        let boxClass = "power-box";
 
-function formatNumber(val, decimals = 1) {
-    const num = Number(val);
-    return isNaN(num) ? "0" : num.toFixed(decimals);
-}
+        if (i <= activeBoxes) {
+          if (signal === "STRONG BUY") {
+            boxClass += " blink-green";
+          } else if (signal === "BUY") {
+            boxClass += " green";
+          } else if (signal === "STRONG SELL") {
+            boxClass += " blink-red";
+          } else if (signal === "SELL") {
+            boxClass += " red";
+          } else {
+            boxClass += " gray";
+          }
+        }
+        html += `<div class="${boxClass}"></div>`;
+      }
 
-function setCategory(cat, btn) {
-    currentCategory = cat;
-    document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    filterAndRender();
-}
+      html += `<span style="margin-left: 6px; font-size: 11px; color: #cbd5e1;">${score}%</span></div>`;
+      return html;
+    }
 
-function handleSearchKey(event) {
-    filterAndRender();
-}
-
-function calculateSwingPower(stock) {
-    const price = Number(stock.price) || 0;
-    const rsi = Number(stock.rsi) || 50;
-    const volRatio = Number(stock.volRatio) || 1;
-    const ema20 = Number(stock.ema20) || price;
-    const ema50 = Number(stock.ema50) || price;
-
-    let trendScore = (price > ema20 ? 1 : 0) + (ema20 > ema50 ? 1 : 0);
-    let rsiScore = (rsi >= 45 && rsi <= 65) ? 1 : (rsi > 65 ? 0.7 : 0.2);
-    let volScore = volRatio >= 1.2 ? 1 : (volRatio >= 1.0 ? 0.6 : 0.2);
-
-    let rawScore = ((trendScore + rsiScore + volScore) / 4.0) * 100;
-    let totalPercent = Math.min(Math.max(rawScore, 0), 100);
-
-    let activeBoxes = Math.round(totalPercent / 20);
-    activeBoxes = Math.min(Math.max(activeBoxes, 0), 5);
-
-    let isOversold = rsi < 30;
-    let isBearish = totalPercent <= 35 && !isOversold;
-    let isStrongBuy = totalPercent >= 80;
-    let isBullish = totalPercent >= 60;
-    
-    return {
-        percent: totalPercent.toFixed(1),
-        activeBoxes: activeBoxes,
-        isOversold: isOversold,
-        isBearish: isBearish,
-        isStrongBuy: isStrongBuy,
-        isBullish: isBullish
-    };
-}
-
-async function loadStockData() {
-    try {
+    // Membaca file data.json dan menampilkan ke tabel
+    async function loadScreenerData() {
+      try {
         const response = await fetch('data.json?t=' + new Date().getTime());
         const data = await response.json();
-        
-        if (data.ihsg) {
-            document.getElementById('ihsgPrice').innerText = formatNominal(data.ihsg.price);
-            const changeElem = document.getElementById('ihsgChange');
-            const chg = Number(data.ihsg.change) || 0;
-            const sign = chg >= 0 ? '+' : '';
-            changeElem.innerText = `(${sign}${chg.toFixed(2)}%)`;
-            changeElem.className = chg >= 0 ? 'positive' : 'negative';
-        }
 
-        globalStocksData = data.stocks || [];
-        filterAndRender();
-    } catch (err) {
-        console.error('GAGAL MEMUAT DATA.JSON:', err);
+        document.getElementById('last-update').innerText = 'Update: ' + new Date(data.updatedAt).toLocaleString('id-ID');
+
+        const tbody = document.getElementById('stock-list');
+        tbody.innerHTML = '';
+
+        data.stocks.forEach(stock => {
+          const tr = document.createElement('tr');
+
+          const changeClass = stock.change >= 0 ? 'txt-green' : 'txt-red';
+          const changeSign = stock.change > 0 ? '+' : '';
+
+          tr.innerHTML = `
+            <td><strong>${stock.ticker}</strong></td>
+            <td>${stock.price.toLocaleString('id-ID')}</td>
+            <td class="${changeClass}">${changeSign}${stock.change}%</td>
+            <td>${stock.bandarmology}</td>
+            <td>${stock.signal}</td>
+            <td>${renderPowerBar(stock.powerScore, stock.signal)}</td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+
+      } catch (error) {
+        console.error('Gagal memuat data.json:', error);
+      }
     }
-}
 
-function filterAndRender() {
-    const keyword = document.getElementById('searchTicker').value.trim().toUpperCase();
-    
-    let filtered = globalStocksData.filter(stock => {
-        const matchCat = currentCategory === 'ALL' || (stock.categories && stock.categories.includes(currentCategory));
-        const matchSearch = !keyword || (stock.ticker && stock.ticker.toUpperCase().includes(keyword));
-        return matchCat && matchSearch;
-    });
-
-    document.getElementById('totalCounter').innerText = `TOTAL: ${filtered.length} EMITEN`;
-    renderTable(filtered);
-}
-
-function renderTable(stocks) {
-    const tbody = document.getElementById('stockTable');
-    tbody.innerHTML = '';
-
-    stocks.forEach((stock, index) => {
-        const tr = document.createElement('tr');
-        const tickerStr = stock.ticker ? stock.ticker.toUpperCase() : index;
-        tr.id = 'row-' + tickerStr;
-        
-        const price = Number(stock.price) || 0;
-        const change = Number(stock.change) || 0;
-        const changeClass = change >= 0 ? 'positive' : 'negative';
-        const changeSign = change >= 0 ? '+' : '';
-        const bandarClass = 'badge-' + (stock.bandarmology || 'neutral').toLowerCase();
-
-        const swing = calculateSwingPower(stock);
-
-        let rowStatusClass = '';
-        let statusIcon = '';
-        let recommendationText = '';
-
-        if (swing.isOversold) {
-            rowStatusClass = 'status-oversold';
-            statusIcon = `<span class="blink-icon">🎯</span>`;
-            recommendationText = `<span style="color:#0275d8;">OVERSOLD</span>`;
-        } else if (swing.isBearish) {
-            rowStatusClass = swing.percent < 20 ? 'status-strong-sell' : 'status-sell';
-            statusIcon = `<span class="blink-icon">⏳</span>`;
-            recommendationText = `<span class="negative">BEARISH</span>`;
-        } else if (swing.isBullish) {
-            statusIcon = `<span class="${swing.isStrongBuy ? 'blink-icon' : ''}">🚀</span>`;
-            recommendationText = `<span class="positive">${swing.isStrongBuy ? 'STRONG BUY' : 'BUY'}</span>`;
-        } else {
-            statusIcon = `<span>👁️</span>`;
-            recommendationText = `<span class="badge-neutral" style="padding:2px 4px;">NEUTRAL</span>`;
-        }
-
-        if (rowStatusClass) tr.classList.add(rowStatusClass);
-
-        let boxesHtml = `<div class="boxes-group">`;
-        for (let i = 1; i <= 5; i++) {
-            let boxClass = 'box-empty';
-            if (i <= swing.activeBoxes) {
-                boxClass = swing.isBearish ? 'box-red' : 'box-green';
-            }
-            boxesHtml += `<span class="swing-box-segment ${boxClass}"></span>`;
-        }
-        boxesHtml += `</div>`;
-
-        const powerColumnContent = `
-            <div class="swing-container">
-                <div class="swing-left">
-                    ${statusIcon}
-                    ${boxesHtml}
-                </div>
-                <div class="percent-middle">${swing.percent}%</div>
-                <div class="buy-sell-right">${recommendationText}</div>
-            </div>
-        `;
-
-        const sl = stock.sl || stock.cl1 || int(price * 0.95);
-        const tp = stock.tp || stock.r1 || int(price * 1.05);
-
-        tr.innerHTML = `
-            <td><strong>${stock.ticker || '-'}</strong></td>
-            <td>${formatNominal(price)}</td>
-            <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
-            <td><span class="badge ${bandarClass}">${(stock.bandarmology || 'NEUTRAL').toUpperCase()}</span></td>
-            <td>
-                <span class="negative">SL: ${formatNominal(sl)}</span><br>
-                <span class="positive">TP: ${formatNominal(tp)}</span>
-            </td>
-            <td>${powerColumnContent}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-loadStockData();
-</script>
-
+    // Jalankan pertama kali saat halaman dibuka
+    loadScreenerData();
+  </script>
 </body>
 </html>
