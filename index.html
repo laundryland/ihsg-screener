@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IHSG STOCK SCREENER PRO - SWING STRATEGY</title>
+    <meta name="theme-color" content="#1e1e1e">
+    <link rel="manifest" href="manifest.json">
+    <title>IHSG SH4NDY Screener</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -22,7 +24,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
         }
         
-        /* Header Utama (Mixed Case) */
+        /* Header Utama */
         .main-header { 
             display: flex; 
             justify-content: space-between; 
@@ -38,9 +40,9 @@
             text-transform: none !important; 
         }
 
-        /* Widget IHSG (Hitam Doff) */
+        /* Widget IHSG Hitam Doff */
         .ihsg-badge {
-            background: #1e1e1e; /* HITAM DOFF */
+            background: #1e1e1e;
             color: #f1f2f6;
             padding: 5px 10px;
             border-radius: 4px;
@@ -50,12 +52,11 @@
             gap: 6px;
             align-items: center;
             border: 1px solid #333;
-            box-shadow: inset 0 0 4px rgba(255,255,255,0.05);
         }
         .ihsg-badge .ihsg-title { color: #f39c12; }
         .ihsg-badge .ihsg-val { color: #2ecc71; }
         
-        /* Header Controls 1 (Sticky Top 0) */
+        /* Header Controls 1 (Pencarian & Live Fetch Manual) */
         .header-controls-1 { 
             display: flex; 
             flex-wrap: wrap; 
@@ -72,7 +73,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
         }
 
-        /* Header Controls 2 (Kategori & Counter - Sticky Top 32px) */
+        /* Header Controls 2 (Filter Kategori & Multi Counter) */
         .header-controls-2 {
             display: flex;
             align-items: center;
@@ -117,19 +118,27 @@
         .control-group { display: flex; align-items: center; gap: 4px; }
         .control-group label { font-size: 10px; font-weight: bold; color: #333; }
         .control-group input, .control-group button { 
-            padding: 3px 6px; 
+            padding: 4px 8px; 
             border: 1px solid #ccc; 
             border-radius: 3px; 
             font-size: 10px; 
             text-transform: uppercase;
         }
+        .btn-add {
+            background: #27ae60 !important;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-add:hover { background: #219150 !important; }
+
         .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 2px; }
 
         /* Table Styling */
         table { width: 100%; border-collapse: collapse; margin-top: 2px; }
         th, td { padding: 5px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; font-size: 11px; }
         
-        /* Sticky Header 3 (Table Head Sticky Top 62px) */
+        /* Sticky Header Table */
         thead th { 
             position: sticky; 
             top: 62px; 
@@ -165,8 +174,6 @@
         .percent-middle { font-size: 10px; font-weight: bold; color: #444; }
         .buy-sell-right { text-align: right; min-width: 85px; }
 
-        .sizing-info { font-size: 9px; color: #555; }
-
         @keyframes blinkEffect { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         @keyframes blinkStrongSell { 0% { background-color: #f8d7da; } 50% { background-color: #f5c6cb; } 100% { background-color: #f8d7da; } }
         .blink-icon { animation: blinkEffect 1s infinite; display: inline-block; }
@@ -179,8 +186,7 @@
 
 <div class="container">
     <div class="main-header">
-        <h1>IHSG Stock Screener Pro</h1>
-        <!-- Widget IHSG Hitam Doff -->
+        <h1>IHSG SH4NDY Screener</h1>
         <div class="ihsg-badge" id="ihsgWidget">
             <span class="ihsg-title">IHSG:</span>
             <span class="ihsg-val" id="ihsgPrice">LOADING...</span>
@@ -188,16 +194,12 @@
         </div>
     </div>
     
-    <!-- Header Controls 1 -->
+    <!-- Header Controls 1: Pencarian & Monitor Manual YFinance -->
     <div class="header-controls-1">
-        <div class="control-group">
-            <label for="manualNominal">DANA (IDR):</label>
-            <input type="text" id="manualNominal" value="100.000.000" style="width: 85px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
-        </div>
-
-        <div class="control-group">
-            <label for="searchTicker">CARI:</label>
-            <input type="text" id="searchTicker" placeholder="TICKER..." style="width: 70px;" onkeyup="filterAndRender()">
+        <div class="control-group" style="flex-grow: 1;">
+            <label for="searchTicker">CARI / MONITOR EMITEN:</label>
+            <input type="text" id="searchTicker" placeholder="MASUKKAN TICKER (MISAL: JARR, JGLE)..." style="width: 220px;" onkeyup="handleSearchKey(event)">
+            <button class="btn-add" onclick="manualFetchTicker()" title="TAMBAHKAN EMITEN MANUAL DARI YFINANCE">+ MONITOR</button>
         </div>
 
         <div class="control-group" style="margin-left: auto;">
@@ -206,13 +208,14 @@
         </div>
     </div>
 
-    <!-- Header Controls 2 (Kategori & Total Multi Counter) -->
+    <!-- Header Controls 2: Kategori & Counter -->
     <div class="header-controls-2">
         <div class="category-buttons">
             <button class="btn-cat active" onclick="setCategory('ALL', this)">ALL IDX</button>
             <button class="btn-cat" onclick="setCategory('BLUECHIP', this)">BLUECHIP</button>
             <button class="btn-cat" onclick="setCategory('TOP GAINERS', this)">TOP GAINERS</button>
             <button class="btn-cat" onclick="setCategory('HIGH VOLATILITY', this)">HIGH VOLATILITY</button>
+            <button class="btn-cat" onclick="setCategory('MANUAL', this)">MONITOR MANUAL</button>
         </div>
         <div class="total-counter" id="totalCounter">TOTAL: 0 EMITEN</div>
     </div>
@@ -220,13 +223,12 @@
     <table>
         <thead>
             <tr>
-                <th style="width: 12%;">TICKER</th>
-                <th style="width: 12%;">HARGA</th>
-                <th style="width: 10%;">CHANGE</th>
-                <th style="width: 12%;">BANDAR</th>
+                <th style="width: 15%;">TICKER</th>
+                <th style="width: 15%;">HARGA</th>
+                <th style="width: 12%;">CHANGE</th>
+                <th style="width: 15%;">BANDAR</th>
                 <th style="width: 18%;">LEVEL (SL / TP)</th>
-                <th style="width: 12%;">RISK SIZING</th>
-                <th style="width: 24%;">POWER / SIGNAL</th>
+                <th style="width: 25%;">POWER / SIGNAL</th>
             </tr>
         </thead>
         <tbody id="stockTable">
@@ -250,18 +252,6 @@ function formatNumber(val, decimals = 1) {
     return isNaN(num) ? "0" : num.toFixed(decimals);
 }
 
-function cleanInputNominal(el) { el.value = el.value.replace(/\./g, ''); }
-
-function formatInputNominal(el) {
-    const num = Number(el.value);
-    if (!isNaN(num) && num > 0) {
-        el.value = new Intl.NumberFormat('id-ID').format(num);
-    } else {
-        el.value = "100.000.000";
-    }
-    filterAndRender();
-}
-
 function setCategory(cat, btn) {
     currentCategory = cat;
     document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
@@ -269,169 +259,164 @@ function setCategory(cat, btn) {
     filterAndRender();
 }
 
-function calculateSwingPower(stock) {
-    const price = Number(stock.price) || 0;
-    const rsi = Number(stock.rsi) || 50;
-    const volRatio = Number(stock.volRatio) || 1;
-    const ema20 = Number(stock.ema20) || price;
-    const ema50 = Number(stock.ema50) || price;
-
-    let trendScore = (price > ema20 ? 1 : 0) + (ema20 > ema50 ? 1 : 0);
-    let rsiScore = (rsi >= 45 && rsi <= 65) ? 1 : (rsi > 65 ? 0.7 : 0.2);
-    let volScore = volRatio >= 1.2 ? 1 : (volRatio >= 1.0 ? 0.6 : 0.2);
-
-    let rawScore = ((trendScore + rsiScore + volScore) / 4.0) * 100;
-    let totalPercent = Math.min(Math.max(rawScore, 0), 100);
-
-    let activeBoxes = Math.round(totalPercent / 20);
-    activeBoxes = Math.min(Math.max(activeBoxes, 0), 5);
-
-    let isOversold = rsi < 30;
-    let isBearish = totalPercent <= 35 && !isOversold;
-    let isStrongBuy = totalPercent >= 80;
-    let isBullish = totalPercent >= 60;
-    
-    return {
-        percent: totalPercent.toFixed(1),
-        activeBoxes: activeBoxes,
-        isOversold: isOversold,
-        isBearish: isBearish,
-        isStrongBuy: isStrongBuy,
-        isBullish: isBullish
-    };
-}
-
-function calculatePositionSize(capital, entryPrice, stopLossPrice) {
-    if (entryPrice <= stopLossPrice || entryPrice <= 0) return { maxLot: 0 };
-    const maxRiskPerTrade = capital * 0.02;
-    const riskPerShare = entryPrice - stopLossPrice;
-    let sharesToBuy = Math.floor(maxRiskPerTrade / riskPerShare);
-    let lotsToBuy = Math.floor(sharesToBuy / 100);
-    
-    if ((lotsToBuy * 100 * entryPrice) > capital) {
-        lotsToBuy = Math.floor(capital / (entryPrice * 100));
-    }
-    return { maxLot: lotsToBuy };
-}
-
-async function loadStockData() {
-    try {
-        const response = await fetch('data.json?t=' + new Date().getTime());
-        const data = await response.json();
-        
-        if (data.ihsg) {
-            document.getElementById('ihsgPrice').innerText = formatNominal(data.ihsg.price);
-            const changeElem = document.getElementById('ihsgChange');
-            const chg = Number(data.ihsg.change) || 0;
-            const sign = chg >= 0 ? '+' : '';
-            changeElem.innerText = `(${sign}${chg.toFixed(2)}%)`;
-            changeElem.className = chg >= 0 ? 'positive' : 'negative';
-        }
-
-        globalStocksData = data.stocks || [];
+function handleSearchKey(event) {
+    if (event.key === 'Enter') {
+        manualFetchTicker();
+    } else {
         filterAndRender();
-    } catch (err) {
-        console.error('GAGAL MEMUAT DATA.JSON:', err);
     }
 }
 
-function filterAndRender() {
-    const keyword = document.getElementById('searchTicker').value.trim().toUpperCase();
-    
-    let filtered = globalStocksData.filter(stock => {
-        const matchCat = currentCategory === 'ALL' || (stock.categories && stock.categories.includes(currentCategory));
-        const matchSearch = !keyword || (stock.ticker && stock.ticker.toUpperCase().includes(keyword));
-        return matchCat && matchSearch;
-    });
+async function manualFetchTicker() {
+    const inputEl = document.getElementById('searchTicker');
+    const ticker = inputEl.value.trim().toUpperCase();
+    if (!ticker) return;
 
-    document.getElementById('totalCounter').innerText = `TOTAL: ${filtered.length} EMITEN`;
-    renderTable(filtered);
-}
+    // Cek apakah ticker sudah terdaftar
+    const existingIndex = globalStocksData.findIndex(s => s.ticker === ticker);
+    if (existingIndex !== -1) {
+        // Terapkan filter & highlight baris
+        document.getElementById('searchTicker').value = ticker;
+        filterAndRender();
+        const row = document.getElementById('row-' + ticker);
+        if (row) {
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            row.classList.add('highlight-blink');
+            setTimeout(() => row.classList.remove('highlight-blink'), 1500);
+        }
+        return;
+    }
 
-function renderTable(stocks) {
-    const tbody = document.getElementById('stockTable');
-    tbody.innerHTML = '';
+    // Jika belum ada, panggil endpoint python / APIBerikut adalah pembaruan kode HTML untuk **`index.html`**. Kolom *Dana* beserta fungsi kalkulasi biayanya telah dihapus, lalu digantikan dengan panel **Input Pencarian Manual** yang terhubung langsung ke API **yfinance** (melalui backend Python/Flask/FastAPI) untuk memantau data emiten secara manual.
 
-    const rawCapitalInput = document.getElementById('manualNominal').value.replace(/\./g, '');
-    const currentCapital = Number(rawCapitalInput) || 100000000;
-
-    stocks.forEach((stock, index) => {
-        const tr = document.createElement('tr');
-        const tickerStr = stock.ticker ? stock.ticker.toUpperCase() : index;
-        tr.id = 'row-' + tickerStr;
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Emiten Stock</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { padding: 20px; background-color: #f4f7f6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { margin-bottom: 20px; font-size: 24px; color: #1a252f; }
         
-        const price = Number(stock.price) || 0;
-        const change = Number(stock.change) || 0;
-        const changeClass = change >= 0 ? 'positive' : 'negative';
-        const changeSign = change >= 0 ? '+' : '';
-        const bandarClass = 'badge-' + (stock.bandarmology || 'neutral').toLowerCase();
+        /* Panel Pencarian Manual */
+        .search-panel { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+        .search-panel input { flex: 1; padding: 10px 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; text-transform: uppercase; }
+        .search-panel button { padding: 10px 20px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .search-panel button:hover { background-color: #219150; }
+        
+        /* Tabel Monitoring */
+        .table-container { background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+        th { background-color: #2c3e50; color: #fff; font-weight: 600; }
+        tr:hover { background-color: #f9f9f9; }
+        
+        .price-up { color: #27ae60; font-weight: bold; }
+        .price-down { color: #e74c3c; font-weight: bold; }
+        .btn-delete { background-color: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-delete:hover { background-color: #c0392b; }
+        .loading { color: #7f8c8d; font-style: italic; }
+    </style>
+</head>
+<body>
 
-        const swing = calculateSwingPower(stock);
-        const sizing = calculatePositionSize(currentCapital, price, stock.sl);
+<div class="container">
+    <h1>Monitor Emiten (yfinance)</h1>
+    
+    <!-- Form Pencarian Manual -->
+    <div class="search-panel">
+        <input type="text" id="tickerInput" placeholder="Masukkan Simbol Emiten (Contoh: BBCA.JK, TLKM.JK, AAPL)">
+        <button onclick="addTicker()">Tambah Monitor</button>
+    </div>
 
-        let rowStatusClass = '';
-        let statusIcon = '';
-        let recommendationText = '';
+    <!-- Tabel Data Emiten -->
+    <div class="table-container">
+        <table id="stockTable">
+            <thead>
+                <tr>
+                    <th>Simbol</th>
+                    <th>Nama Perusahaan</th>
+                    <th>Harga Terakhir</th>
+                    <th>Perubahan</th>
+                    <th>Volume</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="stockTableBody">
+                <!-- Data dari yfinance akan ditambahkan di sini secara dinamis -->
+            </tbody>
+        </table>
+    </div>
+</div>
 
-        if (swing.isOversold) {
-            rowStatusClass = 'status-oversold';
-            statusIcon = `<span class="blink-icon" title="OVERSOLD BOUNCE">🎯</span>`;
-            recommendationText = `<span style="color:#0275d8;">OVERSOLD</span>`;
-        } else if (swing.isBearish) {
-            rowStatusClass = swing.percent < 20 ? 'status-strong-sell' : 'status-sell';
-            statusIcon = `<span class="blink-icon" title="SELL / BEARISH">⏳</span>`;
-            recommendationText = `<span class="negative">BEARISH</span>`;
-        } else if (swing.isBullish) {
-            statusIcon = `<span class="${swing.isStrongBuy ? 'blink-icon' : ''}" title="${swing.isStrongBuy ? 'STRONG BUY' : 'BUY'}">🚀</span>`;
-            recommendationText = `<span class="positive">${swing.isStrongBuy ? 'STRONG BUY' : 'BUY'}</span>`;
-        } else {
-            statusIcon = `<span title="NEUTRAL">👁️</span>`;
-            recommendationText = `<span class="badge-neutral" style="padding:2px 4px;">NEUTRAL</span>`;
+<script>
+    // Menyimpan daftar emiten yang dipantau
+    let monitoredTickers = [];
+
+    async function fetchStockData(ticker) {
+        try {
+            // Memanggil endpoint backend Python yfinance
+            const response = await fetch(`/api/stock?symbol=${encodeURIComponent(ticker)}`);
+            if (!response.ok) throw new Error('Emiten tidak ditemukan');
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            alert(`Gagal mengambil data untuk ${ticker}: ${error.message}`);
+            return null;
+        }
+    }
+
+    async function addTicker() {
+        const input = document.getElementById('tickerInput');
+        const symbol = input.value.trim().toUpperCase();
+
+        if (!symbol) {
+            alert("Silakan masukkan kode/simbol emiten.");
+            return;
         }
 
-        if (rowStatusClass) tr.classList.add(rowStatusClass);
-
-        let boxesHtml = `<div class="boxes-group">`;
-        for (let i = 1; i <= 5; i++) {
-            let boxClass = 'box-empty';
-            if (i <= swing.activeBoxes) {
-                boxClass = swing.isBearish ? 'box-red' : 'box-green';
-            }
-            boxesHtml += `<span class="swing-box-segment ${boxClass}"></span>`;
+        if (monitoredTickers.includes(symbol)) {
+            alert("Emiten sudah ada dalam daftar monitor.");
+            return;
         }
-        boxesHtml += `</div>`;
 
-        const powerColumnContent = `
-            <div class="swing-container">
-                <div class="swing-left">
-                    ${statusIcon}
-                    ${boxesHtml}
-                </div>
-                <div class="percent-middle">${swing.percent}%</div>
-                <div class="buy-sell-right">${recommendationText}</div>
-            </div>
+        const data = await fetchStockData(symbol);
+        if (data) {
+            monitoredTickers.push(symbol);
+            renderRow(data);
+            input.value = '';
+        }
+    }
+
+    function renderRow(data) {
+        const tbody = document.getElementById('stockTableBody');
+        const row = document.createElement('tr');
+        row.setAttribute('id', `row-${data.symbol}`);
+
+        const changeClass = data.change >= 0 ? 'price-up' : 'price-down';
+        const changeSign = data.change >= 0 ? '+' : '';
+
+        row.innerHTML = `
+            <td><strong>${data.symbol}</strong></td>
+            <td>${data.name || '-'}</td>
+            <td>${data.currency || ''} ${data.price.toLocaleString()}</td>
+            <td class="${changeClass}">${changeSign}${data.change}%</td>
+            <td>${data.volume.toLocaleString()}</td>
+            <td><button class="btn-delete" onclick="removeTicker('${data.symbol}')">Hapus</button></td>
         `;
 
-        tr.innerHTML = `
-            <td><strong>${stock.ticker || '-'}</strong></td>
-            <td>${formatNominal(price)}</td>
-            <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
-            <td><span class="badge ${bandarClass}">${(stock.bandarmology || 'NEUTRAL').toUpperCase()}</span></td>
-            <td>
-                <span class="negative">SL: ${formatNominal(stock.sl)}</span><br>
-                <span class="positive">TP: ${formatNominal(stock.tp)}</span>
-            </td>
-            <td class="sizing-info">
-                <strong>${sizing.maxLot} LOT</strong><br>
-                <span style="color:#777;">(RISK 2%)</span>
-            </td>
-            <td>${powerColumnContent}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
+        tbody.appendChild(row);
+    }
 
-loadStockData();
+    function removeTicker(symbol) {
+        monitoredTickers = monitoredTickers.filter(t => t !== symbol);
+        const row = document.getElementById(`row-${symbol}`);
+        if (row) row.remove();
+    }
 </script>
 
 </body>
