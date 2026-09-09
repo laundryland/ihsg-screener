@@ -3,142 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IHSG Stock Screener</title>
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>IHSG Stock Screener Pro</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { margin-top: 0; color: #333; font-size: 1.5rem; }
+        .container { max-width: 1400px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #333; font-size: 24px; }
         
-        /* Header Layout & Controls */
-        .header-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 6px;
-        }
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn-action {
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-action:hover { background: #34495e; }
+        /* Header Controls */
+        .header-controls { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #eaedf1; padding: 12px; border-radius: 6px; }
+        .control-group { display: flex; align-items: center; gap: 8px; }
+        .control-group label { font-size: 13px; font-weight: bold; color: #333; }
+        .control-group input, .control-group button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+        .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .control-group button:hover { background: #34495e; }
+
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+        th { background-color: #2c3e50; color: white; }
+        tr:hover { background-color: #f1f1f1; }
         
-        input[type="text"], input[type="number"] {
-            padding: 7px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
+        .company-name { font-size: 0.85em; color: #555; } /* Permintaan 1: Nama perusahaan kecil */
+        .positive { color: #27ae60; font-weight: bold; }
+        .negative { color: #e74c3c; font-weight: bold; }
+        
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; display: inline-block; }
+        .badge-akumulasi { background: #d4edda; color: #155724; }
+        .badge-distribusi { background: #f8d7da; color: #721c24; }
+        .badge-neutral { background: #e2e3e5; color: #383d41; }
 
-        /* 5 Small Summary Boxes */
-        .summary-boxes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .s-box {
-            background: #fff;
-            border: 1px solid #e1e4e8;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .s-box .title { font-size: 0.8rem; color: #666; margin-bottom: 5px; }
-        .s-box .value { font-size: 1.1rem; font-weight: bold; }
-
-        /* Animations */
-        @keyframes blink {
+        /* 5 Kotak Strategi Swing Middle-Term */
+        .swing-boxes-container { display: flex; align-items: center; gap: 6px; }
+        .eye-icon { margin-right: 4px; font-size: 12px; color: #555; }
+        .swing-box { padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; text-align: center; min-width: 45px; display: inline-block; }
+        
+        /* Animasi Blink */
+        @@keyframes blinkEffect {
             0% { opacity: 1; }
             50% { opacity: 0.3; }
             100% { opacity: 1; }
         }
-        .blink-rocket { color: #27ae60; animation: blink 1s infinite; }
-        .blink-hourglass { color: #e74c3c; animation: blink 1s infinite; }
-        .neutral-gray { color: #95a5a6; }
+        .blink-rocket { background: #27ae60; color: white; animation: blinkEffect 1s infinite; }
+        .blink-hourglass { background: #e74c3c; color: white; animation: blinkEffect 1s infinite; }
+        .box-neutral { background: #bdc3c7; color: #2c3e50; }
 
-        /* Table Design */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #2c3e50; color: white; }
-        tr:hover { background-color: #f1f1f1; }
-        
-        .company-name { font-size: 0.85em; color: #555; }
-        .positive { color: #27ae60; font-weight: bold; }
-        .negative { color: #e74c3c; font-weight: bold; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
-        .badge-akumulasi { background: #d4edda; color: #155724; }
-        .badge-distribusi { background: #f8d7da; color: #721c24; }
-        .badge-neutral { background: #e2e3e5; color: #383d41; }
-        
-        .highlight-row {
-            animation: blink 0.6s ease 3;
-            background-color: #fff3cd !important;
+        /* Efek Blink Baris saat Pencarian Ditemukan */
+        @@keyframes rowBlink {
+            0% { background-color: #f1c40f; }
+            50% { background-color: transparent; }
+            100% { background-color: #f1c40f; }
         }
+        .highlight-blink { animation: rowBlink 0.6s ease 3; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Screener Saham IHSG</h1>
-    <p id="updatedTime" style="font-size: 0.85rem; color: #666;">Memuat data...</p>
-
-    <!-- Header Controls: Refresh, Reset, Manual Nominal, Search -->
+    <h1>IHSG Stock Screener Pro (Swing Strategy)</h1>
+    
+    <!-- Header Control Panel (Refresh, Input Nominal, Search) -->
     <div class="header-controls">
         <div class="control-group">
-            <button class="btn-action" onclick="loadStockData()"><i class="fa-solid fa-rotate"></i> Refresh</button>
-            <button class="btn-action" onclick="resetFilters()"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
+            <button onclick="loadStockData()">
+                <span>🔄</span> Refresh / Reload
+            </button>
+            <span id="updatedTime" style="font-size: 12px; color: #666;">Memuat data...</span>
         </div>
-        <div class="control-group">
-            <label for="manualNominal" style="font-size: 0.85rem; font-weight: 600;">Nominal Input:</label>
-            <input type="number" id="manualNominal" value="5000000000" oninput="calculateStrategies()" style="width: 140px;">
-        </div>
-        <div class="control-group">
-            <input type="text" id="searchInput" placeholder="Cari emiten (contoh: BBCA)..." onkeyup="handleSearch(event)">
-        </div>
-    </div>
 
-    <!-- 5 Small Boxes based on Swing Trader Strategy -->
-    <div class="summary-boxes" id="summaryBoxes">
-        <div class="s-box">
-            <div class="title">Top Status / Market Bias</div>
-            <div class="value" id="boxBias">-</div>
+        <div class="control-group">
+            <label for="manualNominal">Alokasi Dana (Manual):</label>
+            <input type="text" id="manualNominal" value="5.000.000.000" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
         </div>
-        <div class="s-box">
-            <div class="title">Avg Vol Ratio</div>
-            <div class="value" id="boxVol">-</div>
-        </div>
-        <div class="s-box">
-            <div class="title">Avg RSI (14)</div>
-            <div class="value" id="boxRsi">-</div>
-        </div>
-        <div class="s-box">
-            <div class="title">Alokasi Modal / Emiten</div>
-            <div class="value" id="boxAllocation">-</div>
-        </div>
-        <div class="s-box">
-            <div class="title">Sinyal Makro Swing</div>
-            <div class="value" id="boxSignal">-</div>
+
+        <div class="control-group">
+            <label for="searchTicker">Cari Emiten:</label>
+            <input type="text" id="searchTicker" placeholder="Ketik Ticker (cth: BBCA)..." onkeyup="searchStock()">
         </div>
     </div>
 
@@ -154,28 +93,77 @@
                 <th>EMA20</th>
                 <th>EMA50</th>
                 <th>Bandarmology</th>
+                <th>Power 5-Box Swing (Top Trader Algo)</th>
             </tr>
         </thead>
         <tbody id="stockTable">
-            <!-- Data rendered via JS -->
+            <!-- Render via JS -->
         </tbody>
     </table>
 </div>
 
 <script>
-let globalStocksData = [];
-
-// Format raw number stripping "Rp" string visually if needed while retaining exact numeric handling
-function formatNumberOnly(val) {
+// Permintaan 2: Hilangkan "Rp" tanpa mempengaruhi fungsi nominal angka
+function formatNominal(val) {
     const num = Number(val);
     if (isNaN(num) || num === 0) return "0";
     return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(num);
 }
 
-function formatDecimal(val, decimals = 1) {
+function formatNumber(val, decimals = 1) {
     const num = Number(val);
     return isNaN(num) ? "0" : num.toFixed(decimals);
 }
+
+// Handler Input Nominal Manual (Default 5.000.000.000)
+function cleanInputNominal(el) {
+    el.value = el.value.replace(/\./g, '');
+}
+
+function formatInputNominal(el) {
+    const num = Number(el.value);
+    if (!isNaN(num) && num > 0) {
+        el.value = new Intl.NumberFormat('id-ID').format(num);
+    } else {
+        el.value = "5.000.000.000";
+    }
+    loadStockData(); // Refresh kalkulasi berdasarkan nominal baru
+}
+
+// Algoritma Swing Trader Pro (Gabungan Indikator + Harga + Input Manual)
+function calculateSwingPower(stock, manualCapital) {
+    const price = Number(stock.price) || 0;
+    const rsi = Number(stock.rsi) || 50;
+    const volRatio = Number(stock.volRatio) || 1;
+    const ema20 = Number(stock.ema20) || price;
+    const ema50 = Number(stock.ema50) || price;
+
+    // Logika independen indikator + penyesuaian bobot modal besar (manualCapital)
+    let scoreFactor = (price > ema20 ? 1.2 : 0.8) * (ema20 > ema50 ? 1.2 : 0.8);
+    let rsiScore = (rsi >= 50 && rsi <= 70) ? 1.3 : (rsi > 70 ? 0.9 : 0.7);
+    let volScore = volRatio > 1.2 ? 1.4 : 1.0;
+    
+    // Penyesuaian simulasi kekuatan berdasarkan alokasi modal besar institusi/trader pro
+    let capitalMultiplier = manualCapital > 1000000000 ? 1.05 : 0.95;
+
+    let basePower = (scoreFactor * rsiScore * volScore * capitalMultiplier);
+
+    // Menghasilkan 5 buah kotak persentase strategi middle-term
+    let boxes = [];
+    for (let i = 1; i <= 5; i++) {
+        let boxVal = Math.min(Math.max((basePower * (1 + (i * 0.05))) * 15, 10), 99);
+        
+        // Penentuan status kekuatan per kotak berdasarkan algoritma top trader
+        let status = 'neutral';
+        if (boxVal >= 75) status = 'strong_bullish';
+        else if (boxVal <= 40) status = 'bearish';
+
+        boxes.push({ percent: boxVal.toFixed(1), status: status });
+    }
+    return boxes;
+}
+
+let globalStocksData = [];
 
 async function loadStockData() {
     try {
@@ -183,9 +171,9 @@ async function loadStockData() {
         const data = await response.json();
         globalStocksData = data.stocks || [];
         
-        document.getElementById('updatedTime').innerText = 'Terakhir Diperbarui: ' + new Date(data.updatedAt).toLocaleString('id-ID');
+        document.getElementById('updatedTime').innerText = 'Terakhir: ' + new Date(data.updatedAt).toLocaleTimeString('id-ID');
+        
         renderTable(globalStocksData);
-        calculateStrategies();
     } catch (err) {
         console.error('Gagal memuat data:', err);
         document.getElementById('updatedTime').innerText = 'Gagal memuat data.json';
@@ -196,154 +184,78 @@ function renderTable(stocks) {
     const tbody = document.getElementById('stockTable');
     tbody.innerHTML = '';
 
-    if (stocks.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#777;">Tidak ada emiten ditemukan.</td></tr>`;
-        return;
-    }
+    // Ambil nilai input manual nominal (bersihkan titiknya untuk kalkulasi)
+    const rawCapitalInput = document.getElementById('manualNominal').value.replace(/\./g, '');
+    const currentCapital = Number(rawCapitalInput) || 5000000000;
 
-    stocks.forEach(stock => {
+    stocks.forEach((stock, index) => {
         const tr = document.createElement('tr');
-        tr.id = 'row-' + (stock.ticker ? stock.ticker.toUpperCase() : '');
+        tr.id = 'row-' + (stock.ticker ? stock.ticker.toUpperCase() : index);
         
         const price = Number(stock.price) || 0;
         const change = Number(stock.change) || 0;
         const changeClass = change >= 0 ? 'positive' : 'negative';
         const changeSign = change >= 0 ? '+' : '';
-        
-        const bandarVal = (stock.bandarmology || 'NEUTRAL').toUpperCase();
-        let bandarClass = 'badge-neutral';
-        if (bandarVal.includes('AKUMULASI')) bandarClass = 'badge-akumulasi';
-        else if (bandarVal.includes('DISTRIBUSI')) bandarClass = 'badge-distribusi';
+        const bandarClass = 'badge-' + (stock.bandarmology || 'neutral').toLowerCase();
 
-        // 5 indicators logic + price combined simulation for row-level icon matching top swing strategy requirements
-        const rsi = Number(stock.rsi) || 50;
-        const volRatio = Number(stock.volRatio) || 1;
-        const ema20 = Number(stock.ema20) || price;
-        const ema50 = Number(stock.ema50) || price;
-        
-        let indicatorScore = 0;
-        if (price > ema20) indicatorScore++;
-        if (ema20 > ema50) indicatorScore++;
-        if (rsi > 50 && rsi < 75) indicatorScore++;
-        if (volRatio > 1.2) indicatorScore++;
-        if (bandarVal.includes('AKUMULASI')) indicatorScore++;
+        // Kalkulasi 5 Kotak Strategi Swing
+        const swingBoxes = calculateSwingPower(stock, currentCapital);
 
-        let rowIconHtml = '';
-        if (indicatorScore >= 4) {
-            rowIconHtml = `<i class="fa-solid fa-rocket blink-rocket" title="Strong Bullish"></i> `;
-        } else if (indicatorScore <= 1) {
-            rowIconHtml = `<i class="fa-solid fa-hourglass-half blink-hourglass" title="Bearish"></i> `;
-        } else {
-            rowIconHtml = `<i class="fa-solid fa-eye neutral-gray" title="Neutral"></i> `;
-        }
+        let boxesHtml = `<div class="swing-boxes-container"><span class="eye-icon" title="Netral / Watch">👁️</span>`;
+        swingBoxes.forEach(box => {
+            let iconClass = 'box-neutral';
+            let iconSymbol = '';
+            
+            // Permintaan 4: Ikon roket blink jika strong bullish, jam pasir blink jika bearish, abu-abu netral dengan mata di sisi kiri
+            if (box.status === 'strong_bullish') {
+                iconClass = 'blink-rocket';
+                iconSymbol = ' 🚀';
+            } else if (box.status === 'bearish') {
+                iconClass = 'blink-hourglass';
+                iconSymbol = ' ⏳';
+            }
+
+            boxesHtml += `<span class="swing-box ${iconClass}">${box.percent}%${iconSymbol}</span>`;
+        });
+        boxesHtml += `</div>`;
 
         tr.innerHTML = `
             <td><strong>${stock.ticker || '-'}</strong></td>
-            <td><div class="company-name">${stock.name || '-'}</div></td>
-            <td>${formatNumberOnly(price)}</td>
-            <td class="${changeClass}">${changeSign}${formatDecimal(change, 2)}%</td>
-            <td>${formatDecimal(stock.volRatio, 2)}x</td>
-            <td>${formatDecimal(stock.rsi, 1)}</td>
-            <td>${formatNumberOnly(stock.ema20)}</td>
-            <td>${formatNumberOnly(stock.ema50)}</td>
-            <td><span class="badge ${bandarClass}">${rowIconHtml} ${stock.bandarmology || 'NEUTRAL'}</span></td>
+            <td class="company-name">${stock.name || '-'}</td>
+            <td>${formatNominal(price)}</td>
+            <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
+            <td>${formatNumber(stock.volRatio, 2)}x</td>
+            <td>${formatNumber(stock.rsi, 1)}</td>
+            <td>${formatNominal(stock.ema20)}</td>
+            <td>${formatNominal(stock.ema50)}</td>
+            <td><span class="badge ${bandarClass}">${stock.bandarmology || 'NEUTRAL'}</span></td>
+            <td>${boxesHtml}</td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-function calculateStrategies() {
-    if (!globalStocksData.length) return;
+// Permintaan 7: Kolom pencarian di header dengan logika langsung menuju emiten & blink 3x
+function searchStock() {
+    const keyword = document.getElementById('searchTicker').value.trim().toUpperCase();
+    if (!keyword) return;
 
-    let totalRsi = 0;
-    let totalVol = 0;
-    let bullishCount = 0;
-    let bearishCount = 0;
-
-    globalStocksData.forEach(stock => {
-        const price = Number(stock.price) || 0;
-        const rsi = Number(stock.rsi) || 50;
-        const volRatio = Number(stock.volRatio) || 1;
-        const ema20 = Number(stock.ema20) || price;
-        const ema50 = Number(stock.ema50) || price;
-        const bandar = (stock.bandarmology || '').toUpperCase();
-
-        totalRsi += rsi;
-        totalVol += volRatio;
-
-        let score = 0;
-        if (price > ema20) score++;
-        if (ema20 > ema50) score++;
-        if (rsi >= 50) score++;
-        if (volRatio >= 1.1) score++;
-        if (bandar.includes('AKUMULASI')) score++;
-
-        if (score >= 4) bullishCount++;
-        else if (score <= 1) bearishCount++;
-    });
-
-    const avgRsi = totalRsi / globalStocksData.length;
-    const avgVol = totalVol / globalStocksData.length;
-    
-    // Manual Nominal calculation based on swing trader risk-allocations (independent of indicator logic)
-    const manualNominalInput = Number(document.getElementById('manualNominal').value) || 0;
-    // Top swing trader standard risk sizing calculation rule: fraction allocation per setups
-    const allocatedPerStock = globalStocksData.length > 0 ? manualNominalInput / globalStocksData.length : 0;
-
-    // Update 5 Small Boxes
-    document.getElementById('boxBias').innerText = bullishCount > bearishCount ? "BULLISH DOMINANT" : "BEARISH / CAUTIOUS";
-    document.getElementById('boxVol').innerText = formatDecimal(avgVol, 2) + "x";
-    document.getElementById('boxRsi').innerText = formatDecimal(avgRsi, 1);
-    document.getElementById('boxAllocation').innerText = formatNumberOnly(allocatedProportional(allocatedPerStock));
-    
-    let macroSignalBox = document.getElementById('boxSignal');
-    if (bullishCount > globalStocksData.length / 2) {
-        macroSignalBox.innerHTML = `<i class="fa-solid fa-rocket blink-rocket"></i> Strong Bullish`;
-    } else if (bearishCount > globalStocksData.length / 2) {
-        macroSignalBox.innerHTML = `<i class="fa-solid fa-hourglass-half blink-hourglass"></i> Bearish`;
-    } else {
-        macroSignalBox.innerHTML = `<i class="fa-solid fa-eye neutral-gray"></i> Netral`;
-    }
-}
-
-function allocatedProportional(val) {
-    // Keeps independent alignment with strategy risk ratio calculation models
-    return Math.round(val);
-}
-
-function resetFilters() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('manualNominal').value = '5000000000';
-    renderTable(globalStocksData);
-    calculateStrategies();
-}
-
-function handleSearch(event) {
-    const query = event.target.value.toLowerCase().trim();
-    if (!query) {
-        renderTable(globalStocksData);
-        return;
-    }
-
-    const filtered = globalStocksData.filter(s => 
-        (s.ticker && s.ticker.toLowerCase().includes(query)) || 
-        (s.name && s.name.toLowerCase().includes(query))
-    );
-    renderTable(filtered);
-
-    // If exact or direct match found, navigate and trigger 3x blink animation
-    if (filtered.length === 1) {
-        const targetTicker = filtered[0].ticker.toUpperCase();
-        const rowElement = document.getElementById('row-' + targetTicker);
-        if (rowElement) {
-            rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            rowElement.classList.remove('highlight-row');
-            void rowElement.offsetWidth; // trigger reflow
-            rowElement.classList.add('highlight-row');
+    const matchedStock = globalStocksData.find(s => s.ticker && s.ticker.toUpperCase() === keyword);
+    if (matchedStock) {
+        const rowId = 'row-' + keyword;
+        const targetRow = document.getElementById(rowId);
+        if (targetRow) {
+            targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Hapus class lama jika ada lalu tambahkan ulang agar animasi blink 3x terpicu kembali
+            targetRow.classList.remove('highlight-blink');
+            void targetRow.offsetWidth; // Trigger reflow
+            targetRow.classList.add('highlight-blink');
         }
     }
 }
 
+// Inisialisasi awal pemuatan data
 loadStockData();
 </script>
 
