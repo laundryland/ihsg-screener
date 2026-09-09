@@ -1,82 +1,110 @@
-[
-  {
-    "ticker": "BBCA.JK",
-    "name": "Bank Central Asia Tbk",
-    "price": 10250,
-    "signal": "STRONG BUY",
-    "bandarmology": "AKUMULASI",
-    "swing": {
-      "entry": 10150,
-      "r1": 10600,
-      "cl1": 9900
-    },
-    "investasi": {
-      "target_1y": 11500,
-      "valas_pbv": 4.8
-    }
-  },
-  {
-    "ticker": "BBRI.JK",
-    "name": "Bank Rakyat Indonesia (Persero) Tbk",
-    "price": 5150,
-    "signal": "BUY",
-    "bandarmology": "AKUMULASI",
-    "swing": {
-      "entry": 5050,
-      "r1": 5400,
-      "cl1": 4900
-    },
-    "investasi": {
-      "target_1y": 6000,
-      "valas_pbv": 2.6
-    }
-  },
-  {
-    "ticker": "BMRI.JK",
-    "name": "Bank Mandiri (Persero) Tbk",
-    "price": 7050,
-    "signal": "BUY",
-    "bandarmology": "NEUTRAL",
-    "swing": {
-      "entry": 6950,
-      "r1": 7400,
-      "cl1": 6750
-    },
-    "investasi": {
-      "target_1y": 8100,
-      "valas_pbv": 2.2
-    }
-  },
-  {
-    "ticker": "TLKM.JK",
-    "name": "Telkom Indonesia (Persero) Tbk",
-    "price": 3100,
-    "signal": "NEUTRAL",
-    "bandarmology": "DISTRIBUSI",
-    "swing": {
-      "entry": 3000,
-      "r1": 3300,
-      "cl1": 2900
-    },
-    "investasi": {
-      "target_1y": 3800,
-      "valas_pbv": 2.5
-    }
-  },
-  {
-    "ticker": "ASII.JK",
-    "name": "Astra International Tbk",
-    "price": 4950,
-    "signal": "BUY",
-    "bandarmology": "AKUMULASI",
-    "swing": {
-      "entry": 4850,
-      "r1": 5300,
-      "cl1": 4700
-    },
-    "investasi": {
-      "target_1y": 5800,
-      "valas_pbv": 1.1
-    }
-  }
-]
+{
+  "updated_at": "2026-09-09T02:30:00Z",
+  "stocks": [
+    { "ticker": "BBCA", "name": "Bank Central Asia Tbk", "price": 10250, "change": 1.73, "turnover": 420.5, "ema20": 10100, "ema50": 9800, "rsi": 62, "volRatio": 2.8, "high52": 10400, "bandarmology": "AKUMULASI", "entry": 10150, "r1": 10500, "cl1": 9950, "signal": "STRONG BUY" },
+    { "ticker": "BBRI", "name": "Bank Rakyat Indonesia Tbk", "price": 5150, "change": 2.18, "turnover": 380.2, "ema20": 5000, "ema50": 4850, "rsi": 65, "volRatio": 3.0, "high52": 5400, "bandarmology": "AKUMULASI", "entry": 5050, "r1": 5300, "cl1": 4900, "signal": "STRONG BUY" },
+    { "ticker": "BMRI", "name": "Bank Mandiri (Persero) Tbk", "price": 7150, "change": 2.51, "turnover": 310.2, "ema20": 6950, "ema50": 6700, "rsi": 68, "volRatio": 3.1, "high52": 7250, "bandarmology": "AKUMULASI", "entry": 7050, "r1": 7350, "cl1": 6850, "signal": "STRONG BUY" },
+    { "ticker": "BBNI", "name": "Bank Negara Indonesia Tbk", "price": 5450, "change": 1.87, "turnover": 195.4, "ema20": 5300, "ema50": 5150, "rsi": 61, "volRatio": 2.4, "high52": 5700, "bandarmology": "AKUMULASI", "entry": 5350, "r1": 5600, "cl1": 5200, "signal": "BUY" },
+    { "ticker": "TLKM", "name": "Telkom Indonesia Tbk", "price": 3820, "change": -0.52, "turnover": 180.0, "ema20": 3850, "ema50": 3900, "rsi": 44, "volRatio": 1.1, "high52": 4200, "bandarmology": "DISTRIBUSI", "entry": 3800, "r1": 3950, "cl1": 3720, "signal": "NEUTRAL" },
+    { "ticker": "ASII", "name": "Astra International Tbk", "price": 5200, "change": 0.97, "turnover": 95.4, "ema20": 5150, "ema50": 5050, "rsi": 55, "volRatio": 1.8, "high52": 5700, "bandarmology": "NEUTRAL", "entry": 5150, "r1": 5350, "cl1": 5000, "signal": "BUY" },
+    { "ticker": "AMMN", "name": "Amman Mineral Internasional Tbk", "price": 11800, "change": 4.89, "turnover": 540.8, "ema20": 11200, "ema50": 10100, "rsi": 74, "volRatio": 3.9, "high52": 12000, "bandarmology": "AKUMULASI", "entry": 11600, "r1": 12200, "cl1": 11000, "signal": "STRONG BUY" },
+    { "ticker": "BREN", "name": "Barito Renewables Energy Tbk", "price": 8900, "change": -2.20, "turnover": 210.3, "ema20": 9100, "ema50": 9300, "rsi": 41, "volRatio": 0.8, "high52": 10200, "bandarmology": "DISTRIBUSI", "entry": 8800, "r1": 9300, "cl1": 8500, "signal": "SELL" },
+    { "ticker": "TPIA", "name": "Chandra Asri Pacific Tbk", "price": 9250, "change": 3.35, "turnover": 165.2, "ema20": 8900, "ema50": 8400, "rsi": 69, "volRatio": 2.7, "high52": 9500, "bandarmology": "AKUMULASI", "entry": 9100, "r1": 9600, "cl1": 8700, "signal": "STRONG BUY" },
+    { "ticker": "ADRO", "name": "Adaro Energy Indonesia Tbk", "price": 3650, "change": 3.11, "turnover": 145.6, "ema20": 3500, "ema50": 3350, "rsi": 65, "volRatio": 2.6, "high52": 3750, "bandarmology": "AKUMULASI", "entry": 3600, "r1": 3800, "cl1": 3450, "signal": "STRONG BUY" },
+    { "ticker": "PGAS", "name": "Perusahaan Gas Negara Tbk", "price": 1540, "change": 1.32, "turnover": 48.2, "ema20": 1510, "ema50": 1480, "rsi": 58, "volRatio": 2.1, "high52": 1650, "bandarmology": "AKUMULASI", "entry": 1520, "r1": 1600, "cl1": 1470, "signal": "BUY" },
+    { "ticker": "GOTO", "name": "GoTo Gojek Tokopedia Tbk", "price": 68, "change": 0.00, "turnover": 25.1, "ema20": 67, "ema50": 68, "rsi": 49, "volRatio": 1.0, "high52": 95, "bandarmology": "NEUTRAL", "entry": 67, "r1": 72, "cl1": 64, "signal": "NEUTRAL" },
+    { "ticker": "BRIS", "name": "Bank Syariah Indonesia Tbk", "price": 2950, "change": 3.51, "turnover": 112.0, "ema20": 2800, "ema50": 2650, "rsi": 67, "volRatio": 2.7, "high52": 3050, "bandarmology": "AKUMULASI", "entry": 2900, "r1": 3100, "cl1": 2750, "signal": "STRONG BUY" },
+    { "ticker": "UNVR", "name": "Unilever Indonesia Tbk", "price": 2450, "change": -1.21, "turnover": 35.8, "ema20": 2500, "ema50": 2650, "rsi": 38, "volRatio": 0.7, "high52": 3400, "bandarmology": "DISTRIBUSI", "entry": 2400, "r1": 2550, "cl1": 2300, "signal": "SELL" },
+    { "ticker": "ICBP", "name": "Indofood CBP Sukses Makmur Tbk", "price": 11450, "change": 0.66, "turnover": 68.2, "ema20": 11300, "ema50": 11100, "rsi": 56, "volRatio": 1.6, "high52": 12000, "bandarmology": "AKUMULASI", "entry": 11350, "r1": 11800, "cl1": 11000, "signal": "BUY" },
+    { "ticker": "INDF", "name": "Indofood Sukses Makmur Tbk", "price": 6850, "change": 0.37, "turnover": 42.1, "ema20": 6800, "ema50": 6700, "rsi": 53, "volRatio": 1.4, "high52": 7200, "bandarmology": "NEUTRAL", "entry": 6800, "r1": 7050, "cl1": 6600, "signal": "BUY" },
+    { "ticker": "CPIN", "name": "Charoen Pokphand Indonesia Tbk", "price": 5100, "change": 2.00, "turnover": 58.4, "ema20": 4950, "ema50": 4800, "rsi": 63, "volRatio": 2.5, "high52": 5500, "bandarmology": "AKUMULASI", "entry": 5000, "r1": 5300, "cl1": 4850, "signal": "STRONG BUY" },
+    { "ticker": "JPFA", "name": "Japfa Comfeed Indonesia Tbk", "price": 1420, "change": 4.41, "turnover": 62.3, "ema20": 1340, "ema50": 1250, "rsi": 71, "volRatio": 3.4, "high52": 1500, "bandarmology": "AKUMULASI", "entry": 1380, "r1": 1500, "cl1": 1300, "signal": "STRONG BUY" },
+    { "ticker": "KLBF", "name": "Kalbe Farma Tbk", "price": 1680, "change": -0.59, "turnover": 38.2, "ema20": 1700, "ema50": 1650, "rsi": 48, "volRatio": 0.9, "high52": 1850, "bandarmology": "NEUTRAL", "entry": 1660, "r1": 1750, "cl1": 1600, "signal": "NEUTRAL" },
+    { "ticker": "MIKA", "name": "Mitra Keluarga Karyasehat Tbk", "price": 3020, "change": 1.68, "turnover": 28.5, "ema20": 2950, "ema50": 2880, "rsi": 59, "volRatio": 2.0, "high52": 3200, "bandarmology": "AKUMULASI", "entry": 2980, "r1": 3150, "cl1": 2900, "signal": "BUY" },
+    { "ticker": "MDKA", "name": "Merdeka Copper Gold Tbk", "price": 2480, "change": 5.08, "turnover": 185.3, "ema20": 2320, "ema50": 2200, "rsi": 72, "volRatio": 3.8, "high52": 2800, "bandarmology": "AKUMULASI", "entry": 2400, "r1": 2600, "cl1": 2280, "signal": "STRONG BUY" },
+    { "ticker": "MBMA", "name": "Merdeka Battery Materials Tbk", "price": 610, "change": 6.09, "turnover": 142.1, "ema20": 560, "ema50": 520, "rsi": 75, "volRatio": 4.1, "high52": 720, "bandarmology": "AKUMULASI", "entry": 580, "r1": 660, "cl1": 540, "signal": "STRONG BUY" },
+    { "ticker": "ANTM", "name": "Aneka Tambang Tbk", "price": 1520, "change": 3.40, "turnover": 130.4, "ema20": 1450, "ema50": 1400, "rsi": 66, "volRatio": 2.9, "high52": 1750, "bandarmology": "AKUMULASI", "entry": 1480, "r1": 1600, "cl1": 1420, "signal": "STRONG BUY" },
+    { "ticker": "INCO", "name": "Vale Indonesia Tbk", "price": 3950, "change": 2.60, "turnover": 88.6, "ema20": 3800, "ema50": 3700, "rsi": 61, "volRatio": 2.3, "high52": 4500, "bandarmology": "AKUMULASI", "entry": 3880, "r1": 4100, "cl1": 3750, "signal": "BUY" },
+    { "ticker": "PTBA", "name": "Bukit Asam Tbk", "price": 2720, "change": 1.12, "turnover": 54.2, "ema20": 2680, "ema50": 2600, "rsi": 57, "volRatio": 1.8, "high52": 2950, "bandarmology": "AKUMULASI", "entry": 2690, "r1": 2800, "cl1": 2600, "signal": "BUY" },
+    { "ticker": "ITMG", "name": "Indo Tambangraya Megah Tbk", "price": 26800, "change": 0.75, "turnover": 45.1, "ema20": 26500, "ema50": 26000, "rsi": 54, "volRatio": 1.5, "high52": 28500, "bandarmology": "NEUTRAL", "entry": 26500, "r1": 27500, "cl1": 25800, "signal": "BUY" },
+    { "ticker": "HRUM", "name": "Harum Energy Tbk", "price": 1350, "change": 3.85, "turnover": 68.9, "ema20": 1280, "ema50": 1220, "rsi": 67, "volRatio": 2.8, "high52": 1600, "bandarmology": "AKUMULASI", "entry": 1310, "r1": 1420, "cl1": 1240, "signal": "STRONG BUY" },
+    { "ticker": "MEDC", "name": "Medco Energi Internasional Tbk", "price": 1320, "change": 4.35, "turnover": 115.8, "ema20": 1240, "ema50": 1180, "rsi": 70, "volRatio": 3.3, "high52": 1500, "bandarmology": "AKUMULASI", "entry": 1280, "r1": 1400, "cl1": 1200, "signal": "STRONG BUY" },
+    { "ticker": "AKRA", "name": "AKR Corporindo Tbk", "price": 1620, "change": -0.61, "turnover": 32.4, "ema20": 1640, "ema50": 1600, "rsi": 49, "volRatio": 1.0, "high52": 1800, "bandarmology": "NEUTRAL", "entry": 1600, "r1": 1680, "cl1": 1550, "signal": "NEUTRAL" },
+    { "ticker": "CUAN", "name": "Petrindo Jaya Kreasi Tbk", "price": 8450, "change": 8.33, "turnover": 280.4, "ema20": 7600, "ema50": 6800, "rsi": 79, "volRatio": 4.8, "high52": 9200, "bandarmology": "AKUMULASI", "entry": 8000, "r1": 9000, "cl1": 7400, "signal": "STRONG BUY" },
+    { "ticker": "BUMI", "name": "Bumi Resources Tbk", "price": 142, "change": 9.23, "turnover": 310.5, "ema20": 128, "ema50": 115, "rsi": 78, "volRatio": 5.2, "high52": 160, "bandarmology": "AKUMULASI", "entry": 132, "r1": 155, "cl1": 120, "signal": "STRONG BUY" },
+    { "ticker": "BRMS", "name": "Bumi Resources Minerals Tbk", "price": 185, "change": 7.56, "turnover": 220.1, "ema20": 168, "ema50": 150, "rsi": 76, "volRatio": 4.5, "high52": 210, "bandarmology": "AKUMULASI", "entry": 175, "r1": 200, "cl1": 160, "signal": "STRONG BUY" },
+    { "ticker": "ENRG", "name": "Energi Mega Persada Tbk", "price": 240, "change": 5.26, "turnover": 85.3, "ema20": 222, "ema50": 205, "rsi": 71, "volRatio": 3.6, "high52": 270, "bandarmology": "AKUMULASI", "entry": 230, "r1": 260, "cl1": 212, "signal": "STRONG BUY" },
+    { "ticker": "DEWA", "name": "Darma Henwa Tbk", "price": 88, "change": 6.02, "turnover": 64.2, "ema20": 80, "ema50": 72, "rsi": 73, "volRatio": 3.9, "high52": 105, "bandarmology": "AKUMULASI", "entry": 82, "r1": 96, "cl1": 75, "signal": "STRONG BUY" },
+    { "ticker": "DOID", "name": "Delta Dunia Makmur Tbk", "price": 720, "change": 4.35, "turnover": 78.9, "ema20": 670, "ema50": 610, "rsi": 69, "volRatio": 3.2, "high52": 800, "bandarmology": "AKUMULASI", "entry": 690, "r1": 770, "cl1": 630, "signal": "STRONG BUY" },
+    { "ticker": "BSDE", "name": "Bumi Serpong Damai Tbk", "price": 1080, "change": 1.89, "turnover": 45.2, "ema20": 1050, "ema50": 1010, "rsi": 60, "volRatio": 2.2, "high52": 1200, "bandarmology": "AKUMULASI", "entry": 1060, "r1": 1130, "cl1": 1020, "signal": "BUY" },
+    { "ticker": "CTRA", "name": "Ciputra Development Tbk", "price": 1250, "change": 2.04, "turnover": 52.8, "ema20": 1210, "ema50": 1160, "rsi": 62, "volRatio": 2.4, "high52": 1380, "bandarmology": "AKUMULASI", "entry": 1220, "r1": 1310, "cl1": 1180, "signal": "BUY" },
+    { "ticker": "PWON", "name": "Pakuwon Jati Tbk", "price": 430, "change": 0.94, "turnover": 22.1, "ema20": 422, "ema50": 410, "rsi": 54, "volRatio": 1.5, "high52": 480, "bandarmology": "NEUTRAL", "entry": 424, "r1": 450, "cl1": 410, "signal": "BUY" },
+    { "ticker": "SMRA", "name": "Summarecon Agung Tbk", "price": 580, "change": 2.65, "turnover": 38.4, "ema20": 555, "ema50": 530, "rsi": 64, "volRatio": 2.6, "high52": 650, "bandarmology": "AKUMULASI", "entry": 565, "r1": 610, "cl1": 540, "signal": "STRONG BUY" },
+    { "ticker": "PTPP", "name": "PP (Persero) Tbk", "price": 420, "change": 5.00, "turnover": 42.5, "ema20": 390, "ema50": 365, "rsi": 70, "volRatio": 3.5, "high52": 520, "bandarmology": "AKUMULASI", "entry": 400, "r1": 450, "cl1": 375, "signal": "STRONG BUY" },
+    { "ticker": "ADHI", "name": "Adhi Karya (Persero) Tbk", "price": 280, "change": 4.48, "turnover": 28.1, "ema20": 262, "ema50": 245, "rsi": 68, "volRatio": 3.1, "high52": 360, "bandarmology": "AKUMULASI", "entry": 270, "r1": 300, "cl1": 250, "signal": "STRONG BUY" },
+    { "ticker": "WIKA", "name": "Wijaya Karya (Persero) Tbk", "price": 230, "change": 6.48, "turnover": 35.6, "ema20": 210, "ema50": 190, "rsi": 74, "volRatio": 3.8, "high52": 310, "bandarmology": "AKUMULASI", "entry": 218, "r1": 250, "cl1": 198, "signal": "STRONG BUY" },
+    { "ticker": "JSMR", "name": "Jasa Marga (Persero) Tbk", "price": 5300, "change": 1.44, "turnover": 48.9, "ema20": 5180, "ema50": 5000, "rsi": 61, "volRatio": 2.1, "high52": 5700, "bandarmology": "AKUMULASI", "entry": 5220, "r1": 5500, "cl1": 5050, "signal": "BUY" },
+    { "ticker": "PGEO", "name": "Pertamina Geothermal Energy Tbk", "price": 1210, "change": 3.86, "turnover": 85.1, "ema20": 1140, "ema50": 1080, "rsi": 68, "volRatio": 3.0, "high52": 1350, "bandarmology": "AKUMULASI", "entry": 1170, "r1": 1280, "cl1": 1110, "signal": "STRONG BUY" },
+    { "ticker": "ISAT", "name": "Indosat Tbk", "price": 10450, "change": 1.95, "turnover": 72.3, "ema20": 10150, "ema50": 9800, "rsi": 63, "volRatio": 2.5, "high52": 11200, "bandarmology": "AKUMULASI", "entry": 10250, "r1": 10800, "cl1": 9900, "signal": "STRONG BUY" },
+    { "ticker": "EXCL", "name": "XL Axiata Tbk", "price": 2280, "change": 2.24, "turnover": 55.4, "ema20": 2200, "ema50": 2120, "rsi": 62, "volRatio": 2.4, "high52": 2500, "bandarmology": "AKUMULASI", "entry": 2220, "r1": 2380, "cl1": 2140, "signal": "STRONG BUY" },
+    { "ticker": "TOWR", "name": "Sarana Menara Nusantara Tbk", "price": 820, "change": -0.61, "turnover": 24.2, "ema20": 830, "ema50": 840, "rsi": 45, "volRatio": 0.9, "high52": 950, "bandarmology": "DISTRIBUSI", "entry": 800, "r1": 850, "cl1": 780, "signal": "NEUTRAL" },
+    { "ticker": "TBIG", "name": "Tower Bersama Infrastructure Tbk", "price": 1950, "change": 0.52, "turnover": 18.5, "ema20": 1930, "ema50": 1900, "rsi": 52, "volRatio": 1.3, "high52": 2150, "bandarmology": "NEUTRAL", "entry": 1930, "r1": 2020, "cl1": 1880, "signal": "BUY" },
+    { "ticker": "INKP", "name": "Indah Kiat Pulp & Paper Tbk", "price": 8450, "change": 2.42, "turnover": 65.4, "ema20": 8200, "ema50": 7900, "rsi": 63, "volRatio": 2.5, "high52": 9200, "bandarmology": "AKUMULASI", "entry": 8300, "r1": 8800, "cl1": 8000, "signal": "STRONG BUY" },
+    { "ticker": "TKIM", "name": "Pabrik Kertas Tjiwi Kimia Tbk", "price": 7200, "change": 2.86, "turnover": 48.2, "ema20": 6950, "ema50": 6650, "rsi": 66, "volRatio": 2.7, "high52": 7800, "bandarmology": "AKUMULASI", "entry": 7050, "r1": 7500, "cl1": 6800, "signal": "STRONG BUY" },
+    { "ticker": "SMGR", "name": "Semen Indonesia (Persero) Tbk", "price": 3850, "change": -1.28, "turnover": 28.1, "ema20": 3920, "ema50": 4100, "rsi": 40, "volRatio": 0.8, "high52": 5200, "bandarmology": "DISTRIBUSI", "entry": 3780, "r1": 3950, "cl1": 3650, "signal": "SELL" },
+    { "ticker": "INTP", "name": "Indocement Tunggal Prakarsa Tbk", "price": 7100, "change": -0.70, "turnover": 19.4, "ema20": 7200, "ema50": 7400, "rsi": 42, "volRatio": 0.8, "high52": 9100, "bandarmology": "DISTRIBUSI", "entry": 7000, "r1": 7300, "cl1": 6800, "signal": "SELL" },
+    { "ticker": "GGRM", "name": "Gudang Garam Tbk", "price": 15800, "change": -0.94, "turnover": 22.3, "ema20": 16100, "ema50": 16800, "rsi": 39, "volRatio": 0.7, "high52": 24000, "bandarmology": "DISTRIBUSI", "entry": 15500, "r1": 16200, "cl1": 15000, "signal": "SELL" },
+    { "ticker": "HMSP", "name": "H.M. Sampoerna Tbk", "price": 680, "change": 0.00, "turnover": 18.2, "ema20": 680, "ema50": 700, "rsi": 46, "volRatio": 0.9, "high52": 880, "bandarmology": "NEUTRAL", "entry": 670, "r1": 710, "cl1": 650, "signal": "NEUTRAL" },
+    { "ticker": "PANI", "name": "Pantai Indah Kapuk Dua Tbk", "price": 10500, "change": 7.69, "turnover": 320.1, "ema20": 9400, "ema50": 8200, "rsi": 81, "volRatio": 4.9, "high52": 11000, "bandarmology": "AKUMULASI", "entry": 9900, "r1": 11200, "cl1": 9200, "signal": "STRONG BUY" },
+    { "ticker": "FILM", "name": "MD Pictures Tbk", "price": 3450, "change": 6.15, "turnover": 112.4, "ema20": 3180, "ema50": 2850, "rsi": 76, "volRatio": 4.2, "high52": 3800, "bandarmology": "AKUMULASI", "entry": 3300, "r1": 3700, "cl1": 3050, "signal": "STRONG BUY" },
+    { "ticker": "BFIN", "name": "BFI Finance Indonesia Tbk", "price": 980, "change": 2.62, "turnover": 42.1, "ema20": 940, "ema50": 900, "rsi": 64, "volRatio": 2.5, "high52": 1100, "bandarmology": "AKUMULASI", "entry": 950, "r1": 1020, "cl1": 910, "signal": "STRONG BUY" },
+    { "ticker": "PNBN", "name": "Bank Pan Indonesia Tbk", "price": 1280, "change": 4.92, "turnover": 68.3, "ema20": 1190, "ema50": 1100, "rsi": 71, "volRatio": 3.4, "high52": 1400, "bandarmology": "AKUMULASI", "entry": 1230, "r1": 1350, "cl1": 1150, "signal": "STRONG BUY" },
+    { "ticker": "BNGA", "name": "Bank CIMB Niaga Tbk", "price": 1820, "change": 1.11, "turnover": 35.2, "ema20": 1790, "ema50": 1740, "rsi": 58, "volRatio": 1.9, "high52": 1950, "bandarmology": "AKUMULASI", "entry": 1800, "r1": 1880, "cl1": 1750, "signal": "BUY" },
+    { "ticker": "BBTN", "name": "Bank Tabungan Negara (Persero) Tbk", "price": 1380, "change": 2.22, "turnover": 48.6, "ema20": 1330, "ema50": 1270, "rsi": 63, "volRatio": 2.4, "high52": 1500, "bandarmology": "AKUMULASI", "entry": 1350, "r1": 1440, "cl1": 1290, "signal": "STRONG BUY" },
+    { "ticker": "ARTO", "name": "Bank Jago Tbk", "price": 2750, "change": 6.18, "turnover": 165.4, "ema20": 2520, "ema50": 2300, "rsi": 74, "volRatio": 4.0, "high52": 3300, "bandarmology": "AKUMULASI", "entry": 2620, "r1": 2950, "cl1": 2420, "signal": "STRONG BUY" },
+    { "ticker": "MEDP", "name": "Medikaloka Hermina Tbk", "price": 1350, "change": 2.27, "turnover": 32.1, "ema20": 1300, "ema50": 1240, "rsi": 62, "volRatio": 2.3, "high52": 1450, "bandarmology": "AKUMULASI", "entry": 1320, "r1": 1400, "cl1": 1270, "signal": "STRONG BUY" },
+    { "ticker": "ACES", "name": "Aspirasi Hidup Indonesia Tbk", "price": 840, "change": 3.07, "turnover": 58.2, "ema20": 800, "ema50": 760, "rsi": 67, "volRatio": 2.8, "high52": 920, "bandarmology": "AKUMULASI", "entry": 815, "r1": 880, "cl1": 775, "signal": "STRONG BUY" },
+    { "ticker": "MAPI", "name": "Mitra Adiperkasa Tbk", "price": 1650, "change": 2.48, "turnover": 62.4, "ema20": 1580, "ema50": 1510, "rsi": 65, "volRatio": 2.6, "high52": 1850, "bandarmology": "AKUMULASI", "entry": 1610, "r1": 1720, "cl1": 1530, "signal": "STRONG BUY" },
+    { "ticker": "MAPA", "name": "MAP Aktif Adiperkasa Tbk", "price": 980, "change": 3.16, "turnover": 41.2, "ema20": 930, "ema50": 880, "rsi": 68, "volRatio": 2.9, "high52": 1080, "bandarmology": "AKUMULASI", "entry": 950, "r1": 1030, "cl1": 900, "signal": "STRONG BUY" },
+    { "ticker": "ERAA", "name": "Erajaya Swasembada Tbk", "price": 440, "change": 4.76, "turnover": 52.1, "ema20": 410, "ema50": 385, "rsi": 71, "volRatio": 3.4, "high52": 490, "bandarmology": "AKUMULASI", "entry": 422, "r1": 470, "cl1": 398, "signal": "STRONG BUY" },
+    { "ticker": "KPGP", "name": "Kawasan Industri Jababeka Tbk", "price": 165, "change": 7.84, "turnover": 28.4, "ema20": 148, "ema50": 132, "rsi": 77, "volRatio": 4.3, "high52": 185, "bandarmology": "AKUMULASI", "entry": 155, "r1": 178, "cl1": 142, "signal": "STRONG BUY" },
+    { "ticker": "SSIA", "name": "Surya Semesta Internusa Tbk", "price": 1120, "change": 8.74, "turnover": 125.6, "ema20": 980, "ema50": 850, "rsi": 82, "volRatio": 5.0, "high52": 1200, "bandarmology": "AKUMULASI", "entry": 1050, "r1": 1220, "cl1": 940, "signal": "STRONG BUY" },
+    { "ticker": "SIDO", "name": "Industri Jamu Dan Farmasi Sido Muncul Tbk", "price": 720, "change": 1.41, "turnover": 38.5, "ema20": 700, "ema50": 670, "rsi": 60, "volRatio": 2.0, "high52": 780, "bandarmology": "AKUMULASI", "entry": 705, "r1": 750, "cl1": 680, "signal": "BUY" },
+    { "ticker": "MYOR", "name": "Mayora Indah Tbk", "price": 2650, "change": 1.15, "turnover": 29.4, "ema20": 2600, "ema50": 2520, "rsi": 57, "volRatio": 1.8, "high52": 2850, "bandarmology": "AKUMULASI", "entry": 2610, "r1": 2720, "cl1": 2530, "signal": "BUY" },
+    { "ticker": "CMRY", "name": "Cisarua Mountain Dairy Tbk", "price": 5350, "change": 2.88, "turnover": 45.1, "ema20": 5100, "ema50": 4850, "rsi": 66, "volRatio": 2.7, "high52": 5600, "bandarmology": "AKUMULASI", "entry": 5200, "r1": 5550, "cl1": 4980, "signal": "STRONG BUY" },
+    { "ticker": "AMRT", "name": "Sumber Alfaria Trijaya Tbk", "price": 2920, "change": 0.69, "turnover": 51.2, "ema20": 2880, "ema50": 2800, "rsi": 55, "volRatio": 1.6, "high52": 3050, "bandarmology": "NEUTRAL", "entry": 2890, "r1": 2980, "cl1": 2810, "signal": "BUY" },
+    { "ticker": "DOOH", "name": "Cipta Perdana Tbk", "price": 115, "change": 12.75, "turnover": 42.1, "ema20": 98, "ema50": 85, "rsi": 84, "volRatio": 5.5, "high52": 130, "bandarmology": "AKUMULASI", "entry": 105, "r1": 128, "cl1": 92, "signal": "STRONG BUY" },
+    { "ticker": "SBMA", "name": "Sabana Food Tbk", "price": 320, "change": 10.34, "turnover": 38.2, "ema20": 280, "ema50": 245, "rsi": 80, "volRatio": 4.7, "high52": 350, "bandarmology": "AKUMULASI", "entry": 295, "r1": 345, "cl1": 265, "signal": "STRONG BUY" },
+    { "ticker": "SOLA", "name": "Solusi Sinergi Digital Tbk", "price": 185, "change": 9.47, "turnover": 56.4, "ema20": 162, "ema50": 140, "rsi": 79, "volRatio": 4.6, "high52": 200, "bandarmology": "AKUMULASI", "entry": 172, "r1": 198, "cl1": 155, "signal": "STRONG BUY" },
+    { "ticker": "WIFI", "name": "Solusi Sinergi Digital Tbk", "price": 340, "change": 7.94, "turnover": 88.5, "ema20": 305, "ema50": 270, "rsi": 77, "volRatio": 4.1, "high52": 370, "bandarmology": "AKUMULASI", "entry": 320, "r1": 365, "cl1": 290, "signal": "STRONG BUY" },
+    { "ticker": "HUMI", "name": "Humpuss Maritim Internasional Tbk", "price": 95, "change": 8.02, "turnover": 32.1, "ema20": 84, "ema50": 75, "rsi": 76, "volRatio": 4.0, "high52": 110, "bandarmology": "AKUMULASI", "entry": 88, "r1": 104, "cl1": 79, "signal": "STRONG BUY" },
+    { "ticker": "LEAD", "name": "Logindo Samudramakmur Tbk", "price": 112, "change": 6.67, "turnover": 25.4, "ema20": 100, "ema50": 88, "rsi": 74, "volRatio": 3.7, "high52": 125, "bandarmology": "AKUMULASI", "entry": 104, "r1": 120, "cl1": 94, "signal": "STRONG BUY" },
+    { "ticker": "PTRO", "name": "Petrosea Tbk", "price": 8200, "change": 5.81, "turnover": 145.2, "ema20": 7500, "ema50": 6700, "rsi": 75, "volRatio": 3.9, "high52": 8800, "bandarmology": "AKUMULASI", "entry": 7800, "r1": 8600, "cl1": 7200, "signal": "STRONG BUY" },
+    { "ticker": "CGAS", "name": "Citra Nusantara Energi Tbk", "price": 195, "change": 11.43, "turnover": 68.2, "ema20": 165, "ema50": 142, "rsi": 83, "volRatio": 5.1, "high52": 220, "bandarmology": "AKUMULASI", "entry": 178, "r1": 215, "cl1": 158, "signal": "STRONG BUY" },
+    { "ticker": "ASHA", "name": "Cilacap Samudera Fishing Industry Tbk", "price": 85, "change": 6.25, "turnover": 18.2, "ema20": 78, "ema50": 70, "rsi": 72, "volRatio": 3.5, "high52": 98, "bandarmology": "AKUMULASI", "entry": 80, "r1": 92, "cl1": 73, "signal": "STRONG BUY" },
+    { "ticker": "AUTO", "name": "Astra Otoparts Tbk", "price": 2250, "change": 1.81, "turnover": 28.5, "ema20": 2180, "ema50": 2100, "rsi": 61, "volRatio": 2.2, "high52": 2450, "bandarmology": "AKUMULASI", "entry": 2200, "r1": 2320, "cl1": 2120, "signal": "BUY" },
+    { "ticker": "GJTL", "name": "Gajah Tunggal Tbk", "price": 1280, "change": 4.07, "turnover": 62.1, "ema20": 1200, "ema50": 1120, "rsi": 70, "volRatio": 3.3, "high52": 1400, "bandarmology": "AKUMULASI", "entry": 1230, "r1": 1340, "cl1": 1150, "signal": "STRONG BUY" },
+    { "ticker": "SMSM", "name": "Selamat Sempurna Tbk", "price": 1980, "change": 0.51, "turnover": 15.4, "ema20": 1950, "ema50": 1900, "rsi": 55, "volRatio": 1.5, "high52": 2100, "bandarmology": "NEUTRAL", "entry": 1960, "r1": 2040, "cl1": 1900, "signal": "BUY" },
+    { "ticker": "SILO", "name": "Siloam International Hospitals Tbk", "price": 2850, "change": 1.42, "turnover": 24.2, "ema20": 2780, "ema50": 2700, "rsi": 59, "volRatio": 2.0, "high52": 3050, "bandarmology": "AKUMULASI", "entry": 2800, "r1": 2950, "cl1": 2720, "signal": "BUY" },
+    { "ticker": "SAME", "name": "Sarana Meditama Metropolitan Tbk", "price": 280, "change": 3.70, "turnover": 18.5, "ema20": 265, "ema50": 250, "rsi": 66, "volRatio": 2.7, "high52": 320, "bandarmology": "AKUMULASI", "entry": 270, "r1": 298, "cl1": 255, "signal": "STRONG BUY" },
+    { "ticker": "IRRA", "name": "Itama Ranoraya Tbk", "price": 580, "change": 5.45, "turnover": 22.4, "ema20": 535, "ema50": 490, "rsi": 71, "volRatio": 3.5, "high52": 650, "bandarmology": "AKUMULASI", "entry": 550, "r1": 620, "cl1": 510, "signal": "STRONG BUY" },
+    { "ticker": "KAEF", "name": "Kimia Farma Tbk", "price": 720, "change": 2.86, "turnover": 19.8, "ema20": 680, "ema50": 650, "rsi": 63, "volRatio": 2.4, "high52": 850, "bandarmology": "AKUMULASI", "entry": 695, "r1": 760, "cl1": 650, "signal": "STRONG BUY" },
+    { "ticker": "INAF", "name": "Indofarma Tbk", "price": 240, "change": -2.44, "turnover": 5.2, "ema20": 250, "ema50": 270, "rsi": 35, "volRatio": 0.6, "high52": 420, "bandarmology": "DISTRIBUSI", "entry": 230, "r1": 255, "cl1": 220, "signal": "SELL" },
+    { "ticker": "ELSA", "name": "Elnusa Tbk", "price": 480, "change": 3.23, "turnover": 42.1, "ema20": 455, "ema50": 430, "rsi": 67, "volRatio": 2.8, "high52": 520, "bandarmology": "AKUMULASI", "entry": 465, "r1": 500, "cl1": 440, "signal": "STRONG BUY" },
+    { "ticker": "MBSS", "name": "Mitrabahtera Sukses Terusan Tbk", "price": 1150, "change": 4.55, "turnover": 28.1, "ema20": 1080, "ema50": 1000, "rsi": 69, "volRatio": 3.2, "high52": 1250, "bandarmology": "AKUMULASI", "entry": 1100, "r1": 1200, "cl1": 1030, "signal": "STRONG BUY" },
+    { "ticker": "SMDR", "name": "Samudera Indonesia Tbk", "price": 320, "change": 3.23, "turnover": 35.4, "ema20": 302, "ema50": 285, "rsi": 65, "volRatio": 2.6, "high52": 360, "bandarmology": "AKUMULASI", "entry": 310, "r1": 338, "cl1": 292, "signal": "STRONG BUY" },
+    { "ticker": "TMAS", "name": "Temas Tbk", "price": 165, "change": 2.48, "turnover": 18.2, "ema20": 158, "ema50": 150, "rsi": 58, "volRatio": 1.9, "high52": 185, "bandarmology": "AKUMULASI", "entry": 160, "r1": 172, "cl1": 152, "signal": "BUY" },
+    { "ticker": "BIRD", "name": "Blue Bird Tbk", "price": 1850, "change": 1.65, "turnover": 22.1, "ema20": 1800, "ema50": 1740, "rsi": 60, "volRatio": 2.1, "high52": 2050, "bandarmology": "AKUMULASI", "entry": 1820, "r1": 1920, "cl1": 1760, "signal": "BUY" },
+    { "ticker": "ASSA", "name": "Adi Sarana Armada Tbk", "price": 780, "change": 4.00, "turnover": 38.6, "ema20": 735, "ema50": 680, "rsi": 68, "volRatio": 3.0, "high52": 880, "bandarmology": "AKUMULASI", "entry": 750, "r1": 820, "cl1": 710, "signal": "STRONG BUY" },
+    { "ticker": "GTVN", "name": "Gita Visi Nusantara Tbk", "price": 140, "change": 7.69, "turnover": 15.2, "ema20": 125, "ema50": 110, "rsi": 75, "volRatio": 3.8, "high52": 160, "bandarmology": "AKUMULASI", "entry": 130, "r1": 152, "cl1": 118, "signal": "STRONG BUY" },
+    { "ticker": "WOOD", "name": "Integrita Perkasa Tbk", "price": 280, "change": 1.45, "turnover": 12.1, "ema20": 272, "ema50": 265, "rsi": 54, "volRatio": 1.6, "high52": 320, "bandarmology": "NEUTRAL", "entry": 275, "r1": 292, "cl1": 262, "signal": "BUY" },
+    { "ticker": "APLN", "name": "Agung Podomoro Land Tbk", "price": 118, "change": 3.51, "turnover": 14.5, "ema20": 110, "ema50": 102, "rsi": 66, "volRatio": 2.7, "high52": 135, "bandarmology": "AKUMULASI", "entry": 112, "r1": 126, "cl1": 105, "signal": "STRONG BUY" },
+    { "ticker": "ASRI", "name": "Alam Sutera Realty Tbk", "price": 162, "change": 2.53, "turnover": 16.8, "ema20": 154, "ema50": 145, "rsi": 63, "volRatio": 2.4, "high52": 180, "bandarmology": "AKUMULASI", "entry": 156, "r1": 170, "cl1": 148, "signal": "STRONG BUY" },
+    { "ticker": "MDLN", "name": "Modernland Realty Tbk", "price": 68, "change": 4.62, "turnover": 11.2, "ema20": 62, "ema50": 56, "rsi": 69, "volRatio": 3.1, "high52": 78, "bandarmology": "AKUMULASI", "entry": 64, "r1": 72, "cl1": 58, "signal": "STRONG BUY" },
+    { "ticker": "BEST", "name": "Bekasi Fajar Industrial Estate Tbk", "price": 135, "change": 3.85, "turnover": 18.9, "ema20": 126, "ema50": 118, "rsi": 67, "volRatio": 2.8, "high52": 150, "bandarmology": "AKUMULASI", "entry": 128, "r1": 142, "cl1": 120, "signal": "STRONG BUY" },
+    { "ticker": "DMAS", "name": "Puradelta Lestari Tbk", "price": 162, "change": 0.62, "turnover": 19.5, "ema20": 159, "ema50": 155, "rsi": 56, "volRatio": 1.7, "high52": 175, "bandarmology": "NEUTRAL", "entry": 160, "r1": 168, "cl1": 154, "signal": "BUY" },
+    { "ticker": "KIJA", "name": "Kawasan Industri Jababeka Tbk", "price": 155, "change": 4.05, "turnover": 22.4, "ema20": 144, "ema50": 132, "rsi": 68, "volRatio": 3.0, "high52": 172, "bandarmology": "AKUMULASI", "entry": 148, "r1": 164, "cl1": 138, "signal": "STRONG BUY" },
+    { "ticker": "LPKR", "name": "Lippo Karawaci Tbk", "price": 82, "change": 2.50, "turnover": 16.2, "ema20": 78, "ema50": 72, "rsi": 62, "volRatio": 2.3, "high52": 95, "bandarmology": "AKUMULASI", "entry": 79, "r1": 88, "cl1": 74, "signal": "BUY" },
+    { "ticker": "LPCK", "name": "Lippo Cikarang Tbk", "price": 680, "change": 1.49, "turnover": 12.8, "ema20": 660, "ema50": 630, "rsi": 58, "volRatio": 1.9, "high52": 760, "bandarmology": "AKUMULASI", "entry": 665, "r1": 710, "cl1": 635, "signal": "BUY" }
+  ]
+}
