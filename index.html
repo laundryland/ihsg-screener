@@ -6,25 +6,11 @@
     <title>IHSG Stock Screener Pro - Swing Strategy</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; }
-        .container { max-width: 1100px; margin: auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 950px; margin: auto; background: white; padding: 12px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         h1 { margin-top: 0; color: #333; font-size: 18px; margin-bottom: 10px; }
         
-        /* Header Controls (Sticky) */
-        .header-controls { 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 8px; 
-            align-items: center; 
-            justify-content: space-between; 
-            margin-bottom: 15px; 
-            background: #eaedf1; 
-            padding: 8px 12px; 
-            border-radius: 6px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        /* Header Controls & Fixed Header */
+        .header-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 15px; background: #eaedf1; padding: 8px 12px; border-radius: 6px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .control-group { display: flex; align-items: center; gap: 6px; }
         .control-group label { font-size: 11px; font-weight: bold; color: #333; }
         .control-group input, .control-group button { padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; }
@@ -32,42 +18,49 @@
         .control-group button:hover { background: #34495e; }
 
         /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
-        th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; font-size: 12px; }
         th { background-color: #2c3e50; color: white; }
         tr:hover { background-color: #f1f1f1; }
         
-        /* Lebar Kolom Disesuaikan Agar Rapat & Pas */
-        th:nth-child(1), td:nth-child(1) { width: 25%; }
-        th:nth-child(2), td:nth-child(2) { width: 75%; }
-
+        .positive { color: #27ae60; font-weight: bold; }
+        .negative { color: #e74c3c; font-weight: bold; }
+        
         .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; display: inline-block; }
         .badge-akumulasi { background: #d4edda; color: #155724; }
         .badge-distribusi { background: #f8d7da; color: #721c24; }
         .badge-neutral { background: #e2e3e5; color: #383d41; }
 
-        /* 5 Kotak Kekuatan Swing (Masing-masing 20%) */
-        .swing-container { display: flex; align-items: center; gap: 6px; }
+        /* Status Warna Baris / Kotak berdasarkan kondisi */
+        .status-strong-buy { background-color: #d4edda !important; }
+        .status-buy { background-color: #f0fff4 !important; }
+        .status-strong-sell { background-color: #f8d7da !important; animation: blinkStrongSell 0.8s infinite; }
+        .status-sell { background-color: #fdf2f2 !important; }
+
+        /* 5 Kotak Kekuatan Swing & Icon di Kiri */
+        .swing-container { display: flex; align-items: center; gap: 8px; }
         .boxes-group { display: flex; gap: 2px; }
         .swing-box-segment { width: 12px; height: 16px; border-radius: 2px; display: inline-block; }
         .box-green { background-color: #27ae60; }
         .box-red { background-color: #e74c3c; }
         .box-empty { background-color: #dcdde1; }
-        .total-percentage { font-size: 11px; font-weight: bold; margin-left: 5px; }
+        .total-percentage { font-size: 11px; font-weight: bold; margin-left: 2px; }
 
-        .positive { color: #27ae60; font-weight: bold; }
-        .negative { color: #e74c3c; font-weight: bold; }
-
-        /* Animasi Blink */
-        @keyframes blinkEffect {
+        /* Animasi Blink Icon & Strong Sell */
+        @@keyframes blinkEffect {
             0% { opacity: 1; }
             50% { opacity: 0.3; }
             100% { opacity: 1; }
         }
+        @@keyframes blinkStrongSell {
+            0% { background-color: #f8d7da; }
+            50% { background-color: #f5c6cb; }
+            100% { background-color: #f8d7da; }
+        }
         .blink-icon { animation: blinkEffect 1s infinite; display: inline-block; }
 
         /* Efek Blink Baris saat Pencarian Ditemukan */
-        @keyframes rowBlink {
+        @@keyframes rowBlink {
             0% { background-color: #f1c40f; }
             50% { background-color: transparent; }
             100% { background-color: #f1c40f; }
@@ -78,27 +71,26 @@
 <body>
 
 <div class="container">
-    <h1>IHSG Stock Screener Pro (Swing Strategy)</h1>
+    <h1>IHSG Stock Screener Pro</h1>
     
-    <!-- Header Control Panel (Sticky) -->
+    <!-- Header Control Panel -->
     <div class="header-controls">
-        <div class="control-group">
-            <button onclick="loadStockData()" title="Memperbarui data JSON tanpa memuat ulang halaman">
-                🔄 Refresh
-            </button>
-            <button onclick="location.reload()" title="Memuat ulang seluruh halaman web">
-                ⚡ Reload
-            </button>
-        </div>
-
+        <!-- Input Modal Manual -->
         <div class="control-group">
             <label for="manualNominal">Dana:</label>
             <input type="text" id="manualNominal" value="5.000.000.000" style="width: 85px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
         </div>
 
+        <!-- Kolom Pencarian Ticker -->
         <div class="control-group">
             <label for="searchTicker">Cari:</label>
             <input type="text" id="searchTicker" placeholder="Ticker..." style="width: 75px;" onkeyup="searchStock()">
+        </div>
+
+        <!-- Tombol: Refresh & Reload di Pojok Kanan -->
+        <div class="control-group" style="margin-left: auto;">
+            <button onclick="loadStockData()" title="Refresh Data">🔄</button>
+            <button onclick="location.reload()" title="Reload Page">⚡</button>
         </div>
     </div>
 
@@ -106,6 +98,9 @@
         <thead>
             <tr>
                 <th>Ticker</th>
+                <th>Harga</th>
+                <th>Change</th>
+                <th>Bandarmology</th>
                 <th>POWER</th>
             </tr>
         </thead>
@@ -116,6 +111,17 @@
 </div>
 
 <script>
+function formatNominal(val) {
+    const num = Number(val);
+    if (isNaN(num) || num === 0) return "0";
+    return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(num);
+}
+
+function formatNumber(val, decimals = 1) {
+    const num = Number(val);
+    return isNaN(num) ? "0" : num.toFixed(decimals);
+}
+
 function cleanInputNominal(el) {
     el.value = el.value.replace(/\./g, '');
 }
@@ -130,7 +136,7 @@ function formatInputNominal(el) {
     loadStockData();
 }
 
-// Algoritma Kekuatan Swing (Tetap berjalan di latar belakang)
+// Algoritma Kekuatan Swing di Latar Belakang
 function calculateSwingPower(stock, manualCapital) {
     const price = Number(stock.price) || 0;
     const rsi = Number(stock.rsi) || 50;
@@ -150,12 +156,15 @@ function calculateSwingPower(stock, manualCapital) {
     activeBoxes = Math.min(Math.max(activeBoxes, 0), 5);
 
     let isBearishStrong = totalPercent <= 30;
+    let isStrongBuy = totalPercent >= 80;
+    let isBullish = totalPercent >= 60;
     
     return {
         percent: totalPercent.toFixed(1),
         activeBoxes: isBearishStrong ? 5 : activeBoxes,
         isBearishStrong: isBearishStrong,
-        isBullish: totalPercent >= 60
+        isStrongBuy: isStrongBuy,
+        isBullish: isBullish
     };
 }
 
@@ -181,12 +190,41 @@ function renderTable(stocks) {
 
     stocks.forEach((stock, index) => {
         const tr = document.createElement('tr');
-        tr.id = 'row-' + (stock.ticker ? stock.ticker.toUpperCase() : index);
+        const tickerStr = stock.ticker ? stock.ticker.toUpperCase() : index;
+        tr.id = 'row-' + tickerStr;
         
+        const price = Number(stock.price) || 0;
+        const change = Number(stock.change) || 0;
+        const changeClass = change >= 0 ? 'positive' : 'negative';
+        const changeSign = change >= 0 ? '+' : '';
+        const bandarClass = 'badge-' + (stock.bandarmology || 'neutral').toLowerCase();
+
         const swing = calculateSwingPower(stock, currentCapital);
 
-        // Render 5 Kotak POWER
-        let boxesHtml = `<div class="swing-container"><div class="boxes-group">`;
+        // Penentuan Kelas Baris & Tampilan Sesuai Kondisi (Hijau/Merah/Blink)
+        let rowStatusClass = '';
+        let statusIcon = '';
+        let recommendationText = '';
+
+        if (swing.isBearishStrong) {
+            rowStatusClass = swing.percent < 15 ? 'status-strong-sell' : 'status-sell';
+            statusIcon = `<span class="blink-icon" title="Strong Sell">⏳</span>`;
+            recommendationText = `<span class="negative" style="font-size:11px;">Strong Sell (${swing.percent}%)</span>`;
+        } else if (swing.isBullish) {
+            rowStatusClass = swing.isStrongBuy ? 'status-strong-buy' : 'status-buy';
+            statusIcon = `<span class="${swing.isStrongBuy ? 'blink-icon' : ''}" title="${swing.isStrongBuy ? 'Strong Buy' : 'Buy'}">🚀</span>`;
+            recommendationText = `<span class="positive" style="font-size:11px;">${swing.isStrongBuy ? 'Strong Buy' : 'Buy'} (${swing.percent}%)</span>`;
+        } else {
+            statusIcon = `<span title="Neutral">👁️</span>`;
+            recommendationText = `<span class="badge-neutral" style="font-size:10px; padding:2px 4px; border-radius:3px;">Neutral (${swing.percent}%)</span>`;
+        }
+
+        if (rowStatusClass) {
+            tr.classList.add(rowStatusClass);
+        }
+
+        // Render 5 Kotak dengan Icon di sebelah kiri kotak
+        let boxesHtml = `<div class="swing-container">${statusIcon}<div class="boxes-group">`;
         for (let i = 1; i <= 5; i++) {
             let boxClass = 'box-empty';
             if (i <= swing.activeBoxes) {
@@ -194,26 +232,13 @@ function renderTable(stocks) {
             }
             boxesHtml += `<span class="swing-box-segment ${boxClass}" title="Kotak ${i} (20%)"></span>`;
         }
-        boxesHtml += `</div>`;
-
-        let statusIcon = '';
-        let recommendationText = '';
-        
-        if (swing.isBearishStrong) {
-            statusIcon = `<span class="blink-icon" title="Bearish Strong Sell">⏳</span>`;
-            recommendationText = `<span class="negative" style="font-size:11px;">Strong Sell (${swing.percent}%)</span>`;
-        } else if (swing.isBullish) {
-            statusIcon = `<span class="blink-icon" title="Strong Bullish Buy">🚀</span>`;
-            recommendationText = `<span class="positive" style="font-size:11px;">Layak Beli (${swing.percent}%)</span>`;
-        } else {
-            statusIcon = `<span title="Netral / Watch">👁️</span>`;
-            recommendationText = `<span class="badge-neutral" style="font-size:10px; padding:2px 4px; border-radius:3px;">Neutral (${swing.percent}%)</span>`;
-        }
-
-        boxesHtml += `${statusIcon} <span class="total-percentage">${recommendationText}</span></div>`;
+        boxesHtml += `</div><span class="total-percentage">${recommendationText}</span></div>`;
 
         tr.innerHTML = `
             <td><strong>${stock.ticker || '-'}</strong></td>
+            <td>${formatNominal(price)}</td>
+            <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
+            <td><span class="badge ${bandarClass}">${stock.bandarmology || 'NEUTRAL'}</span></td>
             <td>${boxesHtml}</td>
         `;
         tbody.appendChild(tr);
