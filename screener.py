@@ -18,8 +18,7 @@ def save_json_atomically(data, target_path):
 
 
 def calculate_bandarmology_score(item):
-    """Menghitung skor gabungan (0 - 100%) berdasarkan Bandarmologi + RSI + EMA + Volume."""
-    score = 50  # Base Neutral
+    score = 50
 
     bandar = str(item.get("bandarmology", "NEUTRAL")).upper()
     rsi = float(item.get("rsi", 50))
@@ -27,7 +26,6 @@ def calculate_bandarmology_score(item):
     ema20 = float(item.get("ema20", 0))
     vol_ratio = float(item.get("volRatio", 1.0))
 
-    # 1. Bobot Bandarmologi (+/- 25)
     if "BIG ACCUM" in bandar or "STRONG BUY" in bandar:
         score += 25
     elif "ACCUM" in bandar or "BUY" in bandar:
@@ -37,32 +35,27 @@ def calculate_bandarmology_score(item):
     elif "DIST" in bandar or "SELL" in bandar:
         score -= 15
 
-    # 2. Bobot RSI (+/- 15)
     if 50 <= rsi <= 65:
-        score += 15  # Momentum Bullish sehat
+        score += 15
     elif rsi > 70:
-        score += 5  # Overbought
+        score += 5
     elif 35 <= rsi < 50:
         score -= 10
     elif rsi < 30:
-        score -= 15  # Oversold / Downtrend kuat
+        score -= 15
 
-    # 3. Bobot Tren EMA20 (+/- 10)
     if price > ema20 and ema20 > 0:
         score += 10
     elif price < ema20 and ema20 > 0:
         score -= 10
 
-    # 4. Bobot Konfirmasi Volume (+/- 10)
     if vol_ratio >= 1.5:
         score += 10
     elif vol_ratio < 0.5:
         score -= 5
 
-    # Batasi skor pada rentang 0 - 100
     score = max(0, min(100, score))
 
-    # Penentuan Label Signal & Power %
     if score >= 80:
         signal = "STRONG BUY"
     elif score >= 60:
@@ -97,18 +90,15 @@ def clean_and_process_stock(raw_stock):
     if not ticker or price <= 0:
         return None
 
-    # Kalkulasi gabungan Bandarmologi + Teknikal
     power_score, signal = calculate_bandarmology_score(cleaned)
-    cleaned["powerScore"] = power_score  # Nilai 0 - 100%
+    cleaned["powerScore"] = power_score
     cleaned["signal"] = signal
 
     return cleaned
 
 
 def fetch_all_stocks():
-    """Daftar emiten IDX termasuk penambahan BNBR, JGLE, dan Top Gainers."""
-    # Tempatkan penarikan data/scraping aktual kamu di sini.
-    # Sampel data untuk memastikan emiten awal dan baru hadir lengkap:
+    # Masukkan data/logika scraping aktual kamu di sini
     return [
         {
             "ticker": "BNBR",
