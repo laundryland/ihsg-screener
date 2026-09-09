@@ -3,105 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IHSG Stock Screener Pro - Swing Strategy</title>
+    <title>IHSG STOCK SCREENER PRO - SWING STRATEGY</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; }
-        .container { max-width: 950px; margin: auto; background: white; padding: 12px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        h1 { margin-top: 0; color: #333; font-size: 18px; margin-bottom: 10px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f6f9; 
+            margin: 0; 
+            padding: 6px; 
+            text-transform: uppercase; 
+        }
         
-        /* Header Controls & Fixed Header */
-        .header-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 15px; background: #eaedf1; padding: 8px 12px; border-radius: 6px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .control-group { display: flex; align-items: center; gap: 6px; }
-        .control-group label { font-size: 11px; font-weight: bold; color: #333; }
-        .control-group input, .control-group button { padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; }
-        .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .container { 
+            max-width: 1000px; 
+            margin: auto; 
+            background: white; 
+            padding: 8px; 
+            border-radius: 6px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        }
+        
+        /* Header Utama (TETAP CASE NORMAL/MIXED) */
+        .main-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 6px; 
+            padding-bottom: 4px; 
+            border-bottom: 2px solid #2c3e50; 
+        }
+        h1 { 
+            margin: 0; 
+            color: #333; 
+            font-size: 16px; 
+            text-transform: none !important; 
+        }
+
+        /* IHSG Live Widget Badge */
+        .ihsg-badge {
+            background: #2c3e50;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .ihsg-badge .ihsg-val { color: #2ecc71; }
+        
+        /* Header Control Panel (Sticky Header 1) */
+        .header-controls { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 6px; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 6px; 
+            background: #eaedf1; 
+            padding: 6px 10px; 
+            border-radius: 4px; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08); 
+        }
+        .control-group { display: flex; align-items: center; gap: 4px; }
+        .control-group label { font-size: 10px; font-weight: bold; color: #333; }
+        .control-group input, .control-group button { 
+            padding: 3px 6px; 
+            border: 1px solid #ccc; 
+            border-radius: 3px; 
+            font-size: 10px; 
+            text-transform: uppercase;
+        }
+        .control-group button { background: #2c3e50; color: white; cursor: pointer; display: flex; align-items: center; gap: 2px; }
         .control-group button:hover { background: #34495e; }
 
         /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; font-size: 12px; }
-        th { background-color: #2c3e50; color: white; }
-        tr:hover { background-color: #f1f1f1; }
+        table { width: 100%; border-collapse: collapse; margin-top: 2px; }
+        th, td { padding: 5px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; font-size: 11px; }
+        
+        /* Header Tabel (Sticky Header 2) */
+        thead th { 
+            position: sticky; 
+            top: 33px; 
+            z-index: 999; 
+            background-color: #2c3e50; 
+            color: white; 
+            font-size: 11px;
+            padding: 6px 8px;
+        }
+        
+        tr:hover { background-color: #f8f9fa; }
         
         .positive { color: #27ae60; font-weight: bold; }
         .negative { color: #e74c3c; font-weight: bold; }
         
-        .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; display: inline-block; }
+        .badge { padding: 2px 5px; border-radius: 3px; font-size: 0.75em; font-weight: bold; display: inline-block; }
         .badge-akumulasi { background: #d4edda; color: #155724; }
         .badge-distribusi { background: #f8d7da; color: #721c24; }
         .badge-neutral { background: #e2e3e5; color: #383d41; }
 
-        /* Status Warna Baris / Kotak berdasarkan kondisi */
-        .status-strong-buy { background-color: #d4edda !important; }
-        .status-buy { background-color: #f0fff4 !important; }
+        /* Status Warna Baris */
         .status-strong-sell { background-color: #f8d7da !important; animation: blinkStrongSell 0.8s infinite; }
         .status-sell { background-color: #fdf2f2 !important; }
 
-        /* 5 Kotak Kekuatan Swing & Icon di Kiri */
-        .swing-container { display: flex; align-items: center; gap: 8px; }
+        /* Layout Kolom Power / Swing */
+        .swing-container { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            width: 100%; 
+        }
+        .swing-left { display: flex; align-items: center; gap: 6px; }
         .boxes-group { display: flex; gap: 2px; }
-        .swing-box-segment { width: 12px; height: 16px; border-radius: 2px; display: inline-block; }
+        .swing-box-segment { width: 10px; height: 14px; border-radius: 2px; display: inline-block; }
         .box-green { background-color: #27ae60; }
         .box-red { background-color: #e74c3c; }
         .box-empty { background-color: #dcdde1; }
-        .total-percentage { font-size: 11px; font-weight: bold; margin-left: 2px; }
+        
+        .percent-middle { font-size: 10px; font-weight: bold; color: #444; }
+        .buy-sell-right { text-align: right; min-width: 75px; }
 
         /* Animasi Blink Icon & Strong Sell */
-        @@keyframes blinkEffect {
+        @keyframes blinkEffect {
             0% { opacity: 1; }
             50% { opacity: 0.3; }
             100% { opacity: 1; }
         }
-        @@keyframes blinkStrongSell {
+        @keyframes blinkStrongSell {
             0% { background-color: #f8d7da; }
             50% { background-color: #f5c6cb; }
             100% { background-color: #f8d7da; }
         }
         .blink-icon { animation: blinkEffect 1s infinite; display: inline-block; }
 
-        /* Efek Blink Baris saat Pencarian Ditemukan */
-        @@keyframes rowBlink {
+        /* Efek Blink Baris saat Pencarian (Tepat 3 kali) */
+        @keyframes rowBlink3Times {
             0% { background-color: #f1c40f; }
             50% { background-color: transparent; }
             100% { background-color: #f1c40f; }
         }
-        .highlight-blink { animation: rowBlink 0.6s ease 3; }
+        .highlight-blink { 
+            animation: rowBlink3Times 0.4s ease-in-out 3; 
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>IHSG Stock Screener Pro</h1>
+    <!-- Header Utama (Nama Aplikasi + Widget IHSG) -->
+    <div class="main-header">
+        <h1>IHSG Stock Screener Pro</h1>
+        <div class="ihsg-badge" id="ihsgWidget">
+            <span>IHSG:</span>
+            <span class="ihsg-val" id="ihsgPrice">LOADING...</span>
+            <span id="ihsgChange"></span>
+        </div>
+    </div>
     
-    <!-- Header Control Panel -->
+    <!-- Header Controls (Sticky Header 1) -->
     <div class="header-controls">
-        <!-- Input Modal Manual -->
         <div class="control-group">
-            <label for="manualNominal">Dana:</label>
-            <input type="text" id="manualNominal" value="5.000.000.000" style="width: 85px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
+            <label for="manualNominal">DANA:</label>
+            <input type="text" id="manualNominal" value="5.000.000.000" style="width: 80px;" onblur="formatInputNominal(this)" onfocus="cleanInputNominal(this)">
         </div>
 
-        <!-- Kolom Pencarian Ticker -->
         <div class="control-group">
-            <label for="searchTicker">Cari:</label>
-            <input type="text" id="searchTicker" placeholder="Ticker..." style="width: 75px;" onkeyup="searchStock()">
+            <label for="searchTicker">CARI:</label>
+            <input type="text" id="searchTicker" placeholder="TICKER..." style="width: 70px;" onkeyup="searchStock()">
         </div>
 
-        <!-- Tombol: Refresh & Reload di Pojok Kanan -->
         <div class="control-group" style="margin-left: auto;">
-            <button onclick="loadStockData()" title="Refresh Data">🔄</button>
-            <button onclick="location.reload()" title="Reload Page">⚡</button>
+            <button onclick="loadStockData()" title="REFRESH DATA">🔄 REFRESH</button>
+            <button onclick="location.reload()" title="RELOAD PAGE">⚡ RELOAD</button>
         </div>
     </div>
 
+    <!-- Tabel Data (Sticky Header 2 berada di thead) -->
     <table>
         <thead>
             <tr>
-                <th>Ticker</th>
-                <th>Harga</th>
-                <th>Change</th>
-                <th>Bandarmology</th>
-                <th>POWER</th>
+                <th style="width: 15%;">TICKER</th>
+                <th style="width: 15%;">HARGA</th>
+                <th style="width: 15%;">CHANGE</th>
+                <th style="width: 15%;">BANDAR</th>
+                <th style="width: 40%;">POWER / SIGNAL</th>
             </tr>
         </thead>
         <tbody id="stockTable">
@@ -136,7 +224,6 @@ function formatInputNominal(el) {
     loadStockData();
 }
 
-// Algoritma Kekuatan Swing di Latar Belakang
 function calculateSwingPower(stock, manualCapital) {
     const price = Number(stock.price) || 0;
     const rsi = Number(stock.rsi) || 50;
@@ -174,10 +261,21 @@ async function loadStockData() {
     try {
         const response = await fetch('data.json?t=' + new Date().getTime());
         const data = await response.json();
+        
+        // Render Data IHSG Jika Ada
+        if (data.ihsg) {
+            document.getElementById('ihsgPrice').innerText = formatNominal(data.ihsg.price);
+            const changeElem = document.getElementById('ihsgChange');
+            const chg = Number(data.ihsg.change) || 0;
+            const sign = chg >= 0 ? '+' : '';
+            changeElem.innerText = `(${sign}${chg.toFixed(2)}%)`;
+            changeElem.className = chg >= 0 ? 'positive' : 'negative';
+        }
+
         globalStocksData = data.stocks || [];
         renderTable(globalStocksData);
     } catch (err) {
-        console.error('Gagal memuat data.json:', err);
+        console.error('GAGAL MEMUAT DATA.JSON:', err);
     }
 }
 
@@ -201,45 +299,56 @@ function renderTable(stocks) {
 
         const swing = calculateSwingPower(stock, currentCapital);
 
-        // Penentuan Kelas Baris & Tampilan Sesuai Kondisi (Hijau/Merah/Blink)
+        // Pengaturan Baris: Hanya Merah/Strong Sell yang diwarnai latar belakang barisnya
         let rowStatusClass = '';
         let statusIcon = '';
         let recommendationText = '';
 
         if (swing.isBearishStrong) {
             rowStatusClass = swing.percent < 15 ? 'status-strong-sell' : 'status-sell';
-            statusIcon = `<span class="blink-icon" title="Strong Sell">⏳</span>`;
-            recommendationText = `<span class="negative" style="font-size:11px;">Strong Sell (${swing.percent}%)</span>`;
+            statusIcon = `<span class="blink-icon" title="STRONG SELL">⏳</span>`;
+            recommendationText = `<span class="negative">STRONG SELL</span>`;
         } else if (swing.isBullish) {
-            rowStatusClass = swing.isStrongBuy ? 'status-strong-buy' : 'status-buy';
-            statusIcon = `<span class="${swing.isStrongBuy ? 'blink-icon' : ''}" title="${swing.isStrongBuy ? 'Strong Buy' : 'Buy'}">🚀</span>`;
-            recommendationText = `<span class="positive" style="font-size:11px;">${swing.isStrongBuy ? 'Strong Buy' : 'Buy'} (${swing.percent}%)</span>`;
+            // Latar belakang baris bullish dibuat netral/transparan
+            statusIcon = `<span class="${swing.isStrongBuy ? 'blink-icon' : ''}" title="${swing.isStrongBuy ? 'STRONG BUY' : 'BUY'}">🚀</span>`;
+            recommendationText = `<span class="positive">${swing.isStrongBuy ? 'STRONG BUY' : 'BUY'}</span>`;
         } else {
-            statusIcon = `<span title="Neutral">👁️</span>`;
-            recommendationText = `<span class="badge-neutral" style="font-size:10px; padding:2px 4px; border-radius:3px;">Neutral (${swing.percent}%)</span>`;
+            statusIcon = `<span title="NEUTRAL">👁️</span>`;
+            recommendationText = `<span class="badge-neutral" style="padding:2px 4px;">NEUTRAL</span>`;
         }
 
         if (rowStatusClass) {
             tr.classList.add(rowStatusClass);
         }
 
-        // Render 5 Kotak dengan Icon di sebelah kiri kotak
-        let boxesHtml = `<div class="swing-container">${statusIcon}<div class="boxes-group">`;
+        // Render Kotak: Ikon di Kiri, Persentase di Tengah, Buy/Sell di Pojok Kanan
+        let boxesHtml = `<div class="boxes-group">`;
         for (let i = 1; i <= 5; i++) {
             let boxClass = 'box-empty';
             if (i <= swing.activeBoxes) {
                 boxClass = swing.isBearishStrong ? 'box-red' : (swing.isBullish ? 'box-green' : 'box-red');
             }
-            boxesHtml += `<span class="swing-box-segment ${boxClass}" title="Kotak ${i} (20%)"></span>`;
+            boxesHtml += `<span class="swing-box-segment ${boxClass}" title="KOTAK ${i} (20%)"></span>`;
         }
-        boxesHtml += `</div><span class="total-percentage">${recommendationText}</span></div>`;
+        boxesHtml += `</div>`;
+
+        const powerColumnContent = `
+            <div class="swing-container">
+                <div class="swing-left">
+                    ${statusIcon}
+                    ${boxesHtml}
+                </div>
+                <div class="percent-middle">${swing.percent}%</div>
+                <div class="buy-sell-right">${recommendationText}</div>
+            </div>
+        `;
 
         tr.innerHTML = `
             <td><strong>${stock.ticker || '-'}</strong></td>
             <td>${formatNominal(price)}</td>
             <td class="${changeClass}">${changeSign}${formatNumber(change, 2)}%</td>
-            <td><span class="badge ${bandarClass}">${stock.bandarmology || 'NEUTRAL'}</span></td>
-            <td>${boxesHtml}</td>
+            <td><span class="badge ${bandarClass}">${(stock.bandarmology || 'NEUTRAL').toUpperCase()}</span></td>
+            <td>${powerColumnContent}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -255,8 +364,9 @@ function searchStock() {
         const targetRow = document.getElementById(rowId);
         if (targetRow) {
             targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Triggers CSS restart animation untuk blink tepat 3x
             targetRow.classList.remove('highlight-blink');
-            void targetRow.offsetWidth;
+            void targetRow.offsetWidth; 
             targetRow.classList.add('highlight-blink');
         }
     }
