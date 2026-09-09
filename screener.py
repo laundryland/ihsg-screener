@@ -3,7 +3,7 @@ import datetime
 import yfinance as yf
 import pandas as pd
 
-# 1. Daftar Ticker Utama + Otomatis Format Suffix .JK
+# 1. Daftar Ticker Utama (IDX Baseline)
 TICKERS_BASE = [
     "BBCA", "BBRI", "BMRI", "BBNI", "TLKM", "ASII", "AMMN", "BREN", "TPIA", "ADRO", 
     "PGAS", "GOTO", "BRIS", "UNVR", "ICBP", "INDF", "CPIN", "JPFA", "KLBF", "MIKA", 
@@ -18,11 +18,18 @@ TICKERS_BASE = [
     "BEST", "DMAS", "KIJA", "LPKR", "LPCK"
 ]
 
+# 2. Daftar Saham Bluechip / LQ45 Utama
+TICKERS_BLUECHIP = [
+    "ACES", "ADRO", "AMRT", "ANTM", "ARTO", "ASII", "BBCA", "BBNI", "BBRI", "BBTN",
+    "BMRI", "BRPT", "CPIN", "EMTK", "EXCL", "GOTO", "HRUM", "ICBP", "INDF", "INKP",
+    "INTP", "ISAT", "ITMG", "JSMR", "KLBF", "MDKA", "MEDC", "MIKA", "MYOR", "PGAS",
+    "PTBA", "SCMA", "SIDO", "SMGR", "TBIG", "TPIA", "TLKM", "TOWR", "UNVR", "UNTR"
+]
+
 def fetch_top_gainers():
     """Mengambil saham top gainers dari yfinance"""
     try:
         gainers = yf.TradingData().get_gainers()
-        # Filter ticker yang dari bursa Indonesia (.JK)
         jk_gainers = [t.replace('.JK', '') for t in gainers.index if t.endswith('.JK')]
         return jk_gainers
     except Exception as e:
@@ -48,34 +55,33 @@ def process_stock(ticker_symbol):
         if df.empty or len(df) < 50:
             return None
 
-        # Data Harga & Indikator Teknikal
+        # Data Harga & Keamanan Nilai
         close_series = df['Close']
-        current_price = int(close_series.iloc[-1])
-        prev_price = close_series.iloc[-2]
-        change_pct = round(((current_price - prev_price) / prev_price) * 100, 2)
+        raw_price = close_series.iloc[-1]
+        current_price = int(raw_price) if not pd.isna(raw_price) else 0
 
-        # 1. Vol Ratio
+        raw_prev = close_series.iloc[-2]
+        prev_price = float(raw_prev) if not pd.isna(raw_prev) else current_price
+        
+        change_pct = round(((current_price - prev_price) / prev_price) * 100, 2) if prev_price > 0 else 0.0
+
+        # Indikator Teknikal
         vol_today = df['Volume'].iloc[-1]
         vol_avg_20 = df['Volume'].tail(20).mean()
-        vol_ratio = round(vol_today / vol_avg_20, 2) if vol_avg_20 > 0 else 0.0
+        vol_ratio = round(float(vol_today / vol_avg_20), 2) if vol_avg_20 > 0 else 0.0
 
-        # 2. RSI 14
         rsi_series = calculate_rsi(close_series)
-        current_rsi = round(rsi_series.iloc[-1], 1) if not pd.isna(rsi_series.iloc[-1]) else 50.0
+        last_rsi = rsi_series.iloc[-1]
+        current_rsi = round(float(last_rsi), 1) if not pd.isna(last_rsi) else 50.0
 
-        # 3. EMA 20 & 50
-        ema20 = round(close_series.ewm(span=20, adjust=False).mean().iloc[-1], 1)
-        ema50 = round(close_series.ewm(span=50, adjust=False).mean().iloc[-1], 1)
+        ema20_val = close_series.ewm(span=20, adjust=False).mean().iloc[-1]
+        ema50_val = close_series.ewm(span=50, adjust=False).mean().iloc[-1]
+        
+        ema20 = round(float(ema20_val), 1) if not pd.isna(ema20_val) else float(current_price)
+        ema50 = round(float(ema50_val), 1) if not pd.isna(ema50_val) else float(current_price)
 
-        # 4. 52-Week High
-        high_52 = int(df['High'].max())
+        high_52 = int(df['High'].max()) if not pd.isna(df['High'].max()) else current_price
 
-        # Support / Resistance & Stop Loss Sederhana
-        entry_price = current_price
-        r1 = int(current_price * 1.05)
-        cl1 = int(current_price * 0.95)
-
-        # Nama Perusahaan (fallback ke ticker jika kosong)
         info = stock.info
         name = info.get('shortName') or info.get('longName') or clean_ticker
 
@@ -89,21 +95,25 @@ def process_stock(ticker_symbol):
             "ema50": ema50,
             "volRatio": vol_ratio,
             "high52": high_52,
-            "bandarmology": "NEUTRAL",  # Dipantau manual
-            "entry": entry_price,
-            "r1": r1,
-            "cl1": cl1
+            "bandarmology": "NEUTRAL",
+            "entry": current_price,
+            "r1": int(current_price * 1.05),
+            "cl1": int(current_price * 0.95)
         }
     except Exception as e:
         print(f"Gagal memproses {ticker_symbol}: {e}")
         return None
 
 def main():
-    # Gabungkan ticker bawaan + top gainers (tanpa duplikasi)
+    # 1. Ambil Top Gainers
     top_gainers = fetch_top_gainers()
-    all_tickers = list(set(TICKERS_BASE + top_gainers))
     
-    print(f"Total emiten yang diproses: {len(all_tickers)}")
+    # 2. Gabungkan ketiga sumber data (TICKERS_BASE + TICKERS_BLUECHIP + top_gainers)
+    # Penggunaan set() secara otomatis menghapus semua ticker yang duplikat/kembar
+    combined_tickers = set(TICKERS_BASE + TICKERS_BLUECHIP + top_gainers)
+    all_tickers = sorted(list(combined_tickers))
+    
+    print(f"Total emiten unik yang diproses: {len(all_tickers)}")
     
     stocks_data = []
     for ticker in all_tickers:
