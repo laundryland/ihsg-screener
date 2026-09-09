@@ -1,43 +1,64 @@
 {
-  "strategies": [
+  "emitens": [
     {
-      "id": "day_trading",
-      "name": "Day Trading Strategy",
-      "description": "Strategi perdagangan harian yang berfokus pada pergerakan harga dalam satu sesi.",
-      "timeframes": ["15m", "1h", "4h"],
-      "indicators": ["RSI", "EMA 20/50", "MACD"],
-      "rules": {
-        "entry": "Konfirmasi crossover EMA 20 dan 50 disertai indikator RSI keluar dari zona oversold/overbought.",
-        "exit": "RSI menyentuh level ekstrim berlawanan atau terdapat pola candlestick reversal.",
-        "stop_loss": "Di bawah swing low terdekat untuk posisi Long, atau di atas swing high terdekat untuk posisi Short.",
-        "take_profit": "Rasio Risk to Reward minimal 1:2."
-      }
+      "ticker": "BBCA",
+      "name": "Bank Central Asia Tbk",
+      "sector": "Financials",
+      "price": 10250,
+      "per": 24.5,
+      "pbv": 4.8,
+      "roe": 19.5,
+      "market_cap": "1263 T"
     },
     {
-      "id": "swing_trading",
-      "name": "Swing Trading Strategy",
-      "description": "Strategi menengah untuk menangkap tren harga selama beberapa hari hingga minggu.",
-      "timeframes": ["4h", "1d"],
-      "indicators": ["EMA 200", "Stochastic Oscillator", "Support/Resistance"],
-      "rules": {
-        "entry": "Bounce dari area Support/Resistance utama yang searah dengan tren utama EMA 200.",
-        "exit": "Harga mendekati area Support/Resistance berikutnya.",
-        "stop_loss": "Di luar level Support/Resistance acuan.",
-        "take_profit": "Pada level Resistance/Support penting berikutnya."
-      }
+      "ticker": "BBRI",
+      "name": "Bank Rakyat Indonesia (Persero) Tbk",
+      "sector": "Financials",
+      "price": 5150,
+      "per": 14.2,
+      "pbv": 2.3,
+      "roe": 16.2,
+      "market_cap": "780 T"
     },
     {
-      "id": "position_trading",
-      "name": "Position Trading Strategy",
-      "description": "Strategi jangka panjang berdasarkan analisis tren besar dan kondisi fundamental.",
-      "timeframes": ["1d", "1w"],
-      "indicators": ["SMA 50/200", "Trendline", "Volume"],
-      "rules": {
-        "entry": "Breakout dari struktur konsolidasi jangka panjang dengan konfirmasi volume tinggi.",
-        "exit": "Patah tren utama pada timeframe mingguan.",
-        "stop_loss": "Di bawah level struktur swing besar terakhir.",
-        "take_profit": "Menggunakan trailing stop berdasarkan Support/Resistance mingguan."
-      }
+      "ticker": "TLKM",
+      "name": "Telkom Indonesia (Persero) Tbk",
+      "sector": "Infrastructure",
+      "price": 3050,
+      "per": 12.8,
+      "pbv": 2.1,
+      "roe": 16.4,
+      "market_cap": "302 T"
+    },
+    {
+      "ticker": "ASII",
+      "name": "Astra International Tbk",
+      "sector": "Industriables",
+      "price": 5000,
+      "per": 6.8,
+      "pbv": 0.9,
+      "roe": 13.2,
+      "market_cap": "202 T"
+    },
+    {
+      "ticker": "ADRO",
+      "name": "Adaro Energy Indonesia Tbk",
+      "sector": "Energy",
+      "price": 3600,
+      "per": 4.5,
+      "pbv": 0.8,
+      "roe": 17.8,
+      "market_cap": "110 T"
+    },
+    {
+      "ticker": "ICBP",
+      "name": "Indofood CBP Sukses Makmur Tbk",
+      "sector": "Consumer Non-Cyclicals",
+      "price": 11400,
+      "per": 15.6,
+      "pbv": 2.9,
+      "roe": 18.6,
+      "market_cap": "132 T"
     }
   ]
 }
