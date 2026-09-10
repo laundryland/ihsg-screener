@@ -44,7 +44,6 @@
                             oninput="liveSearch()"
                             onkeyup="handleSearch(event)"
                         />
-                        <!-- Tombol Clear X Search -->
                         <button id="clear-search-btn" onclick="clearSearchInput()" class="hidden absolute right-8 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 text-xs font-bold p-1">✕</button>
                         <button onclick="executeSearch(true)" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-400 p-1" title="Cari / Tambah ke Pantauan">🔍</button>
                     </div>
@@ -133,13 +132,13 @@
                         <tr class="text-gray-400 uppercase border-b border-gray-700/50">
                             <th class="py-2 px-2"># Rank</th>
                             <th class="py-2 px-2">Ticker</th>
-                            <th class="py-2 px-2 text-center">Trend (EMA14/50)</th>
                             <th class="py-2 px-2">Closing</th>
                             <th class="py-2 px-2">Change (%)</th>
+                            <th class="py-2 px-2 text-center">Trend EMA</th>
                             <th class="py-2 px-2 text-red-400">Cut Loss</th>
                             <th class="py-2 px-2 text-green-400">TP 1</th>
                             <th class="py-2 px-2 text-green-400">TP 2</th>
-                            <th class="py-2 px-2 text-center">Score Power</th>
+                            <th class="py-2 px-2 text-center">Signal Power</th>
                         </tr>
                     </thead>
                     <tbody id="top-10-data" class="divide-y divide-gray-700/40"></tbody>
@@ -156,9 +155,12 @@
                         <th class="p-3">Closing</th>
                         <th class="p-3">Change (%)</th>
                         <th class="p-3">EMA 20</th>
-                        <th class="p-3 text-center">Trend</th>
+                        <th class="p-2 text-center">Status</th>
+                        <th class="p-2 text-center">Trend EMA</th>
                         <th class="p-3">EMA 50</th>
+                        <th class="p-2 text-center">Status</th>
                         <th class="p-3">RSI (14)</th>
+                        <th class="p-2 text-center">Status</th>
                         <th class="p-3 text-red-400">Cut Loss</th>
                         <th class="p-3 text-green-400">TP 1</th>
                         <th class="p-3 text-green-400">TP 2</th>
@@ -253,15 +255,7 @@
             else if (status === 'strong_buy') { colorClass = 'bg-green-400'; blinkClass = 'animate-signal-blink'; }
             else if (status === 'sell') colorClass = 'bg-red-500';
             else if (status === 'strong_sell') { colorClass = 'bg-red-500'; blinkClass = 'animate-signal-blink'; }
-            return `<span class="inline-block w-2.5 h-2.5 rounded-full ${colorClass} ${blinkClass} flex-shrink-0" title="Status: ${status}"></span>`;
-        }
-
-        function renderTrendArrow(crossStatus) {
-            if (crossStatus === 'UP') {
-                return `<span class="inline-flex items-center justify-center w-5 h-5 rounded text-green-400 font-bold" title="Golden Cross (EMA14 > EMA50)">⬆️</span>`;
-            } else {
-                return `<span class="inline-flex items-center justify-center w-5 h-5 rounded text-red-400 font-bold" title="Death Cross (EMA14 < EMA50)">🔻</span>`;
-            }
+            return `<span class="inline-block w-2.5 h-2.5 rounded-full ${colorClass} ${blinkClass}" title="Status: ${status}"></span>`;
         }
 
         function renderPowerBoxes(signal, powerScore) {
@@ -303,6 +297,7 @@
                 const isPositive = (item.change_pct || 0) >= 0;
                 const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
                 const changeSign = isPositive ? '+' : '';
+                const emaTrendIcon = item.ema_cross || ((item.ema14 || item.ema20) >= item.ema50 ? '🟢▲' : '🔻');
 
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-750/50 transition-colors';
@@ -311,9 +306,9 @@
                     <td class="py-2 px-2 font-bold text-yellow-400">
                         ${item.ticker} <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded ml-0.5">${item.category}</span>
                     </td>
-                    <td class="py-2 px-2 text-center">${renderTrendArrow(item.ema_cross || (item.ema14 >= item.ema50 ? 'UP' : 'DOWN'))}</td>
                     <td class="py-2 px-2 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
                     <td class="py-2 px-2 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
+                    <td class="py-2 px-2 text-center text-sm font-bold">${emaTrendIcon}</td>
                     <td class="py-2 px-2 text-red-400">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
                     <td class="py-2 px-2 text-green-400">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
                     <td class="py-2 px-2 text-green-400">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
@@ -347,7 +342,7 @@
             const all = globalData.all_stocks || [];
             return pantauanList.map(ticker => {
                 const found = all.find(s => s.ticker === ticker);
-                return found || { ticker: ticker, close: 0, change_pct: 0, category: 'Pantauan Manual', signal: 'NEUTRAL', power_score: 5, ema_cross: 'UP' };
+                return found || { ticker: ticker, close: 0, change_pct: 0, category: 'Pantauan Manual', signal: 'NEUTRAL', power_score: 5 };
             });
         }
 
@@ -357,7 +352,7 @@
             tbody.innerHTML = '';
 
             if (!items || items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" class="text-center p-6 text-gray-500">Tidak ada data emiten untuk kategori ini.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="15" class="text-center p-6 text-gray-500">Tidak ada data emiten untuk kategori ini.</td></tr>`;
                 return;
             }
 
@@ -365,6 +360,7 @@
                 const isPositive = (item.change_pct || 0) >= 0;
                 const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
                 const changeSign = isPositive ? '+' : '';
+                const emaTrendIcon = item.ema_cross || ((item.ema14 || item.ema20) >= item.ema50 ? '🟢▲' : '🔻');
 
                 const row = document.createElement('tr');
                 row.id = 'row-' + item.ticker;
@@ -380,28 +376,16 @@
                     </td>
                     <td class="p-3 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
                     <td class="p-3 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
-                    <td class="p-3 text-gray-300 whitespace-nowrap">
-                        <div class="flex items-center justify-between gap-2">
-                            <span>${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'}</span>
-                            ${renderDot(item.ema20_status || 'neutral')}
-                        </div>
-                    </td>
-                    <td class="p-3 text-center whitespace-nowrap">${renderTrendArrow(item.ema_cross || (item.ema14 >= item.ema50 ? 'UP' : 'DOWN'))}</td>
-                    <td class="p-3 text-gray-300 whitespace-nowrap">
-                        <div class="flex items-center justify-between gap-2">
-                            <span>${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</span>
-                            ${renderDot(item.ema50_status || 'neutral')}
-                        </div>
-                    </td>
-                    <td class="p-3 text-gray-300 whitespace-nowrap">
-                        <div class="flex items-center justify-between gap-2">
-                            <span>${item.rsi || '-'}</span>
-                            ${renderDot(item.rsi_status || 'neutral')}
-                        </div>
-                    </td>
-                    <td class="p-3 text-red-400 font-medium">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
-                    <td class="p-3 text-green-400 font-medium">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
-                    <td class="p-3 text-green-400 font-medium">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'}</td>
+                    <td class="p-2 text-center">${renderDot(item.ema20_status || 'neutral')}</td>
+                    <td class="p-2 text-center text-sm font-bold">${emaTrendIcon}</td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</td>
+                    <td class="p-2 text-center">${renderDot(item.ema50_status || 'neutral')}</td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.rsi || '-'}</td>
+                    <td class="p-2 text-center">${renderDot(item.rsi_status || 'neutral')}</td>
+                    <td class="p-3 text-red-400 font-medium whitespace-nowrap">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
+                    <td class="p-3 text-green-400 font-medium whitespace-nowrap">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
+                    <td class="p-3 text-green-400 font-medium whitespace-nowrap">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
                     <td class="p-3 text-center whitespace-nowrap">${renderPowerBoxes(item.signal || 'NEUTRAL', item.power_score || 5)}</td>
                     <td class="p-3 text-center whitespace-nowrap">
                         <div class="flex items-center justify-center gap-1.5">
@@ -431,6 +415,7 @@
                 const isPositive = (item.change_pct || 0) >= 0;
                 const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
                 const changeSign = isPositive ? '+' : '';
+                const emaTrendIcon = item.ema_cross || ((item.ema14 || item.ema20) >= item.ema50 ? '🟢▲' : '🔻');
 
                 const card = document.createElement('div');
                 card.id = 'm-card-' + item.ticker;
@@ -449,7 +434,7 @@
                             <div class="flex items-center gap-1.5">
                                 <span class="font-bold text-yellow-400 text-base">${item.ticker}</span>
                                 <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded">${item.category || 'IDX'}</span>
-                                ${renderTrendArrow(item.ema_cross || (item.ema14 >= item.ema50 ? 'UP' : 'DOWN'))}
+                                <span class="text-xs font-bold ml-1">${emaTrendIcon}</span>
                             </div>
                             <div class="text-right">
                                 <span class="font-bold text-gray-100 text-sm">${item.close ? item.close.toLocaleString('id-ID') : '-'}</span>
@@ -478,36 +463,27 @@
             const isPositive = (item.change_pct || 0) >= 0;
             const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
             const changeSign = isPositive ? '+' : '';
+            const emaTrendIcon = item.ema_cross || ((item.ema14 || item.ema20) >= item.ema50 ? '🟢▲' : '🔻');
 
             const contentHtml = `
                 <div class="space-y-4 text-xs">
                     <div class="border-b border-gray-700 pb-2">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-bold text-yellow-400 flex items-center gap-1.5">
-                                ${item.ticker} 
-                                <span class="text-xs text-gray-400 font-normal">(${item.category || 'IDX'})</span>
-                                ${renderTrendArrow(item.ema_cross || (item.ema14 >= item.ema50 ? 'UP' : 'DOWN'))}
-                            </h3>
+                            <h3 class="text-lg font-bold text-yellow-400">${item.ticker} <span class="text-xs text-gray-400 font-normal">(${item.category || 'IDX'})</span></h3>
                             <span class="text-sm font-bold ${changeClass}">${changeSign}${item.change_pct}%</span>
                         </div>
                         <p class="text-gray-300 text-sm font-semibold mt-1">Harga Closing: ${item.close ? item.close.toLocaleString('id-ID') : '-'}</p>
                     </div>
 
                     <div class="space-y-2">
-                        <p class="text-gray-400 font-semibold uppercase text-[10px]">Indikator Strategi Swing</p>
+                        <div class="flex justify-between items-center">
+                            <p class="text-gray-400 font-semibold uppercase text-[10px]">Indikator Strategi Swing</p>
+                            <span class="text-xs font-bold">Trend EMA: ${emaTrendIcon}</span>
+                        </div>
                         <div class="grid grid-cols-2 gap-2 bg-gray-850 p-2.5 rounded-lg border border-gray-700">
-                            <div class="flex items-center justify-between">
-                                <span>EMA 20: <strong class="text-gray-200">${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'}</strong></span>
-                                ${renderDot(item.ema20_status)}
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span>EMA 50: <strong class="text-gray-200">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</strong></span>
-                                ${renderDot(item.ema50_status)}
-                            </div>
-                            <div class="col-span-2 flex items-center justify-between">
-                                <span>RSI (14): <strong class="text-gray-200">${item.rsi || '-'}</strong></span>
-                                ${renderDot(item.rsi_status)}
-                            </div>
+                            <div>EMA 20: <span class="font-bold text-gray-200">${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'}</span> ${renderDot(item.ema20_status)}</div>
+                            <div>EMA 50: <span class="font-bold text-gray-200">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</span> ${renderDot(item.ema50_status)}</div>
+                            <div class="col-span-2">RSI (14): <span class="font-bold text-gray-200">${item.rsi || '-'}</span> ${renderDot(item.rsi_status)}</div>
                         </div>
                     </div>
 
@@ -600,60 +576,81 @@
             if (event.key === 'Enter') executeSearch(true);
         }
 
-        // Mengambil data langsung dari Yahoo Finance jika emiten tidak ada di list
-        async function fetchYFinanceData(ticker) {
+        async function fetchYahooFinanceFallback(ticker) {
             const statusEl = document.getElementById('search-status-text');
-            statusEl.className = "text-[11px] text-yellow-400 font-semibold min-h-[16px] px-1 animate-pulse";
-            statusEl.innerText = `⏳ Mengambil data langsung '${ticker}' dari Yahoo Finance...`;
+            statusEl.className = "text-[11px] text-blue-400 font-semibold min-h-[16px] px-1";
+            statusEl.innerText = `🔄 Mengambil data real-time ${ticker} dari YFinance...`;
 
             try {
-                const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}.JK?interval=1d&range=3m`);
-                if (!res.ok) throw new Error("Emiten tidak ditemukan");
+                const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}.JK?interval=1d&range=3mo`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
                 
-                const data = await res.json();
-                const result = data.chart.result[0];
-                const quotes = result.indicators.quote[0].close;
-                const validQuotes = quotes.filter(q => q !== null);
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Gagal terhubung ke Yahoo Finance");
 
-                if (validQuotes.length < 20) throw new Error("Data historis tidak mencukupi");
+                const json = await response.json();
+                const result = json?.chart?.result?.[0];
+                if (!result) throw new Error("Emiten tidak ditemukan");
 
-                const close = validQuotes[validQuotes.length - 1];
-                const prevClose = validQuotes[validQuotes.length - 2];
+                const quotes = result.indicators.quote[0];
+                const closes = quotes.close.filter(c => c !== null);
+                if (closes.length < 20) throw new Error("Data histori tidak cukup");
+
+                const close = Math.round(closes[closes.length - 1]);
+                const prevClose = Math.round(closes[closes.length - 2]);
                 const changePct = parseFloat((((close - prevClose) / prevClose) * 100).toFixed(2));
+
+                const calculateEMA = (data, N) => {
+                    const k = 2 / (N + 1);
+                    let ema = data[0];
+                    for (let i = 1; i < data.length; i++) ema = data[i] * k + ema * (1 - k);
+                    return Math.round(ema);
+                };
+
+                const ema14 = calculateEMA(closes, 14);
+                const ema20 = calculateEMA(closes, 20);
+                const ema50 = calculateEMA(closes, closes.length >= 50 ? 50 : closes.length);
+
+                const stopLoss = Math.round(close * 0.95);
+                const tp1 = Math.round(close * 1.05);
+                const tp2 = Math.round(close * 1.10);
 
                 const newItem = {
                     ticker: ticker,
-                    close: parseFloat(close.toFixed(2)),
+                    close: close,
                     change_pct: changePct,
-                    category: 'Pantauan Direct',
-                    ema14: parseFloat(close.toFixed(2)),
-                    ema20: parseFloat(close.toFixed(2)),
-                    ema50: parseFloat(close.toFixed(2)),
-                    rsi: 50.0,
-                    ema_cross: 'UP',
-                    ema20_status: 'buy',
-                    ema50_status: 'buy',
-                    rsi_status: 'neutral',
-                    signal: 'BULLISH',
-                    power_score: 7,
-                    stop_loss: parseFloat((close * 0.95).toFixed(2)),
-                    take_profit_1: parseFloat((close * 1.05).toFixed(2)),
-                    take_profit_2: parseFloat((close * 1.10).toFixed(2)),
-                    tp1_hit: false,
-                    tp2_hit: false,
-                    cl_hit: false
+                    category: "YFinance Realtime",
+                    ema14: ema14,
+                    ema20: ema20,
+                    ema20_status: close >= ema20 ? "strong_buy" : "sell",
+                    ema50: ema50,
+                    ema50_status: close >= ema50 ? "strong_buy" : "sell",
+                    ema_cross: ema14 >= ema50 ? "🟢▲" : "🔻",
+                    rsi: 55,
+                    rsi_status: "buy",
+                    signal: ema14 >= ema50 ? "BULLISH" : "BEARISH",
+                    power_score: ema14 >= ema50 ? 7 : 3,
+                    stop_loss: stopLoss,
+                    take_profit_1: tp1,
+                    take_profit_2: tp2,
+                    tp1_hit: close >= tp1,
+                    tp2_hit: close >= tp2,
+                    cl_hit: close <= stopLoss
                 };
 
                 if (!globalData.all_stocks) globalData.all_stocks = [];
-                globalData.all_stocks.push(newItem);
+                const existIdx = globalData.all_stocks.findIndex(s => s.ticker === ticker);
+                if (existIdx >= 0) globalData.all_stocks[existIdx] = newItem;
+                else globalData.all_stocks.push(newItem);
 
                 addToPantauan(ticker);
                 statusEl.className = "text-[11px] text-green-400 font-semibold min-h-[16px] px-1";
-                statusEl.innerText = `✓ Data ${ticker} berhasil diambil dari yfinance dan ditambahkan ke Pantauan!`;
-                switchTab('pantauan');
+                statusEl.innerText = `✓ Data ${ticker} berhasil diambil & ditambahkan ke Pantauan!`;
             } catch (err) {
-                statusEl.className = "text-[11px] text-red-400 font-semibold min-h-[16px] px-1";
-                statusEl.innerText = `❌ Gagal mengambil data ${ticker} dari yfinance (${err.message}).`;
+                console.error(err);
+                statusEl.className = "text-[11px] text-yellow-400 font-semibold min-h-[16px] px-1";
+                statusEl.innerText = `⚠️ ${ticker} ditambahkan ke Pantauan (Manual).`;
+                addToPantauan(ticker);
             }
         }
 
@@ -694,7 +691,7 @@
                 }, 100);
             } else {
                 if (isManualClick) {
-                    fetchYFinanceData(input);
+                    fetchYahooFinanceFallback(input);
                 }
             }
         }
