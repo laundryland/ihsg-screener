@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import yfinance as yf
 
+# Daftar Emiten IDX Pilihan Swing Trader (150+ Ticker)
 TICKERS = [
     # Bluechip / Big Cap
     {"ticker": "BBCA", "category": "Bluechip"}, {"ticker": "BBRI", "category": "Bluechip"},
@@ -79,12 +80,9 @@ def calculate_rsi(series, period=14):
     rs = gain / loss
     return 100 - (100 / (1 + rs))
 
-def calculate_swing_strategy(close, ema14, ema20, ema50, rsi):
+def calculate_swing_strategy(close, ema20, ema50, rsi):
     score = 0
     
-    # Tren EMA 14 vs EMA 50 (Golden Cross vs Death Cross)
-    ema_cross = "UP" if ema14 >= ema50 else "DOWN"
-
     if close > ema20:
         ema20_status = "strong_buy" if close >= ema20 * 1.02 else "buy"
         score += 2 if ema20_status == "strong_buy" else 1
@@ -132,8 +130,6 @@ def calculate_swing_strategy(close, ema14, ema20, ema50, rsi):
     power_score = min(10, max(1, round(((score + 5) / 10) * 10)))
 
     return {
-        "ema14": round(ema14, 2),
-        "ema_cross": ema_cross,
         "ema20_status": ema20_status,
         "ema50_status": ema50_status,
         "rsi_status": rsi_status,
@@ -181,7 +177,7 @@ def fetch_real_data():
             else:
                 continue
 
-            if len(df) < 50:
+            if len(df) < 30:
                 continue
 
             df['EMA14'] = df['Close'].ewm(span=14, adjust=False).mean()
@@ -196,10 +192,15 @@ def fetch_real_data():
                 continue
 
             change_pct = round(((close - prev_close) / prev_close) * 100, 2)
-            ema14, ema20, ema50 = float(latest['EMA14']), float(latest['EMA20']), float(latest['EMA50'])
+            ema14 = float(latest['EMA14'])
+            ema20 = float(latest['EMA20'])
+            ema50 = float(latest['EMA50'])
             rsi = round(float(latest['RSI']), 1) if not pd.isna(latest['RSI']) else 50.0
 
-            swing_res = calculate_swing_strategy(close, ema14, ema20, ema50, rsi)
+            swing_res = calculate_swing_strategy(close, ema20, ema50, rsi)
+
+            # Golden Cross / Downtrend EMA Status
+            ema_cross = "🟢▲" if ema14 >= ema50 else "🔻"
 
             stop_loss = round(close * 0.95, 2)
             tp1 = round(close * 1.05, 2)
@@ -215,11 +216,11 @@ def fetch_real_data():
                 "change_pct": change_pct,
                 "category": stock["category"],
                 "ema14": round(ema14, 2),
-                "ema_cross": swing_res["ema_cross"],
                 "ema20": round(ema20, 2),
                 "ema20_status": swing_res["ema20_status"],
                 "ema50": round(ema50, 2),
                 "ema50_status": swing_res["ema50_status"],
+                "ema_cross": ema_cross,
                 "rsi": rsi,
                 "rsi_status": swing_res["rsi_status"],
                 "signal": swing_res["signal"],
