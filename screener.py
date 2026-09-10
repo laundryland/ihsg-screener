@@ -29,6 +29,9 @@ TICKERS = [
     {"ticker": "DEWA", "category": "IDX Liquid"}, {"ticker": "BRMS", "category": "IDX Liquid"},
     {"ticker": "HUMI", "category": "IDX Liquid"}, {"ticker": "BNBR", "category": "IDX Liquid"},
     {"ticker": "TINS", "category": "IDX Liquid"}, {"ticker": "PSAB", "category": "IDX Liquid"},
+    {"ticker": "ADMR", "category": "IDX Liquid"}, {"ticker": "MDKA", "category": "IDX Liquid"},
+    {"ticker": "PGEO", "category": "IDX Liquid"}, {"ticker": "BULL", "category": "IDX Liquid"},
+    {"ticker": "AADI", "category": "IDX Liquid"},
 
     # Banking & Financials
     {"ticker": "BRIS", "category": "IDX Liquid"}, {"ticker": "BBTN", "category": "IDX Liquid"},
@@ -45,6 +48,7 @@ TICKERS = [
     {"ticker": "SCMA", "category": "IDX Liquid"}, {"ticker": "BUKA", "category": "IDX Liquid"},
     {"ticker": "WIFI", "category": "IDX Liquid"}, {"ticker": "CENT", "category": "IDX Liquid"},
     {"ticker": "MLPT", "category": "IDX Liquid"}, {"ticker": "MTDL", "category": "IDX Liquid"},
+    {"ticker": "INET", "category": "IDX Liquid"}, {"ticker": "KBLV", "category": "IDX Liquid"},
 
     # Consumer & Healthcare
     {"ticker": "MYOR", "category": "IDX Liquid"}, {"ticker": "CMRY", "category": "IDX Liquid"},
@@ -55,6 +59,8 @@ TICKERS = [
     {"ticker": "SILO", "category": "IDX Liquid"}, {"ticker": "SIDO", "category": "IDX Liquid"},
     {"ticker": "TSPC", "category": "IDX Liquid"}, {"ticker": "KAEF", "category": "IDX Liquid"},
     {"ticker": "CLEO", "category": "IDX Liquid"}, {"ticker": "ULTJ", "category": "IDX Liquid"},
+    {"ticker": "BUVA", "category": "IDX Liquid"}, {"ticker": "AGAR", "category": "IDX Liquid"},
+    {"ticker": "MINA", "category": "IDX Liquid"},
 
     # Property & Construction
     {"ticker": "BSDE", "category": "IDX Liquid"}, {"ticker": "CTRA", "category": "IDX Liquid"},
@@ -70,7 +76,11 @@ TICKERS = [
     {"ticker": "MAIN", "category": "IDX Liquid"}, {"ticker": "JPFA", "category": "IDX Liquid"},
     {"ticker": "TAPG", "category": "IDX Liquid"}, {"ticker": "DSNG", "category": "IDX Liquid"},
     {"ticker": "SSMS", "category": "IDX Liquid"}, {"ticker": "LSIP", "category": "IDX Liquid"},
-    {"ticker": "AALI", "category": "IDX Liquid"}, {"ticker": "ASSA", "category": "IDX Liquid"}
+    {"ticker": "AALI", "category": "IDX Liquid"}, {"ticker": "ASSA", "category": "IDX Liquid"},
+    {"ticker": "CDIA", "category": "IDX Liquid"}, {"ticker": "CBRE", "category": "IDX Liquid"},
+    {"ticker": "MUTU", "category": "IDX Liquid"}, {"ticker": "EMAS", "category": "IDX Liquid"},
+    {"ticker": "BACH", "category": "IDX Liquid"}, {"ticker": "WBSA", "category": "IDX Liquid"},
+    {"ticker": "ROBK", "category": "IDX Liquid"}, {"ticker": "VKTR", "category": "IDX Liquid"}
 ]
 
 def calculate_rsi(series, period=14):
