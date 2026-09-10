@@ -80,22 +80,22 @@ def calculate_rsi(series, period=14):
     rs = gain / loss
     return 100 - (100 / (1 + rs))
 
-def calculate_swing_strategy(close, ema20, ema50, rsi):
+def calculate_swing_strategy(close, ema14, ema50, rsi):
     score = 0
     
-    if close > ema20:
-        ema20_status = "strong_buy" if close >= ema20 * 1.02 else "buy"
-        score += 2 if ema20_status == "strong_buy" else 1
-    elif close < ema20:
-        ema20_status = "strong_sell" if close <= ema20 * 0.98 else "sell"
-        score -= 2 if ema20_status == "strong_sell" else 1
+    if close > ema14:
+        ema14_status = "strong_buy" if close >= ema14 * 1.02 else "buy"
+        score += 2 if ema14_status == "strong_buy" else 1
+    elif close < ema14:
+        ema14_status = "strong_sell" if close <= ema14 * 0.98 else "sell"
+        score -= 2 if ema14_status == "strong_sell" else 1
     else:
-        ema20_status = "neutral"
+        ema14_status = "neutral"
 
-    if ema20 > ema50:
+    if ema14 > ema50:
         ema50_status = "strong_buy" if close > ema50 else "buy"
         score += 2 if ema50_status == "strong_buy" else 1
-    elif ema20 < ema50:
+    elif ema14 < ema50:
         ema50_status = "strong_sell" if close < ema50 else "sell"
         score -= 2 if ema50_status == "strong_sell" else 1
     else:
@@ -130,7 +130,7 @@ def calculate_swing_strategy(close, ema20, ema50, rsi):
     power_score = min(10, max(1, round(((score + 5) / 10) * 10)))
 
     return {
-        "ema20_status": ema20_status,
+        "ema14_status": ema14_status,
         "ema50_status": ema50_status,
         "rsi_status": rsi_status,
         "signal": signal,
@@ -181,7 +181,6 @@ def fetch_real_data():
                 continue
 
             df['EMA14'] = df['Close'].ewm(span=14, adjust=False).mean()
-            df['EMA20'] = df['Close'].ewm(span=20, adjust=False).mean()
             df['EMA50'] = df['Close'].ewm(span=50, adjust=False).mean()
             df['RSI'] = calculate_rsi(df['Close'], 14)
 
@@ -192,15 +191,12 @@ def fetch_real_data():
                 continue
 
             change_pct = round(((close - prev_close) / prev_close) * 100, 2)
-            ema14, ema20, ema50 = float(latest['EMA14']), float(latest['EMA20']), float(latest['EMA50'])
+            ema14, ema50 = float(latest['EMA14']), float(latest['EMA50'])
             rsi = round(float(latest['RSI']), 1) if not pd.isna(latest['RSI']) else 50.0
 
-            swing_res = calculate_swing_strategy(close, ema20, ema50, rsi)
+            swing_res = calculate_swing_strategy(close, ema14, ema50, rsi)
 
-            # Indikator EMA14 vs EMA50 Cross Trend
-            ema_trend = "up" if ema14 >= ema50 else "down"
-
-            # Hitung TP 1, TP 2 Level dan Stop Loss
+            # Hitung Level Target TP1, TP2 dan Stop Loss
             stop_loss = round(close * 0.95, 2)
             tp1 = round(close * 1.05, 2)
             tp2 = round(close * 1.10, 2)
@@ -216,11 +212,9 @@ def fetch_real_data():
                 "change_pct": change_pct,
                 "category": stock["category"],
                 "ema14": round(ema14, 2),
-                "ema20": round(ema20, 2),
-                "ema20_status": swing_res["ema20_status"],
+                "ema14_status": swing_res["ema14_status"],
                 "ema50": round(ema50, 2),
                 "ema50_status": swing_res["ema50_status"],
-                "ema_trend": ema_trend,
                 "rsi": rsi,
                 "rsi_status": swing_res["rsi_status"],
                 "signal": swing_res["signal"],
@@ -236,7 +230,7 @@ def fetch_real_data():
         except Exception:
             continue
 
-    # Mengurutkan berdasarkan Power Ranking Terbesar secara default
+    # Mengurutkan berdasarkan Power Ranking Terbesar
     all_stocks = sorted(all_stocks, key=lambda x: (x["power_score"], x["change_pct"]), reverse=True)
 
     top_bearish = sorted(all_stocks, key=lambda x: (x["power_score"], x["change_pct"]))[:20]
