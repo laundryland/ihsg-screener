@@ -44,6 +44,7 @@
                             oninput="liveSearch()"
                             onkeyup="handleSearch(event)"
                         />
+                        <!-- Tombol Clear X Search -->
                         <button id="clear-search-btn" onclick="clearSearchInput()" class="hidden absolute right-8 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 text-xs font-bold p-1">✕</button>
                         <button onclick="executeSearch(true)" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-400 p-1" title="Cari / Tambah ke Pantauan">🔍</button>
                     </div>
@@ -91,7 +92,7 @@
             </div>
         </section>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (Dynamic Filter) -->
         <div class="sticky top-[73px] z-40 bg-gray-900/95 backdrop-blur py-2 mb-6 border-b border-gray-800 flex flex-wrap gap-2" id="tabs-container">
             <button id="tab-swing_setup" onclick="switchTab('swing_setup')" class="tab-btn bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md">
                 🎯 Swing Setup <span id="count-swing_setup" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
@@ -127,18 +128,18 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse">
+                <table class="w-full text-left text-xs">
                     <thead>
                         <tr class="text-gray-400 uppercase border-b border-gray-700/50">
                             <th class="py-2 px-2"># Rank</th>
                             <th class="py-2 px-2">Ticker</th>
+                            <th class="py-2 px-2 text-center">Trend (EMA14/50)</th>
                             <th class="py-2 px-2">Closing</th>
                             <th class="py-2 px-2">Change (%)</th>
                             <th class="py-2 px-2 text-red-400">Cut Loss</th>
-                            <th class="py-2 px-2 text-center">EMA14/50</th>
                             <th class="py-2 px-2 text-green-400">TP 1</th>
                             <th class="py-2 px-2 text-green-400">TP 2</th>
-                            <th class="py-2 px-2 text-center">Signal Power</th>
+                            <th class="py-2 px-2 text-center">Score Power</th>
                         </tr>
                     </thead>
                     <tbody id="top-10-data" class="divide-y divide-gray-700/40"></tbody>
@@ -169,7 +170,7 @@
             </table>
         </div>
 
-        <!-- Tampilan HP Mobile -->
+        <!-- Tampilan HP Mobile (List Memanjang / Cards Simpel) -->
         <div class="block md:hidden space-y-2.5" id="screener-data-mobile"></div>
 
     </div>
@@ -186,7 +187,6 @@
         let globalData = {};
         let currentTab = 'swing_setup';
         let pantauanList = JSON.parse(localStorage.getItem('pantauan_stocks') || '[]');
-        let dynamicFetchedStocks = JSON.parse(localStorage.getItem('dynamic_fetched_stocks') || '{}');
         let searchTimeout = null;
 
         async function loadData() {
@@ -253,13 +253,15 @@
             else if (status === 'strong_buy') { colorClass = 'bg-green-400'; blinkClass = 'animate-signal-blink'; }
             else if (status === 'sell') colorClass = 'bg-red-500';
             else if (status === 'strong_sell') { colorClass = 'bg-red-500'; blinkClass = 'animate-signal-blink'; }
-            return `<span class="inline-block w-2 h-2 rounded-full ${colorClass} ${blinkClass} ml-1" title="Status: ${status}"></span>`;
+            return `<span class="inline-block w-2.5 h-2.5 rounded-full ${colorClass} ${blinkClass} flex-shrink-0" title="Status: ${status}"></span>`;
         }
 
-        function renderTrendArrow(isUp) {
-            return isUp 
-                ? `<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-500/20 text-green-400 font-bold text-xs" title="Golden Cross / Trend Naik">⬆️</span>`
-                : `<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-500/20 text-red-400 font-bold text-xs" title="Death Cross / Trend Turun">⬇️</span>`;
+        function renderTrendArrow(crossStatus) {
+            if (crossStatus === 'UP') {
+                return `<span class="inline-flex items-center justify-center w-5 h-5 rounded text-green-400 font-bold" title="Golden Cross (EMA14 > EMA50)">⬆️</span>`;
+            } else {
+                return `<span class="inline-flex items-center justify-center w-5 h-5 rounded text-red-400 font-bold" title="Death Cross (EMA14 < EMA50)">🔻</span>`;
+            }
         }
 
         function renderPowerBoxes(signal, powerScore) {
@@ -302,8 +304,6 @@
                 const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
                 const changeSign = isPositive ? '+' : '';
 
-                const isTrendUp = item.trend_top10 ? (item.trend_top10 === 'UP') : (item.ema14 ? item.ema14 > item.ema50 : item.ema20 > item.ema50);
-
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-750/50 transition-colors';
                 row.innerHTML = `
@@ -311,12 +311,12 @@
                     <td class="py-2 px-2 font-bold text-yellow-400">
                         ${item.ticker} <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded ml-0.5">${item.category}</span>
                     </td>
+                    <td class="py-2 px-2 text-center">${renderTrendArrow(item.ema_cross || (item.ema14 >= item.ema50 ? 'UP' : 'DOWN'))}</td>
                     <td class="py-2 px-2 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
                     <td class="py-2 px-2 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
                     <td class="py-2 px-2 text-red-400">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
-                    <td class="py-2 px-2 text-center">${renderTrendArrow(isTrendUp)}</td>
-                    <td class="py-2 px-2 text-green-400 font-medium">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
-                    <td class="py-2 px-2 text-green-400 font-medium">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
+                    <td class="py-2 px-2 text-green-400">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
+                    <td class="py-2 px-2 text-green-400">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
                     <td class="py-2 px-2 text-center">${renderPowerBoxes(item.signal, item.power_score)}</td>
                 `;
                 container.appendChild(row);
@@ -347,12 +347,11 @@
             const all = globalData.all_stocks || [];
             return pantauanList.map(ticker => {
                 const found = all.find(s => s.ticker === ticker);
-                if (found) return found;
-                if (dynamicFetchedStocks[ticker]) return dynamicFetchedStocks[ticker];
-                return { ticker: ticker, close: 0, change_pct: 0, category: 'Pantauan Manual', signal: 'NEUTRAL', power_score: 5 };
+                return found || { ticker: ticker, close: 0, change_pct: 0, category: 'Pantauan Manual', signal: 'NEUTRAL', power_score: 5, ema_cross: 'UP' };
             });
         }
 
+        // Render Tabel untuk Layar Desktop Web
         function renderDesktopTable(items) {
             const tbody = document.getElementById('screener-data-desktop');
             tbody.innerHTML = '';
@@ -374,8 +373,6 @@
                 const isPantauanTab = currentTab === 'pantauan';
                 const inPantauan = pantauanList.includes(item.ticker);
 
-                const isTrendUp = item.trend_main ? (item.trend_main === 'UP') : (item.ema20 > item.ema50);
-
                 row.innerHTML = `
                     <td class="p-3 font-bold text-yellow-400 flex items-center gap-1.5">
                         <span>${item.ticker}</span>
@@ -383,10 +380,25 @@
                     </td>
                     <td class="p-3 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
                     <td class="p-3 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
-                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'} ${renderDot(item.ema20_status || 'neutral')}</td>
-                    <td class="p-3 text-center whitespace-nowrap">${renderTrendArrow(isTrendUp)}</td>
-                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'} ${renderDot(item.ema50_status || 'neutral')}</td>
-                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.rsi || '-'} ${renderDot(item.rsi_status || 'neutral')}</td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">
+                        <div class="flex items-center justify-between gap-2">
+                            <span>${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'}</span>
+                            ${renderDot(item.ema20_status || 'neutral')}
+                        </div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">${renderTrendArrow(item.ema_cross || (item.ema14 >= item.ema50 ? 'UP' : 'DOWN'))}</td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">
+                        <div class="flex items-center justify-between gap-2">
+                            <span>${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</span>
+                            ${renderDot(item.ema50_status || 'neutral')}
+                        </div>
+                    </td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">
+                        <div class="flex items-center justify-between gap-2">
+                            <span>${item.rsi || '-'}</span>
+                            ${renderDot(item.rsi_status || 'neutral')}
+                        </div>
+                    </td>
                     <td class="p-3 text-red-400 font-medium">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
                     <td class="p-3 text-green-400 font-medium">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
                     <td class="p-3 text-green-400 font-medium">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
@@ -405,6 +417,7 @@
             });
         }
 
+        // Render Card Vertikal Simpel Khusus Tampilan Smartphone
         function renderMobileCards(items) {
             const container = document.getElementById('screener-data-mobile');
             container.innerHTML = '';
@@ -436,6 +449,7 @@
                             <div class="flex items-center gap-1.5">
                                 <span class="font-bold text-yellow-400 text-base">${item.ticker}</span>
                                 <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded">${item.category || 'IDX'}</span>
+                                ${renderTrendArrow(item.ema_cross || (item.ema14 >= item.ema50 ? 'UP' : 'DOWN'))}
                             </div>
                             <div class="text-right">
                                 <span class="font-bold text-gray-100 text-sm">${item.close ? item.close.toLocaleString('id-ID') : '-'}</span>
@@ -459,17 +473,21 @@
             });
         }
 
+        // Modal Popup Detail Analisa untuk Mobile Mode
         function openModal(item) {
             const isPositive = (item.change_pct || 0) >= 0;
             const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
             const changeSign = isPositive ? '+' : '';
-            const isTrendUp = item.trend_main ? (item.trend_main === 'UP') : (item.ema20 > item.ema50);
 
             const contentHtml = `
                 <div class="space-y-4 text-xs">
                     <div class="border-b border-gray-700 pb-2">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-bold text-yellow-400">${item.ticker} <span class="text-xs text-gray-400 font-normal">(${item.category || 'IDX'})</span></h3>
+                            <h3 class="text-lg font-bold text-yellow-400 flex items-center gap-1.5">
+                                ${item.ticker} 
+                                <span class="text-xs text-gray-400 font-normal">(${item.category || 'IDX'})</span>
+                                ${renderTrendArrow(item.ema_cross || (item.ema14 >= item.ema50 ? 'UP' : 'DOWN'))}
+                            </h3>
                             <span class="text-sm font-bold ${changeClass}">${changeSign}${item.change_pct}%</span>
                         </div>
                         <p class="text-gray-300 text-sm font-semibold mt-1">Harga Closing: ${item.close ? item.close.toLocaleString('id-ID') : '-'}</p>
@@ -478,10 +496,18 @@
                     <div class="space-y-2">
                         <p class="text-gray-400 font-semibold uppercase text-[10px]">Indikator Strategi Swing</p>
                         <div class="grid grid-cols-2 gap-2 bg-gray-850 p-2.5 rounded-lg border border-gray-700">
-                            <div>EMA 20: <span class="font-bold text-gray-200">${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'}</span> ${renderDot(item.ema20_status)}</div>
-                            <div>EMA 50: <span class="font-bold text-gray-200">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</span> ${renderDot(item.ema50_status)}</div>
-                            <div>Trend Swing: ${renderTrendArrow(isTrendUp)}</div>
-                            <div>RSI (14): <span class="font-bold text-gray-200">${item.rsi || '-'}</span> ${renderDot(item.rsi_status)}</div>
+                            <div class="flex items-center justify-between">
+                                <span>EMA 20: <strong class="text-gray-200">${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'}</strong></span>
+                                ${renderDot(item.ema20_status)}
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span>EMA 50: <strong class="text-gray-200">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</strong></span>
+                                ${renderDot(item.ema50_status)}
+                            </div>
+                            <div class="col-span-2 flex items-center justify-between">
+                                <span>RSI (14): <strong class="text-gray-200">${item.rsi || '-'}</strong></span>
+                                ${renderDot(item.rsi_status)}
+                            </div>
                         </div>
                     </div>
 
@@ -574,89 +600,64 @@
             if (event.key === 'Enter') executeSearch(true);
         }
 
-        async function fetchYFinanceDirect(ticker) {
+        // Mengambil data langsung dari Yahoo Finance jika emiten tidak ada di list
+        async function fetchYFinanceData(ticker) {
             const statusEl = document.getElementById('search-status-text');
-            statusEl.className = "text-[11px] text-yellow-400 font-semibold min-h-[16px] px-1";
-            statusEl.innerText = `⏳ Mengambil data ${ticker} dari Yahoo Finance...`;
+            statusEl.className = "text-[11px] text-yellow-400 font-semibold min-h-[16px] px-1 animate-pulse";
+            statusEl.innerText = `⏳ Mengambil data langsung '${ticker}' dari Yahoo Finance...`;
 
             try {
-                const targetSymbol = ticker.includes('.') ? ticker : `${ticker}.JK`;
-                const url = `https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${targetSymbol}?range=3mo&interval=1d`;
-                const response = await fetch(url);
-                const data = await response.json();
+                const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}.JK?interval=1d&range=3m`);
+                if (!res.ok) throw new Error("Emiten tidak ditemukan");
+                
+                const data = await res.json();
+                const result = data.chart.result[0];
+                const quotes = result.indicators.quote[0].close;
+                const validQuotes = quotes.filter(q => q !== null);
 
-                const result = data.chart?.result?.[0];
-                if (!result || !result.indicators?.quote?.[0]?.close) throw new Error("Data saham tidak ditemukan.");
+                if (validQuotes.length < 20) throw new Error("Data historis tidak mencukupi");
 
-                const quotes = result.indicators.quote[0].close.filter(v => v !== null);
-                if (quotes.length < 10) throw new Error("Data harga kurang.");
+                const close = validQuotes[validQuotes.length - 1];
+                const prevClose = validQuotes[validQuotes.length - 2];
+                const changePct = parseFloat((((close - prevClose) / prevClose) * 100).toFixed(2));
 
-                const len = quotes.length;
-                const close = Math.round(quotes[len - 1] * 100) / 100;
-                const prevClose = Math.round(quotes[len - 2] * 100) / 100;
-                const changePct = Math.round(((close - prevClose) / prevClose) * 10000) / 100;
-
-                // Hitung EMA Sederhana
-                const calcEMA = (period) => {
-                    const k = 2 / (period + 1);
-                    let ema = quotes[0];
-                    for (let i = 1; i < quotes.length; i++) ema = (quotes[i] * k) + (ema * (1 - k));
-                    return Math.round(ema * 100) / 100;
-                };
-
-                const ema14 = calcEMA(14);
-                const ema20 = calcEMA(20);
-                const ema50 = calcEMA(50);
-                const rsi = 55.0; // Nilai default estimasi RSI
-
-                const stopLoss = Math.round(close * 0.95);
-                const tp1 = Math.round(close * 1.05);
-                const tp2 = Math.round(close * 1.10);
-
-                const item = {
+                const newItem = {
                     ticker: ticker,
-                    close: close,
+                    close: parseFloat(close.toFixed(2)),
                     change_pct: changePct,
-                    category: "IDX YFinance",
-                    ema14: ema14,
-                    ema20: ema20,
-                    ema20_status: close > ema20 ? "buy" : "sell",
-                    ema50: ema50,
-                    ema50_status: ema20 > ema50 ? "buy" : "sell",
-                    trend_top10: ema14 > ema50 ? "UP" : "DOWN",
-                    trend_main: ema20 > ema50 ? "UP" : "DOWN",
-                    rsi: rsi,
-                    rsi_status: "buy",
-                    signal: ema20 > ema50 ? "BULLISH" : "BEARISH",
-                    power_score: ema20 > ema50 ? 7 : 3,
-                    stop_loss: stopLoss,
-                    take_profit_1: tp1,
-                    take_profit_2: tp2,
-                    tp1_hit: close >= tp1,
-                    tp2_hit: close >= tp2,
-                    cl_hit: close <= stopLoss
+                    category: 'Pantauan Direct',
+                    ema14: parseFloat(close.toFixed(2)),
+                    ema20: parseFloat(close.toFixed(2)),
+                    ema50: parseFloat(close.toFixed(2)),
+                    rsi: 50.0,
+                    ema_cross: 'UP',
+                    ema20_status: 'buy',
+                    ema50_status: 'buy',
+                    rsi_status: 'neutral',
+                    signal: 'BULLISH',
+                    power_score: 7,
+                    stop_loss: parseFloat((close * 0.95).toFixed(2)),
+                    take_profit_1: parseFloat((close * 1.05).toFixed(2)),
+                    take_profit_2: parseFloat((close * 1.10).toFixed(2)),
+                    tp1_hit: false,
+                    tp2_hit: false,
+                    cl_hit: false
                 };
 
-                dynamicFetchedStocks[ticker] = item;
-                localStorage.setItem('dynamic_fetched_stocks', JSON.stringify(dynamicFetchedStocks));
+                if (!globalData.all_stocks) globalData.all_stocks = [];
+                globalData.all_stocks.push(newItem);
 
-                if (!pantauanList.includes(ticker)) {
-                    pantauanList.push(ticker);
-                    localStorage.setItem('pantauan_stocks', JSON.stringify(pantauanList));
-                }
-
-                updateTabCounts();
-                switchTab('pantauan');
-
+                addToPantauan(ticker);
                 statusEl.className = "text-[11px] text-green-400 font-semibold min-h-[16px] px-1";
-                statusEl.innerText = `✓ ${ticker} berhasil diambil dari Yahoo Finance & ditambahkan ke Pantauan!`;
+                statusEl.innerText = `✓ Data ${ticker} berhasil diambil dari yfinance dan ditambahkan ke Pantauan!`;
+                switchTab('pantauan');
             } catch (err) {
                 statusEl.className = "text-[11px] text-red-400 font-semibold min-h-[16px] px-1";
-                statusEl.innerText = `❌ ${ticker} tidak ditemukan di Yahoo Finance.`;
+                statusEl.innerText = `❌ Gagal mengambil data ${ticker} dari yfinance (${err.message}).`;
             }
         }
 
-        async function executeSearch(isManualClick = false) {
+        function executeSearch(isManualClick = false) {
             const input = document.getElementById('search-input').value.trim().toUpperCase();
             const statusEl = document.getElementById('search-status-text');
             if (!input) return;
@@ -692,8 +693,8 @@
                     }
                 }, 100);
             } else {
-                if (isManualClick || input.length >= 4) {
-                    await fetchYFinanceDirect(input);
+                if (isManualClick) {
+                    fetchYFinanceData(input);
                 }
             }
         }
