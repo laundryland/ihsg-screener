@@ -1,9 +1,3 @@
-import json
-import os
-from datetime import datetime
-import pandas as pd
-import yfinance as yf
-
 # Daftar Emiten IDX Pilihan Swing Trader (150+ Ticker)
 TICKERS = [
     # Bluechip / Big Cap
@@ -29,9 +23,6 @@ TICKERS = [
     {"ticker": "DEWA", "category": "IDX Liquid"}, {"ticker": "BRMS", "category": "IDX Liquid"},
     {"ticker": "HUMI", "category": "IDX Liquid"}, {"ticker": "BNBR", "category": "IDX Liquid"},
     {"ticker": "TINS", "category": "IDX Liquid"}, {"ticker": "PSAB", "category": "IDX Liquid"},
-    {"ticker": "ADMR", "category": "IDX Liquid"}, {"ticker": "MDKA", "category": "IDX Liquid"},
-    {"ticker": "PGEO", "category": "IDX Liquid"}, {"ticker": "BULL", "category": "IDX Liquid"},
-    {"ticker": "AADI", "category": "IDX Liquid"},
 
     # Banking & Financials
     {"ticker": "BRIS", "category": "IDX Liquid"}, {"ticker": "BBTN", "category": "IDX Liquid"},
@@ -48,7 +39,6 @@ TICKERS = [
     {"ticker": "SCMA", "category": "IDX Liquid"}, {"ticker": "BUKA", "category": "IDX Liquid"},
     {"ticker": "WIFI", "category": "IDX Liquid"}, {"ticker": "CENT", "category": "IDX Liquid"},
     {"ticker": "MLPT", "category": "IDX Liquid"}, {"ticker": "MTDL", "category": "IDX Liquid"},
-    {"ticker": "INET", "category": "IDX Liquid"}, {"ticker": "KBLV", "category": "IDX Liquid"},
 
     # Consumer & Healthcare
     {"ticker": "MYOR", "category": "IDX Liquid"}, {"ticker": "CMRY", "category": "IDX Liquid"},
@@ -59,8 +49,6 @@ TICKERS = [
     {"ticker": "SILO", "category": "IDX Liquid"}, {"ticker": "SIDO", "category": "IDX Liquid"},
     {"ticker": "TSPC", "category": "IDX Liquid"}, {"ticker": "KAEF", "category": "IDX Liquid"},
     {"ticker": "CLEO", "category": "IDX Liquid"}, {"ticker": "ULTJ", "category": "IDX Liquid"},
-    {"ticker": "BUVA", "category": "IDX Liquid"}, {"ticker": "AGAR", "category": "IDX Liquid"},
-    {"ticker": "MINA", "category": "IDX Liquid"},
 
     # Property & Construction
     {"ticker": "BSDE", "category": "IDX Liquid"}, {"ticker": "CTRA", "category": "IDX Liquid"},
@@ -77,198 +65,16 @@ TICKERS = [
     {"ticker": "TAPG", "category": "IDX Liquid"}, {"ticker": "DSNG", "category": "IDX Liquid"},
     {"ticker": "SSMS", "category": "IDX Liquid"}, {"ticker": "LSIP", "category": "IDX Liquid"},
     {"ticker": "AALI", "category": "IDX Liquid"}, {"ticker": "ASSA", "category": "IDX Liquid"},
+
+    # Emiten Tambahan Baru
     {"ticker": "CDIA", "category": "IDX Liquid"}, {"ticker": "CBRE", "category": "IDX Liquid"},
-    {"ticker": "MUTU", "category": "IDX Liquid"}, {"ticker": "EMAS", "category": "IDX Liquid"},
-    {"ticker": "BACH", "category": "IDX Liquid"}, {"ticker": "WBSA", "category": "IDX Liquid"},
-    {"ticker": "ROBK", "category": "IDX Liquid"}, {"ticker": "VKTR", "category": "IDX Liquid"}
+    {"ticker": "BUVA", "category": "IDX Liquid"}, {"ticker": "AGAR", "category": "IDX Liquid"},
+    {"ticker": "KBLV", "category": "IDX Liquid"}, {"ticker": "INET", "category": "IDX Liquid"},
+    {"ticker": "MINA", "category": "IDX Liquid"}, {"ticker": "AADI", "category": "IDX Liquid"},
+    {"ticker": "ADMR", "category": "IDX Liquid"}, {"ticker": "MUTU", "category": "IDX Liquid"},
+    {"ticker": "EMAS", "category": "IDX Liquid"}, {"ticker": "BACH", "category": "IDX Liquid"},
+    {"ticker": "MDKA", "category": "IDX Liquid"}, {"ticker": "WBSA", "category": "IDX Liquid"},
+    {"ticker": "PGEO", "category": "IDX Liquid"}, {"ticker": "ROBK", "category": "IDX Liquid"},
+    {"ticker": "BULL", "category": "IDX Liquid"}, {"ticker": "VKTR", "category": "IDX Liquid"},
+    {"ticker": "JGLE", "category": "IDX Liquid"}, {"ticker": "BMRS", "category": "IDX Liquid"}
 ]
-
-def calculate_rsi(series, period=14):
-    delta = series.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-    rs = gain / loss
-    return 100 - (100 / (1 + rs))
-
-def calculate_swing_strategy(close, ema14, ema50, rsi):
-    score = 0
-    
-    if close > ema14:
-        ema14_status = "strong_buy" if close >= ema14 * 1.02 else "buy"
-        score += 2 if ema14_status == "strong_buy" else 1
-    elif close < ema14:
-        ema14_status = "strong_sell" if close <= ema14 * 0.98 else "sell"
-        score -= 2 if ema14_status == "strong_sell" else 1
-    else:
-        ema14_status = "neutral"
-
-    if ema14 > ema50:
-        ema50_status = "strong_buy" if close > ema50 else "buy"
-        score += 2 if ema50_status == "strong_buy" else 1
-    elif ema14 < ema50:
-        ema50_status = "strong_sell" if close < ema50 else "sell"
-        score -= 2 if ema50_status == "strong_sell" else 1
-    else:
-        ema50_status = "neutral"
-
-    if rsi >= 65:
-        rsi_status = "strong_buy"
-        score += 2
-    elif 50 <= rsi < 65:
-        rsi_status = "buy"
-        score += 1
-    elif 30 <= rsi <= 40:
-        rsi_status = "sell"
-        score -= 1
-    elif rsi < 30:
-        rsi_status = "strong_sell"
-        score -= 2
-    else:
-        rsi_status = "neutral"
-
-    if score >= 4:
-        signal = "STRONG_BULLISH"
-    elif score >= 1:
-        signal = "BULLISH"
-    elif score <= -4:
-        signal = "STRONG_BEARISH"
-    elif score <= -1:
-        signal = "BEARISH"
-    else:
-        signal = "NEUTRAL"
-
-    power_score = min(10, max(1, round(((score + 5) / 10) * 10)))
-
-    return {
-        "ema14_status": ema14_status,
-        "ema50_status": ema50_status,
-        "rsi_status": rsi_status,
-        "signal": signal,
-        "power_score": power_score
-    }
-
-def fetch_real_data():
-    symbol_map = {f"{item['ticker']}.JK": item for item in TICKERS}
-    ticker_symbols = list(symbol_map.keys())
-    all_download_tickers = ticker_symbols + ["^JKSE"]
-
-    print("⚡ Mengunduh data emiten dan IHSG (^JKSE)...")
-    download_data = yf.download(all_download_tickers, period="100d", interval="1d", group_by="ticker", progress=False)
-
-    ihsg_data = {
-        "name": "IHSG", "open": 0, "high": 0, "low": 0, "close": 0, "prev_close": 0, "change_pct": 0.0
-    }
-
-    try:
-        if "^JKSE" in download_data and not download_data["^JKSE"].dropna().empty:
-            df_ihsg = download_data["^JKSE"].dropna().copy()
-            if len(df_ihsg) >= 2:
-                latest_ihsg = df_ihsg.iloc[-1]
-                prev_ihsg = df_ihsg.iloc[-2]
-                c_val, p_val = float(latest_ihsg['Close']), float(prev_ihsg['Close'])
-                chg = round(((c_val - p_val) / p_val) * 100, 2) if p_val > 0 else 0.0
-                ihsg_data = {
-                    "name": "IHSG",
-                    "open": round(float(latest_ihsg['Open']), 2),
-                    "high": round(float(latest_ihsg['High']), 2),
-                    "low": round(float(latest_ihsg['Low']), 2),
-                    "close": round(c_val, 2),
-                    "prev_close": round(p_val, 2),
-                    "change_pct": chg
-                }
-    except Exception as e:
-        print(f"Gagal memuat IHSG: {e}")
-
-    all_stocks = []
-    for symbol, stock in symbol_map.items():
-        try:
-            if symbol in download_data and not download_data[symbol].dropna().empty:
-                df = download_data[symbol].dropna().copy()
-            else:
-                continue
-
-            if len(df) < 30:
-                continue
-
-            df['EMA14'] = df['Close'].ewm(span=14, adjust=False).mean()
-            df['EMA50'] = df['Close'].ewm(span=50, adjust=False).mean()
-            df['RSI'] = calculate_rsi(df['Close'], 14)
-
-            latest, previous = df.iloc[-1], df.iloc[-2]
-            close, prev_close = float(latest['Close']), float(previous['Close'])
-            
-            if close <= 0 or prev_close <= 0:
-                continue
-
-            change_pct = round(((close - prev_close) / prev_close) * 100, 2)
-            ema14, ema50 = float(latest['EMA14']), float(latest['EMA50'])
-            rsi = round(float(latest['RSI']), 1) if not pd.isna(latest['RSI']) else 50.0
-
-            swing_res = calculate_swing_strategy(close, ema14, ema50, rsi)
-
-            # Hitung Level Target TP1, TP2 dan Stop Loss
-            stop_loss = round(close * 0.95, 2)
-            tp1 = round(close * 1.05, 2)
-            tp2 = round(close * 1.10, 2)
-
-            # Status Sentuh TP/CL
-            tp1_hit = close >= tp1
-            tp2_hit = close >= tp2
-            cl_hit = close <= stop_loss
-
-            item = {
-                "ticker": stock["ticker"],
-                "close": round(close, 2),
-                "change_pct": change_pct,
-                "category": stock["category"],
-                "ema14": round(ema14, 2),
-                "ema14_status": swing_res["ema14_status"],
-                "ema50": round(ema50, 2),
-                "ema50_status": swing_res["ema50_status"],
-                "rsi": rsi,
-                "rsi_status": swing_res["rsi_status"],
-                "signal": swing_res["signal"],
-                "power_score": swing_res["power_score"],
-                "stop_loss": stop_loss,
-                "take_profit_1": tp1,
-                "take_profit_2": tp2,
-                "tp1_hit": tp1_hit,
-                "tp2_hit": tp2_hit,
-                "cl_hit": cl_hit
-            }
-            all_stocks.append(item)
-        except Exception:
-            continue
-
-    # Mengurutkan berdasarkan Power Ranking Terbesar
-    all_stocks = sorted(all_stocks, key=lambda x: (x["power_score"], x["change_pct"]), reverse=True)
-
-    top_bearish = sorted(all_stocks, key=lambda x: (x["power_score"], x["change_pct"]))[:20]
-    top_10_entry = [s for s in all_stocks if s["signal"] in ["STRONG_BULLISH", "BULLISH"]][:10]
-
-    swing_setup = [s for s in all_stocks if s["signal"] in ["BULLISH", "STRONG_BULLISH"]]
-    top_gainers = sorted(all_stocks, key=lambda x: x["change_pct"], reverse=True)[:20]
-    top_movers = sorted(all_stocks, key=lambda x: abs(x["change_pct"]), reverse=True)[:20]
-    bluechips = [s for s in all_stocks if s["category"] == "Bluechip"]
-
-    output = {
-        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S WIB"),
-        "total_scanned": len(all_stocks),
-        "ihsg": ihsg_data,
-        "top_10_entry": top_10_entry,
-        "swing_setup": swing_setup,
-        "top_gainers": top_gainers,
-        "top_movers": top_movers,
-        "bluechips": bluechips,
-        "top_bearish": top_bearish,
-        "all_stocks": all_stocks
-    }
-
-    temp_filename, final_filename = "data.json.tmp", "data.json"
-    with open(temp_filename, "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=2)
-    os.replace(temp_filename, final_filename)
-    print(f"🚀 Berhasil! {len(all_stocks)} emiten tersimpan.")
-
-if __name__ == "__main__":
-    fetch_real_data()
