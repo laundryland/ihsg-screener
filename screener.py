@@ -192,20 +192,20 @@ def fetch_real_data():
                 continue
 
             change_pct = round(((close - prev_close) / prev_close) * 100, 2)
-            ema14 = float(latest['EMA14'])
-            ema20 = float(latest['EMA20'])
-            ema50 = float(latest['EMA50'])
+            ema14, ema20, ema50 = float(latest['EMA14']), float(latest['EMA20']), float(latest['EMA50'])
             rsi = round(float(latest['RSI']), 1) if not pd.isna(latest['RSI']) else 50.0
 
             swing_res = calculate_swing_strategy(close, ema20, ema50, rsi)
 
-            # Golden Cross / Downtrend EMA Status
-            ema_cross = "🟢▲" if ema14 >= ema50 else "🔻"
+            # Indikator EMA14 vs EMA50 Cross Trend
+            ema_trend = "up" if ema14 >= ema50 else "down"
 
+            # Hitung TP 1, TP 2 Level dan Stop Loss
             stop_loss = round(close * 0.95, 2)
             tp1 = round(close * 1.05, 2)
             tp2 = round(close * 1.10, 2)
 
+            # Status Sentuh TP/CL
             tp1_hit = close >= tp1
             tp2_hit = close >= tp2
             cl_hit = close <= stop_loss
@@ -220,7 +220,7 @@ def fetch_real_data():
                 "ema20_status": swing_res["ema20_status"],
                 "ema50": round(ema50, 2),
                 "ema50_status": swing_res["ema50_status"],
-                "ema_cross": ema_cross,
+                "ema_trend": ema_trend,
                 "rsi": rsi,
                 "rsi_status": swing_res["rsi_status"],
                 "signal": swing_res["signal"],
@@ -236,6 +236,7 @@ def fetch_real_data():
         except Exception:
             continue
 
+    # Mengurutkan berdasarkan Power Ranking Terbesar secara default
     all_stocks = sorted(all_stocks, key=lambda x: (x["power_score"], x["change_pct"]), reverse=True)
 
     top_bearish = sorted(all_stocks, key=lambda x: (x["power_score"], x["change_pct"]))[:20]
