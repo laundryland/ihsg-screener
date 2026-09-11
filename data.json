@@ -1,0 +1,55 @@
+{
+  "last_updated": "2026-09-11 01:35:00 WIB",
+  "ihsg": {
+    "name": "IHSG",
+    "open": 7720.5,
+    "high": 7780.1,
+    "low": 7695.2,
+    "close": 7765.4,
+    "prev_close": 7710.0,
+    "change_pct": 0.72
+  },
+  "top_10_entry": [
+    {
+      "ticker": "BBCA",
+      "close": 10250.0,
+      "change_pct": 0.99,
+      "category": "Bluechip",
+      "ema14": 10150.0,
+      "ema14_status": "strong_buy",
+      "ema50": 9870.2,
+      "ema50_status": "strong_buy",
+      "rsi": 62.4,
+      "rsi_status": "buy",
+      "signal": "STRONG_BULLISH",
+      "power_score": 9,
+      "stop_loss": 9737.5,
+      "take_profit_1": 10762.5,
+      "take_profit_2": 11275.0
+    }
+  ],
+  "swing_setup": [
+    {
+      "ticker": "BBCA",
+      "close": 10250.0,
+      "change_pct": 0.99,
+      "category": "Bluechip",
+      "ema14": 10150.0,
+      "ema14_status": "strong_buy",
+      "ema50": 9870.2,
+      "ema50_status": "strong_buy",
+      "rsi": 62.4,
+      "rsi_status": "buy",
+      "signal": "STRONG_BULLISH",
+      "power_score": 9,
+      "stop_loss": 9737.5,
+      "take_profit_1": 10762.5,
+      "take_profit_2": 11275.0
+    }
+  ],
+  "top_gainers": [],
+  "top_movers": [],
+  "bluechips": [],
+  "top_bearish": [],
+  "all_stocks": []
+}
