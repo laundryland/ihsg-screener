@@ -1,0 +1,25 @@
+{
+  "short_name": "IDX Swing",
+  "name": "IDX Swing Trading Screener",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2422/2422796.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2422/2422796.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#030712",
+  "theme_color": "#111827",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Sistem Analisis Momentum & Signal Power Swing Trading Saham IDX",
+  "lang": "id"
+}
