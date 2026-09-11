@@ -1,14 +1,14 @@
 {
-  "last_updated": "2026-09-11 16:05:54 WIB",
+  "last_updated": "2026-09-11 16:10:43 WIB",
   "total_scanned": 0,
   "ihsg": {
     "name": "IHSG",
-    "close": 6524.11,
+    "close": 6541.38,
     "prev_close": 6589.34,
     "open": 6552.79,
     "high": 6552.79,
     "low": 6462.96,
-    "change_pct": -0.99
+    "change_pct": -0.73
   },
   "top_10_entry": [],
   "swing_setup": [],
