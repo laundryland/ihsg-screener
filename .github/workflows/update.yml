@@ -7,7 +7,7 @@ on:
       - 'screener.py'
       - '.github/workflows/*'
   schedule:
-    # Berjalan tiap 15 menit saat jam kerja bursa (09:00 - 16:30 WIB)
+    # Berjalan tiap 15 menit saat jam kerja bursa (02:00 - 09:30 UTC = 09:00 - 16:30 WIB)
     - cron: '*/15 2-9 * * 1-5'
 
 jobs:
@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -37,6 +37,6 @@ jobs:
           git add data.json
           git status
           git diff-index --quiet HEAD || git commit -m "auto: update stock data [skip ci]"
-          git push
+          git push || echo "Tidak ada perubahan untuk di-push"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
