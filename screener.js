@@ -134,10 +134,13 @@ def main():
         s_jk = f"{t_code}.JK"
         
         try:
-            if s_jk not in df_all.columns:
-                continue
-            
-            df = df_all[s_jk].dropna()
+            # Aman dari KeyError jika ticker tidak ditemukan/gagal download
+            if isinstance(df_all.columns, pd.MultiIndex):
+                if s_jk not in df_all.columns.get_level_values(0):
+                    continue
+                df = df_all[s_jk].dropna()
+            else:
+                df = df_all.dropna()
 
             if len(df) < 50: 
                 continue
@@ -182,9 +185,9 @@ def main():
                 "rsi_status": "buy" if 40 <= rsi <= 65 else ("overbought" if rsi > 70 else "neutral"),
                 "signal": signal,
                 "power_score": power_score,
-                "stop_loss": round(close * 0.95),       # Cut Loss -5%
-                "take_profit_1": round(close * 1.05),   # TP1 +5%
-                "take_profit_2": round(close * 1.10)    # TP2 +10%
+                "stop_loss": round(close * 0.95),
+                "take_profit_1": round(close * 1.05),
+                "take_profit_2": round(close * 1.10)
             })
         except Exception as e:
             print(f"⚠️ Skip {t_code}: {e}")
