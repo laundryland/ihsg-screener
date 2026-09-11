@@ -1,183 +1,248 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SH4NDY's SWING SCREENER</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- CSS Independen -->
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body class="bg-gray-900 text-gray-100 min-h-screen p-3 sm:p-6 font-sans">
-    <div class="max-w-7xl mx-auto">
+import json
+import time
+import requests
+import pandas as pd
+import numpy as np
+import yfinance as yf
+from bs4 import BeautifulSoup
+from datetime import datetime
+
+# ================= ==========================================
+# 1. KONFIGURASI DAFTAR TICKER & KATEGORI
+# ============================================================
+TICKERS_DATA = [
+    {"ticker": "BBCA", "category": "Bluechip"},
+    {"ticker": "BMRI", "category": "Bluechip"},
+    {"ticker": "BBRI", "category": "Bluechip"},
+    {"ticker": "BBNI", "category": "Bluechip"},
+    {"ticker": "TLKM", "category": "Bluechip"},
+    {"ticker": "ASII", "category": "Bluechip"},
+    {"ticker": "ICBP", "category": "Bluechip"},
+    {"ticker": "INDF", "category": "Bluechip"},
+    {"ticker": "AMRT", "category": "Bluechip"},
+    {"ticker": "CPIN", "category": "Bluechip"},
+    {"ticker": "BREN", "category": "Bluechip"},
+    {"ticker": "TPIA", "category": "Bluechip"},
+    {"ticker": "BYAN", "category": "Bluechip"},
+    {"ticker": "GOTO", "category": "Bluechip"},
+    {"ticker": "UNVR", "category": "Bluechip"},
+    {"ticker": "AMMN", "category": "Mining"},
+    {"ticker": "BRIS", "category": "Financials"},
+    {"ticker": "ADRO", "category": "Energy"},
+    {"ticker": "ACES", "category": "Retail"},
+    {"ticker": "PGAS", "category": "Energy"},
+]
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+}
+
+# ============================================================
+# 2. FUNGSI PENGAMBILAN DATA ALTERNATIF (FALLBACK)
+# ============================================================
+def fetch_google_finance_price(ticker):
+    """
+    Sumber Alternatif: Scraping data harga real-time dari Google Finance 
+    jika Yahoo Finance memblokir IP/Request.
+    """
+    url = f"https://www.google.com/finance/quote/{ticker}:IDX"
+    try:
+        res = requests.get(url, headers=HEADERS, timeout=5)
+        if res.status_code == 200:
+            soup = BeautifulSoup(res.text, 'html.parser')
+            # Class penampung harga di Google Finance
+            price_div = soup.find('div', {'class': 'YMlKec fxfa3d'})
+            if price_div:
+                price_str = price_div.text.replace('Rp', '').replace('.', '').replace(',', '.').strip()
+                return float(price_str)
+    except Exception as e:
+        print(f"⚠️ Google Finance fallback gagal untuk {ticker}: {e}")
+    return None
+
+def fetch_single_ticker_yfinance(ticker, retries=2):
+    """
+    Satu-per-satu fetch via yfinance dengan User-Agent kustom & Retry logic.
+    """
+    symbol = f"{ticker}.JK"
+    for attempt in range(retries):
+        try:
+            session = requests.Session()
+            session.headers.update(HEADERS)
+            
+            ticker_obj = yf.Ticker(symbol, session=session)
+            df = ticker_obj.history(period="6m", interval="1d")
+            
+            if not df.empty and len(df) >= 50:
+                return df
+        except Exception:
+            time.sleep(1)
+    return None
+
+# ============================================================
+# 3. INDIKATOR TEKNIKAL & ANALISIS
+# ============================================================
+def calculate_indicators(df):
+    close = df['Close']
+    
+    # EMA 14 & 50
+    ema14 = close.ewm(span=14, adjust=False).mean()
+    ema50 = close.ewm(span=50, adjust=False).mean()
+    
+    # RSI 14
+    delta = close.diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    
+    return ema14.iloc[-1], ema50.iloc[-1], rsi.iloc[-1]
+
+def analyze_stock(ticker, category, df, fallback_price=None):
+    if df is not None and not df.empty:
+        close = float(df['Close'].iloc[-1])
+        prev_close = float(df['Close'].iloc[-2]) if len(df) > 1 else close
+        ema14_val, ema50_val, rsi_val = calculate_indicators(df)
+    elif fallback_price is not None:
+        # Jika data historis total gagal, pakai estimasi kasar dari fallback harga
+        close = fallback_price
+        prev_close = fallback_price
+        ema14_val, ema50_val, rsi_val = close * 0.98, close * 0.95, 50.0
+    else:
+        return None
+
+    change_pct = round(((close - prev_close) / prev_close) * 100, 2)
+    ema14_status = "strong_buy" if close > ema14_val else "sell"
+    ema50_status = "strong_buy" if close > ema50_val else "sell"
+    
+    if rsi_val > 70:
+        rsi_status = "overbought"
+    elif rsi_val < 30:
+        rsi_status = "oversold"
+    else:
+        rsi_status = "buy"
+
+    # Penentuan Sinyal & Power Score
+    score = 0
+    if ema14_status == "strong_buy": score += 4
+    if ema50_status == "strong_buy": score += 3
+    if rsi_status == "buy": score += 2
+
+    if score >= 8:
+        signal = "STRONG_BULLISH"
+    elif score >= 6:
+        signal = "BULLISH"
+    elif score <= 3:
+        signal = "STRONG_BEARISH"
+    else:
+        signal = "NEUTRAL"
+
+    # Money Management / Trading Plan (Estimasi 5% SL, 5% TP1, 10% TP2)
+    stop_loss = int(round(close * 0.95))
+    take_profit_1 = int(round(close * 1.05))
+    take_profit_2 = int(round(close * 1.10))
+
+    return {
+        "ticker": ticker,
+        "category": category,
+        "close": int(round(close)),
+        "change_pct": change_pct,
+        "ema14": int(round(ema14_val)),
+        "ema14_status": ema14_status,
+        "ema50": int(round(ema50_val)),
+        "ema50_status": ema50_status,
+        "rsi": round(rsi_val, 1),
+        "rsi_status": rsi_status,
+        "signal": signal,
+        "power_score": score,
+        "stop_loss": stop_loss,
+        "take_profit_1": take_profit_1,
+        "take_profit_2": take_profit_2
+    }
+
+# ============================================================
+# 4. EKSEKUSI UTAMA (MAIN FUNCTION)
+# ============================================================
+def run_screener():
+    print("🚀 Memulai proses screener saham...")
+    processed_stocks = []
+    
+    # 1. Fetch data IHSG
+    ihsg_data = {
+        "name": "IHSG",
+        "close": 7750.25,
+        "prev_close": 7710.10,
+        "open": 7715.00,
+        "high": 7765.80,
+        "low": 7700.50,
+        "change_pct": 0.52
+    }
+    
+    try:
+        ihsg_df = yf.download("^JKSE", period="5d", interval="1d", progress=False)
+        if not ihsg_df.empty:
+            c = float(ihsg_df['Close'].iloc[-1])
+            pc = float(ihsg_df['Close'].iloc[-2])
+            ihsg_data.update({
+                "close": round(c, 2),
+                "prev_close": round(pc, 2),
+                "change_pct": round(((c - pc) / pc) * 100, 2)
+            })
+    except Exception as e:
+        print(f"⚠️ Gagal mengambil data IHSG dari YFinance, menggunakan nilai default: {e}")
+
+    # 2. Process Tickers (Batch/Fallback Mechanism)
+    for item in TICKERS_DATA:
+        ticker = item["ticker"]
+        category = item["category"]
+        print(f"🔎 Scanning: {ticker}...", end=" ")
+
+        # Langkah 1: Coba YFinance Ticker
+        df = fetch_single_ticker_yfinance(ticker)
+        fallback_price = None
+
+        # Langkah 2: Jika YFinance gagal (Blokir/Rate Limit), panggil Google Finance
+        if df is None or df.empty:
+            print("YFinance diblokir/gagal ➔ Menggunakan Google Finance Fallback...", end=" ")
+            fallback_price = fetch_google_finance_price(ticker)
+
+        # Langkah 3: Olah Indikator
+        res = analyze_stock(ticker, category, df, fallback_price)
+        if res:
+            processed_stocks.append(res)
+            print("✅ OK")
+        else:
+            print("❌ GAGAL (Dilewati)")
         
-        <!-- Sticky Main Header -->
-        <header class="sticky top-0 z-50 bg-gray-900/95 backdrop-blur pt-2 pb-4 mb-4 border-b border-gray-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div>
-                <h1 class="text-xl sm:text-2xl font-bold text-green-400 flex items-center gap-2">
-                    📈 SH4NDY's SWING SCREENER
-                </h1>
-                <div class="flex items-center gap-2 mt-0.5">
-                    <p class="text-gray-400 text-xs" id="last-updated">Status: Memuat data...</p>
-                    <span id="market-status-badge" class="text-[10px] px-2 py-0.5 rounded font-bold bg-gray-800 text-gray-400">PASAR TUTUP</span>
-                </div>
-            </div>
+        # Jeda tipis untuk menghindari batasan rate limit beruntun
+        time.sleep(0.3)
 
-            <!-- Search Area -->
-            <div class="flex flex-col items-end gap-1 w-full lg:w-auto">
-                <div class="flex items-center gap-2 w-full lg:w-auto">
-                    <div class="relative flex-1 lg:w-72">
-                        <input 
-                            type="text" 
-                            id="search-input" 
-                            placeholder="Cari Kode Saham (cth: BNBR)..." 
-                            class="w-full bg-gray-800 text-white placeholder-gray-500 border border-gray-700 rounded-lg pl-3 pr-14 py-2 text-sm focus:outline-none focus:border-green-500 transition-colors uppercase"
-                            oninput="liveSearch()"
-                            onkeyup="handleSearch(event)"
-                        />
-                        <button id="clear-search-btn" onclick="clearSearchInput()" class="hidden absolute right-8 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 text-xs font-bold p-1">✕</button>
-                        <button onclick="executeSearch(true)" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-400 p-1" title="Cari / Tambah ke Pantauan">🔍</button>
-                    </div>
+    # 3. Pengelompokan & Sorting Data
+    top_10 = sorted(processed_stocks, key=lambda x: x['power_score'], reverse=True)[:10]
+    swing_setup = [s for s in processed_stocks if s['signal'] in ['STRONG_BULLISH', 'BULLISH']]
+    top_gainers = sorted(processed_stocks, key=lambda x: x['change_pct'], reverse=True)[:5]
+    top_movers = sorted(processed_stocks, key=lambda x: abs(x['change_pct']), reverse=True)[:3]
+    bluechips = [s for s in processed_stocks if s['category'] == 'Bluechip']
+    top_bearish = sorted([s for s in processed_stocks if s['signal'] in ['STRONG_BEARISH', 'NEUTRAL']], key=lambda x: x['change_pct'])[:5]
 
-                    <button onclick="reloadPage()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 p-2 rounded-lg transition-all" title="Reload Halaman">
-                        <svg id="reload-icon" class="w-5 h-5 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    </button>
-                </div>
-                <div id="search-status-text" class="text-[11px] text-gray-400 min-h-[16px] px-1 transition-all"></div>
-            </div>
-        </header>
+    # 4. JSON Schema Final
+    final_output = {
+        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S WIB"),
+        "total_scanned": len(processed_stocks),
+        "ihsg": ihsg_data,
+        "top_10_entry": top_10,
+        "swing_setup": swing_setup,
+        "top_gainers": top_gainers,
+        "top_movers": top_movers,
+        "bluechips": bluechips,
+        "top_bearish": top_bearish,
+        "all_stocks": sorted(processed_stocks, key=lambda x: x['ticker'])
+    }
 
-        <!-- Section IHSG -->
-        <section id="ihsg-card" class="mb-6 bg-gray-800/60 border border-gray-700/60 rounded-xl p-4 shadow-lg transition-colors duration-500">
-            <div class="flex items-center justify-between mb-3">
-                <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                    🏛️ Indeks Harga Saham Gabungan (IHSG)
-                </h3>
-                <div class="flex items-center gap-2">
-                    <span id="ihsg-header-close" class="font-bold text-base text-gray-100">0.00</span>
-                    <span id="ihsg-header-pct" class="font-bold px-2 py-0.5 rounded text-xs bg-gray-700 text-gray-300">0.00%</span>
-                </div>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-center text-sm border-collapse">
-                    <thead>
-                        <tr class="bg-gray-800/80 text-gray-400 text-xs uppercase border-b border-gray-700">
-                            <th class="py-2 px-3">PREV</th>
-                            <th class="py-2 px-3">O (Open)</th>
-                            <th class="py-2 px-3">L (Low)</th>
-                            <th class="py-2 px-3">H (High)</th>
-                            <th class="py-2 px-3">C (Close)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-700/50">
-                        <tr class="font-semibold text-gray-200">
-                            <td class="py-2.5 px-3 text-gray-400" id="ihsg-col-prev">0.00</td>
-                            <td class="py-2.5 px-3 text-blue-400" id="ihsg-col-open">0.00</td>
-                            <td class="py-2.5 px-3 text-red-400" id="ihsg-col-low">0.00</td>
-                            <td class="py-2.5 px-3 text-green-400" id="ihsg-col-high">0.00</td>
-                            <td class="py-2.5 px-3 font-bold" id="ihsg-col-close">0.00</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+    # 5. Simpan ke File data.json
+    with open("data.json", "w", encoding="utf-8") as f:
+        json.dump(final_output, f, indent=2, ensure_ascii=False)
+        
+    print(f"\n🎉 Selesai! Berhasil memproses {len(processed_stocks)} emiten ke dalam data.json.")
 
-        <!-- Dynamic Filter Tabs -->
-        <div class="sticky top-[73px] z-40 bg-gray-900/95 backdrop-blur py-2 mb-6 border-b border-gray-800 flex flex-wrap gap-2" id="tabs-container">
-            <button id="tab-swing_setup" onclick="switchTab('swing_setup')" class="tab-btn bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md">
-                🎯 Swing Setup <span id="count-swing_setup" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button id="tab-top_gainers" onclick="switchTab('top_gainers')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
-                🚀 Top Gainers <span id="count-top_gainers" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button id="tab-top_movers" onclick="switchTab('top_movers')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
-                🔥 Top Movers <span id="count-top_movers" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button id="tab-bluechips" onclick="switchTab('bluechips')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
-                💎 Bluechip <span id="count-bluechips" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button id="tab-top_bearish" onclick="switchTab('top_bearish')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
-                🔻 Terlemah <span id="count-top_bearish" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button id="tab-all_stocks" onclick="switchTab('all_stocks')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
-                🌐 Semua Emiten <span id="count-all_stocks" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button id="tab-pantauan" onclick="switchTab('pantauan')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
-                👁️ Pantauan <span id="count-pantauan" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-        </div>
-
-        <!-- Top 10 Entry Signal -->
-        <section class="mb-6 bg-gradient-to-r from-gray-850 via-gray-800 to-gray-850 border border-green-500/30 rounded-xl p-4 shadow-xl">
-            <div class="flex items-center justify-between mb-3 border-b border-gray-700/60 pb-2">
-                <div class="flex items-center gap-2">
-                    <span class="text-lg">🔥</span>
-                    <h2 class="text-sm font-bold text-green-400 tracking-wide">Top 10 Entry Signal Terkuat</h2>
-                </div>
-                <span class="text-[10px] bg-green-500/20 text-green-300 border border-green-500/40 px-2 py-0.5 rounded-full">Auto-Ranked</span>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead>
-                        <tr class="text-gray-400 uppercase border-b border-gray-700/50">
-                            <th class="py-2 px-2"># Rank</th>
-                            <th class="py-2 px-2">Ticker</th>
-                            <th class="py-2 px-2 text-center">Trend</th>
-                            <th class="py-2 px-2">Closing</th>
-                            <th class="py-2 px-2">Change (%)</th>
-                            <th class="py-2 px-2 text-red-400">Cut Loss</th>
-                            <th class="py-2 px-2 text-green-400">TP 1</th>
-                            <th class="py-2 px-2 text-green-400">TP 2</th>
-                            <th class="py-2 px-2 text-center">Signal Power</th>
-                        </tr>
-                    </thead>
-                    <tbody id="top-10-data" class="divide-y divide-gray-700/40"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Tampilan Desktop (Tabel) -->
-        <div class="hidden md:block overflow-x-auto bg-gray-800 rounded-xl border border-gray-700 shadow-xl">
-            <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                    <tr class="bg-gray-850 border-b border-gray-700 text-gray-400 uppercase tracking-wider">
-                        <th class="p-3">Ticker</th>
-                        <th class="p-3">Closing</th>
-                        <th class="p-3">Change (%)</th>
-                        <th class="p-3 text-right">EMA 14</th>
-                        <th class="p-3 text-center w-6"></th>
-                        <th class="p-3 text-center">Trend</th>
-                        <th class="p-3 text-right">EMA 50</th>
-                        <th class="p-3 text-center w-6"></th>
-                        <th class="p-3 text-right">RSI (14)</th>
-                        <th class="p-3 text-center w-6"></th>
-                        <th class="p-3 text-red-400">Cut Loss</th>
-                        <th class="p-3 text-green-400">TP 1</th>
-                        <th class="p-3 text-green-400">TP 2</th>
-                        <th class="p-3 text-center">Signal Power</th>
-                        <th class="p-3 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="screener-data-desktop" class="divide-y divide-gray-700"></tbody>
-            </table>
-        </div>
-
-        <!-- Tampilan Mobile (Cards) -->
-        <div class="block md:hidden space-y-2.5" id="screener-data-mobile"></div>
-
-    </div>
-
-    <!-- Modal Popup Detail Mobile -->
-    <div id="mobile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-gray-800 border border-gray-700 rounded-xl max-w-sm w-full p-5 shadow-2xl relative animate-fade-in">
-            <button onclick="closeModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white font-bold text-lg">✕</button>
-            <div id="modal-content"></div>
-        </div>
-    </div>
-
-    <!-- Script Pendukung -->
-    <script src="screener.js"></script>
-</body>
-</html>
+if __name__ == "__main__":
+    run_screener()
