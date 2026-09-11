@@ -1,18 +1,19 @@
 name: Update Stock Data
 
 on:
-  workflow_dispatch: # Bisa di-trigger manual dari dashboard GitHub
+  workflow_dispatch: # Pemicu Manual dari Dashboard GitHub
   push:
     paths:
       - 'screener.py'
       - '.github/workflows/*'
   schedule:
-    # Berjalan setiap 15 menit dari jam 02:00 UTC - 09:00 UTC (09:00 WIB - 16:00 WIB), Senin-Jumat
+    # Menjalankan script setiap 15 menit dari jam 02:00 - 09:30 UTC (09:00 - 16:30 WIB), Senin - Jumat
     - cron: '*/15 2-9 * * 1-5'
 
 jobs:
   run-screener:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
