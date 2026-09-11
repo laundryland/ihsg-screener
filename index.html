@@ -56,15 +56,21 @@
             </div>
         </header>
 
-        <!-- Section IHSG -->
+        <!-- Section IHSG dengan Indikator Signal Power di Deretan Paling Kanan -->
         <section id="ihsg-card" class="mb-6 bg-gray-800/60 border border-gray-700/60 rounded-xl p-4 shadow-lg transition-colors duration-500">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
                     🏛️ Indeks Harga Saham Gabungan (IHSG)
                 </h3>
-                <div class="flex items-center gap-2">
-                    <span id="ihsg-header-close" class="font-bold text-base text-gray-100">0.00</span>
-                    <span id="ihsg-header-pct" class="font-bold px-2 py-0.5 rounded text-xs bg-gray-700 text-gray-300">0.00%</span>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <span id="ihsg-header-close" class="font-bold text-base text-gray-100">0.00</span>
+                        <span id="ihsg-header-pct" class="font-bold px-2 py-0.5 rounded text-xs bg-gray-700 text-gray-300">0.00%</span>
+                    </div>
+                    <!-- Indikator Signal Power IHSG di Deretan Paling Kanan -->
+                    <div id="ihsg-signal-power-container" class="border-l border-gray-700 pl-3 hidden sm:block">
+                        <!-- Rendered via JS -->
+                    </div>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -88,6 +94,10 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <!-- Mobile view signal power row -->
+            <div id="ihsg-signal-power-mobile" class="mt-2 pt-2 border-t border-gray-700/50 flex sm:hidden justify-between items-center text-xs">
+                <!-- Rendered via JS -->
             </div>
         </section>
 
@@ -126,7 +136,8 @@
                 <span class="text-[10px] bg-green-500/20 text-green-300 border border-green-500/40 px-2 py-0.5 rounded-full">Auto-Ranked</span>
             </div>
 
-            <div class="overflow-x-auto">
+            <!-- Tampilan Desktop Top 10 -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
                         <tr class="text-gray-400 uppercase border-b border-gray-700/50">
@@ -144,6 +155,9 @@
                     <tbody id="top-10-data" class="divide-y divide-gray-700/40"></tbody>
                 </table>
             </div>
+
+            <!-- Tampilan Mobile Top 10 (Sama dengan Kategori Lain / Menggunakan Cards & Modal Detail) -->
+            <div class="block md:hidden space-y-2.5" id="top-10-data-mobile"></div>
         </section>
 
         <!-- Tampilan Web Desktop (Tabel) -->
@@ -155,12 +169,12 @@
                         <th class="p-3">Closing</th>
                         <th class="p-3">Change (%)</th>
                         <th class="p-3 text-right">EMA 14</th>
-                        <th class="p-3 text-center w-6"></th> <!-- Bulatan EMA 14 -->
-                        <th class="p-3 text-center">Trend</th> <!-- Golden Cross 💚 / 💔 -->
+                        <th class="p-3 text-center w-6"></th>
+                        <th class="p-3 text-center">Trend</th>
                         <th class="p-3 text-right">EMA 50</th>
-                        <th class="p-3 text-center w-6"></th> <!-- Bulatan EMA 50 -->
+                        <th class="p-3 text-center w-6"></th>
                         <th class="p-3 text-right">RSI (14)</th>
-                        <th class="p-3 text-center w-6"></th> <!-- Bulatan RSI -->
+                        <th class="p-3 text-center w-6"></th>
                         <th class="p-3 text-red-400">Cut Loss</th>
                         <th class="p-3 text-green-400">TP 1</th>
                         <th class="p-3 text-green-400">TP 2</th>
@@ -237,6 +251,22 @@
             const colClose = document.getElementById('ihsg-col-close');
             colClose.innerText = ihsg.close ? ihsg.close.toLocaleString('id-ID') : '-';
             colClose.className = `py-2.5 px-3 font-bold ${closeColorClass}`;
+
+            // Render Signal Power di Bagian Kanan IHSG
+            const ihsgSignal = chgPct > 0 ? "BULLISH" : (chgPct < 0 ? "BEARISH" : "NEUTRAL");
+            const ihsgPowerScore = chgPct > 1 ? 8 : (chgPct > 0 ? 6 : (chgPct < -1 ? 2 : 5));
+            const powerHtml = renderPowerBoxes(ihsgSignal, ihsgPowerScore);
+
+            document.getElementById('ihsg-signal-power-container').innerHTML = `
+                <div class="flex flex-col items-end">
+                    <span class="text-[10px] text-gray-400 uppercase font-bold mb-0.5">Market Power</span>
+                    ${powerHtml}
+                </div>
+            `;
+            document.getElementById('ihsg-signal-power-mobile').innerHTML = `
+                <span class="text-gray-400 font-bold uppercase text-[10px]">Market Power:</span>
+                ${powerHtml}
+            `;
         }
 
         function updateTabCounts() {
@@ -292,10 +322,14 @@
 
         function renderTop10Entry(items) {
             const container = document.getElementById('top-10-data');
+            const mobileContainer = document.getElementById('top-10-data-mobile');
+            
             container.innerHTML = '';
+            mobileContainer.innerHTML = '';
 
             if (!items || items.length === 0) {
                 container.innerHTML = `<tr><td colspan="9" class="text-center p-3 text-gray-500">Belum ada sinyal entry.</td></tr>`;
+                mobileContainer.innerHTML = `<div class="text-center p-4 text-gray-500 bg-gray-800 rounded-xl border border-gray-700">Belum ada sinyal entry.</div>`;
                 return;
             }
 
@@ -305,6 +339,7 @@
                 const changeSign = isPositive ? '+' : '';
                 const trendIcon = renderTrendIcon(item.ema14, item.ema50);
 
+                // Render Desktop Table Row
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-750/50 transition-colors';
                 row.innerHTML = `
@@ -321,6 +356,40 @@
                     <td class="py-2 px-2 text-center">${renderPowerBoxes(item.signal, item.power_score)}</td>
                 `;
                 container.appendChild(row);
+
+                // Render Mobile Card (Sama persis dengan kategori lain & support click detail modal)
+                const card = document.createElement('div');
+                card.id = 'top10-m-card-' + item.ticker;
+                card.className = 'bg-gray-800 border border-gray-700 rounded-xl p-3 flex items-center justify-between shadow-md active:bg-gray-750 transition-all cursor-pointer';
+                card.onclick = (e) => {
+                    if (e.target.tagName === 'BUTTON') return;
+                    openModal(item);
+                };
+
+                card.innerHTML = `
+                    <div class="flex flex-col gap-1 w-full">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs font-bold text-green-400">#${index + 1}</span>
+                                <span class="font-bold text-yellow-400 text-base">${item.ticker}</span>
+                                <span class="text-sm">${trendIcon}</span>
+                                <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded">${item.category || 'IDX'}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-gray-100 text-sm">${item.close ? item.close.toLocaleString('id-ID') : '-'}</span>
+                                <span class="text-xs font-semibold ${changeClass} ml-1.5">${changeSign}${item.change_pct}%</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-1 pt-2 border-t border-gray-700/60">
+                            <div>${renderPowerBoxes(item.signal || 'NEUTRAL', item.power_score || 5)}</div>
+                            <div class="flex items-center gap-1">
+                                <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 text-gray-200 px-2 py-1 rounded text-xs">📋</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                mobileContainer.appendChild(card);
             });
         }
 
@@ -353,7 +422,6 @@
             });
         }
 
-        // Render Tabel untuk Layar Desktop Web dengan Kolom Bulatan Terpisah
         function renderDesktopTable(items) {
             const tbody = document.getElementById('screener-data-desktop');
             tbody.innerHTML = '';
@@ -588,7 +656,6 @@
             if (event.key === 'Enter') executeSearch(true);
         }
 
-        // Realtime Fallback Mengambil Data dari YFinance Jika Emiten Tidak Ditemukan
         async function fetchYFinanceRealtime(ticker) {
             try {
                 const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}.JK?interval=1d&range=3m`;
@@ -605,14 +672,12 @@
                 const prevClose = Math.round(validQuotes[validQuotes.length - 2]);
                 const changePct = parseFloat((((close - prevClose) / prevClose) * 100).toFixed(2));
 
-                // Hitung EMA 14 sederhana
                 const k14 = 2 / (14 + 1);
                 let ema14 = validQuotes[0];
                 for (let i = 1; i < validQuotes.length; i++) {
                     ema14 = (validQuotes[i] * k14) + (ema14 * (1 - k14));
                 }
 
-                // Hitung EMA 50 sederhana
                 const k50 = 2 / (50 + 1);
                 let ema50 = validQuotes[0];
                 for (let i = 1; i < validQuotes.length; i++) {
@@ -621,7 +686,7 @@
 
                 ema14 = Math.round(ema14);
                 ema50 = Math.round(ema50);
-                const rsi = 50.0; // default perkiraan
+                const rsi = 50.0;
 
                 const stopLoss = Math.round(close * 0.95);
                 const tp1 = Math.round(close * 1.05);
@@ -683,7 +748,7 @@
                 if (currentTab !== targetCategory) switchTab(targetCategory);
 
                 setTimeout(() => {
-                    const el = document.getElementById('row-' + targetStock.ticker) || document.getElementById('m-card-' + targetStock.ticker);
+                    const el = document.getElementById('row-' + targetStock.ticker) || document.getElementById('m-card-' + targetStock.ticker) || document.getElementById('top10-m-card-' + targetStock.ticker);
                     if (el) {
                         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         el.classList.remove('animate-blink');
@@ -713,6 +778,16 @@
                     }
 
                     switchTab('pantauan');
+
+                    setTimeout(() => {
+                        const el = document.getElementById('row-' + input) || document.getElementById('m-card-' + input);
+                        if (el) {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            el.classList.remove('animate-blink');
+                            void el.offsetWidth;
+                            el.classList.add('animate-blink');
+                        }
+                    }, 100);
                 }
             }
         }
