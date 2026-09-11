@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SH4NDY's SWING SCREENER</title>
+    <title>IHSG Screener</title>
+    <!-- Favicon & PWA Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes blink-animation {
@@ -20,36 +25,40 @@
         .animate-signal-blink { animation: pulse-fast 0.8s infinite ease-in-out; }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen p-4 sm:p-6 font-sans">
-    <div class="max-w-7xl mx-auto space-y-6">
+<body class="bg-gray-900 text-gray-100 min-h-screen p-3 sm:p-6 font-sans">
+    <div class="max-w-7xl mx-auto">
         
         <!-- Sticky Main Header -->
-        <header class="sticky top-0 z-50 bg-gray-900/95 backdrop-blur pt-3 pb-5 border-b border-gray-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <header class="sticky top-0 z-50 bg-gray-900/95 backdrop-blur pt-2 pb-4 mb-4 border-b border-gray-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-bold text-green-400 flex items-center gap-2">
                     📈 SH4NDY's SWING SCREENER
                 </h1>
-                <p class="text-gray-400 text-xs mt-1" id="last-updated">Status: Memuat data...</p>
+                <p class="text-gray-400 text-xs mt-0.5" id="last-updated">Status: Memuat data...</p>
+            </div>
+
+            <!-- Logo di Header Utama Posisi di Tengah -->
+            <div class="flex justify-center items-center my-2 lg:my-0">
+                <img src="icon-192x192.png" alt="IHSG Screener Logo" class="w-10 h-10 object-contain rounded-xl shadow-md border border-gray-700">
             </div>
 
             <!-- Search Area with Clear Button -->
-            <div class="flex flex-col items-end gap-1.5 w-full lg:w-auto">
-                <div class="flex items-center gap-2.5 w-full lg:w-auto">
-                    <div class="relative flex-1 lg:w-80">
+            <div class="flex flex-col items-end gap-1 w-full lg:w-auto">
+                <div class="flex items-center gap-2 w-full lg:w-auto">
+                    <div class="relative flex-1 lg:w-72">
                         <input 
                             type="text" 
                             id="search-input" 
                             placeholder="Cari Kode Saham (cth: BNBR)..." 
-                            class="w-full bg-gray-800 text-white placeholder-gray-500 border border-gray-700 rounded-xl pl-3.5 pr-14 py-2.5 text-sm focus:outline-none focus:border-green-500 transition-colors uppercase"
+                            class="w-full bg-gray-800 text-white placeholder-gray-500 border border-gray-700 rounded-lg pl-3 pr-16 py-2 text-sm focus:outline-none focus:border-green-500 transition-colors uppercase"
                             oninput="liveSearch()"
                             onkeyup="handleSearch(event)"
                         />
-                        <!-- Tombol X Diperbesar & Diberi Ruang Lega -->
-                        <button id="clear-search-btn" onclick="clearSearchInput()" class="hidden absolute right-9 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 text-base font-extrabold px-1.5 py-1">✕</button>
-                        <button onclick="executeSearch(true)" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-400 p-1.5" title="Cari / Tambah ke Pantauan">🔍</button>
+                        <button id="clear-search-btn" onclick="clearSearchInput()" class="hidden absolute right-10 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 text-sm font-bold p-1.5" title="Bersihkan Pencarian">✕</button>
+                        <button onclick="executeSearch(true)" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-400 p-1.5" title="Cari / Tambah ke Pantauan">🔍</button>
                     </div>
 
-                    <button onclick="reloadPage()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 p-2.5 rounded-xl transition-all" title="Reload Halaman">
+                    <button onclick="reloadPage()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 p-2 rounded-lg transition-all" title="Reload Halaman">
                         <svg id="reload-icon" class="w-5 h-5 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
                 </div>
@@ -58,107 +67,104 @@
         </header>
 
         <!-- Section IHSG dengan Indikator Signal Power di Deretan Paling Kanan -->
-        <section id="ihsg-card" class="bg-gray-800/60 border border-gray-700/60 rounded-xl p-4.5 shadow-lg transition-colors duration-500">
-            <div class="flex items-center justify-between mb-3.5">
+        <section id="ihsg-card" class="mb-6 bg-gray-800/60 border border-gray-700/60 rounded-xl p-4 shadow-lg transition-colors duration-500">
+            <div class="flex items-center justify-between mb-3">
                 <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
                     🏛️ Indeks Harga Saham Gabungan (IHSG)
                 </h3>
-                <div class="flex items-center gap-3.5">
+                <div class="flex items-center gap-3">
                     <div class="flex items-center gap-2">
                         <span id="ihsg-header-close" class="font-bold text-base text-gray-100">0.00</span>
                         <span id="ihsg-header-pct" class="font-bold px-2 py-0.5 rounded text-xs bg-gray-700 text-gray-300">0.00%</span>
                     </div>
-                    <!-- Indikator Signal Power IHSG di Deretan Paling Kanan -->
-                    <div id="ihsg-signal-power-container" class="border-l border-gray-700 pl-3.5 hidden sm:block">
-                        <!-- Rendered via JS -->
-                    </div>
+                    <!-- Indikator Signal Power di deretan paling kanan tanpa CL -->
+                    <div id="ihsg-signal-power" class="hidden sm:flex items-center pl-3 border-l border-gray-700"></div>
                 </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-center text-sm border-collapse">
                     <thead>
                         <tr class="bg-gray-800/80 text-gray-400 text-xs uppercase border-b border-gray-700">
-                            <th class="py-2.5 px-3">PREV</th>
-                            <th class="py-2.5 px-3">O (Open)</th>
-                            <th class="py-2.5 px-3">L (Low)</th>
-                            <th class="py-2.5 px-3">H (High)</th>
-                            <th class="py-2.5 px-3">C (Close)</th>
+                            <th class="py-2 px-3">PREV</th>
+                            <th class="py-2 px-3">O (Open)</th>
+                            <th class="py-2 px-3">L (Low)</th>
+                            <th class="py-2 px-3">H (High)</th>
+                            <th class="py-2 px-3">C (Close)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-700/50">
                         <tr class="font-semibold text-gray-200">
-                            <td class="py-3 px-3 text-gray-400" id="ihsg-col-prev">0.00</td>
-                            <td class="py-3 px-3 text-blue-400" id="ihsg-col-open">0.00</td>
-                            <td class="py-3 px-3 text-red-400" id="ihsg-col-low">0.00</td>
-                            <td class="py-3 px-3 text-green-400" id="ihsg-col-high">0.00</td>
-                            <td class="py-3 px-3 font-bold" id="ihsg-col-close">0.00</td>
+                            <td class="py-2.5 px-3 text-gray-400" id="ihsg-col-prev">0.00</td>
+                            <td class="py-2.5 px-3 text-blue-400" id="ihsg-col-open">0.00</td>
+                            <td class="py-2.5 px-3 text-red-400" id="ihsg-col-low">0.00</td>
+                            <td class="py-2.5 px-3 text-green-400" id="ihsg-col-high">0.00</td>
+                            <td class="py-2.5 px-3 font-bold" id="ihsg-col-close">0.00</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <!-- Mobile view signal power row -->
-            <div id="ihsg-signal-power-mobile" class="mt-3 pt-3 border-t border-gray-700/50 flex sm:hidden justify-between items-center text-xs">
-                <!-- Rendered via JS -->
-            </div>
+            <!-- Signal Power untuk Mobile di deretan bawah kanan kartu IHSG -->
+            <div id="ihsg-signal-power-mobile" class="flex sm:hidden items-center justify-end mt-2 pt-2 border-t border-gray-700/50"></div>
         </section>
 
         <!-- Navigation Tabs (Dynamic Filter) -->
-        <div class="sticky top-[85px] z-40 bg-gray-900/95 backdrop-blur py-2.5 border-b border-gray-800 flex flex-wrap gap-2.5" id="tabs-container">
-            <button id="tab-swing_setup" onclick="switchTab('swing_setup')" class="tab-btn bg-green-600 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md">
+        <div class="sticky top-[73px] z-40 bg-gray-900/95 backdrop-blur py-2 mb-6 border-b border-gray-800 flex flex-wrap gap-2" id="tabs-container">
+            <button id="tab-swing_setup" onclick="switchTab('swing_setup')" class="tab-btn bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md">
                 🎯 Swing Setup <span id="count-swing_setup" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            <button id="tab-top_gainers" onclick="switchTab('top_gainers')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+            <button id="tab-top_gainers" onclick="switchTab('top_gainers')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
                 🚀 Top Gainers <span id="count-top_gainers" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            <button id="tab-top_movers" onclick="switchTab('top_movers')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+            <button id="tab-top_movers" onclick="switchTab('top_movers')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
                 🔥 Top Movers <span id="count-top_movers" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            <button id="tab-bluechips" onclick="switchTab('bluechips')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+            <button id="tab-bluechips" onclick="switchTab('bluechips')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
                 💎 Bluechip <span id="count-bluechips" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            <button id="tab-top_bearish" onclick="switchTab('top_bearish')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+            <button id="tab-top_bearish" onclick="switchTab('top_bearish')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
                 🔻 Terlemah <span id="count-top_bearish" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            <button id="tab-all_stocks" onclick="switchTab('all_stocks')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+            <button id="tab-all_stocks" onclick="switchTab('all_stocks')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
                 🌐 Semua Emiten <span id="count-all_stocks" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            <button id="tab-pantauan" onclick="switchTab('pantauan')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5">
+            <button id="tab-pantauan" onclick="switchTab('pantauan')" class="tab-btn bg-gray-800 text-gray-300 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
                 👁️ Pantauan <span id="count-pantauan" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
             </button>
         </div>
 
-        <!-- Top 10 Best Entry -->
-        <section class="bg-gradient-to-r from-gray-850 via-gray-800 to-gray-850 border border-green-500/30 rounded-xl p-4.5 shadow-xl">
-            <div class="flex items-center justify-between mb-3.5 border-b border-gray-700/60 pb-2.5">
+        <!-- Top 10 Best Entry (Desktop Table & Mobile Card Integration) -->
+        <section class="mb-6 bg-gradient-to-r from-gray-850 via-gray-800 to-gray-850 border border-green-500/30 rounded-xl p-4 shadow-xl">
+            <div class="flex items-center justify-between mb-3 border-b border-gray-700/60 pb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">🔥</span>
                     <h2 class="text-sm font-bold text-green-400 tracking-wide">Top 10 Entry Signal Terkuat</h2>
                 </div>
-                <span class="text-[10px] bg-green-500/20 text-green-300 border border-green-500/40 px-2.5 py-1 rounded-full">Auto-Ranked</span>
+                <span class="text-[10px] bg-green-500/20 text-green-300 border border-green-500/40 px-2 py-0.5 rounded-full">Auto-Ranked</span>
             </div>
 
-            <!-- Tampilan Desktop Top 10 -->
+            <!-- Tampilan Desktop untuk Top 10 -->
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
                         <tr class="text-gray-400 uppercase border-b border-gray-700/50">
-                            <th class="py-2.5 px-2.5"># Rank</th>
-                            <th class="py-2.5 px-2.5">Ticker</th>
-                            <th class="py-2.5 px-2.5 text-center">Trend</th>
-                            <th class="py-2.5 px-2.5">Closing</th>
-                            <th class="py-2.5 px-2.5">Change (%)</th>
-                            <th class="py-2.5 px-2.5 text-red-400">Cut Loss</th>
-                            <th class="py-2.5 px-2.5 text-green-400">TP 1</th>
-                            <th class="py-2.5 px-2.5 text-green-400">TP 2</th>
-                            <th class="py-2.5 px-2.5 text-center">Signal Power</th>
+                            <th class="py-2 px-2"># Rank</th>
+                            <th class="py-2 px-2">Ticker</th>
+                            <th class="py-2 px-2 text-center">Trend</th>
+                            <th class="py-2 px-2">Closing</th>
+                            <th class="py-2 px-2">Change (%)</th>
+                            <th class="py-2 px-2 text-red-400">Cut Loss</th>
+                            <th class="py-2 px-2 text-green-400">TP 1</th>
+                            <th class="py-2 px-2 text-green-400">TP 2</th>
+                            <th class="py-2 px-2 text-center">Signal Power</th>
+                            <th class="py-2 px-2 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="top-10-data" class="divide-y divide-gray-700/40"></tbody>
+                    <tbody id="top-10-data-desktop" class="divide-y divide-gray-700/40"></tbody>
                 </table>
             </div>
 
-            <!-- Tampilan Mobile Top 10 -->
-            <div class="block md:hidden space-y-3" id="top-10-data-mobile"></div>
+            <!-- Tampilan Mobile Card untuk Top 10 (Sama dengan kategori lain) -->
+            <div class="block md:hidden space-y-2.5" id="top-10-data-mobile"></div>
         </section>
 
         <!-- Tampilan Web Desktop (Tabel) -->
@@ -166,36 +172,36 @@
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
                     <tr class="bg-gray-850 border-b border-gray-700 text-gray-400 uppercase tracking-wider">
-                        <th class="p-3.5">Ticker</th>
-                        <th class="p-3.5">Closing</th>
-                        <th class="p-3.5">Change (%)</th>
-                        <th class="p-3.5 text-right">EMA 14</th>
-                        <th class="p-3.5 text-center w-6"></th>
-                        <th class="p-3.5 text-center">Trend</th>
-                        <th class="p-3.5 text-right">EMA 50</th>
-                        <th class="p-3.5 text-center w-6"></th>
-                        <th class="p-3.5 text-right">RSI (14)</th>
-                        <th class="p-3.5 text-center w-6"></th>
-                        <th class="p-3.5 text-red-400">Cut Loss</th>
-                        <th class="p-3.5 text-green-400">TP 1</th>
-                        <th class="p-3.5 text-green-400">TP 2</th>
-                        <th class="p-3.5 text-center">Signal Power</th>
-                        <th class="p-3.5 text-center">Aksi</th>
+                        <th class="p-3">Ticker</th>
+                        <th class="p-3">Closing</th>
+                        <th class="p-3">Change (%)</th>
+                        <th class="p-3 text-right">EMA 14</th>
+                        <th class="p-3 text-center w-6"></th>
+                        <th class="p-3 text-center">Trend</th>
+                        <th class="p-3 text-right">EMA 50</th>
+                        <th class="p-3 text-center w-6"></th>
+                        <th class="p-3 text-right">RSI (14)</th>
+                        <th class="p-3 text-center w-6"></th>
+                        <th class="p-3 text-red-400">Cut Loss</th>
+                        <th class="p-3 text-green-400">TP 1</th>
+                        <th class="p-3 text-green-400">TP 2</th>
+                        <th class="p-3 text-center">Signal Power</th>
+                        <th class="p-3 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="screener-data-desktop" class="divide-y divide-gray-700"></tbody>
             </table>
         </div>
 
-        <!-- Tampilan HP Mobile (List / Cards) -->
-        <div class="block md:hidden space-y-3" id="screener-data-mobile"></div>
+        <!-- Tampilan HP Mobile (List Memanjang / Cards Simpel) -->
+        <div class="block md:hidden space-y-2.5" id="screener-data-mobile"></div>
 
     </div>
 
     <!-- Modal Popup Details untuk Mobile Mode -->
     <div id="mobile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative animate-fade-in">
-            <button onclick="closeModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white font-bold text-xl p-1">✕</button>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl max-w-sm w-full p-5 shadow-2xl relative animate-fade-in">
+            <button onclick="closeModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white font-bold text-lg p-1">✕</button>
             <div id="modal-content"></div>
         </div>
     </div>
@@ -230,9 +236,9 @@
             const chgPct = ihsg.change_pct || 0;
             const ihsgCard = document.getElementById('ihsg-card');
 
-            if (chgPct > 0) ihsgCard.className = "bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-4.5 shadow-lg transition-colors duration-500";
-            else if (chgPct < 0) ihsgCard.className = "bg-rose-950/40 border border-rose-500/40 rounded-xl p-4.5 shadow-lg transition-colors duration-500";
-            else ihsgCard.className = "bg-gray-800/60 border border-gray-700/60 rounded-xl p-4.5 shadow-lg transition-colors duration-500";
+            if (chgPct > 0) ihsgCard.className = "mb-6 bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-4 shadow-lg transition-colors duration-500";
+            else if (chgPct < 0) ihsgCard.className = "mb-6 bg-rose-950/40 border border-rose-500/40 rounded-xl p-4 shadow-lg transition-colors duration-500";
+            else ihsgCard.className = "mb-6 bg-gray-800/60 border border-gray-700/60 rounded-xl p-4 shadow-lg transition-colors duration-500";
 
             const isPositive = chgPct >= 0;
             const changeClass = isPositive ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-red-500/20 text-red-400 border-red-500/40';
@@ -251,22 +257,12 @@
             
             const colClose = document.getElementById('ihsg-col-close');
             colClose.innerText = ihsg.close ? ihsg.close.toLocaleString('id-ID') : '-';
-            colClose.className = `py-3 px-3 font-bold ${closeColorClass}`;
+            colClose.className = `py-2.5 px-3 font-bold ${closeColorClass}`;
 
-            const ihsgSignal = chgPct > 0 ? "BULLISH" : (chgPct < 0 ? "BEARISH" : "NEUTRAL");
-            const ihsgPowerScore = chgPct > 1 ? 8 : (chgPct > 0 ? 6 : (chgPct < -1 ? 2 : 5));
-            const powerHtml = renderPowerBoxes(ihsgSignal, ihsgPowerScore);
-
-            document.getElementById('ihsg-signal-power-container').innerHTML = `
-                <div class="flex flex-col items-end">
-                    <span class="text-[10px] text-gray-400 uppercase font-bold mb-1">Market Power</span>
-                    ${powerHtml}
-                </div>
-            `;
-            document.getElementById('ihsg-signal-power-mobile').innerHTML = `
-                <span class="text-gray-400 font-bold uppercase text-[10px]">Market Power:</span>
-                ${powerHtml}
-            `;
+            // Render Signal Power IHSG di deretan paling kanan (tanpa CL)
+            const powerHtml = renderPowerBoxes(chgPct >= 1 ? 'STRONG_BULLISH' : (chgPct >= 0 ? 'BULLISH' : 'BEARISH'), chgPct >= 1 ? 9 : (chgPct >= 0 ? 7 : 3));
+            document.getElementById('ihsg-signal-power').innerHTML = powerHtml;
+            document.getElementById('ihsg-signal-power-mobile').innerHTML = powerHtml;
         }
 
         function updateTabCounts() {
@@ -312,7 +308,7 @@
             boxesHtml += '</div>';
 
             return `
-                <div class="flex items-center justify-center gap-2">
+                <div class="flex items-center justify-center gap-1.5">
                     <span class="text-[10px] font-bold text-gray-400 min-w-[28px] text-right">${pct}%</span>
                     ${boxesHtml}
                     <span class="text-xs flex items-center justify-center w-4 h-4">${iconHtml}</span>
@@ -321,15 +317,15 @@
         }
 
         function renderTop10Entry(items) {
-            const container = document.getElementById('top-10-data');
+            const desktopContainer = document.getElementById('top-10-data-desktop');
             const mobileContainer = document.getElementById('top-10-data-mobile');
             
-            container.innerHTML = '';
+            desktopContainer.innerHTML = '';
             mobileContainer.innerHTML = '';
 
             if (!items || items.length === 0) {
-                container.innerHTML = `<tr><td colspan="9" class="text-center p-4 text-gray-500">Belum ada sinyal entry.</td></tr>`;
-                mobileContainer.innerHTML = `<div class="text-center p-4 text-gray-500 bg-gray-800 rounded-xl border border-gray-700">Belum ada sinyal entry.</div>`;
+                desktopContainer.innerHTML = `<tr><td colspan="10" class="text-center p-3 text-gray-500">Belum ada sinyal entry.</td></tr>`;
+                mobileContainer.innerHTML = `<div class="text-center p-3 text-gray-500 bg-gray-800 rounded-xl border border-gray-700">Belum ada sinyal entry.</div>`;
                 return;
             }
 
@@ -338,40 +334,50 @@
                 const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
                 const changeSign = isPositive ? '+' : '';
                 const trendIcon = renderTrendIcon(item.ema14, item.ema50);
+                const inPantauan = pantauanList.includes(item.ticker);
 
+                // Render Desktop Table Row
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-750/50 transition-colors';
+                row.id = 'top10-row-' + item.ticker;
+                row.className = 'hover:bg-gray-750/50 transition-colors border-b border-gray-700/40';
                 row.innerHTML = `
-                    <td class="py-3 px-2.5 font-extrabold text-green-400">#${index + 1}</td>
-                    <td class="py-3 px-2.5 font-bold text-yellow-400">
-                        ${item.ticker} <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded ml-1">${item.category}</span>
+                    <td class="py-2 px-2 font-extrabold text-green-400">#${index + 1}</td>
+                    <td class="py-2 px-2 font-bold text-yellow-400">
+                        ${item.ticker} <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded ml-0.5">${item.category}</span>
                     </td>
-                    <td class="py-3 px-2.5 text-center text-sm">${trendIcon}</td>
-                    <td class="py-3 px-2.5 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
-                    <td class="py-3 px-2.5 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
-                    <td class="py-3 px-2.5 text-red-400">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
-                    <td class="py-3 px-2.5 text-green-400">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
-                    <td class="py-3 px-2.5 text-green-400">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
-                    <td class="py-3 px-2.5 text-center">${renderPowerBoxes(item.signal, item.power_score)}</td>
+                    <td class="py-2 px-2 text-center text-sm">${trendIcon}</td>
+                    <td class="py-2 px-2 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
+                    <td class="py-2 px-2 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
+                    <td class="py-2 px-2 text-red-400">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
+                    <td class="py-2 px-2 text-green-400">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
+                    <td class="py-2 px-2 text-green-400">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
+                    <td class="py-2 px-2 text-center">${renderPowerBoxes(item.signal, item.power_score)}</td>
+                    <td class="py-2 px-2 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 hover:bg-gray-600 text-gray-200 p-1 rounded text-xs" title="Copy Ticker">📋</button>
+                            <button onclick="addToPantauan('${item.ticker}')" class="${inPantauan ? 'bg-green-800 text-green-300' : 'bg-gray-700 hover:bg-gray-600 text-gray-200'} p-1 rounded text-xs" title="Pantau">${inPantauan ? '✓' : '👁️+'}</button>
+                        </div>
+                    </td>
                 `;
-                container.appendChild(row);
+                desktopContainer.appendChild(row);
 
+                // Render Mobile Card (Sama persis logikanya dengan kategori lain & menampilkan detail ketika diklik)
                 const card = document.createElement('div');
                 card.id = 'top10-m-card-' + item.ticker;
-                card.className = 'bg-gray-800 border border-gray-700 rounded-xl p-3.5 flex items-center justify-between shadow-md active:bg-gray-750 transition-all cursor-pointer';
+                card.className = 'bg-gray-800 border border-gray-700 rounded-xl p-3 flex items-center justify-between shadow-md active:bg-gray-750 transition-all cursor-pointer';
                 card.onclick = (e) => {
                     if (e.target.tagName === 'BUTTON') return;
                     openModal(item);
                 };
 
                 card.innerHTML = `
-                    <div class="flex flex-col gap-2 w-full">
+                    <div class="flex flex-col gap-1 w-full">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold text-green-400">#${index + 1}</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-extrabold text-green-400 text-xs">#${index + 1}</span>
                                 <span class="font-bold text-yellow-400 text-base">${item.ticker}</span>
                                 <span class="text-sm">${trendIcon}</span>
-                                <span class="text-[9px] bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">${item.category || 'IDX'}</span>
+                                <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded">${item.category || 'IDX'}</span>
                             </div>
                             <div class="text-right">
                                 <span class="font-bold text-gray-100 text-sm">${item.close ? item.close.toLocaleString('id-ID') : '-'}</span>
@@ -379,10 +385,11 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2 border-t border-gray-700/60">
+                        <div class="flex items-center justify-between mt-1 pt-2 border-t border-gray-700/60">
                             <div>${renderPowerBoxes(item.signal || 'NEUTRAL', item.power_score || 5)}</div>
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-lg text-xs">📋</button>
+                            <div class="flex items-center gap-1">
+                                <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 text-gray-200 px-2 py-1 rounded text-xs">📋</button>
+                                <button onclick="addToPantauan('${item.ticker}')" class="${inPantauan ? 'bg-green-800 text-green-300' : 'bg-gray-700 text-gray-200'} px-2 py-1 rounded text-xs">${inPantauan ? '✓' : '👁️+'}</button>
                             </div>
                         </div>
                     </div>
@@ -443,36 +450,36 @@
                 const inPantauan = pantauanList.includes(item.ticker);
 
                 row.innerHTML = `
-                    <td class="p-3.5 font-bold text-yellow-400 flex items-center gap-2">
+                    <td class="p-3 font-bold text-yellow-400 flex items-center gap-1.5">
                         <span>${item.ticker}</span>
                         <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded">${item.category || 'IDX'}</span>
                     </td>
-                    <td class="p-3.5 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
-                    <td class="p-3.5 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
+                    <td class="p-3 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
+                    <td class="p-3 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
                     
-                    <td class="p-3.5 text-right text-gray-300 whitespace-nowrap">${item.ema14 ? item.ema14.toLocaleString('id-ID') : '-'}</td>
-                    <td class="p-3.5 text-center align-middle">${renderDot(item.ema14_status || 'neutral')}</td>
+                    <td class="p-3 text-right text-gray-300 whitespace-nowrap">${item.ema14 ? item.ema14.toLocaleString('id-ID') : '-'}</td>
+                    <td class="p-3 text-center align-middle">${renderDot(item.ema14_status || 'neutral')}</td>
                     
-                    <td class="p-3.5 text-center text-sm align-middle">${trendIcon}</td>
+                    <td class="p-3 text-center text-sm align-middle">${trendIcon}</td>
                     
-                    <td class="p-3.5 text-right text-gray-300 whitespace-nowrap">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</td>
-                    <td class="p-3.5 text-center align-middle">${renderDot(item.ema50_status || 'neutral')}</td>
+                    <td class="p-3 text-right text-gray-300 whitespace-nowrap">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</td>
+                    <td class="p-3 text-center align-middle">${renderDot(item.ema50_status || 'neutral')}</td>
                     
-                    <td class="p-3.5 text-right text-gray-300 whitespace-nowrap">${item.rsi || '-'}</td>
-                    <td class="p-3.5 text-center align-middle">${renderDot(item.rsi_status || 'neutral')}</td>
+                    <td class="p-3 text-right text-gray-300 whitespace-nowrap">${item.rsi || '-'}</td>
+                    <td class="p-3 text-center align-middle">${renderDot(item.rsi_status || 'neutral')}</td>
                     
-                    <td class="p-3.5 text-red-400 font-medium whitespace-nowrap">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
-                    <td class="p-3.5 text-green-400 font-medium whitespace-nowrap">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
-                    <td class="p-3.5 text-green-400 font-medium whitespace-nowrap">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
+                    <td class="p-3 text-red-400 font-medium whitespace-nowrap">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
+                    <td class="p-3 text-green-400 font-medium whitespace-nowrap">${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
+                    <td class="p-3 text-green-400 font-medium whitespace-nowrap">${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}</td>
                     
-                    <td class="p-3.5 text-center whitespace-nowrap">${renderPowerBoxes(item.signal || 'NEUTRAL', item.power_score || 5)}</td>
+                    <td class="p-3 text-center whitespace-nowrap">${renderPowerBoxes(item.signal || 'NEUTRAL', item.power_score || 5)}</td>
                     
-                    <td class="p-3.5 text-center whitespace-nowrap">
-                        <div class="flex items-center justify-center gap-2">
-                            <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 hover:bg-gray-600 text-gray-200 px-2 py-1 rounded-lg text-xs" title="Copy Kode Emiten">📋</button>
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 hover:bg-gray-600 text-gray-200 p-1 rounded text-xs" title="Copy Kode Emiten">📋</button>
                             ${isPantauanTab ? 
-                                `<button onclick="removeFromPantauan('${item.ticker}')" class="bg-red-900/60 hover:bg-red-700 text-red-300 px-2 py-1 rounded-lg text-xs" title="Hapus dari Pantauan">❌</button>` :
-                                `<button onclick="addToPantauan('${item.ticker}')" class="${inPantauan ? 'bg-green-800 text-green-300' : 'bg-gray-700 hover:bg-gray-600 text-gray-200'} px-2 py-1 rounded-lg text-xs" title="Tambah ke Pantauan">${inPantauan ? '✓' : '👁️+'}</button>`
+                                `<button onclick="removeFromPantauan('${item.ticker}')" class="bg-red-900/60 hover:bg-red-700 text-red-300 p-1 rounded text-xs" title="Hapus dari Pantauan">❌</button>` :
+                                `<button onclick="addToPantauan('${item.ticker}')" class="${inPantauan ? 'bg-green-800 text-green-300' : 'bg-gray-700 hover:bg-gray-600 text-gray-200'} p-1 rounded text-xs" title="Tambah ke Pantauan">${inPantauan ? '✓' : '👁️+'}</button>`
                             }
                         </div>
                     </td>
@@ -498,7 +505,7 @@
 
                 const card = document.createElement('div');
                 card.id = 'm-card-' + item.ticker;
-                card.className = 'bg-gray-800 border border-gray-700 rounded-xl p-3.5 flex items-center justify-between shadow-md active:bg-gray-750 transition-all cursor-pointer';
+                card.className = 'bg-gray-800 border border-gray-700 rounded-xl p-3 flex items-center justify-between shadow-md active:bg-gray-750 transition-all cursor-pointer';
                 card.onclick = (e) => {
                     if (e.target.tagName === 'BUTTON') return;
                     openModal(item);
@@ -508,12 +515,12 @@
                 const inPantauan = pantauanList.includes(item.ticker);
 
                 card.innerHTML = `
-                    <div class="flex flex-col gap-2 w-full">
+                    <div class="flex flex-col gap-1 w-full">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5">
                                 <span class="font-bold text-yellow-400 text-base">${item.ticker}</span>
                                 <span class="text-sm">${trendIcon}</span>
-                                <span class="text-[9px] bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">${item.category || 'IDX'}</span>
+                                <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded">${item.category || 'IDX'}</span>
                             </div>
                             <div class="text-right">
                                 <span class="font-bold text-gray-100 text-sm">${item.close ? item.close.toLocaleString('id-ID') : '-'}</span>
@@ -521,13 +528,13 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2 border-t border-gray-700/60">
+                        <div class="flex items-center justify-between mt-1 pt-2 border-t border-gray-700/60">
                             <div>${renderPowerBoxes(item.signal || 'NEUTRAL', item.power_score || 5)}</div>
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 text-gray-200 px-2.5 py-1 rounded-lg text-xs">📋</button>
+                            <div class="flex items-center gap-1">
+                                <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 text-gray-200 px-2 py-1 rounded text-xs">📋</button>
                                 ${isPantauanTab ? 
-                                    `<button onclick="removeFromPantauan('${item.ticker}')" class="bg-red-900/60 text-red-300 px-2.5 py-1 rounded-lg text-xs">❌</button>` :
-                                    `<button onclick="addToPantauan('${item.ticker}')" class="${inPantauan ? 'bg-green-800 text-green-300' : 'bg-gray-700 text-gray-200'} px-2.5 py-1 rounded-lg text-xs">${inPantauan ? '✓' : '👁️+'}</button>`
+                                    `<button onclick="removeFromPantauan('${item.ticker}')" class="bg-red-900/60 text-red-300 px-2 py-1 rounded text-xs">❌</button>` :
+                                    `<button onclick="addToPantauan('${item.ticker}')" class="${inPantauan ? 'bg-green-800 text-green-300' : 'bg-gray-700 text-gray-200'} px-2 py-1 rounded text-xs">${inPantauan ? '✓' : '👁️+'}</button>`
                                 }
                             </div>
                         </div>
@@ -545,7 +552,7 @@
 
             const contentHtml = `
                 <div class="space-y-4 text-xs">
-                    <div class="border-b border-gray-700 pb-3">
+                    <div class="border-b border-gray-700 pb-2">
                         <div class="flex items-center justify-between">
                             <h3 class="text-lg font-bold text-yellow-400 flex items-center gap-2">
                                 ${item.ticker} <span>${trendIcon}</span>
@@ -553,28 +560,28 @@
                             </h3>
                             <span class="text-sm font-bold ${changeClass}">${changeSign}${item.change_pct}%</span>
                         </div>
-                        <p class="text-gray-300 text-sm font-semibold mt-1.5">Harga Closing: ${item.close ? item.close.toLocaleString('id-ID') : '-'}</p>
+                        <p class="text-gray-300 text-sm font-semibold mt-1">Harga Closing: ${item.close ? item.close.toLocaleString('id-ID') : '-'}</p>
                     </div>
 
                     <div class="space-y-2">
                         <p class="text-gray-400 font-semibold uppercase text-[10px]">Indikator Strategi Swing</p>
-                        <div class="grid grid-cols-2 gap-2.5 bg-gray-850 p-3 rounded-xl border border-gray-700">
+                        <div class="grid grid-cols-2 gap-2 bg-gray-850 p-2.5 rounded-lg border border-gray-700">
                             <div>EMA 14: <span class="font-bold text-gray-200">${item.ema14 ? item.ema14.toLocaleString('id-ID') : '-'}</span> ${renderDot(item.ema14_status)}</div>
                             <div>EMA 50: <span class="font-bold text-gray-200">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</span> ${renderDot(item.ema50_status)}</div>
-                            <div class="col-span-2 pt-1 border-t border-gray-700/50">RSI (14): <span class="font-bold text-gray-200">${item.rsi || '-'}</span> ${renderDot(item.rsi_status)}</div>
+                            <div class="col-span-2">RSI (14): <span class="font-bold text-gray-200">${item.rsi || '-'}</span> ${renderDot(item.rsi_status)}</div>
                         </div>
                     </div>
 
-                    <div class="space-y-1.5">
+                    <div class="space-y-1">
                         <p class="text-gray-400 font-semibold uppercase text-[10px]">Power Signal Score</p>
-                        <div class="bg-gray-850 p-3 rounded-xl border border-gray-700 flex justify-center">
+                        <div class="bg-gray-850 p-2.5 rounded-lg border border-gray-700 flex justify-center">
                             ${renderPowerBoxes(item.signal, item.power_score)}
                         </div>
                     </div>
 
                     <div class="space-y-2">
                         <p class="text-gray-400 font-semibold uppercase text-[10px]">Trading Plan</p>
-                        <div class="bg-gray-850 p-3 rounded-xl border border-gray-700 space-y-2">
+                        <div class="bg-gray-850 p-2.5 rounded-lg border border-gray-700 space-y-1.5">
                             <div class="flex justify-between text-red-400 font-semibold">
                                 <span>Cut Loss (SL):</span>
                                 <span>${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '🛑✨' : ''}</span>
@@ -726,7 +733,7 @@
 
             let targetCategory = null;
             let targetStock = null;
-            const categories = ['swing_setup', 'top_gainers', 'top_movers', 'bluechips', 'top_bearish', 'all_stocks'];
+            const categories = ['swing_setup', 'top_gainers', 'top_movers', 'bluechips', 'top_bearish', 'all_stocks', 'top_10_entry'];
 
             for (const cat of categories) {
                 if (globalData[cat]) {
@@ -741,29 +748,41 @@
 
             if (targetStock && targetCategory) {
                 statusEl.className = "text-[11px] text-green-400 font-semibold min-h-[16px] px-1";
-                statusEl.innerText = `✓ Emiten ${targetStock.ticker} ditemukan di kategori ${targetCategory.replace('_', ' ').toUpperCase()}`;
+                statusEl.innerText = `✓ Emiten ${targetStock.ticker} ditemukan!`;
 
-                if (currentTab !== targetCategory) switchTab(targetCategory);
-
-                setTimeout(() => {
-                    const el = document.getElementById('row-' + targetStock.ticker) || document.getElementById('m-card-' + targetStock.ticker) || document.getElementById('top10-m-card-' + targetStock.ticker);
-                    if (el) {
-                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        el.classList.remove('animate-blink');
-                        void el.offsetWidth;
-                        el.classList.add('animate-blink');
-                    }
-                }, 100);
+                if (targetCategory === 'top_10_entry') {
+                    // Scroll langsung ke bagian Top 10 Entry
+                    setTimeout(() => {
+                        const el = document.getElementById('top10-row-' + targetStock.ticker) || document.getElementById('top10-m-card-' + targetStock.ticker);
+                        if (el) {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            el.classList.remove('animate-blink');
+                            void el.offsetWidth;
+                            el.classList.add('animate-blink');
+                        }
+                    }, 100);
+                } else {
+                    if (currentTab !== targetCategory) switchTab(targetCategory);
+                    setTimeout(() => {
+                        const el = document.getElementById('row-' + targetStock.ticker) || document.getElementById('m-card-' + targetStock.ticker);
+                        if (el) {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            el.classList.remove('animate-blink');
+                            void el.offsetWidth;
+                            el.classList.add('animate-blink');
+                        }
+                    }, 100);
+                }
             } else {
                 if (isManualClick) {
                     statusEl.className = "text-[11px] text-yellow-400 font-semibold min-h-[16px] px-1";
-                    statusEl.innerText = `🔄 Mengambil data realtime '${input}' dari YFinance...`;
+                    statusEl.innerText = `🔄 Mengambil data realtime '${input}'...`;
 
                     const liveStock = await fetchYFinanceRealtime(input);
                     if (liveStock) {
                         dynamicFetchedStocks[input] = liveStock;
                         statusEl.className = "text-[11px] text-green-400 font-semibold min-h-[16px] px-1";
-                        statusEl.innerText = `✓ Data ${input} berhasil didapatkan dari YFinance & ditambahkan ke Pantauan.`;
+                        statusEl.innerText = `✓ Data ${input} berhasil didapatkan & ditambahkan ke Pantauan.`;
                     } else {
                         statusEl.className = "text-[11px] text-yellow-400 font-semibold min-h-[16px] px-1";
                         statusEl.innerText = `⚠️ ${input} ditambahkan ke Pantauan (Manual).`;
@@ -776,16 +795,6 @@
                     }
 
                     switchTab('pantauan');
-
-                    setTimeout(() => {
-                        const el = document.getElementById('row-' + input) || document.getElementById('m-card-' + input);
-                        if (el) {
-                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            el.classList.remove('animate-blink');
-                            void el.offsetWidth;
-                            el.classList.add('animate-blink');
-                        }
-                    }, 100);
                 }
             }
         }
