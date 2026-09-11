@@ -7,7 +7,6 @@ on:
       - 'screener.py'
       - '.github/workflows/*'
   schedule:
-    # Berjalan tiap 15 menit saat jam kerja bursa (02:00 - 09:30 UTC = 09:00 - 16:30 WIB)
     - cron: '*/15 2-9 * * 1-5'
 
 jobs:
@@ -37,6 +36,6 @@ jobs:
           git add data.json
           git status
           git diff-index --quiet HEAD || git commit -m "auto: update stock data [skip ci]"
-          git push || echo "Tidak ada perubahan untuk di-push"
+          git push || echo "Tidak ada perubahan data"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
