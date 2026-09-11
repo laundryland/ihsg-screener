@@ -76,7 +76,7 @@ TICKERS = [
     {"ticker": "MTEL", "category": "Telecom/Tech"}, {"ticker": "CENT", "category": "Telecom/Tech"},
     {"ticker": "EMTK", "category": "Telecom/Tech"}, {"ticker": "SCMA", "category": "Telecom/Tech"},
     {"ticker": "BUKA", "category": "Telecom/Tech"}, {"ticker": "MLPT", "category": "Telecom/Tech"},
-    {"ticker": "ASSAR", "category": "Logistics"}, {"ticker": "BIRD", "category": "Logistics"},
+    {"ticker": "ASSA", "category": "Logistics"}, {"ticker": "BIRD", "category": "Logistics"},
 
     # --- BASIC MATERIALS & HEAVY EQUIPMENT (10) ---
     {"ticker": "SMGR", "category": "Basic Material"}, {"ticker": "INTP", "category": "Basic Material"},
@@ -123,7 +123,6 @@ def main():
     
     symbols_jk = [f"{t['ticker']}.JK" for t in TICKERS]
     try:
-        # Batch download untuk efisiensi waktu & menghindari rate-limit
         df_all = yf.download(symbols_jk, period="6m", interval="1d", group_by='ticker', progress=False)
     except Exception as e:
         print(f"❌ Batch Download Error: {e}")
@@ -135,12 +134,10 @@ def main():
         s_jk = f"{t_code}.JK"
         
         try:
-            if len(symbols_jk) > 1:
-                if s_jk not in df_all.columns.levels[0]: 
-                    continue
-                df = df_all[s_jk].dropna()
-            else:
-                df = df_all.dropna()
+            if s_jk not in df_all.columns:
+                continue
+            
+            df = df_all[s_jk].dropna()
 
             if len(df) < 50: 
                 continue
@@ -154,7 +151,6 @@ def main():
             rsi_series = calculate_rsi(df['Close'], 14)
             rsi = float(rsi_series.iloc[-1]) if not pd.isna(rsi_series.iloc[-1]) else 50.0
 
-            # Kalkulasi Sinyal & Skor
             signal = "NEUTRAL"
             power_score = 5
 
@@ -193,7 +189,6 @@ def main():
         except Exception as e:
             print(f"⚠️ Skip {t_code}: {e}")
 
-    # Pengelompokan Data
     swing_setup = sorted([s for s in stocks if s['signal'] in ['STRONG_BULLISH', 'BULLISH']], key=lambda x: x['power_score'], reverse=True)
     
     output = {
@@ -209,7 +204,6 @@ def main():
         "all_stocks": sorted(stocks, key=lambda x: x['ticker'])
     }
 
-    # Simpan Hasil ke JSON
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(output, f, indent=2, ensure_ascii=False)
 
