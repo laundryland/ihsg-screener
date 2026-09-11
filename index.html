@@ -4,10 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SH4NDY's SWING SCREENER</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- CSS Independen -->
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        @keyframes blink-animation {
+            0% { background-color: rgba(234, 179, 8, 0.4); }
+            50% { background-color: transparent; }
+            100% { background-color: rgba(234, 179, 8, 0.4); }
+        }
+        .animate-blink { animation: blink-animation 0.6s ease-in-out 3; }
+
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(0.92); }
+        }
+        .animate-signal-blink { animation: pulse-fast 0.8s infinite ease-in-out; }
+    </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen p-3 sm:p-6 font-sans">
     <div class="max-w-7xl mx-auto">
@@ -18,13 +29,10 @@
                 <h1 class="text-xl sm:text-2xl font-bold text-green-400 flex items-center gap-2">
                     📈 SH4NDY's SWING SCREENER
                 </h1>
-                <div class="flex items-center gap-2 mt-0.5">
-                    <p class="text-gray-400 text-xs" id="last-updated">Status: Memuat data...</p>
-                    <span id="market-status-badge" class="text-[10px] px-2 py-0.5 rounded font-bold bg-gray-800 text-gray-400">PASAR TUTUP</span>
-                </div>
+                <p class="text-gray-400 text-xs mt-0.5" id="last-updated">Status: Memuat data...</p>
             </div>
 
-            <!-- Search Area -->
+            <!-- Search Area with Clear Button -->
             <div class="flex flex-col items-end gap-1 w-full lg:w-auto">
                 <div class="flex items-center gap-2 w-full lg:w-auto">
                     <div class="relative flex-1 lg:w-72">
@@ -36,6 +44,7 @@
                             oninput="liveSearch()"
                             onkeyup="handleSearch(event)"
                         />
+                        <!-- Tombol Clear X Search -->
                         <button id="clear-search-btn" onclick="clearSearchInput()" class="hidden absolute right-8 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 text-xs font-bold p-1">✕</button>
                         <button onclick="executeSearch(true)" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-400 p-1" title="Cari / Tambah ke Pantauan">🔍</button>
                     </div>
@@ -83,7 +92,7 @@
             </div>
         </section>
 
-        <!-- Dynamic Filter Tabs -->
+        <!-- Navigation Tabs (Dynamic Filter) -->
         <div class="sticky top-[73px] z-40 bg-gray-900/95 backdrop-blur py-2 mb-6 border-b border-gray-800 flex flex-wrap gap-2" id="tabs-container">
             <button id="tab-swing_setup" onclick="switchTab('swing_setup')" class="tab-btn bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shadow-md">
                 🎯 Swing Setup <span id="count-swing_setup" class="bg-black/30 px-1.5 py-0.5 rounded-full">0</span>
@@ -108,7 +117,7 @@
             </button>
         </div>
 
-        <!-- Top 10 Entry Signal -->
+        <!-- Top 10 Best Entry -->
         <section class="mb-6 bg-gradient-to-r from-gray-850 via-gray-800 to-gray-850 border border-green-500/30 rounded-xl p-4 shadow-xl">
             <div class="flex items-center justify-between mb-3 border-b border-gray-700/60 pb-2">
                 <div class="flex items-center gap-2">
@@ -124,13 +133,11 @@
                         <tr class="text-gray-400 uppercase border-b border-gray-700/50">
                             <th class="py-2 px-2"># Rank</th>
                             <th class="py-2 px-2">Ticker</th>
-                            <th class="py-2 px-2 text-center">Trend</th>
                             <th class="py-2 px-2">Closing</th>
                             <th class="py-2 px-2">Change (%)</th>
+                            <th class="py-2 px-2 text-center">Score Power</th>
                             <th class="py-2 px-2 text-red-400">Cut Loss</th>
-                            <th class="py-2 px-2 text-green-400">TP 1</th>
-                            <th class="py-2 px-2 text-green-400">TP 2</th>
-                            <th class="py-2 px-2 text-center">Signal Power</th>
+                            <th class="py-2 px-2 text-green-400">TP 1 / TP 2</th>
                         </tr>
                     </thead>
                     <tbody id="top-10-data" class="divide-y divide-gray-700/40"></tbody>
@@ -138,7 +145,7 @@
             </div>
         </section>
 
-        <!-- Tampilan Desktop (Tabel) -->
+        <!-- Tampilan Web Desktop (Tabel) -->
         <div class="hidden md:block overflow-x-auto bg-gray-800 rounded-xl border border-gray-700 shadow-xl">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
@@ -146,17 +153,12 @@
                         <th class="p-3">Ticker</th>
                         <th class="p-3">Closing</th>
                         <th class="p-3">Change (%)</th>
-                        <th class="p-3 text-right">EMA 14</th>
-                        <th class="p-3 text-center w-6"></th>
-                        <th class="p-3 text-center">Trend</th>
-                        <th class="p-3 text-right">EMA 50</th>
-                        <th class="p-3 text-center w-6"></th>
-                        <th class="p-3 text-right">RSI (14)</th>
-                        <th class="p-3 text-center w-6"></th>
-                        <th class="p-3 text-red-400">Cut Loss</th>
-                        <th class="p-3 text-green-400">TP 1</th>
-                        <th class="p-3 text-green-400">TP 2</th>
+                        <th class="p-3">EMA 20</th>
+                        <th class="p-3">EMA 50</th>
+                        <th class="p-3">RSI (14)</th>
                         <th class="p-3 text-center">Signal Power</th>
+                        <th class="p-3 text-red-400">Cut Loss</th>
+                        <th class="p-3 text-green-400">TP 1 / TP 2</th>
                         <th class="p-3 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -164,12 +166,12 @@
             </table>
         </div>
 
-        <!-- Tampilan Mobile (Cards) -->
+        <!-- Tampilan HP Mobile (List Memanjang / Cards Simpel) -->
         <div class="block md:hidden space-y-2.5" id="screener-data-mobile"></div>
 
     </div>
 
-    <!-- Modal Popup Detail Mobile -->
+    <!-- Modal Popup Details untuk Mobile Mode -->
     <div id="mobile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-gray-800 border border-gray-700 rounded-xl max-w-sm w-full p-5 shadow-2xl relative animate-fade-in">
             <button onclick="closeModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white font-bold text-lg">✕</button>
@@ -177,7 +179,448 @@
         </div>
     </div>
 
-    <!-- Script Pendukung -->
-    <script src="screener.js"></script>
+    <script>
+        let globalData = {};
+        let currentTab = 'swing_setup';
+        let pantauanList = JSON.parse(localStorage.getItem('pantauan_stocks') || '[]');
+        let searchTimeout = null;
+
+        async function loadData() {
+            try {
+                const response = await fetch('data.json?t=' + new Date().getTime());
+                if (!response.ok) throw new Error("Gagal memuat data.json");
+                
+                globalData = await response.json();
+                document.getElementById('last-updated').innerText = 'Terakhir Diperbarui: ' + (globalData.last_updated || 'N/A');
+                
+                renderIHSG(globalData.ihsg || {});
+                updateTabCounts();
+                renderTop10Entry(globalData.top_10_entry || []);
+                renderCurrentTab();
+            } catch (error) {
+                console.error(error);
+                document.getElementById('last-updated').innerText = 'Error: Gagal memuat data';
+            }
+        }
+
+        function renderIHSG(ihsg) {
+            if (!ihsg || ihsg.close === undefined) return;
+            const chgPct = ihsg.change_pct || 0;
+            const ihsgCard = document.getElementById('ihsg-card');
+
+            if (chgPct > 0) ihsgCard.className = "mb-6 bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-4 shadow-lg transition-colors duration-500";
+            else if (chgPct < 0) ihsgCard.className = "mb-6 bg-rose-950/40 border border-rose-500/40 rounded-xl p-4 shadow-lg transition-colors duration-500";
+            else ihsgCard.className = "mb-6 bg-gray-800/60 border border-gray-700/60 rounded-xl p-4 shadow-lg transition-colors duration-500";
+
+            const isPositive = chgPct >= 0;
+            const changeClass = isPositive ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-red-500/20 text-red-400 border-red-500/40';
+            const closeColorClass = isPositive ? 'text-green-400' : 'text-red-400';
+            const changeSign = isPositive ? '+' : '';
+
+            document.getElementById('ihsg-header-close').innerText = ihsg.close ? ihsg.close.toLocaleString('id-ID') : '0.00';
+            const headerPct = document.getElementById('ihsg-header-pct');
+            headerPct.innerText = `${changeSign}${ihsg.change_pct}%`;
+            headerPct.className = `font-bold px-2 py-0.5 rounded text-xs border ${changeClass}`;
+
+            document.getElementById('ihsg-col-prev').innerText = ihsg.prev_close ? ihsg.prev_close.toLocaleString('id-ID') : '-';
+            document.getElementById('ihsg-col-open').innerText = ihsg.open ? ihsg.open.toLocaleString('id-ID') : '-';
+            document.getElementById('ihsg-col-low').innerText = ihsg.low ? ihsg.low.toLocaleString('id-ID') : '-';
+            document.getElementById('ihsg-col-high').innerText = ihsg.high ? ihsg.high.toLocaleString('id-ID') : '-';
+            
+            const colClose = document.getElementById('ihsg-col-close');
+            colClose.innerText = ihsg.close ? ihsg.close.toLocaleString('id-ID') : '-';
+            colClose.className = `py-2.5 px-3 font-bold ${closeColorClass}`;
+        }
+
+        function updateTabCounts() {
+            const categories = ['swing_setup', 'top_gainers', 'top_movers', 'bluechips', 'top_bearish', 'all_stocks'];
+            categories.forEach(cat => {
+                const el = document.getElementById('count-' + cat);
+                if (el && globalData[cat]) el.innerText = globalData[cat].length;
+            });
+            const pEl = document.getElementById('count-pantauan');
+            if (pEl) pEl.innerText = pantauanList.length;
+        }
+
+        function renderDot(status) {
+            let colorClass = 'bg-gray-500';
+            let blinkClass = '';
+            if (status === 'buy') colorClass = 'bg-green-500';
+            else if (status === 'strong_buy') { colorClass = 'bg-green-400'; blinkClass = 'animate-signal-blink'; }
+            else if (status === 'sell') colorClass = 'bg-red-500';
+            else if (status === 'strong_sell') { colorClass = 'bg-red-500'; blinkClass = 'animate-signal-blink'; }
+            return `<span class="inline-block w-2 h-2 rounded-full ${colorClass} ${blinkClass} ml-1" title="Status: ${status}"></span>`;
+        }
+
+        function renderPowerBoxes(signal, powerScore) {
+            const pct = (powerScore || 5) * 10;
+            let boxColor = 'bg-gray-600', isBlink = false, iconHtml = '⏳';
+            
+            if (signal === 'STRONG_BULLISH') { boxColor = 'bg-green-400'; isBlink = true; iconHtml = '<span class="inline-block animate-signal-blink">🚀</span>'; }
+            else if (signal === 'BULLISH') { boxColor = 'bg-green-500'; iconHtml = '🚀'; }
+            else if (signal === 'STRONG_BEARISH') { boxColor = 'bg-red-500'; isBlink = true; iconHtml = '<span class="inline-block w-2.5 h-2.5 bg-red-500 rounded-full animate-signal-blink"></span>'; }
+            else if (signal === 'BEARISH') { boxColor = 'bg-red-500'; iconHtml = '<span class="inline-block w-2.5 h-2.5 bg-red-500 rounded-full"></span>'; }
+            else { boxColor = 'bg-gray-600'; }
+
+            let boxesHtml = '<div class="flex items-center gap-0.5">';
+            for (let i = 1; i <= 10; i++) {
+                const active = i <= (powerScore || 5);
+                boxesHtml += `<span class="w-1.5 h-3.5 rounded-sm ${active ? boxColor : 'bg-gray-700'} ${isBlink && active ? 'animate-signal-blink' : ''}"></span>`;
+            }
+            boxesHtml += '</div>';
+
+            return `
+                <div class="flex items-center justify-center gap-1.5">
+                    <span class="text-[10px] font-bold text-gray-400 min-w-[28px] text-right">${pct}%</span>
+                    ${boxesHtml}
+                    <span class="text-xs flex items-center justify-center w-4 h-4">${iconHtml}</span>
+                </div>
+            `;
+        }
+
+        function renderTop10Entry(items) {
+            const container = document.getElementById('top-10-data');
+            container.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                container.innerHTML = `<tr><td colspan="7" class="text-center p-3 text-gray-500">Belum ada sinyal entry.</td></tr>`;
+                return;
+            }
+
+            items.forEach((item, index) => {
+                const isPositive = (item.change_pct || 0) >= 0;
+                const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
+                const changeSign = isPositive ? '+' : '';
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-750/50 transition-colors';
+                row.innerHTML = `
+                    <td class="py-2 px-2 font-extrabold text-green-400">#${index + 1}</td>
+                    <td class="py-2 px-2 font-bold text-yellow-400">
+                        ${item.ticker} <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded ml-0.5">${item.category}</span>
+                    </td>
+                    <td class="py-2 px-2 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
+                    <td class="py-2 px-2 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
+                    <td class="py-2 px-2 text-center">${renderPowerBoxes(item.signal, item.power_score)}</td>
+                    <td class="py-2 px-2 text-red-400">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
+                    <td class="py-2 px-2 text-green-400">
+                        ${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''} / 
+                        ${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}
+                    </td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function renderCurrentTab() {
+            const data = currentTab === 'pantauan' ? getPantauanData() : (globalData[currentTab] || []);
+            renderDesktopTable(data);
+            renderMobileCards(data);
+        }
+
+        function switchTab(tabKey) {
+            currentTab = tabKey;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-green-600', 'text-white', 'shadow-md');
+                btn.classList.add('bg-gray-800', 'text-gray-300');
+            });
+            const activeBtn = document.getElementById('tab-' + tabKey);
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-gray-800', 'text-gray-300');
+                activeBtn.classList.add('bg-green-600', 'text-white', 'shadow-md');
+            }
+            renderCurrentTab();
+        }
+
+        function getPantauanData() {
+            const all = globalData.all_stocks || [];
+            return pantauanList.map(ticker => {
+                const found = all.find(s => s.ticker === ticker);
+                return found || { ticker: ticker, close: 0, change_pct: 0, category: 'Pantauan Manual', signal: 'NEUTRAL', power_score: 5 };
+            });
+        }
+
+        // Render Tabel untuk Layar Desktop Web
+        function renderDesktopTable(items) {
+            const tbody = document.getElementById('screener-data-desktop');
+            tbody.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center p-6 text-gray-500">Tidak ada data emiten untuk kategori ini.</td></tr>`;
+                return;
+            }
+
+            items.forEach(item => {
+                const isPositive = (item.change_pct || 0) >= 0;
+                const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
+                const changeSign = isPositive ? '+' : '';
+
+                const row = document.createElement('tr');
+                row.id = 'row-' + item.ticker;
+                row.className = 'hover:bg-gray-750 transition-colors border-b border-gray-700/50';
+
+                const isPantauanTab = currentTab === 'pantauan';
+                const inPantauan = pantauanList.includes(item.ticker);
+
+                row.innerHTML = `
+                    <td class="p-3 font-bold text-yellow-400 flex items-center gap-1.5">
+                        <span>${item.ticker}</span>
+                        <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded">${item.category || 'IDX'}</span>
+                    </td>
+                    <td class="p-3 font-medium">${item.close ? item.close.toLocaleString('id-ID') : '-'}</td>
+                    <td class="p-3 font-semibold ${changeClass}">${changeSign}${item.change_pct}%</td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'} ${renderDot(item.ema20_status || 'neutral')}</td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'} ${renderDot(item.ema50_status || 'neutral')}</td>
+                    <td class="p-3 text-gray-300 whitespace-nowrap">${item.rsi || '-'} ${renderDot(item.rsi_status || 'neutral')}</td>
+                    <td class="p-3 text-center whitespace-nowrap">${renderPowerBoxes(item.signal || 'NEUTRAL', item.power_score || 5)}</td>
+                    <td class="p-3 text-red-400 font-medium">${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '<span class="inline-block animate-signal-blink">🛑✨</span>' : ''}</td>
+                    <td class="p-3 text-green-400 font-medium">
+                        ${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''} / 
+                        ${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '<span class="inline-block animate-signal-blink">💚✨</span>' : ''}
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 hover:bg-gray-600 text-gray-200 p-1 rounded text-xs" title="Copy Kode Emiten">📋</button>
+                            ${isPantauanTab ? 
+                                `<button onclick="removeFromPantauan('${item.ticker}')" class="bg-red-900/60 hover:bg-red-700 text-red-300 p-1 rounded text-xs" title="Hapus dari Pantauan">❌</button>` :
+                                `<button onclick="addToPantauan('${item.ticker}')" class="${inPantauan ? 'bg-green-800 text-green-300' : 'bg-gray-700 hover:bg-gray-600 text-gray-200'} p-1 rounded text-xs" title="Tambah ke Pantauan">${inPantauan ? '✓' : '👁️+'}</button>`
+                            }
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Render Card Vertikal Simpel Khusus Tampilan Smartphone
+        function renderMobileCards(items) {
+            const container = document.getElementById('screener-data-mobile');
+            container.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                container.innerHTML = `<div class="text-center p-6 text-gray-500 bg-gray-800 rounded-xl border border-gray-700">Tidak ada emiten untuk kategori ini.</div>`;
+                return;
+            }
+
+            items.forEach(item => {
+                const isPositive = (item.change_pct || 0) >= 0;
+                const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
+                const changeSign = isPositive ? '+' : '';
+
+                const card = document.createElement('div');
+                card.id = 'm-card-' + item.ticker;
+                card.className = 'bg-gray-800 border border-gray-700 rounded-xl p-3 flex items-center justify-between shadow-md active:bg-gray-750 transition-all cursor-pointer';
+                card.onclick = (e) => {
+                    // Hindari pemicu klik modal jika menekan tombol aksi
+                    if (e.target.tagName === 'BUTTON') return;
+                    openModal(item);
+                };
+
+                const isPantauanTab = currentTab === 'pantauan';
+                const inPantauan = pantauanList.includes(item.ticker);
+
+                card.innerHTML = `
+                    <div class="flex flex-col gap-1 w-full">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold text-yellow-400 text-base">${item.ticker}</span>
+                                <span class="text-[9px] bg-gray-700 text-gray-300 px-1 py-0.5 rounded">${item.category || 'IDX'}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-gray-100 text-sm">${item.close ? item.close.toLocaleString('id-ID') : '-'}</span>
+                                <span class="text-xs font-semibold ${changeClass} ml-1.5">${changeSign}${item.change_pct}%</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-1 pt-2 border-t border-gray-700/60">
+                            <div>${renderPowerBoxes(item.signal || 'NEUTRAL', item.power_score || 5)}</div>
+                            <div class="flex items-center gap-1">
+                                <button onclick="copyTicker('${item.ticker}')" class="bg-gray-700 text-gray-200 px-2 py-1 rounded text-xs">📋</button>
+                                ${isPantauanTab ? 
+                                    `<button onclick="removeFromPantauan('${item.ticker}')" class="bg-red-900/60 text-red-300 px-2 py-1 rounded text-xs">❌</button>` :
+                                    `<button onclick="addToPantauan('${item.ticker}')" class="${inPantauan ? 'bg-green-800 text-green-300' : 'bg-gray-700 text-gray-200'} px-2 py-1 rounded text-xs">${inPantauan ? '✓' : '👁️+'}</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Modal Popup Detail Analisa untuk Mobile Mode
+        function openModal(item) {
+            const isPositive = (item.change_pct || 0) >= 0;
+            const changeClass = isPositive ? 'text-green-400' : 'text-red-400';
+            const changeSign = isPositive ? '+' : '';
+
+            const contentHtml = `
+                <div class="space-y-4 text-xs">
+                    <div class="border-b border-gray-700 pb-2">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-yellow-400">${item.ticker} <span class="text-xs text-gray-400 font-normal">(${item.category || 'IDX'})</span></h3>
+                            <span class="text-sm font-bold ${changeClass}">${changeSign}${item.change_pct}%</span>
+                        </div>
+                        <p class="text-gray-300 text-sm font-semibold mt-1">Harga Closing: ${item.close ? item.close.toLocaleString('id-ID') : '-'}</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <p class="text-gray-400 font-semibold uppercase text-[10px]">Indikator Strategi Swing</p>
+                        <div class="grid grid-cols-2 gap-2 bg-gray-850 p-2.5 rounded-lg border border-gray-700">
+                            <div>EMA 20: <span class="font-bold text-gray-200">${item.ema20 ? item.ema20.toLocaleString('id-ID') : '-'}</span> ${renderDot(item.ema20_status)}</div>
+                            <div>EMA 50: <span class="font-bold text-gray-200">${item.ema50 ? item.ema50.toLocaleString('id-ID') : '-'}</span> ${renderDot(item.ema50_status)}</div>
+                            <div class="col-span-2">RSI (14): <span class="font-bold text-gray-200">${item.rsi || '-'}</span> ${renderDot(item.rsi_status)}</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p class="text-gray-400 font-semibold uppercase text-[10px]">Power Signal Score</p>
+                        <div class="bg-gray-850 p-2.5 rounded-lg border border-gray-700 flex justify-center">
+                            ${renderPowerBoxes(item.signal, item.power_score)}
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <p class="text-gray-400 font-semibold uppercase text-[10px]">Trading Plan</p>
+                        <div class="bg-gray-850 p-2.5 rounded-lg border border-gray-700 space-y-1.5">
+                            <div class="flex justify-between text-red-400 font-semibold">
+                                <span>Cut Loss (SL):</span>
+                                <span>${item.stop_loss ? item.stop_loss.toLocaleString('id-ID') : '-'} ${item.cl_hit ? '🛑✨' : ''}</span>
+                            </div>
+                            <div class="flex justify-between text-green-400 font-semibold">
+                                <span>Take Profit 1 (TP1):</span>
+                                <span>${item.take_profit_1 ? item.take_profit_1.toLocaleString('id-ID') : '-'} ${item.tp1_hit ? '💚✨' : ''}</span>
+                            </div>
+                            <div class="flex justify-between text-green-400 font-semibold">
+                                <span>Take Profit 2 (TP2):</span>
+                                <span>${item.take_profit_2 ? item.take_profit_2.toLocaleString('id-ID') : '-'} ${item.tp2_hit ? '💚✨' : ''}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-content').innerHTML = contentHtml;
+            document.getElementById('mobile-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('mobile-modal').classList.add('hidden');
+        }
+
+        function copyTicker(ticker) {
+            navigator.clipboard.writeText(ticker);
+            const statusEl = document.getElementById('search-status-text');
+            statusEl.className = "text-[11px] text-green-400 font-semibold min-h-[16px] px-1";
+            statusEl.innerText = `✓ Kode emiten ${ticker} berhasil dicopy!`;
+            setTimeout(() => { statusEl.innerText = ''; }, 2000);
+        }
+
+        function addToPantauan(ticker) {
+            if (!pantauanList.includes(ticker)) {
+                pantauanList.push(ticker);
+                localStorage.setItem('pantauan_stocks', JSON.stringify(pantauanList));
+                updateTabCounts();
+                renderCurrentTab();
+            }
+        }
+
+        function removeFromPantauan(ticker) {
+            pantauanList = pantauanList.filter(t => t !== ticker);
+            localStorage.setItem('pantauan_stocks', JSON.stringify(pantauanList));
+            updateTabCounts();
+            renderCurrentTab();
+        }
+
+        function liveSearch() {
+            clearTimeout(searchTimeout);
+            const statusEl = document.getElementById('search-status-text');
+            const clearBtn = document.getElementById('clear-search-btn');
+            const input = document.getElementById('search-input').value.trim().toUpperCase();
+
+            if (!input) {
+                statusEl.innerText = '';
+                clearBtn.classList.add('hidden');
+                return;
+            }
+
+            clearBtn.classList.remove('hidden');
+            statusEl.className = "text-[11px] text-gray-400 min-h-[16px] px-1";
+            statusEl.innerText = `Mencari '${input}'...`;
+
+            searchTimeout = setTimeout(() => {
+                executeSearch(false);
+            }, 300);
+        }
+
+        function clearSearchInput() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-search-btn').classList.add('hidden');
+            document.getElementById('search-status-text').innerText = '';
+        }
+
+        function handleSearch(event) {
+            if (event.key === 'Enter') executeSearch(true);
+        }
+
+        function executeSearch(isManualClick = false) {
+            const input = document.getElementById('search-input').value.trim().toUpperCase();
+            const statusEl = document.getElementById('search-status-text');
+            if (!input) return;
+
+            let targetCategory = null;
+            let targetStock = null;
+            const categories = ['swing_setup', 'top_gainers', 'top_movers', 'bluechips', 'top_bearish', 'all_stocks'];
+
+            for (const cat of categories) {
+                if (globalData[cat]) {
+                    const found = globalData[cat].find(s => s.ticker === input);
+                    if (found) {
+                        targetCategory = cat;
+                        targetStock = found;
+                        break;
+                    }
+                }
+            }
+
+            if (targetStock && targetCategory) {
+                statusEl.className = "text-[11px] text-green-400 font-semibold min-h-[16px] px-1";
+                statusEl.innerText = `✓ Emiten ${targetStock.ticker} ditemukan di kategori ${targetCategory.replace('_', ' ').toUpperCase()}`;
+
+                if (currentTab !== targetCategory) switchTab(targetCategory);
+
+                setTimeout(() => {
+                    const el = document.getElementById('row-' + targetStock.ticker) || document.getElementById('m-card-' + targetStock.ticker);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        el.classList.remove('animate-blink');
+                        void el.offsetWidth;
+                        el.classList.add('animate-blink');
+                    }
+                }, 100);
+            } else {
+                if (isManualClick) {
+                    statusEl.className = "text-[11px] text-yellow-400 font-semibold min-h-[16px] px-1";
+                    statusEl.innerText = `⚠️ ${input} ditambahkan ke Pantauan.`;
+
+                    if (!pantauanList.includes(input)) {
+                        pantauanList.push(input);
+                        localStorage.setItem('pantauan_stocks', JSON.stringify(pantauanList));
+                        updateTabCounts();
+                    }
+
+                    switchTab('pantauan');
+                }
+            }
+        }
+
+        function reloadPage() {
+            const icon = document.getElementById('reload-icon');
+            icon.classList.add('rotate-180');
+            setTimeout(() => location.reload(), 300);
+        }
+
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
 </body>
 </html>
